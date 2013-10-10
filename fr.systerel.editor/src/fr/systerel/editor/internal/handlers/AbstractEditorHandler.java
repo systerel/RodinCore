@@ -23,7 +23,7 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 public abstract class AbstractEditorHandler extends AbstractHandler {
 
 	@Override
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		final RodinEditor editor = getActiveRodinEditor();
 		return editor != null && isEnabled(editor, editor.getCurrentOffset());
 	}
@@ -39,7 +39,7 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	 *         <code>false</code> otherwise
 	 */
 	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
-		return true;
+		return !editor.isOverlayActive();
 	}
 	
 	protected static RodinEditor getActiveRodinEditor(ExecutionEvent event) {

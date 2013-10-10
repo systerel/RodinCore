@@ -29,6 +29,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
@@ -240,6 +241,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		editorText.setBackground(IRodinColorConstant.BG_COLOR);
 		editorText.addExtendedModifyListener(this);
 		editorText.addVerifyKeyListener(this);
+		
+		final EditorActionUpdater actionUpdater = new  EditorActionUpdater(editor);
+		editorText.addFocusListener(actionUpdater);
+		editorText.addSelectionListener(actionUpdater);
+		
 		createMenu();
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
@@ -420,6 +426,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			parent.setCaretOffset(newEditorOffset);
 		}
 		interval = null;
+		
+		RodinEditorUtils.flushTextModificationHistory(editor);
 	}
 	
 	public boolean isActive() {
@@ -462,6 +470,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	public void saveAndExit(boolean maintainCaretPosition) {
 		doUpdateModelAfterChanges();
 		quitEdition(maintainCaretPosition);
+	}
+	
+	public boolean isTextSelected() {
+		return editorText != null && editorText.getSelectionCount() > 0;
 	}
 
 	@Override
@@ -656,6 +668,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		if (enable) {
 			editorText.addModifyListener(eventBTranslator);
 		}
+	}
+
+	public ITextOperationTarget getTextOperationTarget() {
+		return (ITextOperationTarget) textViewer;
 	}
 
 }

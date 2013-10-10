@@ -14,16 +14,21 @@ import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertAcceleratorTo
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eventb.ui.eventbeditor.IRodinHistory;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.EditorPlugin;
@@ -32,8 +37,19 @@ import fr.systerel.editor.EditorPlugin;
  * Utility methods for the Rodin Editor.
  */
 public class RodinEditorUtils {
-	
-	
+
+	public static final IOperationHistory MAIN_PLATFORM_HISTORY = //
+	PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+
+	public static final IRodinHistory RODIN_HISTORY = ElementManipulationFacade
+			.getHistory();
+
+	public static void flushTextModificationHistory(RodinEditor editor) {
+		final IDocument document = editor.getDocument();
+		final ObjectUndoContext textContext = new ObjectUndoContext(document);
+		MAIN_PLATFORM_HISTORY.dispose(textContext, true, true, false);
+	}
+
 	/**
 	 * Converts the given SWT event into a JFace keystroke. This method allows
 	 * to further use the JFace cross-platform layer to handle keyboard events.

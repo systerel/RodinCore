@@ -25,97 +25,58 @@
             commandId="fr.systerel.editor.addChild">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.AddSiblingHandler"
             commandId="fr.systerel.editor.addSibling">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.AddSameSiblingHandler"
             commandId="fr.systerel.editor.addSameSibling">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.MoveUpHandler"
             commandId="org.eclipse.ui.edit.text.moveLineUp">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.MoveDownHandler"
             commandId="org.eclipse.ui.edit.text.moveLineDown">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.DeleteHandler"
-            commandId="org.eclipse.ui.edit.delete">
-         <activeWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.SelectUpHandler"
             commandId="org.eclipse.ui.edit.text.select.lineUp">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
          <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
+         <reference
+               definitionId="fr.systerel.editor.definition.inRodinEditor">
+         </reference>
          </enabledWhen>
       </handler>
       <handler
@@ -123,13 +84,13 @@
             commandId="org.eclipse.ui.edit.text.select.lineDown">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
          <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
+         <reference
+               definitionId="fr.systerel.editor.definition.inRodinEditor">
+         </reference>
          </enabledWhen>
       </handler>
       <handler
@@ -137,100 +98,53 @@
             commandId="fr.systerel.editor.abortEditionFreeSelection">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.RodinEditorDefaultScope">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.RefreshHandler"
             commandId="org.eclipse.ui.file.refresh">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.RodinEditorDefaultScope">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.TraverseHandlers$TraverseNextHandler"
             commandId="fr.systerel.editor.traverseNext">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.TraverseHandlers$TraversePreviousHandler"
             commandId="fr.systerel.editor.traversePrevious">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.QuickAddElementHandler$QuickAddChildHandler"
             commandId="fr.systerel.editor.showAddChild">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.QuickAddElementHandler$QuickAddSiblingHandler"
             commandId="fr.systerel.editor.showAddSibling">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
-         </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.InsertHandler"
-            commandId="org.eventb.ui.edit.insert">
-         <activeWhen>
-            <with
-                  variable="activeEditorId">
-               <and>
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="fr.systerel.editor.editors.RodinEditor">
-                     </equals>
-                  </with>
-               </and>
-            </with>
          </activeWhen>
       </handler>
    </extension>
@@ -241,28 +155,45 @@
             commandId="org.eclipse.ui.edit.copy">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
-            </reference>
-         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.PasteHandler"
             commandId="org.eclipse.ui.edit.paste">
          <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
          </activeWhen>
-         <enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.DeleteHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>
             <reference
-                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
             </reference>
-         </enabledWhen>
+         </activeWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.UndoHandler"
+            commandId="org.eclipse.ui.edit.undo">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.RedoHandler"
+            commandId="org.eclipse.ui.edit.redo">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+            </reference>
+         </activeWhen>
       </handler>
    </extension>
    <extension
@@ -338,16 +269,6 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.addSameSibling"
             name="Add Same Sibling">
-      </command>
-      <command
-            categoryId="fr.systerel.editor.editionCategory"
-            id="fr.systerel.editor.moveUp"
-            name="Move Up">
-      </command>
-      <command
-            categoryId="fr.systerel.editor.editionCategory"
-            id="fr.systerel.editor.moveDown"
-            name="Move Down">
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
@@ -538,6 +459,11 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:fr.systerel.editor.editors.RodinEditor?before=additions">
+         <command
+               commandId="org.eclipse.ui.edit.delete"
+               label="Delete"
+               style="push">
+         </command>
          <dynamic
                class="fr.systerel.editor.internal.handlers.DynamicAddChildContributionItem"
                id="fr.systerel.editor.addChildPossibilities">
@@ -559,21 +485,6 @@
                name="fr.systerel.editor.CreationSeparator"
                visible="true">
          </separator>
-         <command
-               commandId="org.eclipse.ui.edit.copy"
-               label="Copy"
-               style="push">
-         </command>
-         <command
-               commandId="org.eclipse.ui.edit.paste"
-               label="Paste"
-               style="push">
-         </command>
-         <command
-               commandId="org.eclipse.ui.edit.delete"
-               label="Delete"
-               style="push">
-         </command>
          <separator
                name="fr.systerel.editor.MovementSeparator"
                visible="true">
@@ -917,7 +828,16 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="fr.systere.editor.definition.RodinEditorDefaultScope">
+            id="fr.systerel.editor.definition.inRodinEditor">
+         <with
+               variable="activeFocusControlId">
+               <equals
+                     value="fr.systerel.editor.editors.RodinEditor">
+               </equals>
+         </with>
+      </definition>
+      <definition
+            id="fr.systerel.editor.definition.RodinEditorDefaultScope">
          <with
                variable="activeContexts">
             <iterate

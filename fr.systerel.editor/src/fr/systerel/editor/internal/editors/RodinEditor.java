@@ -10,20 +10,17 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import static org.eclipse.ui.actions.ActionFactory.REDO;
-import static org.eclipse.ui.actions.ActionFactory.UNDO;
 import static org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE;
 import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -31,20 +28,18 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
@@ -52,7 +47,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -60,7 +54,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.EditorPlugin;
-import fr.systerel.editor.internal.actions.HistoryAction;
+import fr.systerel.editor.internal.actions.operations.EditorActionTarget;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
@@ -82,7 +76,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	private RodinConfiguration rodinViewerConfiguration;
 	
 	private DNDManager dndManager;
-	private IUndoContext  undoContext;
 	
 	/** The overlay editor to edit elements and attributes */
 	private OverlayEditor overlayEditor;
@@ -117,6 +110,10 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	private ContextMenuSimplifier contextMenuSimplifier;
 
+	private EditorActionTarget editorActionTarget;
+
+	private OverlayEditorUndoManager overlayUndoManager;
+	
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
 		documentProvider = new RodinDocumentProvider(mapper, this);
@@ -141,12 +138,21 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		styledText = viewer.getTextWidget();
 	
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
+		editorActionTarget = new EditorActionTarget(this);
 		overlayUpdater = new OverlayBackModificationUpdater(overlayEditor);
 		getDocument().addDocumentListener(overlayUpdater);
 		
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
 		getSite().setSelectionProvider(selController);
+		selController.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSelectionDependentActions();
+				
+			}
+		});
 		styledText.addMouseListener(selController);
 		styledText.addVerifyKeyListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
@@ -162,6 +168,21 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	
 		setTitleImageAndPartName();
 		contextMenuSimplifier = ContextMenuSimplifier.startSimplifying(styledText.getMenu());
+		// the focus tracker is used to activate the handlers, when the widget
+		// has focus and the editor is not in overlay mode.
+		final IFocusService focusService = (IFocusService) getSite()
+				.getService(IFocusService.class);
+		focusService.addFocusTracker(styledText, "fr.systerel.editor.editors.RodinEditor");
+		viewer.setEditable(false);
+		styledText.setEditable(false);
+	}
+	
+	@Override
+	protected void createActions() {
+		super.createActions();
+		// Deactivate unused actions
+		setAction(ITextEditorActionConstants.MOVE_LINE_UP, null);
+		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, null);
 	}
 
 	/**
@@ -230,6 +251,57 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	}
 	
 	/**
+	 * Tells the callers that the editor is editable even if its main text
+	 * component is not.
+	 */
+	@Override
+	public boolean isEditorInputModifiable() {
+		return true;
+	}
+
+	/**
+	 * Tells the callers that the editor is editable even if its main text
+	 * component is not.
+	 */
+	@Override
+	public boolean isEditable() {
+		return true;
+	}
+
+	/**
+	 * Updates the state of the given editor input such as read-only flag.
+	 */
+	@Override
+	protected void updateState(IEditorInput input) {
+		// Do nothing. This editor viewer is read-only and that shall not change
+	}
+	
+	@Override
+	protected void validateState(IEditorInput input) {
+		// Do nothing. This editor viewer is read-only and that shall not change
+	}
+	
+	/**
+	 * Let editor actions be redirected (programmatically) to the right target
+	 * depending on the current mode (i.e. in overlay mode or not). Overriding
+	 * these actions at the handler level is not possible.
+	 */
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (ITextOperationTarget.class.equals(adapter)) {
+			return getEditorActionTarget();
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	
+	private Object getEditorActionTarget() {
+		if (editorActionTarget == null)
+			editorActionTarget = new EditorActionTarget(this);
+		return editorActionTarget;
+	}
+
+	/**
 	 * Creates a projection viewer to allow folding
 	 */
 	@Override
@@ -240,6 +312,33 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
+	}
+	
+	/**
+	 * Activates navigation actions registered on the source viewer (which is
+	 * read-only).
+	 */
+    public void createNavigationActions() {
+    	super.createNavigationActions();
+    }
+	
+	/**
+	 * Deactivates navigation actions registered on the source viewer (which is
+	 * read-only) These actions are typically deactivated when the overlay.
+	 * becomes enabled, as they would operate on the main source viewer which is
+	 * unwanted.
+	 */
+	public void clearNavigationActions() {
+		for (IdMapEntry entry : ACTION_MAP) {
+			setAction(entry.getActionId(), null);
+		}
+		setAction(ITextEditorActionDefinitionIds.LINE_START, null);
+		setAction(ITextEditorActionDefinitionIds.LINE_END, null);
+		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, null);
+		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_UP, null);
+		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN, null);
+		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_START, null);
+		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_END, null);
 	}
 
 	public void activateRodinEditorContext() {
@@ -268,131 +367,16 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		if (defaultContext != null)
 			contextService.deactivateContext(defaultContext);
 	}
-	
-	/**
-	 * It is mandatory to remove the actions so that the commands contributed
-	 * through extension points are taken into account.
-	 */
-	@Override
-	protected void createActions() {
-		super.createActions();
-		removeAction(ActionFactory.CUT.getId());
-		removeAction(ActionFactory.COPY.getId());
-		removeAction(ActionFactory.PASTE.getId());
-		removeAction(ActionFactory.DELETE.getId());
-		removeAction(ActionFactory.REFRESH.getId());
-		removeAction(ITextEditorActionConstants.SHIFT_RIGHT);
-		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
-		removeAction(ITextEditorActionConstants.MOVE_LINE_DOWN);
-		removeAction(ITextEditorActionConstants.MOVE_LINE_UP);
-		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_UP);
-		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN);
-		removeAction(ITextEditorActionDefinitionIds.LINE_END);
-		removeAction(ITextEditorActionDefinitionIds.LINE_START);
-		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_UP);
-		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN);
-	}
 
+	/**
+	 * Deactivating the undo manager on the source viewer
+	 */
 	@Override
 	protected void createUndoRedoActions() {
-		if (getUndoContext() != null) {
-			final IWorkbenchWindow ww = getEditorSite().getWorkbenchWindow();
-			final Action undoAction = new HistoryAction.Undo(ww);
-			final Action redoAction = new HistoryAction.Redo(ww);
-			final IPartListener listener = new PartListener();
-			setHistoryHandler(UNDO.getId(), undoAction, listener);
-			setHistoryHandler(REDO.getId(), redoAction, listener);
-		}
-	}
-	
-	private IUndoContext getUndoContext() {
-		final IEventBRoot root = getInputRoot();
-		if (root != null) {
-			undoContext = ElementManipulationFacade.getRodinFileUndoContext(root);
-		}
-		return undoContext;
-	}
-
-	/**
-	 * Set a global action handler for a undo/redo action and add the given part
-	 * listener.
-	 * */
-	private void setHistoryHandler(String actionId, IAction handler,
-			IPartListener listener) {
-		if (!(getGlobalActionHandler(actionId) == handler)) {
-			registerUndoRedoAction(actionId, (HistoryAction) handler);
-			getEditorSite().getPage().addPartListener(listener);
-		}
-	}
-
-	private IAction getGlobalActionHandler(String actionId) {
-		final IActionBars bars = getEditorSite().getActionBars();
-		return bars.getGlobalActionHandler(actionId);
-	}
-
-	/**
-	 * Pushed down from AbstractTextEditor
-	 */
-	private void registerUndoRedoAction(String actionId, HistoryAction action) {
-		final IAction oldAction = getAction(actionId);
-		if (oldAction instanceof OperationHistoryActionHandler)
-			((OperationHistoryActionHandler) oldAction).dispose();
-		if (action == null)
-			return;
-		setAction(actionId, action);
-		final IActionBars actionBars = getEditorSite().getActionBars();
-		if (actionBars != null)
-			actionBars.setGlobalActionHandler(actionId, action);
-		action.setEnabled(false);
-	}
-
-	/**
-	 * A listener to update the undo/redo action when the Event-B editor is
-	 * activated.
-	 */
-	class PartListener implements IPartListener {
-		
-		private void refreshUndoRedoAction() {
-			final IAction undoAction = getGlobalActionHandler(UNDO.getId());
-			final IAction redoAction = getGlobalActionHandler(REDO.getId());
-	
-			if (undoAction instanceof HistoryAction
-					&& redoAction instanceof HistoryAction) {
-				((HistoryAction) undoAction).refresh();
-				((HistoryAction) redoAction).refresh();
-			}
-		}
-	
-		@Override
-		public void partActivated(IWorkbenchPart part) {
-			refreshUndoRedoAction();
-		}
-	
-		@Override
-		public void partBroughtToTop(IWorkbenchPart part) {
-			// do nothing
-		}
-	
-		@Override
-		public void partClosed(IWorkbenchPart part) {
-			// do nothing
-		}
-	
-		@Override
-		public void partDeactivated(IWorkbenchPart part) {
-			// do nothing
-		}
-	
-		@Override
-		public void partOpened(IWorkbenchPart part) {
-			// do nothing
-		}
-	}
-
-	private void removeAction(String actionId) {
-		if (actionId == null)
-			return;
-		setAction(actionId, null);
+		final ISourceViewer sourceViewer = getSourceViewer();
+		overlayUndoManager = new OverlayEditorUndoManager(this);
+		sourceViewer.setUndoManager(overlayUndoManager);
+		super.createUndoRedoActions();
 	}
 	
 	/**
@@ -478,9 +462,29 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	/** Tells if the overlay is currently visible as the user is editing */
 	public boolean isOverlayActive() {
-		return overlayEditor.isActive();
+		return overlayEditor != null && overlayEditor.isActive();
 	}
 	
+	/**
+	 * Refreshes the enablement of editor actions. This update is mandatory to
+	 * redirect actions to the right implementation depending on the editor
+	 * mode.
+	 */
+	public void updateActions() {
+		super.updateStateDependentActions();
+		super.updateContentDependentActions();
+		super.updateSelectionDependentActions();
+	}
+	
+	/**
+	 * Refreshes the enablement of editor selection dependent actions. This
+	 * update is mandatory to redirect actions to the right implementation
+	 * depending on the editor selection.
+	 */
+	public void updateSelectionDependentActions() {
+		super.updateSelectionDependentActions();
+	}
+
 	public boolean threadSafeIsOverlayActive() {
 		final ActivationChecker checker = new ActivationChecker(this);
 		getSite().getShell().getDisplay().syncExec(checker);
@@ -538,6 +542,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	public void resync(final IProgressMonitor monitor, final boolean silent,
 			final ILElement newElement) {
 		if (styledText != null && !styledText.isDisposed()) {
+			final RodinEditor editor = this;
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
@@ -564,6 +569,10 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 						System.out.println("\\ Elapsed time : " + time + "ms.");
 					}
 					markerAnnotationsUpdater.recalculateAnnotations();
+					// Refreshing the editor is viewed as an operation in
+					// history : it is mandatory to flush textual operation in
+					// this case.
+					RodinEditorUtils.flushTextModificationHistory(editor);
 				}
 			});
 		}
@@ -588,6 +597,10 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
+	}
+
+	public ITextOperationTarget getTextOperationTarget() {
+		return viewer;
 	}
 
 //	/**

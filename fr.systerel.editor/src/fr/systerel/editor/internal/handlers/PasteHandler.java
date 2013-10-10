@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
@@ -34,14 +32,6 @@ public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		if (editor.isOverlayActive()) {
-			final IAction action = editor.getOverlayEditorAction(ST.PASTE);
-			if (action != null) {
-				action.run();
-				return "Text pasted";
-			}
-			return "Text paste failed";
-		}
 		final Interval inter = editor.getDocumentMapper()
 				.findFirstElementIntervalAfter(offset);
 		if (inter == null)
@@ -78,8 +68,10 @@ public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
-		if (editor.isOverlayActive())
-			return true;
+		return isPastePossible(editor, caretOffset);
+	}
+
+	public static boolean isPastePossible(RodinEditor editor, int caretOffset) {
 		final EditorElement target = editor.getDocumentMapper()
 				.findEditorElementAt(caretOffset);
 		if (target == null) {
