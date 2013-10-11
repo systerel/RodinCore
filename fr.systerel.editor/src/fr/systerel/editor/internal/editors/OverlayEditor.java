@@ -458,7 +458,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 	
 	public boolean isActive() {
-		return editorText.isVisible();
+		return editorText != null && !editorText.isDisposed()
+				&& editorText.isVisible();
 	}
 	
 	public void setVisible(final boolean visible) {
