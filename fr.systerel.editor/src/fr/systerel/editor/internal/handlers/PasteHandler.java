@@ -87,10 +87,16 @@ public class PasteHandler extends AbstractEditionHandler {
 		// Try to handle by using a rodin handle transfer.
 		final Transfer rodinHandleTransfer = ElementManipulationFacade
 				.getRodinHandleTransfer();
-		final IRodinElement[] elements = (IRodinElement[]) clipboard
-				.getContents(rodinHandleTransfer);
+		try {
+			final IRodinElement[] elements = (IRodinElement[]) clipboard
+					.getContents(rodinHandleTransfer);
 		// enable only if there are elements to paste
 		return elements != null && elements.length > 0;
+		} catch (Exception e) {
+			// something wrong appened when retrieving the contents of the
+			// clipboard
+			return false;
+		}
 	}
 
 }
