@@ -488,7 +488,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final String text;
 		if (!contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
 			// force translation
-			text = RodinKeyboardUIPlugin.getDefault().translate(original);
+			text = translateAllText(original);
 		} else {
 			text = original;
 		}
@@ -537,8 +537,15 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	private void modifyText(String text) {
-		mapper.synchronizeInterval(interval, text);
+		// force one-pass translation to avoid registering useless translation
+		// operations to the undo history
+		final String translated = translateAllText(text);
+		mapper.synchronizeInterval(interval, translated);
 		resizeAndPositionOverlay(editorText, parent, interval);
+	}
+
+	private String translateAllText(String text) {
+		return RodinKeyboardUIPlugin.getDefault().translate(text);
 	}
 
 	private void resizeAndPositionOverlay(StyledText overlay,
