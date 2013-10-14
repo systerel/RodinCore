@@ -150,6 +150,18 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="fr.systerel.editor.internal.handlers.CutHandler"
+            commandId="org.eclipse.ui.edit.cut">
+         <activeWhen>
+            <with
+                  variable="activeFocusControlId">
+               <equals
+                     value="fr.systerel.editor.editors.RodinEditor">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
                <handler
             class="fr.systerel.editor.internal.handlers.CopyHandler"
             commandId="org.eclipse.ui.edit.copy">
