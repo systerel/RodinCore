@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +26,14 @@ public interface IPrefMapEntry<T> {
 	 * 
 	 * @return the entry key
 	 */
-	public String getKey();
+	String getKey();
 
 	/**
 	 * Returns the current value of this entry.
 	 * 
 	 * @return a value
 	 */
-	public T getValue();
+	T getValue();
 
 	/**
 	 * Sets the key associated to this entry.
@@ -42,7 +42,7 @@ public interface IPrefMapEntry<T> {
 	 *            the new value of the key
 	 * @since 2.3
 	 */
-	public void setKey(String key);
+	void setKey(String key);
 
 	/**
 	 * Set the value associated to this entry.
@@ -50,7 +50,7 @@ public interface IPrefMapEntry<T> {
 	 * @param value
 	 *            the new value of the entry
 	 */
-	public void setValue(T value);
+	void setValue(T value);
 
 	/**
 	 * Returns an object that references the value of this entry.

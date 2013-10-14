@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public interface IPrefElementTranslator<U> {
 	 *            the element to be stored in a preference
 	 * @return a string corresponding to the element given as parameter
 	 */
-	public String extract(U u);
+	String extract(U u);
 
 	/**
 	 * Returns the value created from the given string parameter.
@@ -43,6 +43,6 @@ public interface IPrefElementTranslator<U> {
 	 *            the information to create the element
 	 * @return the element created from the given information
 	 */
-	public U inject(String s);
+	U inject(String s);
 
 }
