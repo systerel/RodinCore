@@ -13,8 +13,10 @@ package fr.systerel.editor.internal.editors;
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertAcceleratorToKeyStroke;
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
+import static org.eventb.ui.manipulation.ElementManipulationFacade.getRodinFileUndoContext;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -27,9 +29,11 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eventb.core.IEventBRoot;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.EditorPlugin;
 
@@ -48,6 +52,14 @@ public class RodinEditorUtils {
 		final IDocument document = editor.getDocument();
 		final ObjectUndoContext textContext = new ObjectUndoContext(document);
 		MAIN_PLATFORM_HISTORY.dispose(textContext, true, true, false);
+	}
+
+	public static void flushHistory(RodinEditor rodinEditor) {
+		flushTextModificationHistory(rodinEditor);
+		final ILElement root = rodinEditor.getResource().getRoot();
+		final IEventBRoot ebRoot = (IEventBRoot) root.getElement();
+		final IUndoContext rodinFileContext = getRodinFileUndoContext(ebRoot);
+		MAIN_PLATFORM_HISTORY.dispose(rodinFileContext, true, true, false);
 	}
 
 	/**
