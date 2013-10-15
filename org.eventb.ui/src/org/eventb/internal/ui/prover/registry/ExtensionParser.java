@@ -37,6 +37,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
  * @author Laurent Voisin
  * @see TacticUIRegistry
  */
+@SuppressWarnings("synthetic-access")
 public class ExtensionParser {
 
 	private static class ErroneousElement extends Exception {
@@ -197,27 +198,27 @@ public class ExtensionParser {
 	 * and registered in the appropriate data structures.
 	 */
 	public void parse(IConfigurationElement[] elements) {
-		final ElementSet tactics = new TacticParser();
-		final ElementSet dropdowns = new DropdownParser();
-		final ElementSet toolbars = new ToolbarParser();
+		final ElementSet tacticSet = new TacticParser();
+		final ElementSet dropdownSet = new DropdownParser();
+		final ElementSet toolbarSet = new ToolbarParser();
 
 		for (final IConfigurationElement element : elements) {
 			final String tag = element.getName();
 			if (tag.equals(TACTIC_TAG)) {
-				tactics.add(element);
+				tacticSet.add(element);
 			} else if (tag.equals(DROPDOWN_TAG)) {
-				dropdowns.add(element);
+				dropdownSet.add(element);
 			} else if (tag.equals(TOOLBAR_TAG)) {
-				toolbars.add(element);
+				toolbarSet.add(element);
 			} else {
 				errors.add(unknownElement(element));
 			}
 		}
 
-		tactics.parse();
+		tacticSet.parse();
 		mergeListsOfTactics();
-		dropdowns.parse();
-		toolbars.parse();
+		dropdownSet.parse();
+		toolbarSet.parse();
 	}
 
 	/**
