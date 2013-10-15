@@ -32,8 +32,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -151,13 +149,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionDependentActions();
-				
-			}
-		});
-		styledText.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
 				updateActions();
 			}
 		});
