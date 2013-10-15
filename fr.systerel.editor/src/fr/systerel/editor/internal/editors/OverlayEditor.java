@@ -447,28 +447,18 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	public void quitEdition(boolean maintainCaretPosition) {
 		editorText.removeModifyListener(eventBTranslator);
-		setVisible(false);
+		editorText.setVisible(false);
 		if (maintainCaretPosition) {
 			final int newEditorOffset = overlayToEditorOffset();
 			parent.setCaretOffset(newEditorOffset);
 		}
 		interval = null;
-		
 		RodinEditorUtils.flushTextModificationHistory(editor);
 	}
 	
 	public boolean isActive() {
 		return editorText != null && !editorText.isDisposed()
 				&& editorText.isVisible();
-	}
-	
-	public void setVisible(final boolean visible) {
-		editorText.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				editorText.setVisible(visible);
-			}
-		});
 	}
 
 	/**
