@@ -32,16 +32,18 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -153,6 +155,12 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 				
 			}
 		});
+		styledText.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				updateActions();
+			}
+		});
 		styledText.addMouseListener(selController);
 		styledText.addVerifyKeyListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
@@ -175,6 +183,18 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		focusService.addFocusTracker(styledText, EDITOR_ID);
 		viewer.setEditable(false);
 		styledText.setEditable(false);
+	}
+	
+	/**
+	 * Set a global action handler for a undo/redo action and add the given part
+	 * listener.
+	 * */
+	private void setGlobalHistoryActions(String actionId) {
+		final IAction action = getAction(actionId);
+		setAction(actionId, action);
+		final IActionBars actionBars= getEditorSite().getActionBars();
+		if (actionBars != null)
+			actionBars.setGlobalActionHandler(actionId, action);
 	}
 	
 	@Override
@@ -318,33 +338,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
-	
-	/**
-	 * Activates navigation actions registered on the source viewer (which is
-	 * read-only).
-	 */
-    public void createNavigationActions() {
-    	super.createNavigationActions();
-    }
-	
-	/**
-	 * Deactivates navigation actions registered on the source viewer (which is
-	 * read-only) These actions are typically deactivated when the overlay.
-	 * becomes enabled, as they would operate on the main source viewer which is
-	 * unwanted.
-	 */
-	public void clearNavigationActions() {
-		for (IdMapEntry entry : ACTION_MAP) {
-			setAction(entry.getActionId(), null);
-		}
-		setAction(ITextEditorActionDefinitionIds.LINE_START, null);
-		setAction(ITextEditorActionDefinitionIds.LINE_END, null);
-		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, null);
-		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_UP, null);
-		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN, null);
-		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_START, null);
-		setAction(ITextEditorActionDefinitionIds.SELECT_LINE_END, null);
-	}
 
 	public void activateRodinEditorContext() {
 		// Activate Event-B Editor Context
@@ -374,7 +367,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Deactivating the undo manager on the source viewer
+	 * Deactivating the undo manager on the source viewer.
+	 * Retarget UNDO/REDO actions using TextEditorOperation actions.
 	 */
 	@Override
 	protected void createUndoRedoActions() {
@@ -382,6 +376,12 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		overlayUndoManager = new OverlayEditorUndoManager(this);
 		sourceViewer.setUndoManager(overlayUndoManager);
 		super.createUndoRedoActions();
+		setGlobalHistoryActions();
+	}
+
+	private void setGlobalHistoryActions() {
+		setGlobalHistoryActions(ITextEditorActionConstants.UNDO);
+		setGlobalHistoryActions(ITextEditorActionConstants.REDO);
 	}
 	
 	/**

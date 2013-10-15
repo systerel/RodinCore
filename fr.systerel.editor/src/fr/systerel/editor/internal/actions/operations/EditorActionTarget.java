@@ -27,6 +27,8 @@ import fr.systerel.editor.internal.editors.OverlayEditor;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.SelectionController;
 import fr.systerel.editor.internal.handlers.PasteHandler;
+import fr.systerel.editor.internal.handlers.RedoHandler;
+import fr.systerel.editor.internal.handlers.UndoHandler;
 
 /**
  * Class used to replace legacy text editor target to redirect actions to the
@@ -90,6 +92,10 @@ public class EditorActionTarget implements ITextOperationTarget {
 			return isSomeElementSelected();
 		case ITextOperationTarget.PASTE:
 			return isPastePossible();
+		case ITextOperationTarget.UNDO:
+			return UndoHandler.isUndo(editor);
+		case ITextOperationTarget.REDO:
+			return RedoHandler.isRedo(editor);
 		}
 		return false;
 	}

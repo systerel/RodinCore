@@ -14,6 +14,8 @@ import static fr.systerel.editor.internal.editors.RodinEditorUtils.RODIN_HISTORY
 
 import org.eclipse.core.commands.operations.IUndoContext;
 
+import fr.systerel.editor.internal.editors.RodinEditor;
+
 /**
  * Implementation of the redo command for the Rodin Editor (not in overlay mode)
  */
@@ -25,8 +27,13 @@ public class RedoHandler extends AbstractUndoRedoHandler {
 	}
 
 	@Override
-	protected boolean isEnabled(IUndoContext undoCtx) {
-		return RODIN_HISTORY.isRedo(undoCtx);
+	protected boolean isEnabled(RodinEditor editor) {
+		return isRedo(editor);
 	}
 
+	public static boolean isRedo(RodinEditor editor) {
+		final IUndoContext context = getRodinUndoRedoContext(editor);
+		return RODIN_HISTORY.isRedo(context);
+	}
+	
 }

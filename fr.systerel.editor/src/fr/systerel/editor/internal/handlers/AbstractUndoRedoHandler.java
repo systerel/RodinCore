@@ -39,8 +39,7 @@ public abstract class AbstractUndoRedoHandler extends AbstractEditorHandler {
 		if (editor == null) {
 			return false;
 		}
-		final IUndoContext undoCtx = getRodinUndoRedoContext(editor);
-		return isEnabled(undoCtx);
+		return isEnabled(editor);
 	}
 
 	/**
@@ -49,12 +48,11 @@ public abstract class AbstractUndoRedoHandler extends AbstractEditorHandler {
 	protected abstract void doOperation(IUndoContext undoCtx);
 
 	/**
-	 * Tells whether the operation implementation which uses the given Rodin
-	 * undo context.
+	 * Tells whether the operation implementation is enabled.
 	 */
-	protected abstract boolean isEnabled(IUndoContext undoCtx);
+	protected abstract boolean isEnabled(RodinEditor editor);
 
-	private static IUndoContext getRodinUndoRedoContext(final RodinEditor editor) {
+	protected static IUndoContext getRodinUndoRedoContext(final RodinEditor editor) {
 		final ILElement root = editor.getResource().getRoot();
 		final IEventBRoot iRoot = (IEventBRoot) root.getElement();
 		return getRodinFileUndoContext(iRoot);

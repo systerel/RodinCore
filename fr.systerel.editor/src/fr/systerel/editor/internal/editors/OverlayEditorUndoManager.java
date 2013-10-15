@@ -11,9 +11,12 @@
 package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.RODIN_HISTORY;
+import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.jface.text.TextViewerUndoManager;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Specific manager for the UNDO/REDO actions in the overlay editor. This
@@ -25,8 +28,17 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	private RodinEditor editor;
 
 	public OverlayEditorUndoManager(RodinEditor editor) {
-		super(200);
+		super(getPreferencesLimit());
 		this.editor = editor;
+	}
+	
+	private static int getPreferencesLimit() {
+		return EditorsUI.getPreferenceStore().getInt(EDITOR_UNDO_HISTORY_SIZE);
+	}
+
+	@Override
+	public IUndoContext getUndoContext() {
+		return null;
 	}
 
 	/**
@@ -34,7 +46,7 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	 */
 	@Override
 	public boolean undoable() {
-		return RODIN_HISTORY.isUndo(getEditorUndoContext());
+		return RODIN_HISTORY.isUndo(getOverlayUndoContext());
 	}
 
 	/**
@@ -42,7 +54,7 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	 */
 	@Override
 	public boolean redoable() {
-		return RODIN_HISTORY.isRedo(getEditorUndoContext());
+		return RODIN_HISTORY.isRedo(getOverlayUndoContext());
 	}
 
 	/**
@@ -50,7 +62,7 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	 */
 	@Override
 	public void undo() {
-		RODIN_HISTORY.undo(getEditorUndoContext());
+		RODIN_HISTORY.undo(getOverlayUndoContext());
 	}
 
 	/**
@@ -58,7 +70,7 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	 */
 	@Override
 	public void redo() {
-		RODIN_HISTORY.redo(getEditorUndoContext());
+		RODIN_HISTORY.redo(getOverlayUndoContext());
 	}
 
 	/**
@@ -67,7 +79,7 @@ public class OverlayEditorUndoManager extends TextViewerUndoManager {
 	 * @return an object undo context which encapsulates the document handled by
 	 *         the Rodin editor
 	 */
-	private ObjectUndoContext getEditorUndoContext() {
+	private ObjectUndoContext getOverlayUndoContext() {
 		return new ObjectUndoContext(editor.getDocument());
 	}
 
