@@ -40,23 +40,6 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 @SuppressWarnings("synthetic-access")
 public class ExtensionParser {
 
-	private static class ErroneousElement extends Exception {
-
-		private static final long serialVersionUID = 7360620082299355450L;
-
-		private final IStatus status;
-
-		public ErroneousElement(IStatus status) {
-			super(status.getMessage(), status.getException());
-			this.status = status;
-		}
-
-		public IStatus getStatus() {
-			return status;
-		}
-
-	}
-
 	/**
 	 * Implements a set of configuration elements to parse.
 	 */
@@ -108,16 +91,11 @@ public class ExtensionParser {
 		public void parse() {
 			for (final Map.Entry<String, IConfigurationElement> entry : set
 					.entrySet()) {
-				try {
-					parse(entry.getKey(), entry.getValue());
-				} catch (ErroneousElement e) {
-					errors.add(e.getStatus());
-				}
+				parse(entry.getKey(), entry.getValue());
 			}
 		}
 
-		protected abstract void parse(String id, IConfigurationElement element)
-				throws ErroneousElement;
+		protected abstract void parse(String id, IConfigurationElement element);
 
 	}
 
@@ -128,8 +106,7 @@ public class ExtensionParser {
 		}
 
 		@Override
-		protected void parse(String id, IConfigurationElement element)
-				throws ErroneousElement {
+		protected void parse(String id, IConfigurationElement element) {
 			final TacticUILoader loader = new TacticUILoader(id, element);
 			final TacticUIInfo info = loader.load();
 			if (info != null) {
@@ -147,8 +124,7 @@ public class ExtensionParser {
 		}
 
 		@Override
-		protected void parse(String id, IConfigurationElement element)
-				throws ErroneousElement {
+		protected void parse(String id, IConfigurationElement element) {
 			final String toolbarId = element.getAttribute("toolbar");
 			if (toolbarId == null || toolbarId.isEmpty()) {
 				if (ProverUIUtils.DEBUG)
@@ -169,8 +145,7 @@ public class ExtensionParser {
 		}
 
 		@Override
-		protected void parse(String id, IConfigurationElement element)
-				throws ErroneousElement {
+		protected void parse(String id, IConfigurationElement element) {
 			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry, id));
 			printDebugRegistration(id, TOOLBAR_TAG);
 		}
