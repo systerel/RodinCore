@@ -42,6 +42,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -101,8 +102,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	private SelectionController selController;
 	/** An updater for problem annotations which listens to the resource changes */
 	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
-	/** A listener to update overlay editor's contents in case of indirect typing modification (e.g. undo-redo) */
-	private OverlayBackModificationUpdater overlayUpdater;
 
 	private IContextActivation specificContext;
 
@@ -112,7 +111,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	private EditorActionTarget editorActionTarget;
 
-	private OverlayEditorUndoManager overlayUndoManager;
+	private HistoryActionUpdater historyActionUpdater;
 	
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
@@ -139,8 +138,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		editorActionTarget = new EditorActionTarget(this);
-		overlayUpdater = new OverlayBackModificationUpdater(overlayEditor);
-		getDocument().addDocumentListener(overlayUpdater);
 		
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
@@ -149,7 +146,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateActions();
+				updateSelectionDependentActions();
 			}
 		});
 		styledText.addMouseListener(selController);
@@ -174,6 +171,9 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		focusService.addFocusTracker(styledText, EDITOR_ID);
 		viewer.setEditable(false);
 		styledText.setEditable(false);
+		
+		historyActionUpdater =  new HistoryActionUpdater(this);
+		historyActionUpdater.startListening();
 	}
 	
 	/**
@@ -236,6 +236,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	@Override
 	public void dispose() {
+		historyActionUpdater.finishListening();
 		RodinEditorUtils.flushHistory(this);
 		close(false);
 		if (contextMenuSimplifier != null) {
@@ -244,8 +245,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		if (markerAnnotationsUpdater != null){
 			markerAnnotationsUpdater.dispose();			
 		}
-		if (overlayUpdater != null)
-			getDocument().removeDocumentListener(overlayUpdater);
 		JFaceResources.getFontRegistry().removeListener(this);
 		documentProvider.unloadResource();
 		deactivateRodinEditorContext();
@@ -364,8 +363,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	protected void createUndoRedoActions() {
 		final ISourceViewer sourceViewer = getSourceViewer();
-		overlayUndoManager = new OverlayEditorUndoManager(this);
-		sourceViewer.setUndoManager(overlayUndoManager);
+		sourceViewer.setUndoManager(null);
 		super.createUndoRedoActions();
 		setGlobalHistoryActions();
 	}
@@ -462,14 +460,16 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	}
 	
 	/**
-	 * Refreshes the enablement of editor actions. This update is mandatory to
-	 * redirect actions to the right implementation depending on the editor
-	 * mode.
+	 * Updates a single action if it implements {@link IUpdate}.
+	 *
+	 * @param actionId
+	 *            the id of the action to update
 	 */
-	public void updateActions() {
-		super.updateStateDependentActions();
-		super.updateContentDependentActions();
-		super.updateSelectionDependentActions();
+	public void updateAction(String actionId) {
+		final IAction action = getAction(actionId);
+		if (action instanceof IUpdate) {
+			((IUpdate) action).update();
+		}
 	}
 	
 	/**
@@ -479,6 +479,15 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	 */
 	public void updateSelectionDependentActions() {
 		super.updateSelectionDependentActions();
+	}
+	
+	/**
+	 * Refreshes the enablement of editor property dependent actions. This
+	 * update is mandatory to redirect actions (especially UNDO and REDO
+	 * actions) to the right implementation depending on the editor selection.
+	 */
+	public void updatePropertyDependentActions() {
+		super.updatePropertyDependentActions();
 	}
 
 	public boolean threadSafeIsOverlayActive() {
@@ -538,7 +547,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	public void resync(final IProgressMonitor monitor, final boolean silent,
 			final ILElement newElement) {
 		if (styledText != null && !styledText.isDisposed()) {
-			final RodinEditor editor = this;
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
@@ -565,10 +573,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 						System.out.println("\\ Elapsed time : " + time + "ms.");
 					}
 					markerAnnotationsUpdater.recalculateAnnotations();
-					// Refreshing the editor is viewed as an operation in
-					// history : it is mandatory to flush textual operation in
-					// this case.
-					RodinEditorUtils.flushTextModificationHistory(editor);
 				}
 			});
 		}

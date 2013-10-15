@@ -93,7 +93,7 @@ class EditorActionUpdater implements FocusListener, SelectionListener {
 			}
 			editor.setAction(actionId, null);
 		}
-		editor.updateActions();
+		editor.updateSelectionDependentActions();
 	}
 
 	@Override

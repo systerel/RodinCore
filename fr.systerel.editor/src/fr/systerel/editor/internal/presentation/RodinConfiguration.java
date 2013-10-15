@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -338,6 +339,14 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			result.add(t.getName());
 		}
 		return result.toArray(new String[result.size()]);
+	}
+	
+	/**
+	 * Deactivates the undo manager from the Rodin Editor
+	 */
+	@Override
+	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
+		return null;
 	}
 
 }

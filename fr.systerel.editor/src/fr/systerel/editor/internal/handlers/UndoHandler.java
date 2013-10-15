@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static fr.systerel.editor.internal.editors.RodinEditorUtils.RODIN_HISTORY;
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.getRodinHistory;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 
@@ -23,7 +23,7 @@ public class UndoHandler extends AbstractUndoRedoHandler {
 
 	@Override
 	protected void doOperation(IUndoContext undoCtx) {
-		RODIN_HISTORY.undo(undoCtx);
+		getRodinHistory().undo(undoCtx);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class UndoHandler extends AbstractUndoRedoHandler {
 	
 	public static boolean isUndo(RodinEditor editor) {
 		final IUndoContext context = getRodinUndoRedoContext(editor);
-		return RODIN_HISTORY.isUndo(context);
+		return getRodinHistory().isUndo(context);
 	}
 
 }

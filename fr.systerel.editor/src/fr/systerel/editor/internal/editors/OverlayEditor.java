@@ -12,13 +12,18 @@ package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
+import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.getPlatformHistory;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
+import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -32,6 +37,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -53,6 +59,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
@@ -86,12 +93,14 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  * This class manages the little text field that is used to edit an element.
  */
 public class OverlayEditor implements IAnnotationModelListenerExtension,
-		ExtendedModifyListener, VerifyKeyListener, IMenuListener {
+		ExtendedModifyListener, VerifyKeyListener, IMenuListener, IOperationHistoryListener {
 
 	private static final int CR = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.CR_NAME);
 	private static final int ENTER = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.ENTER_NAME);
 	private static final int PAD_ENTER = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.NUMPAD_ENTER_NAME);
-		
+	
+	private static final int HISTORY_SIZE = EditorsUI.getPreferenceStore().getInt(EDITOR_UNDO_HISTORY_SIZE);
+	
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 			+ ".editorText";
 
@@ -222,6 +231,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	/** A backup of the text contained on the opening of the editor. */
 	private String originalText = "";
+	private IDocument document;
+	private TextViewerUndoManager undoManager;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -256,9 +267,16 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	protected IDocument createDocument(String text) {
-		final IDocument doc = new Document();
-		doc.set(text);
-		return doc;
+		document = new Document();
+		document.set(text);
+		undoManager = new TextViewerUndoManager(HISTORY_SIZE);
+		textViewer.setUndoManager(undoManager);
+		undoManager.connect(textViewer);
+		return document;
+	}
+
+	public IDocument getDocument() {
+		return document;
 	}
 
 	//TODO Check for command based replacement ?
@@ -364,6 +382,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		resizeAndPositionOverlay(editorText, parent, inter);
 		editorText.setVisible(true);
 		editorText.setFocus();
+		getPlatformHistory().addOperationHistoryListener(this);
 	}
 
 	private void setCaretPosition(int pos) {
@@ -446,6 +465,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 	
 	public void quitEdition(boolean maintainCaretPosition) {
+		getPlatformHistory().removeOperationHistoryListener(this);
 		editorText.removeModifyListener(eventBTranslator);
 		editorText.setVisible(false);
 		if (maintainCaretPosition) {
@@ -453,7 +473,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			parent.setCaretOffset(newEditorOffset);
 		}
 		interval = null;
-		RodinEditorUtils.flushTextModificationHistory(editor);
+		if (undoManager != null)
+			undoManager.disconnect();
 	}
 	
 	public boolean isActive() {
@@ -699,4 +720,21 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		return (ITextOperationTarget) textViewer;
 	}
 
+	@Override
+	public void historyNotification(OperationHistoryEvent event) {
+		if (event.getOperation().hasContext(undoManager.getUndoContext())) {
+			switch (event.getEventType()) {
+			case OperationHistoryEvent.REDONE:
+			case OperationHistoryEvent.UNDONE:
+				final CaretPositionHelper caretHelper = getHelper(editorText);
+				caretHelper.recordCaretPosition();
+				mapper.synchronizeInterval(interval, editorText.getText());
+				resizeAndPositionOverlay(editorText, parent, interval);
+				final int newPos = caretHelper.getNewPositionToEnd();
+				// free cumbersome selection at the end of the text
+				editorText.setSelectionRange(newPos, 0);
+			}
+		}
+	}
+	
 }

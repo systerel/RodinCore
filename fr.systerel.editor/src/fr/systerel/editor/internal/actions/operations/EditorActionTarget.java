@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations;
 
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.getDefaultEvaluationContext;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.log;
 
 import java.util.Collections;
@@ -19,7 +20,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -62,13 +62,6 @@ public class EditorActionTarget implements ITextOperationTarget {
 	public boolean canDoOperation(int operation) {
 		final OverlayEditor overlayEditor = editor.getOverlayEditor();
 		if (overlayEditor != null && overlayEditor.isActive()) {
-			switch (operation) {
-			case SELECT_ALL:
-			case UNDO:
-			case REDO:
-				return editor.getTextOperationTarget()
-						.canDoOperation(operation);
-			}
 			return overlayEditor.getTextOperationTarget().canDoOperation(
 					operation);
 		}
@@ -76,13 +69,9 @@ public class EditorActionTarget implements ITextOperationTarget {
 	}
 
 	private boolean canDoEditorOperation(int operation) {
-		final StyledText mainText = editor.getStyledText();
+ 		final StyledText mainText = editor.getStyledText();
 		if (mainText == null) {
 			return false;
-		}
-		// if some text is selected we can perfrom the operation at text level
-		if (mainText.getSelectionRange().y != 0) {
-			return editor.getTextOperationTarget().canDoOperation(operation);
 		}
 		switch (operation) {
 		case ITextOperationTarget.CUT:
@@ -112,13 +101,6 @@ public class EditorActionTarget implements ITextOperationTarget {
 	@Override
 	public void doOperation(int operation) {
 		if (editor.isOverlayActive()) {
-			// undo/redo actions are handled by the source viewer
-			switch (operation) {
-			case UNDO:
-			case REDO:
-				editor.getTextOperationTarget().doOperation(operation);
-				return;
-			}
 			// redirecting the action to overlay styledText
 			final OverlayEditor overlayEditor = editor.getOverlayEditor();
 			overlayEditor.getTextOperationTarget().doOperation(operation);
@@ -133,9 +115,7 @@ public class EditorActionTarget implements ITextOperationTarget {
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(commandId);
 		try {
-			final EvaluationContext context = new EvaluationContext(null,
-					Collections.EMPTY_LIST);
-			context.addVariable(ISources.ACTIVE_EDITOR_NAME, editor);
+			final EvaluationContext context = getDefaultEvaluationContext(editor);
 			command.executeWithChecks(new ExecutionEvent(command,
 					Collections.EMPTY_MAP, null, context));
 		} catch (Exception e) {

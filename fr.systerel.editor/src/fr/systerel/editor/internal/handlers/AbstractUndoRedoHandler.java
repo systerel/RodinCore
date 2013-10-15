@@ -41,6 +41,11 @@ public abstract class AbstractUndoRedoHandler extends AbstractEditorHandler {
 		}
 		return isEnabled(editor);
 	}
+	
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		setBaseEnabled(isEnabled());
+	}
 
 	/**
 	 * Operation implementation which uses the given Rodin undo context.
