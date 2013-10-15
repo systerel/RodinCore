@@ -225,6 +225,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	@Override
 	public void dispose() {
+		RodinEditorUtils.flushHistory(this);
 		close(false);
 		if (contextMenuSimplifier != null) {
 			contextMenuSimplifier.finishSimplifying();
