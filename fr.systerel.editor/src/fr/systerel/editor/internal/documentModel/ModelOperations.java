@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,15 +42,17 @@ public class ModelOperations {
 		 */
 		public ModelPosition(ILElement targetParent, ILElement nextSibling) {
 			Assert.isNotNull(targetParent);
-			if (nextSibling != null) {
+			this.targetParent = targetParent;
+			if (nextSibling != null && !nextSibling.isImplicit()) {
 				Assert.isLegal(
 						targetParent.equals(nextSibling.getParent()),
 						"illegal model position: parent= "
 								+ targetParent.getElement() + " next sibling= "
 								+ nextSibling.getElement());
+				this.nextSibling = nextSibling;
+			} else {
+				this.nextSibling = null;
 			}
-			this.targetParent = targetParent;
-			this.nextSibling = nextSibling;
 		}
 
 	}
@@ -71,8 +73,9 @@ public class ModelOperations {
 			final ILElement il = toHandle.get(lastElemIndex);
 			boolean success = applyTo(il, pos);
 			toHandle.remove(il);
-			ModelPosition newPos = new ModelPosition(pos.targetParent, il);
-			if (success) {
+			// calculate position and apply to further elements to handle
+			if (toHandle.size() > 0 && success) {
+				ModelPosition newPos = new ModelPosition(pos.targetParent, il);
 				for (int i = toHandle.size() - 1; i >= 0; i--) {
 					final ILElement lastMoved = toHandle.get(i);
 					success = applyTo(lastMoved, newPos);
