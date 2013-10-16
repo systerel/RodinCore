@@ -57,6 +57,13 @@ public class ImplicitDeltaProcessor {
 	public boolean traverseDelta(final IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		final IRodinElement element = delta.getElement();
+		// if the delta does not concern a modification in the project we
+		// return;
+		final IRodinProject rodinProject = element.getRodinProject();
+		if (rodinProject != null
+				&& !(rodinProject.equals(rodinRoot.getRodinProject()))) {
+			return false;
+		}
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinFile
 					&& element.equals(rodinRoot.getRodinFile())) {
@@ -72,22 +79,23 @@ public class ImplicitDeltaProcessor {
 				return false;
 			}
 		}
-		if (element instanceof IRodinDB || element instanceof IRodinProject
-				|| element instanceof IRodinFile) {
+		if (element instanceof IRodinDB || element instanceof IRodinProject) {
 			boolean needRecalculate = false;
 			for (IRodinElementDelta d : delta.getAffectedChildren()) {
 				needRecalculate |= traverseDelta(d);
+				if (needRecalculate)
+					break;
 			}
 			return needRecalculate;
 		}
-		// if the delta does not concern a modification in the project we
-		// return;
-		final IRodinProject rodinProject = element.getRodinProject();
-		if (rodinProject != null
-				&& !(rodinProject.equals(rodinRoot.getRodinProject()))) {
-			return false;
+		if (element instanceof IRodinFile) {
+			final IInternalElement deltaRoot = ((IRodinFile) element).getRoot();
+			// implicit children are calculated for other roots
+			if (!deltaRoot.equals(rodinRoot)) {
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 
 }

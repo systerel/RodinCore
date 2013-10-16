@@ -70,7 +70,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		this.documentMapper = mapper;
 		this.editor = editor;
 		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
-		implicitPresentationUpdater = new ImplicitPresentationUpdater();
+		implicitPresentationUpdater = new ImplicitPresentationUpdater(editor);
 	}
 
 	@Override

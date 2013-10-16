@@ -188,8 +188,10 @@ public abstract class ElementOperation implements Runnable {
 			// send a notification to update the root
 			final ImplicitElement implicitStub = LightcoreFactory.eINSTANCE
 					.createImplicitElement();
-			root.eNotify(new NotificationImpl(Notification.ADD, null,
-					implicitStub));
+			final NotificationImpl notification = new NotificationImpl(
+					Notification.ADD, null, implicitStub);
+			// implicit presentation adapter is on the parent RodinResource
+			root.eResource().eNotify(notification);
 		}
 
 		private void recursiveImplicitLoadFromRoot() {
