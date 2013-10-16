@@ -19,6 +19,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
@@ -94,6 +95,7 @@ class EditorActionUpdater implements FocusListener, SelectionListener {
 			editor.setAction(actionId, null);
 		}
 		editor.updateSelectionDependentActions();
+		editor.updateAction(ITextEditorActionConstants.SELECT_ALL);
 	}
 
 	@Override

@@ -207,6 +207,15 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.SelectAllHandler"
+            commandId="org.eclipse.ui.edit.selectAll">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
