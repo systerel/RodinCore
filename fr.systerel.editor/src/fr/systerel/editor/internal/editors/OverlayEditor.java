@@ -459,8 +459,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 	
 	public void abortEdition(boolean maintainCaretPosition) {
-		if (!originalText.isEmpty() && editor.isDirty())
-			editorText.setText(originalText);
+		mapper.synchronizeInterval(interval, originalText);
 		quitEdition(maintainCaretPosition);
 	}
 	
