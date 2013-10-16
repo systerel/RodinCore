@@ -71,6 +71,16 @@ public final class ErrorStatuses {
 				+ " extension '" + ce.getAttribute("id") + "' "
 				+ contributedBy(ce));
 	}
+	
+	// The instance object is invalid (wrong interface for instance)
+	public static final int INVALID_INSTANCE = 1005;
+	
+	public static IStatus invalidInstance(IConfigurationElement ce,
+			String instanceAttribute) {
+		return error(INVALID_INSTANCE, "Invalid instance for " + ce.getName()
+				+ " extension '" + ce.getAttribute(instanceAttribute) + "' "
+				+ contributedBy(ce));
+	}
 
 	private static IStatus error(int code, String msg) {
 		return new Status(ERROR, PLUGIN_ID, code, msg, null);
@@ -79,5 +89,4 @@ public final class ErrorStatuses {
 	private static String contributedBy(IConfigurationElement ce) {
 		return "contributed by " + ce.getContributor().getName();
 	}
-
 }

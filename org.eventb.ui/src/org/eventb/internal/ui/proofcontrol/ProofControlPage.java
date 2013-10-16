@@ -105,6 +105,7 @@ import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.registry.DropdownInfo;
+import org.eventb.internal.ui.prover.registry.DynamicDropdownInfo;
 import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
@@ -136,6 +137,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	ScrolledForm scrolledForm;
 
 	private Collection<GlobalTacticDropdownToolItem> dropdownItems;
+
+	private Collection<DynamicDropdownManager> dynDropdowns;
 
 	private Collection<GlobalTacticToolItem> toolItems;
 
@@ -205,6 +208,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		scrolledForm.dispose();
 		if (ch != null){
 			ch.remove();
+		}
+		for (GlobalTacticDropdownToolItem dropdown : dropdownItems) {
+			dropdown.dispose();
+		}
+		for(DynamicDropdownManager dropdown: dynDropdowns) {
+			dropdown.dispose();
 		}
 		super.dispose();
 	}
@@ -314,6 +323,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				}
 			});
 			toolItems.add(globalTacticToolItem);
+		}
+		
+		for (DynamicDropdownInfo dynDropdown : info.getDynamicDropdowns()) {
+			final ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
+			item.setText(dynDropdown.getName());
+
+			final DynamicDropdownManager manager = new DynamicDropdownManager(
+					item, dynDropdown.getTacticProvider(), editor);
+			item.addSelectionListener(manager);
+			dynDropdowns.add(manager);
 		}
 
 		toolBar.pack();
@@ -574,6 +593,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		// Create toolbars
 		dropdownItems = new ArrayList<GlobalTacticDropdownToolItem>();
+		dynDropdowns = new ArrayList<DynamicDropdownManager>();
 		toolItems = new ArrayList<GlobalTacticToolItem>();
 
 		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
@@ -792,6 +812,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		}
 		for (GlobalTacticToolItem item : toolItems) {
 			item.updateStatus(userSupport, input);
+		}
+		for (DynamicDropdownManager dynDropdown : dynDropdowns) {
+			dynDropdown.update();
 		}
 	}
 

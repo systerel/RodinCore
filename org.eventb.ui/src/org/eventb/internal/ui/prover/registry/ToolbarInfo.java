@@ -22,17 +22,21 @@ public class ToolbarInfo extends AbstractInfo {
 	// FIXME remove both variables (should be computed earlier)
 	private final Map<String, TacticUIInfo> globalRegistry;
 	private final Map<String, DropdownInfo> dropdownRegistry;
-
+	private final Map<String, DynamicDropdownInfo> dynDropdownRegistry;
+	
 	private volatile List<DropdownInfo> dropdowns; // FIXME Should be final
-
+	
+	private volatile List<DynamicDropdownInfo> dynDropdowns; // FIXME Should be final
+	
 	private volatile List<TacticUIInfo> tactics; // FIXME Should be final
 
 	public ToolbarInfo(Map<String, TacticUIInfo> globalRegistry,
 			Map<String, DropdownInfo> dropdownRegistry,
-			String id) {
+			Map<String, DynamicDropdownInfo> dynDropdownRegistry, String id) {
 		super(id);
 		this.globalRegistry = globalRegistry;
 		this.dropdownRegistry = dropdownRegistry;
+		this.dynDropdownRegistry = dynDropdownRegistry;
 	}
 
 	public List<DropdownInfo> getDropdowns() {
@@ -71,5 +75,25 @@ public class ToolbarInfo extends AbstractInfo {
 		}
 
 		return tactics;
+	}
+
+	// This method is not thread safe, but called only in UI thread, so OK.
+	public List<DynamicDropdownInfo> getDynamicDropdowns() {
+		assert dynDropdownRegistry != null;
+
+		if (dynDropdowns == null) {
+			dynDropdowns = new ArrayList<DynamicDropdownInfo>();
+			for (final DynamicDropdownInfo info : dynDropdownRegistry.values()) {
+				if (id.equals(info.getToolbar())) {
+					final String dropdownID = info.getID();
+					dynDropdowns.add(info);
+					if (ProverUIUtils.DEBUG)
+						ProverUIUtils.debug("Attached dynamic dropdown " + dropdownID
+								+ " to toolbar " + id);
+				}
+			}
+		}
+
+		return dynDropdowns;
 	}
 }

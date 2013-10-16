@@ -115,6 +115,10 @@ public abstract class GlobalTacticDropdownToolItem {
 				apply(active);
 			}
 		}
+		
+		public void dispose() {
+			menu.dispose();
+		}
 	}
 
 	public GlobalTacticDropdownToolItem(ToolItem item, DropdownInfo info) {
@@ -168,4 +172,10 @@ public abstract class GlobalTacticDropdownToolItem {
 		return info.getID();
 	}
 
+	public void dispose() {
+		if (!item.isDisposed()) {
+			item.removeSelectionListener(listener);
+		}
+		listener.dispose();
+	}
 }

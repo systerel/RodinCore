@@ -12,8 +12,10 @@
 package org.eventb.internal.ui.prover.registry;
 
 import static org.eclipse.core.runtime.Status.OK_STATUS;
+import static org.eventb.internal.ui.UIUtils.log;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.duplicateId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidId;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidInstance;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.loadingErrors;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.missingId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.unknownElement;
@@ -24,9 +26,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.ui.prover.IUIDynTacticProvider;
 
 /**
  * Utility class for parsing the extensions contributed to extension point
@@ -117,6 +121,33 @@ public class ExtensionParser {
 
 	}
 
+	private class DynamicDropdownParser extends ElementSet {
+
+		DynamicDropdownParser() {
+			// Do nothing
+		}
+
+		@Override
+		protected void parse(String id, IConfigurationElement element) {
+			try {
+				final String name = element.getAttribute(NAME_TAG);
+				final String toolbar = element.getAttribute(TOOLBAR_TAG);
+				final Object extn = element
+						.createExecutableExtension(TACTIC_PROVIDER_TAG);
+				if (!(extn instanceof IUIDynTacticProvider)) {
+					errors.add(invalidInstance(element, TACTIC_PROVIDER_TAG));
+				}
+				final IUIDynTacticProvider provider = (IUIDynTacticProvider) extn;
+				dynDropdownRegistry.put(id, new DynamicDropdownInfo(id, name,
+						toolbar, provider));
+				printDebugRegistration(id, DYNAMIC_DROPDOWN_tag);
+			} catch (CoreException e) {
+				log(e, "while loading dynamic dropdown " + id);
+			}
+		}
+
+	}
+
 	private class DropdownParser extends ElementSet {
 
 		DropdownParser() {
@@ -146,7 +177,8 @@ public class ExtensionParser {
 
 		@Override
 		protected void parse(String id, IConfigurationElement element) {
-			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry, id));
+			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry,
+					dynDropdownRegistry, id));
 			printDebugRegistration(id, TOOLBAR_TAG);
 		}
 
@@ -156,6 +188,9 @@ public class ExtensionParser {
 	private static final String TACTIC_TAG = "tactic";
 	private static final String TOOLBAR_TAG = "toolbar";
 	private static final String DROPDOWN_TAG = "dropdown";
+	private static final String DYNAMIC_DROPDOWN_tag = "dynamic_dropdown";
+	private static final String TACTIC_PROVIDER_TAG = "tacticProvider";
+	private static final String NAME_TAG = "name";
 
 	private final List<TacticProviderInfo> goalTactics = new ArrayList<TacticProviderInfo>();
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
@@ -164,6 +199,7 @@ public class ExtensionParser {
 	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final List<ToolbarInfo> toolbars = new ArrayList<ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
+	private final Map<String, DynamicDropdownInfo> dynDropdownRegistry = new HashMap<String, DynamicDropdownInfo>();
 
 	private final List<IStatus> errors = new ArrayList<IStatus>();
 
@@ -176,6 +212,7 @@ public class ExtensionParser {
 		final ElementSet tacticSet = new TacticParser();
 		final ElementSet dropdownSet = new DropdownParser();
 		final ElementSet toolbarSet = new ToolbarParser();
+		final ElementSet dynDropdownSet = new DynamicDropdownParser();
 
 		for (final IConfigurationElement element : elements) {
 			final String tag = element.getName();
@@ -185,6 +222,8 @@ public class ExtensionParser {
 				dropdownSet.add(element);
 			} else if (tag.equals(TOOLBAR_TAG)) {
 				toolbarSet.add(element);
+			} else if (tag.equals(DYNAMIC_DROPDOWN_tag)) {
+				dynDropdownSet.add(element);
 			} else {
 				errors.add(unknownElement(element));
 			}
@@ -194,6 +233,7 @@ public class ExtensionParser {
 		mergeListsOfTactics();
 		dropdownSet.parse();
 		toolbarSet.parse();
+		dynDropdownSet.parse();
 	}
 
 	/**
@@ -262,6 +302,10 @@ public class ExtensionParser {
 
 	public Map<String, DropdownInfo> getDropdownRegistry() {
 		return dropdownRegistry;
+	}
+
+	public List<DynamicDropdownInfo> getDynTacticRegistry() {
+		return new ArrayList<DynamicDropdownInfo>(dynDropdownRegistry.values());
 	}
 
 }
