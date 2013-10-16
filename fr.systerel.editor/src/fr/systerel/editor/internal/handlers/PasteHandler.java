@@ -59,11 +59,24 @@ public class PasteHandler extends AbstractEditionHandler {
 						+ element + "does not exist");
 			}
 		}
-		final IRodinElement target = element.getElement();
+		final ILElement ilTarget = getLocalParent(element);
+		final IRodinElement target = ilTarget.getElement();
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
 		RodinOperationUtils.pasteElements((IInternalElement) target, elements);
 		return "Elements pasted";
+	}
+	
+	/**
+	 * Gets the nearest parent in the hierarchy which is not implicit. At least
+	 * returns the component root which is necessarily local.
+	 */
+	private ILElement getLocalParent(ILElement element) {
+		final ILElement parent = element.getParent();
+		if (parent != null && element.isImplicit()) {
+			return getLocalParent(parent);
+		}
+		return element;
 	}
 
 	@Override
