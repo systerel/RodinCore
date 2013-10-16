@@ -9,6 +9,12 @@ Require-Bundle: org.eclipse.core.runtime,
  fr.systerel.editor,
  org.eventb.core,
  org.eclipse.jface.text,
- org.rodinp.core
+ org.rodinp.core,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.resources,
+ org.rodinp.core.emf,
+ org.eclipse.ui.editors,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
