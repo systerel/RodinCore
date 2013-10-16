@@ -198,6 +198,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, null);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, null);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, null);
+		setAction(ITextEditorActionConstants.DELETE_LINE, null);
 	}
 
 	/**
