@@ -387,9 +387,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 
 	private void setCaretPosition(int pos) {
 		if (isLineDelimiter(pos)) {
-			return;
-		} else if (pos >= 0 && pos <= editorText.getCharCount())
+			editorText.setCaretOffset(getFirstPositionOnLeft(pos));
+		} else if (pos >= 0 && pos <= editorText.getCharCount()) {
 			editorText.setCaretOffset(pos);
+		}
+		// else do not set caret position;
 	}
 
 	/**
@@ -410,6 +412,15 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		// delimiter is longer than one character and the offset is set
 		// in between parts of the line delimiter.
 		return offsetInLine > editorText.getLine(line).length();
+	}
+	
+	private int getFirstPositionOnLeft(int pos) {
+		for (int i = pos; i > 0; i--) {
+			if (!isLineDelimiter(i)) {
+				return i;
+			}
+		}
+		return 0;
 	}
 	
 	private void showTipMenu(final Interval inter) {
@@ -596,16 +607,12 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	public void refreshOverlayContents(DocumentEvent event) {
-		final int offset = event.getOffset();
-		if (isActive() && !modifyingText && interval.contains(offset)) {
+		if (isActive() && !modifyingText) {
+			final CaretPositionHelper helper = getHelper(editorText);
 			mapper.synchronizeIntervalWithoutModifyingDocument(interval, event);
-			final int carPosBckp = editorText.getCaretOffset();
-			editorText.setText(event.getText());
-			final int edTextLength = editorText.getText().length();
-			if (carPosBckp < edTextLength)
-				setCaretPosition(carPosBckp);
-			else
-				setCaretPosition(edTextLength);
+			final String text = event.getText();
+			editorText.setText(text);
+			setCaretPosition(helper.getNewPositionToEnd());
 		}
 	}
 	
