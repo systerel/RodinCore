@@ -166,6 +166,7 @@ public class DNDManager {
 			if (elems == null)
 				return;
 			new Move(pos).perform(elems);
+			controller.clearSelection();
 		}
 
 		private List<ILElement> toLElements(IRodinElement[] elements) {
