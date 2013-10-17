@@ -65,7 +65,7 @@ public class RodinOperationUtils {
 			} else {
 				oldValue = null;
 			}
-			if (value.equals(oldValue)) {
+			if ((oldValue == null && value.isEmpty()) || value.equals(oldValue)) {
 				return;
 			}
 			ElementManipulationFacade.changeAttribute(ielement, manip, value);
