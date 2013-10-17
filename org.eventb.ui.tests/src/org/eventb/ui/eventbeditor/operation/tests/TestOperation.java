@@ -502,6 +502,56 @@ public class TestOperation extends OperationTest {
 	}
 
 	/**
+	 * Ensures that move operation is well executed, undone, and redone for an
+	 * element which parent is not the component root.
+	 */
+	@Test
+	public void testMove3() throws Exception {
+		// state observed after execute, and redo
+		addEventElement(mchElement, "evt1");
+		final Element evt2 = addEventElement(mchElement, "evt2");
+		addAction(evt2, "act1", "var:=var+1");
+
+		final IEvent source = createEvent(mch, "evt1");
+		final IEvent target = createEvent(mch, "evt2");
+		final IAction moved = createAction(source, "act1", "var:=var+1");
+
+		final AtomicOperation op = OperationFactory.move(source.getRoot(),
+				moved, target, null);
+		verifyOperation(op, mch, mchElement);
+	}
+	
+	/**
+	 * Ensures that move operation also renames elements to avoid name
+	 * collision.
+	 */
+	@Test
+	public void testMove4() throws Exception {
+		// state observed after execute, and redo
+		final Element evt1 = addEventElement(mchElement, "evt1");
+		addAction(evt1, "act1", "1");
+		final Element evt2 = addEventElement(mchElement, "evt2");
+		addAction(evt2, "act1", "1");
+		addAction(evt2, "act2", "2");
+		addAction(evt2, "act2", "2");
+
+		final IEvent source = createEvent(mch, "evt1");
+		final IAction act1 = createAction(source, "act1", "1");
+		final IAction act2 = createAction(source, "act2", "2");
+		
+		final IEvent target = createEvent(mch, "evt2");
+		// ensure that a1 and a2 have the same internal name in both evt1 and
+		// evt2
+		act1.copy(target, null, null, false, null);
+		act2.copy(target, null, null, false, null);
+
+		final AtomicOperation op = OperationFactory.move(source.getRoot(),
+				act2, target, null);
+		verifyOperation(op, mch, mchElement);
+	}
+
+
+	/**
 	 * ensures that prefix of elements with the same type is renamed<br>
 	 * ensures others elements are not renamed
 	 */
