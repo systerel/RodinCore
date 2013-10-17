@@ -233,8 +233,8 @@ def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
         doc_filename))
     # Some set up depending on one_page
     if one_page:
-        topic=re.compile(r'<a name="([^"]*)"></a><h([2-9])>\s*<span class="mw-headline">([^<]*)</span></h[2-9]>',re.UNICODE)
-        where_base = "%s/%s#" % (out_dir_base, os.path.basename(doc_filename))
+        topic=re.compile(r'<li class="toclevel-([1-9]) tocsection-[0-9]*"><a href="([^"]*)"><span class="tocnumber">[0-9\.]*</span> <span class="toctext">([^<]*)</span>',re.UNICODE)
+        where_base = "%s/%s" % (out_dir_base, os.path.basename(doc_filename))
         title_extract_re = config.default_title_extract_re
     else:
         topic=re.compile(r'<div class="topic" style="display:inline;"><a href="([^"]*)"(0*)[^>]*>([^<]*)</a></div>',re.UNICODE)
@@ -260,7 +260,7 @@ def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
     for m in topic.finditer(doc):
         logging.debug("Found topic <h%s> %s : %s" % (m.group(2), m.group(3),m.group(1)))
         try:
-            l = int(m.group(2))
+            l = int(m.group(1))
         except:
             l = 2
         if first_level is None:
@@ -270,10 +270,10 @@ def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
             for l in range(level, l-1, -1):
                 toc+='%s</topic>\n' % (' '*l)
         toc += '%s<topic label="%s" href="%s%s">\n' % (' ' * l,
-                m.group(3).strip(), where_base,  m.group(1))
+                m.group(3).strip(), where_base,  m.group(2))
         if not one_page:
             toc += '%s<link toc="%s.xml" />' % (' ' * (l+1),
-                    os.path.splitext(m.group(1))[0] )
+                    os.path.splitext(m.group(2))[0] )
         level = l
 
     if first_level:
