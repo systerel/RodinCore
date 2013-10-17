@@ -89,15 +89,16 @@ public class PresentationUpdater extends EContentAdapter {
 			if (eventType == Notification.MOVE //
 					|| eventType == Notification.REMOVE_MANY //
 					|| eventType == Notification.REMOVE) {
-				editor.resync(null, false);
+				editor.resync(null, true);
 				return true;
 			}
 			if (eventType == Notification.ADD) {
 				final Object newValue = notification.getNewValue();
 				if (newValue instanceof ILElement) {
-					editor.resync(null, false, (ILElement) newValue);
+					editor.resync(null, true, (ILElement) newValue);
 				} else {
-					editor.resync(null, false);
+					//FIXME do something more accurate here
+					editor.resync(null, true);
 				}
 				return true;
 			}
