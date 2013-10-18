@@ -16,7 +16,7 @@ import org.eclipse.swt.custom.StyledText;
  * Helper class which registers a caret position as a distance from the styled
  * text end, and further calculates new caret position from this distance.
  */
-class CaretPositionHelper {
+public class CaretPositionHelper {
 
 	/**
 	 * The base styled text
@@ -59,6 +59,21 @@ class CaretPositionHelper {
 	public int getNewPositionToEnd() {
 		newCharCount = editorText.getCharCount();
 		return Math.min(newCharCount - getOldPositionToEnd(), newCharCount);
+	}
+
+	/**
+	 * Returns the old caret position if the styled text contains such position,
+	 * or the new character count (size) of the styled otherwise.
+	 *
+	 * @return the recorded position if the styled text contains such position,
+	 *         the styled text character count otherwise.
+	 */
+	public int getSafeNewPositionToEnd() {
+		newCharCount = editorText.getCharCount();
+		if (oldCaretPos < newCharCount) {
+			return oldCaretPos;
+		}
+		return newCharCount;
 	}
 
 }

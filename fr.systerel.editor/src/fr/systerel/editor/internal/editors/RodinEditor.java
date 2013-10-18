@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE;
 import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
@@ -555,6 +556,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 					if (styledText.isDisposed()) {
 						return;
 					}
+					final CaretPositionHelper caretHelper = getHelper(styledText);
+					caretHelper.recordCaretPosition();
 					final int currentOffset = getCurrentOffset();
 					final int topIndex = styledText.getTopIndex();
 					final ILElement[] selection = selController
@@ -564,7 +567,12 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 						System.out.println("\\ Start refreshing Rodin Editor.");
 					documentProvider.synchronizeRoot(monitor, silent);
 					styledText.setTopIndex(topIndex);
-					final int offset = getCaretOffset(currentOffset, newElement);
+					final int offset;
+					if (newElement != null) {
+						offset = getCaretOffset(currentOffset, newElement);
+					} else {
+						offset = caretHelper.getSafeNewPositionToEnd();
+					}
 					styledText.setCaretOffset(offset);
 					selController.selectItems(selection);
 					if (DEBUG) {
