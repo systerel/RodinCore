@@ -18,12 +18,12 @@ import org.rodinp.core.RodinDBException;
 
 public class Move extends OperationLeaf {
 
-	final IInternalElement oldParent;
-	final IInternalElement oldSibling;
-	final IInternalElement newParent;
-	final IInternalElement newSibling;
+	private final IInternalElement oldParent;
+	private final IInternalElement oldSibling;
+	private final IInternalElement newParent;
+	private final IInternalElement newSibling;
 
-	IInternalElement movedElement;
+	private IInternalElement movedElement;
 
 	public Move(IInternalElement movedElement, IInternalElement newParent,
 			IInternalElement newSibling) {
