@@ -34,9 +34,8 @@ public class CopyHandler extends AbstractEditorHandler {
 	
 	@Override
 	public boolean isEnabled(RodinEditor re, int caretOffset) {
-		if (re.getSelectionController().hasSelectedElements())
-			return true;
-		return false;
+		return re.getSelectionController().hasSelectedElements()
+				|| re.getStyledText().getSelectionCount() > 0;
 	}
 	
 	@Override

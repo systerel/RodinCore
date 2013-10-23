@@ -77,6 +77,7 @@ public class EditorActionTarget implements ITextOperationTarget {
 		case ITextOperationTarget.CUT:
 			return false;
 		case ITextOperationTarget.COPY:
+			return isSomeElementSelected() || isSomeTextSelected();
 		case ITextOperationTarget.DELETE:
 			return isSomeElementSelected();
 		case ITextOperationTarget.PASTE:
@@ -96,6 +97,10 @@ public class EditorActionTarget implements ITextOperationTarget {
 	private boolean isSomeElementSelected() {
 		final SelectionController ctrller = editor.getSelectionController();
 		return ctrller != null && ctrller.hasSelectedElements();
+	}
+
+	private boolean isSomeTextSelected() {
+		return editor.getStyledText().getSelectionCount() > 0;
 	}
 
 	@Override
