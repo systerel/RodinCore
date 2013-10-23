@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
@@ -92,6 +93,12 @@ public class OperationTestHelper {
 		synchronized (synchronizer) {
 			synchronizer.wait(1000);
 		}
+	}
+	
+	public void setSelection(int start, int length) throws InterruptedException {
+		selController.clearSelection();
+		rodinEditor.getOverlayEditor().quitEdition(false);
+		rodinEditor.getStyledText().setSelection(new Point(start, length));
 	}
 
 	public RodinEditor getEditor() {

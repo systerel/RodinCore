@@ -143,6 +143,20 @@ public class OperationEnablementTests {
 		assertEnabled(EDIT_DELETE);
 		assertEnabled(EDIT_PASTE);
 	}
+	
+	/**
+	 * Checks that copy action is enabled when overlay is inactive but some text
+	 * is selected in the Rodin editor. Cut, paste and delete actions are
+	 * disabled.
+	 */
+	@Test
+	public void TestTextCopyEnablement() throws Exception {
+		helper.setSelection(0, 8);
+		assertEnabled(EDIT_COPY);
+		assertDisabled(EDIT_CUT);
+		assertDisabled(EDIT_DELETE);
+		assertDisabled(EDIT_PASTE);
+	}
 
 	public void assertEnablement(String commandName, String message,
 			boolean shouldBeEnabled) {
