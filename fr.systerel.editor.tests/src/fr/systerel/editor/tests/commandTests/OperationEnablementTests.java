@@ -83,10 +83,8 @@ public class OperationEnablementTests {
 	 */
 	@Test
 	public void SelectionDependentEnablementTest() throws Exception {
-		final List<ILElement> axioms = helper.getRoot().getChildrenOfType(
-				IAxiom.ELEMENT_TYPE);
 		// there is only one axiom in the file at the beginning
-		final ILElement axiom = axioms.get(0);
+		final ILElement axiom = getFirstAxiom(helper);
 		helper.setSelection(new ILElement[] { axiom });
 		assertEnabled(EDIT_COPY);
 		assertEnabled(EDIT_DELETE);
@@ -100,11 +98,8 @@ public class OperationEnablementTests {
 	 */
 	@Test
 	public void TestPasteEnablement() throws Exception {
-		final ILElement root = helper.getRoot();
-		final List<ILElement> axioms = root
-				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		// there is only one axiom in the file at the beginning
-		final ILElement axiom = axioms.get(0);
+		final ILElement axiom = getFirstAxiom(helper);
 		helper.setSelection(new ILElement[] { axiom });
 		helper.executeOperation(EDIT_COPY);
 		assertEnabled(EDIT_PASTE);
@@ -118,6 +113,7 @@ public class OperationEnablementTests {
 		assertEnabled(EDIT_DELETE);
 		assertDisabled(EDIT_CUT);
 
+		final ILElement root = helper.getRoot();
 		final List<ILElement> axioms2 = root
 				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		assertTrue(axioms2.size() == 2);
@@ -130,22 +126,13 @@ public class OperationEnablementTests {
 	 */
 	@Test
 	public void TestOverlayDefaultEnablement() throws Exception {
-		final ILElement root = helper.getRoot();
-		final List<ILElement> axioms = root
-				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
-		final EditorElement axiomPos = helper.getEditor().getDocumentMapper()
-				.findEditorElement(axioms.get(0));
-		final Interval interval = axiomPos
-				.getInterval(EventBAttributes.PREDICATE_ATTRIBUTE);
-		final OverlayEditor overlay = helper.getOverlay();
-		overlay.showAtOffset(interval.getOffset());
-		
+		enterAxiomPredicateEdition(helper);
 		assertDisabled(EDIT_CUT);
 		assertDisabled(EDIT_COPY);
 		assertEnabled(EDIT_DELETE);
 		assertEnabled(EDIT_PASTE);
 	}
-	
+
 	/**
 	 * Checks that copy action is enabled when overlay is inactive but some text
 	 * is selected in the Rodin editor. Cut, paste and delete actions are
@@ -168,10 +155,7 @@ public class OperationEnablementTests {
 	public void TestUndoRedoEnablement() throws Exception {
 		assertDisabled(EDIT_UNDO);
 		assertDisabled(EDIT_REDO);
-		final ILElement root = helper.getRoot();
-		final List<ILElement> axioms = root
-				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
-		final ILElement axiom = axioms.get(0);
+		final ILElement axiom = getFirstAxiom(helper);
 		helper.setSelection(new ILElement[] { axiom });
 		helper.executeOperation(EDIT_DELETE);
 		assertEnabled(EDIT_UNDO);
@@ -195,6 +179,24 @@ public class OperationEnablementTests {
 
 	public void assertDisabled(String commandName) {
 		assertEnablement(commandName, " should be not enabled", false);
+	}
+
+	private static void enterAxiomPredicateEdition(OperationTestHelper helper) {
+		final ILElement axiom = getFirstAxiom(helper);
+		final EditorElement axiomPos = helper.getEditor().getDocumentMapper()
+				.findEditorElement(axiom);
+		final Interval interval = axiomPos
+				.getInterval(EventBAttributes.PREDICATE_ATTRIBUTE);
+		final OverlayEditor overlay = helper.getOverlay();
+		overlay.showAtOffset(interval.getOffset());
+	}
+
+	private static ILElement getFirstAxiom(OperationTestHelper helper) {
+		final ILElement root = helper.getRoot();
+		final List<ILElement> axioms = root
+				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		final ILElement axiom = axioms.get(0);
+		return axiom;
 	}
 
 }
