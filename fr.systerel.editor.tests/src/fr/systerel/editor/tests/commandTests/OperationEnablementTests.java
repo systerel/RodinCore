@@ -16,6 +16,8 @@ import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_COPY;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_CUT;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_DELETE;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_PASTE;
+import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_REDO;
+import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_UNDO;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -156,6 +158,27 @@ public class OperationEnablementTests {
 		assertDisabled(EDIT_CUT);
 		assertDisabled(EDIT_DELETE);
 		assertDisabled(EDIT_PASTE);
+	}
+	
+	/**
+	 * Checks that undo/redo actions are enabled in the Rodin editor when some
+	 * delete operation is respectively performed and undone.
+	 */
+	@Test
+	public void TestUndoRedoEnablement() throws Exception {
+		assertDisabled(EDIT_UNDO);
+		assertDisabled(EDIT_REDO);
+		final ILElement root = helper.getRoot();
+		final List<ILElement> axioms = root
+				.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+		final ILElement axiom = axioms.get(0);
+		helper.setSelection(new ILElement[] { axiom });
+		helper.executeOperation(EDIT_DELETE);
+		assertEnabled(EDIT_UNDO);
+		assertDisabled(EDIT_REDO);
+		helper.executeOperation(EDIT_UNDO);
+		assertDisabled(EDIT_UNDO);
+		assertEnabled(EDIT_REDO);
 	}
 
 	public void assertEnablement(String commandName, String message,
