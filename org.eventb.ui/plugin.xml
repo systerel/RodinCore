@@ -1252,6 +1252,12 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.Equality1"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
+      <dynamic_dropdown
+            id="org.eventb.ui.profile_dyn_dropdown"
+            name="%proofDropdowns.profile.name"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ProfileUITacticProvider"
+            toolbar="org.eventb.ui.sequentToolbar">
+      </dynamic_dropdown>
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
