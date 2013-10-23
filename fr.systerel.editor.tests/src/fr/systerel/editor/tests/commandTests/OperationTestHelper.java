@@ -84,7 +84,7 @@ public class OperationTestHelper {
 	}
 
 	public void closeRodinEditor() {
-		rodinEditor.close(false);
+		rodinEditor.getEditorSite().getPage().closeEditor(rodinEditor, false);
 	}
 
 	public void setSelection(ILElement[] toSelect) throws InterruptedException {
