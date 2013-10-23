@@ -17,6 +17,7 @@ import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_CUT;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_DELETE;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_PASTE;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_REDO;
+import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_SELECT_ALL;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_UNDO;
 import static org.junit.Assert.assertTrue;
 
@@ -163,6 +164,17 @@ public class OperationEnablementTests {
 		helper.executeOperation(EDIT_UNDO);
 		assertDisabled(EDIT_UNDO);
 		assertEnabled(EDIT_REDO);
+	}
+	
+	/**
+	 * Checks that selectAll action is always enabled both in the Rodin editor
+	 * and overlay editor.
+	 */
+	@Test
+	public void TestSelectAllEnablement() throws Exception {
+		assertEnabled(EDIT_SELECT_ALL);
+		enterAxiomPredicateEdition(helper);
+		assertEnabled(EDIT_SELECT_ALL);
 	}
 
 	public void assertEnablement(String commandName, String message,
