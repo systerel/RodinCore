@@ -10,45 +10,44 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
+import static fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection.getDeleteAction;
+import static fr.systerel.internal.explorer.navigator.actionProviders.ActionCollection.getOpenAction;
+import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_DELETE;
 import static org.eclipse.ui.actions.ActionFactory.NEW_WIZARD_DROP_DOWN;
+import static org.eclipse.ui.navigator.ICommonActionConstants.OPEN;
+import static org.eclipse.ui.navigator.ICommonMenuConstants.GROUP_NEW;
+import static org.eclipse.ui.navigator.ICommonMenuConstants.GROUP_OPEN;
+import static org.eclipse.ui.navigator.ICommonMenuConstants.GROUP_OPEN_WITH;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.navigator.ICommonActionConstants;
-import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
- * The action provider for <code>IEventBRoot</code>s. 
+ * The action provider for <code>IEventBRoot</code>s.
  */
 public class RootActionProvider extends NavigatorActionProvider {
 
-    @Override
-    public void fillActionBars(IActionBars actionBars) {
-        super.fillActionBars(actionBars);
-        // forward doubleClick to doubleClickAction
-        actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
-              ActionCollection.getOpenAction(site));
-        // forwards pressing the delete key to deleteAction
-        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), ActionCollection.getDeleteAction(site));
-    }
-	
+	@Override
+	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
+		// forward doubleClick to doubleClickAction
+		actionBars.setGlobalActionHandler(OPEN, getOpenAction(site));
+		// forwards pressing the delete key to deleteAction
+		actionBars.setGlobalActionHandler(EDIT_DELETE, getDeleteAction(site));
+	}
 
-    
-    @Override
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		menu.add(new Separator(ICommonMenuConstants.GROUP_NEW));
-		menu.appendToGroup(ICommonMenuConstants.GROUP_NEW, getNewAction());
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection
-				.getOpenAction(site));
-		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH,
-				buildOpenWithMenu());
-		menu.appendToGroup(GROUP_MODELLING, ActionCollection
-				.getDeleteAction(site));
+		menu.add(new Separator(GROUP_NEW));
+		menu.appendToGroup(GROUP_NEW, getNewAction());
+		menu.appendToGroup(GROUP_OPEN, getOpenAction(site));
+		menu.appendToGroup(GROUP_OPEN_WITH, buildOpenWithMenu());
+		menu.add(new Separator(GROUP_MODELLING));
+		menu.appendToGroup(GROUP_MODELLING, getDeleteAction(site));
 	}
 
 	/**
@@ -56,11 +55,11 @@ public class RootActionProvider extends NavigatorActionProvider {
 	 *
 	 * @return the built menu
 	 */
-	private IWorkbenchAction getNewAction() {
+	private static IWorkbenchAction getNewAction() {
 		final IWorkbenchAction newAction = NEW_WIZARD_DROP_DOWN
 				.create(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 		newAction.setText(newAction.getToolTipText());
 		return newAction;
 	}
-	
+
 }
