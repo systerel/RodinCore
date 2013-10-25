@@ -521,6 +521,11 @@
             name="%commands.resource.rename.name">
       </command>
       <command
+            description="%commands.resource.refine.description"
+            id="org.eventb.ui.refine"
+            name="%commands.resource.refine.name">
+      </command>
+      <command
             description="%commands.resource.showProperties.description"
             id="org.eventb.ui.showProperties"
             name="%commands.resource.showProperties.name">
@@ -558,6 +563,9 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <separator
+               name="org.eventb.ui.afterAdditions.separator">
+         </separator>
          <command
                commandId="org.eventb.ui.showProperties"
                mnemonic="%commands.resource.showProperties.mnemonic"
@@ -574,6 +582,10 @@
                </iterate>
             </visibleWhen>
          </command>
+         <dynamic
+               class="org.eventb.internal.ui.refine.RefineItem"
+               id="org.eventb.ui.refineItem">
+         </dynamic>
       </menuContribution>
    </extension>
    <extension
@@ -589,6 +601,10 @@
       <handler
             class="org.eventb.internal.ui.handlers.ShowPropertiesHandler"
             commandId="org.eventb.ui.showProperties">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.refine.RefineHandler"
+            commandId="org.eventb.ui.refine">
       </handler>
    </extension>
    <extension
@@ -1837,12 +1853,6 @@
          		id="org.eclipse.ui.commands.toggleState">
    			</state>
       </command>
-      <command
-            defaultHandler="org.eventb.internal.ui.refine.RefineHandler"
-            description="%commands.refine.description"
-            id="org.eventb.ui.refine"
-            name="%commands.refine.name">
-      </command>
       <category
             description="%categories.ProvingDescription"
             id="org.eventb.ui.categories.prove"
@@ -2752,14 +2762,6 @@
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eventb.ui.views.ProofSkeleton?after=additions">
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any">
-         <dynamic
-               class="org.eventb.internal.ui.refine.RefineItem"
-               id="org.eventb.ui.refineItem">
-         </dynamic>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">

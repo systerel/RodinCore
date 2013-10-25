@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.refine;
 
-import java.util.Collection;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,7 +20,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.actions.RodinFileInputValidator;
@@ -138,13 +141,23 @@ public class RefineHandler extends AbstractHandler {
 
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		final EvaluationContext eval = (EvaluationContext) evaluationContext;
-		final Object defaultVariable = eval.getDefaultVariable();
-		if (!(defaultVariable instanceof Collection<?>)) {
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IWorkbenchWindow ww = workbench.getActiveWorkbenchWindow();
+		if (ww == null) {
+			setBaseEnabled(false);
 			return;
 		}
-		final Collection<?> selection = (Collection<?>) defaultVariable;
-		final IInternalElement element = computeElement(selection);
+		final ISelectionService selectionService = ww.getSelectionService();
+		final ISelection selection = selectionService.getSelection();
+		if (selection == null || selection.isEmpty()) {
+			setBaseEnabled(false);
+			return;
+		}
+		if (!(selection instanceof ITreeSelection)) {
+			setBaseEnabled(false);
+			return;
+		}
+		final IInternalElement element = computeElement((ITreeSelection) selection);
 		final boolean enabled = element != null;
 
 		if (enabled) {
@@ -153,10 +166,10 @@ public class RefineHandler extends AbstractHandler {
 		setBaseEnabled(enabled);
 	}
 
-	private static IInternalElement computeElement(Collection<?> selection) {
+	private static IInternalElement computeElement(ITreeSelection selection) {
 		if (selection.size() != 1)
 			return null;
-		final Object x = selection.iterator().next();
+		final Object x = selection.getFirstElement();
 		if (!(x instanceof IInternalElement))
 			return null;
 		final IInternalElement e = (IInternalElement) x;
