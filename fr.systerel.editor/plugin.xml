@@ -443,34 +443,74 @@
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewVariableWizardHandler"
             commandId="fr.systerel.editor.openNewVariableWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewVariantWizardHandler"
             commandId="fr.systerel.editor.openNewVariantWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewInvariantWizardHandler"
             commandId="fr.systerel.editor.openNewInvariantWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewEventWizardHandler"
             commandId="fr.systerel.editor.openNewEventWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewCarrierSetWizardHandler"
             commandId="fr.systerel.editor.openNewCarrierSetWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewEnumeratedSetWizardHandler"
             commandId="fr.systerel.editor.openNewEnumeratedSetWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewAxiomWizardHandler"
             commandId="fr.systerel.editor.openNewAxiomWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.dialogs.handlers.WizardHandlers$NewConstantWizardHandler"
             commandId="fr.systerel.editor.openNewConstantWizard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension

@@ -504,34 +504,74 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewEventHandler"
             commandId="org.eventb.ui.editor.newEvent">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewVariableHandler"
             commandId="org.eventb.ui.editor.newVariable">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewInvariantHandler"
             commandId="org.eventb.ui.editor.newInvariant">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewVariantHandler"
             commandId="org.eventb.ui.editor.newVariant">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewCarrierSetHandler"
             commandId="org.eventb.ui.editor.newCarrierSet">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewEnumeratedSetHandler"
             commandId="org.eventb.ui.editor.newEnumeratedSet">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewConstantHandler"
             commandId="org.eventb.ui.editor.newConstant">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewAxiomHandler"
             commandId="org.eventb.ui.editor.newAxiom">
+            <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
@@ -3210,5 +3250,24 @@
            </equals>
         </with>
      </definition>
+     <definition
+            id="org.eventb.ui.definition.activeEditorInputEditable">
+         <with
+               variable="activeEditorInput">
+            <test
+                  property="org.eventb.ui.property.isEditable">
+            </test>
+         </with>
+     </definition>
   </extension>
+  <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eventb.internal.ui.eventbeditor.wizards.EditableEditorInputTester"
+            id="org.eventb.ui.isEditableTester"
+            namespace="org.eventb.ui.property"
+            properties="isEditable"
+            type="org.eclipse.ui.part.FileEditorInput">
+      </propertyTester>
+   </extension>
 </plugin>
