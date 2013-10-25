@@ -398,15 +398,6 @@
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
          <action
-               class="org.eventb.internal.ui.prooftreeui.ShowRuleDetails"
-               enablesFor="1"
-               icon="icons/full/ctool16/info_prover_rule.gif"
-               id="org.eventb.ui.showRuleDetails"
-               label="%popupMenu.showRuleDetails.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.showRuleDetails.tooltip">
-         </action>
-         <action
                class="org.eventb.internal.ui.prooftreeui.ShowTypeEnv"
                enablesFor="1"
                icon="icons/full/ctool16/info_type_env.gif"
@@ -605,6 +596,42 @@
       <handler
             class="org.eventb.internal.ui.refine.RefineHandler"
             commandId="org.eventb.ui.refine">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            id="org.eventb.ui.proofTreeUi.showRuleDetails"
+            name="%commands.proofTreeNode.showRuleDetails.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.eventb.ui.proofTreeUi.showRuleDetails"
+               icon="icons/full/ctool16/info_prover_rule.gif"
+               mnemonic="%commands.proofTreeNode.showRuleDetails.mnemonic"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <instanceof
+                        value="org.eventb.core.seqprover.IProofTreeNode">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.ShowRuleDetailsHandler"
+            commandId="org.eventb.ui.proofTreeUi.showRuleDetails">
       </handler>
    </extension>
    <extension
