@@ -583,18 +583,38 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoActionRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoActionLabel">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoGuardRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoGuardLabel">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoInvariantRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoInvariantLabel">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoAxiomRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoAxiomLabel">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension

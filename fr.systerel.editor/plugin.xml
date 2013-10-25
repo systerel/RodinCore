@@ -274,18 +274,38 @@
       <handler
             class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoActionLabelRenaming"
             commandId="fr.systerel.editor.rename.action">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoGuardLabelRenaming"
             commandId="fr.systerel.editor.rename.guard">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoInvariantLabelRenaming"
             commandId="fr.systerel.editor.rename.invariant">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoAxiomLabelRenaming"
             commandId="fr.systerel.editor.rename.axiom">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
