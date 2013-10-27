@@ -642,6 +642,22 @@
       </menuContribution>
       <menuContribution
             allPopups="true"
+            locationURI="popup:fr.systerel.explorer.navigator.view?after=group.openWith">
+         <command
+               commandId="org.eventb.ui.proveInteractively"
+               icon="icons/discharged.gif"
+               mnemonic="%commands.resource.proveInteractively.mnemonic"
+               style="push"
+               tooltip="%commands.resource.proveInteractively.tooltip">
+            <visibleWhen checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isIEventBRoot">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
             locationURI="popup:fr.systerel.explorer.navigator.view">
          <command
                commandId="org.eventb.ui.simplify"
@@ -671,18 +687,6 @@
                   checkEnabled="false">
                <reference
                      definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eventb.ui.proveInteractively"
-               icon="icons/discharged.gif"
-               mnemonic="%commands.resource.proveInteractively.mnemonic"
-               style="push"
-               tooltip="%commands.resource.proveInteractively.tooltip">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isIEventBRoot">
                </reference>
             </visibleWhen>
          </command>
