@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.CursorModifier.HAND_CURSOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinkLabel;
 
@@ -36,7 +37,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -51,10 +51,6 @@ import org.eventb.ui.prover.ITacticApplication;
 public class TacticHyperlinkManager {
 
 	final static Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
-
-	final Cursor arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);
-
-	final Cursor handCursor = new Cursor(Display.getDefault(), SWT.CURSOR_HAND);
 
 	private final StyledText text;
 	private final StringBuilder toAppend;
@@ -74,9 +70,11 @@ public class TacticHyperlinkManager {
 	private MouseEnterListener mouseEnterListener = new MouseEnterListener(this);	
 	private MouseExitListener mouseExitListener = new MouseExitListener(this);
 
+	private final Cursor defaultCursor;
 	
 	public TacticHyperlinkManager(StyledText text) {
 		this.text = text;
+		this.defaultCursor = text.getCursor();
 		currentLink = null;
 		this.toAppend = new StringBuilder();
 		this.stringBuilderOffset = 0;
@@ -204,7 +202,6 @@ public class TacticHyperlinkManager {
 		final Point tipPosition = text.toDisplay(widgetPosition);
 		setMenuLocation(tipMenu, tipPosition);
 		disableCurrentLink();
-		text.setCursor(arrowCursor);
 		tipMenu.addMenuListener(new MenuListener() {
 
 			@Override
@@ -285,6 +282,7 @@ public class TacticHyperlinkManager {
 		style.foreground = RED;
 		style.underline = false;
 		text.setStyleRange(style);
+		text.setCursor(defaultCursor);
 		currentLink = null;
 	}
 
@@ -304,12 +302,11 @@ public class TacticHyperlinkManager {
 			if (index != null) {
 				if (!index.equals(currentLink)) {
 					setCurrentLink(index);
-					text.setCursor(handCursor);
+					text.setCursor(HAND_CURSOR);
 				}
 			} else {
 				if (currentLink != null) {
-					text.setCursor(arrowCursor);
-					setCurrentLink(null);
+					disableCurrentLink();
 				}
 			}
 		} catch (IllegalArgumentException exception) {
