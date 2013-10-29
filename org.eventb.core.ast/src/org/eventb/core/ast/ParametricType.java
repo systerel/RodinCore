@@ -41,13 +41,12 @@ public class ParametricType extends Type {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	private static Expression[] buildExprs(Type[] typeParams,
 			FormulaFactory factory) {
 		final int length = typeParams.length;
 		final Expression[] result = new Expression[length];
 		for (int i = 0; i < length; i++) {
-			result[i] = typeParams[i].toExpression(factory);
+			result[i] = typeParams[i].toExpression();
 		}
 		return result;
 	}

@@ -171,23 +171,6 @@ public abstract class Type {
 		return expr;
 	}
 
-	/**
-	 * Returns the expression that denotes the set corresponding to this type.
-	 * 
-	 * @param factory
-	 *            factory to use for building the result expression
-	 * @return the set corresponding to this type
-	 * @deprecated use {@link #toExpression()} instead
-	 */
-	@Deprecated
-	public Expression toExpression(FormulaFactory factory){
-		if (factory == this.fac) {
-			return toExpression();
-		} else {
-			return buildExpression(factory);
-		}
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();

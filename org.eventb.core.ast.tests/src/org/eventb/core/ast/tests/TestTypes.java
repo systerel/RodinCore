@@ -112,12 +112,11 @@ public class TestTypes extends AbstractTests {
 	 * Checks type conversion to Expression and getting back a type from the
 	 * expression.
 	 */
-	@SuppressWarnings("deprecation")
 	private void assertTypeExpression(Type type, String image) throws Exception {
 		final Expression expected = parseExpression(image, typenv);
 		final Expression actual = type.toExpression();
 		assertEquals(expected, actual);
-		assertEquals(expected, type.toExpression(type.getFactory()));
+		assertEquals(expected, type.toExpression());
 
 		assertTrue(actual.isATypeExpression());
 		assertEquals(type, actual.toType());

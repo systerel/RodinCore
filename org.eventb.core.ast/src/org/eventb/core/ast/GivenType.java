@@ -93,21 +93,6 @@ public class GivenType extends Type {
 		return (FreeIdentifier) super.toExpression();
 	}
 
-	/**
-	 * Returns the free identifier that denotes the set corresponding to this
-	 * given type.
-	 * 
-	 * @param factory
-	 *            factory to use for building the result identifier
-	 * @return the set corresponding to this type
-	 * @since 2.6
-	 */
-	@Deprecated
-	@Override
-	public FreeIdentifier toExpression(FormulaFactory factory) {
-		return (FreeIdentifier) super.toExpression(factory);
-	}
-
 	@Override
 	public void accept(ITypeVisitor visitor) {
 		visitor.visit(this);

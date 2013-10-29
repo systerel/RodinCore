@@ -50,10 +50,8 @@ public class ProductType extends Type {
 	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		@SuppressWarnings("deprecation")
-		Expression leftExpr = left.toExpression(factory);
-		@SuppressWarnings("deprecation")
-		Expression rightExpr = right.toExpression(factory);
+		final Expression leftExpr = left.toExpression();
+		final Expression rightExpr = right.toExpression();
 		return factory.makeBinaryExpression(Formula.CPROD, leftExpr, rightExpr, null);
 	}
 
