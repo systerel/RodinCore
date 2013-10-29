@@ -58,6 +58,7 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.RodinElement;
 
 /**
  * This class handles loading and generation of Prover Sequents from PO sequents
@@ -99,6 +100,12 @@ public final class POLoader {
 		final SelectionHints selHints = new SelectionHints(poSeq);
 		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv, factory);
 		final Predicate goal = readGoal(poSeq, typeEnv, factory);
+		if (goal == null) {
+			throw new IllegalArgumentException("Could not read the goal of "
+					+ ((RodinElement) poSeq).toStringWithAncestors() + ". "
+					+ "Inferred type environment: "
+					+ typeEnv.makeSnapshot().toString());
+		}
 		if (! isWDPO(poSeq)) addWDpredicates(goal, hypotheses, factory);
 		return makeSequent(typeEnv, hypotheses, selHyps, goal, poSeq);
 	}
