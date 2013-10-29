@@ -16,10 +16,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import java.util.Collection;
+
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
@@ -97,6 +101,16 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		this.level = level;
 	}
 
+	/**
+	 * Also remove trivial predicates.
+	 */
+	@Override
+	protected Collection<Predicate> postProcessInferredHyp(Predicate inferredHyp) {
+		final Collection<Predicate> inferredHyps = super.postProcessInferredHyp(inferredHyp);
+		inferredHyps.remove(DLib.True(inferredHyp.getFactory()));
+		return inferredHyps;
+	}
+	
 	public final String getReasonerID() {
 		return level.getReasonerId();
 	}

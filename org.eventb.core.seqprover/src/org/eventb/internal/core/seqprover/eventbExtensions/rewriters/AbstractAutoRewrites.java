@@ -49,8 +49,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 			// Rewrite the hypothesis
 			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
 
-			Collection<Predicate> inferredHyps = Lib
-					.breakPossibleConjunct(inferredHyp);
+			final Collection<Predicate> inferredHyps = postProcessInferredHyp(inferredHyp);
 
 			// Check if rewriting made a change
 			if (inferredHyp == hyp && inferredHyps.size() == 1)
@@ -104,6 +103,26 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		}
 		return ProverFactory.reasonerFailure(this, input,
 				"No rewrites applicable");
+	}
+
+	/**
+	 * Process rewritten hypothesis, potentially making further simplifications.
+	 * 
+	 * <p>
+	 * Returned collection may contain 0, 1 or more predicates.
+	 * </p>
+	 * <p>
+	 * It is considered that no post processing occurred, if and only if the
+	 * returned collection is of size 1 and contains the given rewritten
+	 * hypothesis instance.
+	 * </p>
+	 * 
+	 * @param inferredHyp
+	 *            the rewritten hypothesis
+	 * @return a collection of hypotheses
+	 */
+	protected Collection<Predicate> postProcessInferredHyp(Predicate inferredHyp) {
+		return Lib.breakPossibleConjunct(inferredHyp);
 	}
 
 	/**
