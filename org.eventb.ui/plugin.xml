@@ -634,9 +634,14 @@
                 value="org.eclipse.ui.views.PropertySheet" />
             <visibleWhen
                   checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
-               </reference>
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <reference
+                        definitionId="org.eventb.ui.definition.containsEventBRootOrRodinProject">
+                  </reference>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -668,9 +673,10 @@
                   checkEnabled="false">
                <or>
                   <reference
-                        definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
+                        definitionId="org.eventb.ui.definition.containsEventBRootOrRodinProject">
                   </reference>
-                  <iterate>
+                  <iterate
+                        operator="or">
                      <instanceof
                            value="org.eventb.core.IPSStatus">
                      </instanceof>
@@ -686,7 +692,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
+                     definitionId="org.eventb.ui.definition.containsEventBRootOrRodinProject">
                </reference>
             </visibleWhen>
          </command>
@@ -3167,21 +3173,27 @@
        </and>
      </definition>
      <definition
-           id="org.eventb.ui.definition.isEventBRootOrRodinProject">
-       <iterate operator="or" ifEmpty="false">
-          <or>
-              <instanceof
-                    value="org.eventb.core.IEventBRoot">
-              </instanceof>
-              <adapt
-                    type="org.eclipse.core.resources.IResource">
-                 <test
-                       property="org.eclipse.core.resources.projectNature"
-                       value="org.rodinp.core.rodinnature">
-                 </test>
-              </adapt>
-          </or>
-       </iterate>
+           id="org.eventb.ui.definition.containsEventBRootOrRodinProject">
+        <and>
+           <count
+                 value="+">
+           </count>
+           <iterate
+                 operator="or">
+              <or>
+                 <instanceof
+                       value="org.eventb.core.IEventBRoot">
+                 </instanceof>
+	             <adapt
+	                   type="org.eclipse.core.resources.IResource">
+	                <test
+	                      property="org.eclipse.core.resources.projectNature"
+	                      value="org.rodinp.core.rodinnature">
+	                </test>
+	             </adapt>
+              </or>
+           </iterate>
+        </and>
      </definition>
      <definition
            id="org.eventb.ui.definition.isEventBMachineEditorActive">
