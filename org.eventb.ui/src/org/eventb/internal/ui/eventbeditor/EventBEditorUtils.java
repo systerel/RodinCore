@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -64,7 +63,6 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -76,7 +74,6 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -707,33 +704,6 @@ public class EventBEditorUtils {
 		}
 		return null;
 	}
-	
-	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
-			throws RodinDBException {
-		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
-		IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
-		IMachineRoot abstractRoot = EventBUtils.getAbstractMachine(root);
-		if (abstractRoot == null)
-			return null;
-		if (!abstractRoot.exists())
-			return null;
-
-		IRodinElement abstractElement = null;
-		if (concreteElement instanceof IEvent) {
-			IRodinElement[] abs_evts = ((IEvent) concreteElement)
-					.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-			if (abs_evts.length == 0) {
-				abstractElement = abstractRoot.getInternalElement(
-						IEvent.ELEMENT_TYPE, ((IEvent) concreteElement)
-								.getElementName());
-			} else {
-				abstractElement = abstractRoot.getInternalElement(
-						IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-								.getAbstractEventLabel());
-			}
-		}
-		return abstractElement;
-	}
 
 	public static void debug(String message) {
 		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);
@@ -745,17 +715,6 @@ public class EventBEditorUtils {
 			e.printStackTrace();
 		}
 		UIUtils.log(e, message);
-	}
-
-	public static String getComments(ICommentedElement element) {
-		try {
-			if (element.hasComment()) {
-				return element.getComment();
-			}
-			return "";
-		} catch (RodinDBException e) {
-			return "";
-		}
 	}
 	
 	public static String getFreeInitialisationActionName(IMachineRoot root) {
