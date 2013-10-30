@@ -481,38 +481,9 @@ public class RodinEditor extends TextEditor {
 	public void updatePropertyDependentActions() {
 		super.updatePropertyDependentActions();
 	}
-
-	public boolean threadSafeIsOverlayActive() {
-		final ActivationChecker checker = new ActivationChecker(this);
-		getSite().getShell().getDisplay().syncExec(checker);
-		return checker.getResult();
-	}
-	
-	private static class ActivationChecker implements Runnable {
-
-		boolean result = false;
-		private RodinEditor editor;
-
-		public ActivationChecker(RodinEditor editor) {
-			this.editor = editor;
-		}
-
-		public void run() {
-			this.result = editor.isOverlayActive();
-		}
-
-		public boolean getResult() {
-			return result;
-		}
-
-	}
 	
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
-	}
-
-	public ITextOperationTarget getTextOperationTarget() {
-		return viewer;
 	}
 
 	public SourceViewer getViewer() {
