@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractContextManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -77,8 +77,8 @@ public class ExtendsSection extends
 
 	@Override
 	protected IExtendsContext getFreeElementContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot,
-				IExtendsContext.ELEMENT_TYPE);
+		final String childName = EventBUtils.getFreeChildName(rodinRoot,
+				IExtendsContext.ELEMENT_TYPE, "i");
 		return rodinRoot.getExtendsClause(childName);
 	}
 

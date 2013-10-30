@@ -714,13 +714,6 @@ public class UIUtils {
 		return !(newValue.equals(oldValue));
 	}
 
-	public static <T extends IInternalElement> String getFreeChildName(
-			IInternalElement parent, IInternalElementType<T> type)
-			throws RodinDBException {
-		final String prefix = "i";
-		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
-	}
-
 	public static QualifiedName getQualifiedName(IInternalElementType<?> type) {
 		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
 	}

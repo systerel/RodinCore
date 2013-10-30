@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractContextManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -67,8 +67,8 @@ public class SeesSection extends
 
 	@Override
 	protected ISeesContext getFreeElementContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot,
-				ISeesContext.ELEMENT_TYPE);
+		final String childName = EventBUtils.getFreeChildName(rodinRoot,
+				ISeesContext.ELEMENT_TYPE, "i");
 		return rodinRoot.getSeesClause(childName);
 	}
 

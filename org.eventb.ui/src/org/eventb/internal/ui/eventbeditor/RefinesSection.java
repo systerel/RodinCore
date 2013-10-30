@@ -36,6 +36,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -218,8 +219,8 @@ public class RefinesSection extends SectionPart implements
 		machineCombo.setEnabled(!isReadOnly(root));
 		machineCombo.add(NULL_VALUE);
 		try {
-			final String childName = UIUtils.getFreeChildName(root,
-					IRefinesMachine.ELEMENT_TYPE);
+			final String childName = EventBUtils.getFreeChildName(root,
+					IRefinesMachine.ELEMENT_TYPE, "i");
 			final IRefinesMachine clause = root.getRefinesClause(childName);
 			final String[] possibleValues = factory.getPossibleValues(clause,
 					null);
