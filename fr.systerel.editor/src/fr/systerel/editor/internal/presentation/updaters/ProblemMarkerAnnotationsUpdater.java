@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,9 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -48,7 +50,7 @@ import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.presentation.RodinProblemAnnotation;
 
-public class ProblemMarkerAnnotationsUpdater {
+public class ProblemMarkerAnnotationsUpdater implements IDocumentListener {
 	
 	/** Tracing debug option */
 	public static boolean DEBUG;
@@ -63,7 +65,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	/** The associated Rodin Editor */
 	private final RodinEditor editor;
 	/** The annotation model to keep coherent */
-	private final IAnnotationModel annotationModel;
+	private IAnnotationModel annotationModel;
 	/** The map of marker and annotations */
 	private ResourceChangeListener listener = new ResourceChangeListener();
 	
@@ -90,13 +92,16 @@ public class ProblemMarkerAnnotationsUpdater {
 		for (IMarkerDelta d : markerDeltas) {
 			if (d.getKind() == IResourceDelta.REMOVED
 					|| d.getKind() == IResourceDelta.ADDED) {
-				recalculateAnnotations();
+				refreshMarkersAnnotations();
 				break;
 			}
 		}
 	}
 
 	private void removeMarkerAnnotations() {
+		if (annotationModel == null) {
+			return;
+		}
 		final Iterator<?> itr = annotationModel.getAnnotationIterator();
 		while (itr.hasNext()) {
 			final Object next = itr.next();
@@ -200,17 +205,16 @@ public class ProblemMarkerAnnotationsUpdater {
 		return new RodinProblemAnnotation(marker);
 	}
 
-	public ProblemMarkerAnnotationsUpdater(RodinEditor rodinEditor,
-			IAnnotationModel annotationModel) {
+	public ProblemMarkerAnnotationsUpdater(RodinEditor rodinEditor) {
 		this.editor = rodinEditor;
 		this.resource = editor.getInputRoot().getResource();
 		assert (resource != null);
 		this.workspace = resource.getWorkspace();
-		this.annotationModel = annotationModel;
 		workspace.addResourceChangeListener(listener);
 	}
 
-	public void initializeMarkersAnnotations() {
+	public void refreshMarkersAnnotations() {
+		annotationModel = editor.getViewer().getAnnotationModel();
 		removeMarkerAnnotations();
 		final IInternalElement inputRoot = editor.getInputRoot();
 		if (!(inputRoot instanceof IEventBRoot)) {
@@ -347,10 +351,22 @@ public class ProblemMarkerAnnotationsUpdater {
 		return newPosStartEnd(pStart, pEnd);
 	}
 
-	public void recalculateAnnotations() {
-		initializeMarkersAnnotations();
+	public void initializeMarkersAnnotations() {
+		refreshMarkersAnnotations();
 	}
 
+	@Override
+	public void documentAboutToBeChanged(DocumentEvent event) {
+		// Nothing to do
+	}
+
+	@Override
+	public void documentChanged(DocumentEvent event) {
+		if (!editor.isOverlayActive()) {
+			refreshMarkersAnnotations();
+		}
+	}
+	
 	public void dispose() {
 		workspace.removeResourceChangeListener(listener);
 	}

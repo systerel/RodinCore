@@ -25,6 +25,7 @@ public class CaretPositionHelper {
 
 	private int oldCharCount = 0;
 	private int oldCaretPos = 0;
+	private int oldLineIndex = 0;
 	private int newCharCount = 0;
 
 	public CaretPositionHelper(StyledText editorText) {
@@ -42,6 +43,7 @@ public class CaretPositionHelper {
 	public void recordCaretPosition() {
 		oldCharCount = editorText.getCharCount();
 		oldCaretPos = editorText.getCaretOffset();
+		oldLineIndex = editorText.getLineAtOffset(oldCaretPos);
 	}
 
 	private int getOldPositionToEnd() {
@@ -71,9 +73,25 @@ public class CaretPositionHelper {
 	public int getSafeNewPositionToEnd() {
 		newCharCount = editorText.getCharCount();
 		if (oldCaretPos < newCharCount) {
-			return oldCaretPos;
+			final int lineAtOffset = editorText.getLineAtOffset(oldCaretPos);
+			if (lineAtOffset != oldLineIndex) {
+				return getNewPositionToEnd();
+			} else {
+				return oldCaretPos;
+			}
 		}
 		return newCharCount;
+	}
+
+	/**
+	 * Returns the current offset of the line start at <code>lineIndex</code> or
+	 * <code>-1</code> if <code>lineIndex</code> is invalid.
+	 */
+	public int getSafeLineOffset(int lineIndex) {
+		if ((lineIndex < 0) || (lineIndex > editorText.getLineCount())) {
+			return -1;
+		}
+		return editorText.getOffsetAtLine(lineIndex);
 	}
 
 }

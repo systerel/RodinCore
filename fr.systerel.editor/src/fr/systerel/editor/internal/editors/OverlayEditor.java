@@ -472,7 +472,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	public void abortEdition(boolean maintainCaretPosition) {
 		mapper.synchronizeInterval(interval, originalText);
-		quitEdition(maintainCaretPosition);
+		quitEdition(false);
 	}
 	
 	public void quitEdition(boolean maintainCaretPosition) {

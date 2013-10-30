@@ -10,13 +10,21 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.presentation.updaters;
 
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -37,17 +45,16 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * 
  * @author "Thomas Muller"
  */
-public class PresentationUpdater extends EContentAdapter {
+public class PresentationUpdater extends EContentAdapter implements
+		IPropertyChangeListener {
 
 	private static class NotificationProcessor implements Runnable {
 
-		private final RodinEditor editor;
-		private final DocumentMapper mapper;
 		private final BlockingQueue<Notification> notifications;
+		private final PresentationUpdater updater;
 
-		public NotificationProcessor(RodinEditor editor, DocumentMapper mapper) {
-			this.editor = editor;
-			this.mapper = mapper;
+		public NotificationProcessor(PresentationUpdater updater) {
+			this.updater = updater;
 			this.notifications = new LinkedBlockingQueue<Notification>();
 		}
 
@@ -69,7 +76,9 @@ public class PresentationUpdater extends EContentAdapter {
 			 * Cases where the editor shall be completely resynchronized.
 			 */
 			for (Notification notification : currentNotifications) {
-				if (performFullResyncIfNeeded(notification)) {
+				final EditorResynchronizer snzr = getSynchronizer(notification);
+				if (snzr != null) {
+					snzr.resynchronize();
 					return;
 				}
 			}
@@ -84,30 +93,35 @@ public class PresentationUpdater extends EContentAdapter {
 			}
 		}
 
-		private boolean performFullResyncIfNeeded(Notification notification) {
+		private EditorResynchronizer getSynchronizer(Notification notification) {
 			final int eventType = notification.getEventType();
-			if (eventType == Notification.MOVE //
-					|| eventType == Notification.REMOVE_MANY //
-					|| eventType == Notification.REMOVE) {
-				editor.resync(null, true);
-				return true;
-			}
-			if (eventType == Notification.ADD) {
+			final RodinEditor editor = updater.getEditor();
+			switch (eventType) {
+			case Notification.REMOVE:
+				final Object oldValue = notification.getOldValue();
+				if (oldValue instanceof ILElement) {
+					return new AfterDeletionResynchronizer(editor, null,
+							(ILElement) oldValue);
+				}
+			case Notification.ADD:
 				final Object newValue = notification.getNewValue();
 				if (newValue instanceof ILElement) {
-					editor.resync(null, true, (ILElement) newValue);
-				} else {
-					//FIXME do something more accurate here
-					editor.resync(null, true);
+					return new AfterAdditionResynchronizer(editor, null,
+							(ILElement) newValue);
 				}
-				return true;
+				//$FALL-THROUGH$
+			case Notification.MOVE:
+			case Notification.REMOVE_MANY:
+				return new BasicEditorResynchronizer(editor, null);
 			}
-			return false;
+			return null;
 		}
 
 		private void processNotification(Notification notification) {
 			final Object oldObject = notification.getOldValue();
 			final Object notifier = notification.getNotifier();
+			final RodinEditor editor = updater.getEditor();
+			final DocumentMapper mapper = editor.getDocumentMapper();
 			final boolean wasILElement = !(oldObject instanceof ILElement);
 			if (notifier instanceof ILElement && wasILElement) {
 				mapper.elementChanged((ILElement) notifier);
@@ -125,10 +139,16 @@ public class PresentationUpdater extends EContentAdapter {
 
 	}
 
+	private final RodinEditor editor;
 	private final NotificationProcessor processor;
 
 	public PresentationUpdater(RodinEditor editor, DocumentMapper mapper) {
-		this.processor = new NotificationProcessor(editor, mapper);
+		this.editor = editor;
+		this.processor = new NotificationProcessor(this);
+	}
+
+	public RodinEditor getEditor() {
+		return editor;
 	}
 
 	@Override
@@ -149,6 +169,28 @@ public class PresentationUpdater extends EContentAdapter {
 			return ((ILElement) object).isImplicit();
 		}
 		return false;
+	}
+	
+	/**
+	 * Asynchronously refreshes the editor and both repositions the caret at its
+	 * place if such place is still legal, and restore selection if selection is
+	 * still valid.
+	 */
+	public void resync(final IProgressMonitor monitor) {
+		new BasicEditorResynchronizer(editor, monitor).resynchronize();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
+			final StyledText styledText = editor.getStyledText();
+			if (styledText == null || styledText.isDisposed()) {
+				return;
+			}
+			styledText.setFont(font);
+			resync(null);
+		}
 	}
 
 }

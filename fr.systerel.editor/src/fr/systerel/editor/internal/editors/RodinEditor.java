@@ -10,24 +10,20 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE;
 import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,19 +48,17 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.operations.EditorActionTarget;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
-import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
-public class RodinEditor extends TextEditor implements IPropertyChangeListener {
+public class RodinEditor extends TextEditor {
 
 	public static boolean DEBUG;
 	
@@ -95,9 +89,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	//private ProjectionAnnotationModel projectionAnnotationModel;
 	///** The basic annotations currently carried by the source viewer */
 	//private Annotation[] oldPojectionAnnotations = new Annotation[0];
-	
-	/** The viewer's model of basic annotations (e.g. problem annotations) */
-	 private IAnnotationModel annotationModel;
 
 	/** A controller for selection on the styled text */
 	private SelectionController selController;
@@ -130,12 +121,12 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 //		projectionSupport.install();
 //		viewer.doOperation(ProjectionViewer.TOGGLE);
 //		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
-		annotationModel = viewer.getAnnotationModel();
 		if (markerAnnotationsUpdater == null)
-			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(
-					this, annotationModel);
+			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(this);
 	
 		styledText = viewer.getTextWidget();
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
+		styledText.setFont(font);
 	
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		editorActionTarget = new EditorActionTarget(this);
@@ -155,13 +146,10 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
-	
-		font = JFaceResources.getFont(RODIN_MATH_FONT);
-		JFaceResources.getFontRegistry().addListener(this);
-		styledText.setFont(font);
 		makeWideCaret();
 		
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
+		getDocument().addDocumentListener(markerAnnotationsUpdater);
 	
 		setTitleImageAndPartName();
 		contextMenuSimplifier = ContextMenuSimplifier.startSimplifying(styledText.getMenu());
@@ -238,16 +226,18 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	@Override
 	public void dispose() {
-		historyActionUpdater.finishListening();
+		if (historyActionUpdater!=null) {
+			historyActionUpdater.finishListening();
+		}
 		RodinEditorUtils.flushHistory(this);
 		close(false);
 		if (contextMenuSimplifier != null) {
 			contextMenuSimplifier.finishSimplifying();
 		}
-		if (markerAnnotationsUpdater != null){
-			markerAnnotationsUpdater.dispose();			
+		if (markerAnnotationsUpdater != null) {
+			getDocument().removeDocumentListener(markerAnnotationsUpdater);
+			markerAnnotationsUpdater.dispose();
 		}
-		JFaceResources.getFontRegistry().removeListener(this);
 		documentProvider.unloadResource();
 		deactivateRodinEditorContext();
 		super.dispose();
@@ -517,98 +507,15 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	}
 	
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(RODIN_MATH_FONT)) {
-			font = JFaceResources.getFont(RODIN_MATH_FONT);
-			if (styledText == null || styledText.isDisposed()) {
-				return;
-			}
-			styledText.setFont(font);
-			resync(null, true);
-		}
-	}
-
-	/**
-	 * Refreshes the editor and avoids making the document dirty if the
-	 * parameter <code>silent</code> is <code>true</code>. Indeed, this
-	 * parameter represents the fact that nothing shall have changed (i.e. the
-	 * user can not save it, as it is not supposed to be anything to save,
-	 * typically in case of the "refresh" of the editor). Note: this is
-	 * necessary, as the resynchronisation will make the underlying document
-	 * change, even if there is no change in the rodin database.
-	 */
-	public void resync(final IProgressMonitor monitor, final boolean silent) {
-		resync(monitor, silent, null);
-	}
-	
-	/**
-	 * See comment of resync(monitor, silent) method. Sets the caret at the 
-	 * position of the first editable interval of the given element.
-	 */
-	public void resync(final IProgressMonitor monitor, final boolean silent,
-			final ILElement newElement) {
-		if (styledText != null && !styledText.isDisposed()) {
-			final Display display = styledText.getDisplay();
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (styledText.isDisposed()) {
-						return;
-					}
-					final CaretPositionHelper caretHelper = getHelper(styledText);
-					caretHelper.recordCaretPosition();
-					final int currentOffset = getCurrentOffset();
-					final int topIndex = styledText.getTopIndex();
-					final ILElement[] selection = selController
-							.getSelectedElements();
-					final long start = System.currentTimeMillis();
-					if (DEBUG)
-						System.out.println("\\ Start refreshing Rodin Editor.");
-					documentProvider.synchronizeRoot(monitor, silent);
-					styledText.setTopIndex(topIndex);
-					final int offset;
-					if (newElement != null) {
-						offset = getCaretOffset(currentOffset, newElement);
-					} else {
-						offset = caretHelper.getSafeNewPositionToEnd();
-					}
-					styledText.setCaretOffset(offset);
-					selController.selectItems(selection);
-					if (DEBUG) {
-						System.out
-								.println("\\ Finished refreshing Rodin Editor.");
-						final long time = System.currentTimeMillis() - start;
-						System.out.println("\\ Elapsed time : " + time + "ms.");
-					}
-					markerAnnotationsUpdater.recalculateAnnotations();
-				}
-			});
-		}
-	}
-
-	/**
-	 * Tries to calculate the offset of the first editable field of the given
-	 * element and returns the default offset if it did not succeed.
-	 */
-	private int getCaretOffset(int defaultOffset, ILElement newElement) {
-		if (newElement != null) {
-			final EditorElement edElem = mapper.findEditorElement(newElement);
-			if (edElem == null)
-				return defaultOffset;
-			final int elemFirstOffset = edElem.getOffset();
-			final Interval inter = mapper
-					.findEditableIntervalAfter(elemFirstOffset);
-			return (inter == null) ? defaultOffset : inter.getOffset();
-		}
-		return defaultOffset;
-	}
-	
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
 	}
 
 	public ITextOperationTarget getTextOperationTarget() {
+		return viewer;
+	}
+
+	public SourceViewer getViewer() {
 		return viewer;
 	}
 

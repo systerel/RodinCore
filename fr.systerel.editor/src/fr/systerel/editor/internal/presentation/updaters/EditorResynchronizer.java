@@ -1,0 +1,147 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
+package fr.systerel.editor.internal.presentation.updaters;
+
+import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
+import static fr.systerel.editor.internal.editors.RodinEditor.DEBUG;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Display;
+import org.rodinp.core.emf.api.itf.ILElement;
+
+import fr.systerel.editor.internal.editors.CaretPositionHelper;
+import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.SelectionController;
+
+/**
+ * Abstract class defining the default algorithm to refresh the Rodin editor
+ * main <code>styledText</code>.
+ *
+ * @author Thomas Muller
+ */
+public abstract class EditorResynchronizer {
+
+	private final IProgressMonitor monitor;
+	protected final RodinEditor editor;
+
+	protected EditorSnapshot snapshot;
+
+	public EditorResynchronizer(RodinEditor editor,
+			IProgressMonitor monitor) {
+		this.editor = editor;
+		this.monitor = monitor;
+	}
+
+	/**
+	 * Resynchronizes the editor and reposition selection and caret.
+	 */
+	public void resynchronize() {
+		final StyledText styledText = editor.getStyledText();
+		if (styledText == null || styledText.isDisposed()) {
+			return;
+		}
+		final Display display = styledText.getDisplay();
+		display.asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (styledText.isDisposed()) {
+					return;
+				}
+				final long start = System.currentTimeMillis();
+				if (DEBUG)
+					System.out.println("\\ Start refreshing Rodin Editor.");
+				takeSnapshot();
+				editor.getDocumentProvider().synchronizeRoot(monitor, true);
+				restoreSnapshot();
+				if (DEBUG) {
+					System.out.println("\\ Finished refreshing Rodin Editor.");
+					final long time = System.currentTimeMillis() - start;
+					System.out.println("\\ Elapsed time : " + time + "ms.");
+				}
+			}
+			
+		});
+	}
+
+	/**
+	 * Called before the editor contents are refreshed. Clients may override.
+	 */
+	protected void takeSnapshot() {
+		snapshot = new EditorSnapshot(editor);
+		snapshot.record();
+	}
+
+	/**
+	 * Restores the top index, the selection and caret position. Called after
+	 * the editor contents are refreshed. Clients may override.
+	 */
+	protected void restoreSnapshot() {
+		final StyledText styledText = editor.getStyledText();
+		styledText.setTopIndex(snapshot.getTopIndex());
+		final SelectionController selCtrlr = editor.getSelectionController();
+		selCtrlr.selectItems(snapshot.getSelectedItems());
+		repositionCaret(styledText);
+	}
+
+	/**
+	 * Places the caret at the best logical position after the editor contents
+	 * have been refreshed.
+	 *
+	 * @param styledText
+	 *            the main editor <code>styledText</code> after it has been
+	 *            refreshed
+	 */
+	protected abstract void repositionCaret(final StyledText styledText);
+
+	/**
+	 * A snapshot of the current editor state in terms of caret position,
+	 * topIndex value, and selected items.
+	 */
+	protected static class EditorSnapshot {
+
+		private final RodinEditor editor;
+		private final CaretPositionHelper caretHelper;
+
+		private int topIndex;
+		private ILElement[] selection;
+
+		public EditorSnapshot(RodinEditor editor) {
+			this.editor = editor;
+			this.caretHelper = getHelper(editor.getStyledText());
+		}
+
+		public void record() {
+			caretHelper.recordCaretPosition();
+			topIndex = editor.getStyledText().getTopIndex();
+			selection = editor.getSelectionController().getSelectedElements();
+		}
+
+		public int getTopIndex() {
+			return topIndex;
+		}
+
+		public int getCaretOffset() {
+			return caretHelper.getSafeNewPositionToEnd();
+		}
+
+		public ILElement[] getSelectedItems() {
+			return selection;
+		}
+		
+		public int getSafeLineOffset(int lineIndex) {
+			return caretHelper.getSafeLineOffset(lineIndex);
+		}
+
+	}
+
+}

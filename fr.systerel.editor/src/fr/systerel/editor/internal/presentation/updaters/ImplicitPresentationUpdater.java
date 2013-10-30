@@ -14,8 +14,6 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.rodinp.core.emf.api.itf.ILFile;
 
-import fr.systerel.editor.internal.editors.RodinEditor;
-
 /**
  * An adapter to update the presentation when the implicit children are
  * recalculated after the user "saves" a model. It iterates on all opened
@@ -25,17 +23,18 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  */
 public class ImplicitPresentationUpdater extends AdapterImpl {
 
-	private final RodinEditor editor;
+	private final PresentationUpdater updater;
+	private ILFile root;
 
-	public ImplicitPresentationUpdater(RodinEditor editor) {
-		this.editor = editor;
+	public ImplicitPresentationUpdater(ILFile root, PresentationUpdater updater) {
+		this.root = root;
+		this.updater = updater;
 	}
 
 	@Override
 	public void notifyChanged(Notification notification) {
-		final ILFile root = editor.getResource();
 		if (this.target != null && this.target.equals(root)) {
-			editor.resync(null, true);
+			updater.resync(null);
 		}
 	}
 }

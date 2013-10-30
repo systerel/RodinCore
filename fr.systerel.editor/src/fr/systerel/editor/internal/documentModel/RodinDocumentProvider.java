@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -51,10 +52,10 @@ import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
  */
 public class RodinDocumentProvider extends AbstractDocumentProvider {
 
-	protected final DocumentMapper documentMapper;
-	private final PresentationUpdater elementPresentationChangeAdapter;
-	private final ImplicitPresentationUpdater implicitPresentationUpdater;
 	private final RodinEditor editor;
+	private final DocumentMapper documentMapper;
+	private PresentationUpdater mainUpdater;
+	private ImplicitPresentationUpdater implicitUpdater;
 	
 	private IDocument document;
 	private ILElement inputRoot;
@@ -69,8 +70,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
 		this.editor = editor;
-		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
-		implicitPresentationUpdater = new ImplicitPresentationUpdater(editor);
 	}
 
 	@Override
@@ -92,8 +91,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		resource.addAdapter(implicitPresentationUpdater);
-		resource.addEContentAdapter(elementPresentationChangeAdapter);
 		return resource;
 	}
 	
@@ -112,7 +109,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			final IFile file = (IFile) ((IEditorInput) element)
 					.getAdapter(IFile.class);
 			editorInput = (IEditorInput) element;
-
 			inputResource = (ILFile) getResource(file);
 			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
@@ -238,6 +234,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	public void unloadResource() {
 		if (info != null)
 			RodinCore.removeElementChangedListener(info);
+		if (mainUpdater != null) {
+			JFaceResources.getFontRegistry().removeListener(mainUpdater);
+		}
 		inputResource.unloadResource();
 	}
 
@@ -256,7 +255,18 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		RodinCore.addElementChangedListener(info);
 		return info;
 	}
+	
+	protected void connected() {
+		addUpdaters();
+	}
 
+	private void addUpdaters() {
+		mainUpdater = new PresentationUpdater(editor, documentMapper);
+		implicitUpdater = new ImplicitPresentationUpdater(resource, mainUpdater);
+		resource.addEContentAdapter(mainUpdater);
+		resource.addAdapter(implicitUpdater);
+		JFaceResources.getFontRegistry().addListener(mainUpdater);
+	}
 	
 	/**
 	 * The ElementInfo class contains a flag <code>fCanBeSaved</code> indicating
