@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -728,7 +729,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 
 	@Override
 	public void historyNotification(OperationHistoryEvent event) {
-		if (event.getOperation().hasContext(undoManager.getUndoContext())) {
+		final IUndoContext undoContext = undoManager.getUndoContext();
+		if (undoContext != null && event.getOperation().hasContext(undoContext)) {
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.REDONE:
 			case OperationHistoryEvent.UNDONE:
