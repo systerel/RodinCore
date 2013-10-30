@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package fr.systerel.editor.internal.handlers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.custom.ST;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
@@ -56,14 +54,6 @@ public class SelectUpHandler extends AbstractSelectHandler {
 			return elem1.equals(elem2);
 		}
 		return parent1.equals(parent2);
-	}
-
-	@Override
-	protected void handleOverlayAction(RodinEditor editor) {
-		final IAction action = editor.getOverlayEditorAction(ST.SELECT_LINE_UP);
-		if (action != null) {
-			action.run();
-		}		
 	}
 
 }

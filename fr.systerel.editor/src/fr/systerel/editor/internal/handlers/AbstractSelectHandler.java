@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,6 @@ public abstract class AbstractSelectHandler extends AbstractEditionHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		if (editor.isOverlayActive()) {
-			handleOverlayAction(editor);
-			return "";
-		}
 		final SelectionController selController = editor
 				.getSelectionController();
 		final ILElement element = selController.getSelectionAt(offset);
@@ -58,7 +54,5 @@ public abstract class AbstractSelectHandler extends AbstractEditionHandler {
 
 	protected abstract ILElement getSibling(RodinEditor rEditor,
 			ILElement element);
-	
-	protected abstract void handleOverlayAction(RodinEditor editor);
 
 }

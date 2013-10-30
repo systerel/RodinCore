@@ -699,13 +699,6 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		editActions.put(ST.SELECT_LINE_DOWN, action);
 		
 	}
-	
-	public IAction getOverlayAction(int actionConstant) {
-		final IAction action = ctxMenuEditActions.get(actionConstant);
-		if (action != null)
-			return action;
-		return editActions.get(actionConstant);
-	}
 
 	private void setEventBTranslation(Interval interval) {
 		// TODO use attribute type

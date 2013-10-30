@@ -428,11 +428,6 @@ public class RodinEditor extends TextEditor {
 	public IEventBRoot getInputRoot() {
 		return documentProvider.getInputRoot();
 	}
-	
-	/** Returns the registered action or <code>null</code> if not found */
-	public IAction getOverlayEditorAction(int actionConstant) {
-		return overlayEditor.getOverlayAction(actionConstant);
-	}
 
 	public ILFile getResource() {
 		return documentProvider.getResource();
