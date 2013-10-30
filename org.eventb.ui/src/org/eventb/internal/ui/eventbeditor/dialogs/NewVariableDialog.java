@@ -137,7 +137,7 @@ public class NewVariableDialog extends EventBDialog {
 		createLabel(getBody(), "Identifier");
 		identifierText = createBText(getBody(), EMPTY, 200, true, 3);
 		final IVariable variable = root.getInternalElement(
-				IVariable.ELEMENT_TYPE, "tmp");
+				IVariable.ELEMENT_TYPE, DEFAULT_NAME);
 		addProposalAdapter(variable, LABEL_ATTRIBUTE, identifierText);
 
 		createLabel(getBody(), "Initialisation");
