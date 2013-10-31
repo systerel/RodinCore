@@ -24,7 +24,8 @@ public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
-		return editor.getSelectionController().getSelectedElements().length > 0
+		return super.isEnabled(editor, caretOffset)
+				&& editor.getSelectionController().getSelectedElements().length > 0
 				&& !isReadOnlyElementSelected(editor);
 	}
 	

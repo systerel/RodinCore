@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.handlers;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
+import org.eventb.core.IEventBRoot;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
@@ -80,13 +81,19 @@ public class PasteHandler extends AbstractEditionHandler {
 	}
 
 	@Override
-	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
-		return isPastePossible(editor, caretOffset);
+	public boolean isEnabled() {
+		return isPastePossible();
 	}
 
-	public static boolean isPastePossible(RodinEditor editor, int caretOffset) {
+	public static boolean isPastePossible() {
+		final RodinEditor editor = getActiveRodinEditor();
+		if (editor == null)
+			return false;
+		final IEventBRoot inputRoot = editor.getInputRoot();
+		if (inputRoot == null || !inputRoot.exists())
+			return false;
 		final EditorElement target = editor.getDocumentMapper()
-				.findEditorElementAt(caretOffset);
+				.findEditorElementAt(editor.getCurrentOffset());
 		if (target == null) {
 			return false;
 		}

@@ -91,7 +91,7 @@ public class EditorActionTarget implements ITextOperationTarget {
 	}
 
 	private boolean isPastePossible() {
-		return PasteHandler.isPastePossible(editor, editor.getCurrentOffset());
+		return PasteHandler.isPastePossible();
 	}
 
 	private boolean isSomeElementSelected() {

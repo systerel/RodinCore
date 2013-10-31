@@ -15,6 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eventb.core.IEventBRoot;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
@@ -25,12 +26,20 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	@Override
 	public boolean isEnabled() {
 		final RodinEditor editor = getActiveRodinEditor();
-		return editor != null && isEnabled(editor, editor.getCurrentOffset());
+		if (editor == null)
+			return false;
+		final IEventBRoot inputRoot = editor.getInputRoot();
+		if (inputRoot == null || !inputRoot.exists()) {
+			return false;
+		}
+		return isEnabled(editor, editor.getCurrentOffset());
 	}
 
 	/**
-	 * Implementors should perform enablement checkings using the given
-	 * RodinEditor. Default implementation returns <code>true</code>.
+	 * Implementors may extend this method to perform enablement checkings using
+	 * the given RodinEditor.<br />
+	 * Default implementation returns <code>true</code> if the overlay editor is
+	 * not active.
 	 * 
 	 * @param editor
 	 *            the current Rodin Editor

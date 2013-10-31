@@ -25,11 +25,6 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * Abstract class for the editor handlers such as add, remove, copy, etc.
  */
 public abstract class AbstractEditionHandler extends AbstractEditorHandler {
-
-	@Override
-	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
-		return !editor.isOverlayActive();
-	}
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
