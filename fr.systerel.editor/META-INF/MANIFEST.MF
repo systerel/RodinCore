@@ -24,4 +24,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: fr.systerel.editor.internal.documentModel;x-friends:="fr.systerel.editor.tests",
- fr.systerel.editor.internal.editors;x-friends:="fr.systerel.editor.tests"
+ fr.systerel.editor.internal.editors;x-friends:="fr.systerel.editor.tests",
+ fr.systerel.editor.internal.presentation.updaters

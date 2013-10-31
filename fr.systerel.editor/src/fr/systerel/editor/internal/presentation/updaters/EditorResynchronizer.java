@@ -49,28 +49,53 @@ public abstract class EditorResynchronizer {
 		if (styledText == null || styledText.isDisposed()) {
 			return;
 		}
+		Runnable runnable = new SynchronizationRunnable(this, editor, monitor); 
 		final Display display = styledText.getDisplay();
-		display.asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				if (styledText.isDisposed()) {
-					return;
-				}
-				final long start = System.currentTimeMillis();
-				if (DEBUG)
-					System.out.println("\\ Start refreshing Rodin Editor.");
-				takeSnapshot();
-				editor.getDocumentProvider().synchronizeRoot(monitor, true);
-				restoreSnapshot();
-				if (DEBUG) {
-					System.out.println("\\ Finished refreshing Rodin Editor.");
-					final long time = System.currentTimeMillis() - start;
-					System.out.println("\\ Elapsed time : " + time + "ms.");
-				}
+		display.asyncExec(runnable);
+	}
+	
+	/**
+	 * For testing purpose only. Perform re-synchronization synchronously in UI.
+	 */
+	public void resynchronizeForTests() {
+		final StyledText styledText = editor.getStyledText();
+		final Display display = styledText.getDisplay();
+		Runnable runnable = new SynchronizationRunnable(this, editor, monitor);
+		display.syncExec(runnable);
+	}
+
+	private static class SynchronizationRunnable implements Runnable {
+
+		private final EditorResynchronizer owner;
+		private final IProgressMonitor monitor;
+		private final RodinEditor editor;
+
+		public SynchronizationRunnable(EditorResynchronizer owner,
+				RodinEditor editor, IProgressMonitor monitor) {
+			this.owner = owner;
+			this.editor = editor;
+			this.monitor = monitor;
+		}
+
+		@Override
+		public void run() {
+			final StyledText styledText = editor.getStyledText();
+			if (styledText.isDisposed()) {
+				return;
 			}
-			
-		});
+			final long start = System.currentTimeMillis();
+			if (DEBUG)
+				System.out.println("\\ Start refreshing Rodin Editor.");
+			owner.takeSnapshot();
+			editor.getDocumentProvider().synchronizeRoot(monitor, true);
+			owner.restoreSnapshot();
+			if (DEBUG) {
+				System.out.println("\\ Finished refreshing Rodin Editor.");
+				final long time = System.currentTimeMillis() - start;
+				System.out.println("\\ Elapsed time : " + time + "ms.");
+			}
+		}
+
 	}
 
 	/**

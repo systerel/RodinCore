@@ -10,7 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.tests.commandTests;
 
-import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_PASTE;
+import static fr.systerel.editor.tests.TestUtils.WORKBENCH;
+import static fr.systerel.editor.tests.TestUtils.openRodinEditor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,15 +30,8 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
@@ -50,8 +44,6 @@ import fr.systerel.editor.internal.editors.SelectionController;
  * An helper class dedicated to perform operations in the Rodin Editor.
  */
 public class OperationTestHelper {
-
-	private static final IWorkbench WORKBENCH = PlatformUI.getWorkbench();
 
 	private final RodinEditor rodinEditor;
 	private final ILElement root;
@@ -113,12 +105,6 @@ public class OperationTestHelper {
 		return root;
 	}
 
-	public IEditorPart openRodinEditor(IFile input) throws PartInitException {
-		final IWorkbenchWindow ww = WORKBENCH.getActiveWorkbenchWindow();
-		final IWorkbenchPage activePage = ww.getActivePage();
-		return IDE.openEditor(activePage, input);
-	}
-
 	public void executeOperation(String commandId) throws Exception {
 		final ICommandService service = (ICommandService) WORKBENCH
 				.getService(ICommandService.class);
@@ -131,9 +117,8 @@ public class OperationTestHelper {
 		command.addExecutionListener(commandSync);
 		command.executeWithChecks(new ExecutionEvent(command,
 				Collections.EMPTY_MAP, null, context));
-		final IExecutionListener synchronizer = getSynchronizer(EDIT_PASTE);
-		synchronized (synchronizer) {
-			synchronizer.wait(500);
+		synchronized (commandSync) {
+			commandSync.wait(500);
 		}
 	}
 

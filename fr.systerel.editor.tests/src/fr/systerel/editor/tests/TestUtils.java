@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.tests.commandTests;
+package fr.systerel.editor.tests;
 
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 
@@ -27,6 +27,13 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -38,6 +45,8 @@ public class TestUtils {
 
 	private static final String PLUGIN_ID = "fr.systerel.editor.tests";
 
+	public static final IWorkbench WORKBENCH = PlatformUI.getWorkbench();
+	
 	private static final IWorkspaceRoot WS_ROOT = getWorkspace().getRoot();
 
 	private static final String TEST_FOLDER_NAME = "test-files";
@@ -64,6 +73,22 @@ public class TestUtils {
 			}
 		};
 		getWorkspace().run(create, null);
+		return project;
+	}
+	
+	/*
+	 * Remove simple project.
+	 */
+	public static IProject deleteProject(final String projectName)
+			throws CoreException {
+		final IProject project = WS_ROOT.getProject(projectName);
+		final IWorkspaceRunnable remove = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				project.close(null);
+				project.delete(true, null);
+			}
+		};
+		getWorkspace().run(remove, null);
 		return project;
 	}
 
@@ -93,6 +118,12 @@ public class TestUtils {
 
 	public static String getFilePathString(final String fileName) {
 		return TEST_FOLDER_NAME + "/" + fileName;
+	}
+
+	public static IEditorPart openRodinEditor(IFile input) throws PartInitException {
+		final IWorkbenchWindow ww = WORKBENCH.getActiveWorkbenchWindow();
+		final IWorkbenchPage activePage = ww.getActivePage();
+		return IDE.openEditor(activePage, input);
 	}
 
 }

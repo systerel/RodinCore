@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.tests.commandTests;
 
-import static fr.systerel.editor.tests.commandTests.TestUtils.copyTestFileInProject;
+import static fr.systerel.editor.tests.TestUtils.copyTestFileInProject;
 import static junit.framework.Assert.assertEquals;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_COPY;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_CUT;
@@ -26,12 +26,14 @@ import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +43,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.OverlayEditor;
+import fr.systerel.editor.tests.TestUtils;
 
 /**
  * Tests which verify the enablement of redirected text operation actions such
@@ -76,6 +79,11 @@ public class OperationEnablementTests {
 	public void tearDown() throws Exception {
 		helper.closeRodinEditor();
 		helper.clearClipboard();
+	}
+	
+	@AfterClass
+	public static void afterClass() throws CoreException {
+		TestUtils.deleteProject("P");
 	}
 
 	/**
