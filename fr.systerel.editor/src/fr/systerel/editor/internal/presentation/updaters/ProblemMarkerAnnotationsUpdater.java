@@ -217,7 +217,7 @@ public class ProblemMarkerAnnotationsUpdater implements IDocumentListener {
 		annotationModel = editor.getViewer().getAnnotationModel();
 		removeMarkerAnnotations();
 		final IInternalElement inputRoot = editor.getInputRoot();
-		if (!(inputRoot instanceof IEventBRoot)) {
+		if (!(inputRoot instanceof IEventBRoot) || !inputRoot.exists()) {
 			return;
 		}
 		final IResource file = ((IEventBRoot) inputRoot).getResource();
