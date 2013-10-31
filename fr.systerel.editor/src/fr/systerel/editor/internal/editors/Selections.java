@@ -163,14 +163,17 @@ public class Selections {
 		}
 
 		public ILElement[] getElements() {
-			final ILElement[] result = new ILElement[selected.size()];
-			for (int i = 0; i < selected.size(); i++) {
-				final SimpleSelection sel = selected.get(i);
-				result[i] = sel.element;
+			final List<ILElement> result = new ArrayList<ILElement>(
+					selected.size());
+			for (SimpleSelection sel : selected) {
+				final ILElement element = sel.element;
+				if (element != null && element.getElement().exists()) {
+					result.add(element);
+				}
 			}
-			return result;
+			return result.toArray(new ILElement[result.size()]);
 		}
-		
+
 		public void toggle(ILElement element, EditPos position) {
 			int index = indexOf(element);
 			if (index < 0) {
