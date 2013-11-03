@@ -257,6 +257,10 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 		assertSame("wrong tree", tree, root.getProofTree());
 		assertNull("Root node has a parent", root.getParent());
 
+		// Tree and root node share the same factory.
+		assertSame("Wrong tree factory", root.getFormulaFactory(),
+				tree.getFormulaFactory());
+
 		// Tree and root node share the same sequent.
 		assertSame("Wrong tree sequent", sequent, tree.getSequent());
 		assertSame("Wrong tree sequent", root.getSequent(), tree.getSequent());

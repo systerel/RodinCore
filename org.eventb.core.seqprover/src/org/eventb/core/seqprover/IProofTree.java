@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
+import org.eventb.core.ast.FormulaFactory;
 
 /**
  * Common protocol for a proof tree of the sequent prover.
@@ -19,6 +20,9 @@ package org.eventb.core.seqprover;
  * </p>
  * <p>
  * A proof tree is closed if, and only if, its root node is closed.
+ * </p>
+ * <p>
+ * All Event-B formulas of a proof tree are built with the same formula factory.
  * </p>
  * <p>
  * The proof tree implements the observer design pattern and clients can
@@ -37,6 +41,17 @@ package org.eventb.core.seqprover;
  * @since 1.0
  */
 public interface IProofTree {
+
+	/**
+	 * Returns the language of this proof tree in the form of a formula factory.
+	 * <p>
+	 * This is a shortcut for <code>getRoot().getFormulaFactory()</code>.
+	 * </p>
+	 * 
+	 * @return the formula factory of this proof tree
+	 * @since 3.0
+	 */
+	FormulaFactory getFormulaFactory();
 
 	/**
 	 * Returns the sequent that this proof tree attempts to prove.

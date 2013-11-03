@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
@@ -82,6 +83,11 @@ public final class ProofTree implements IProofTree {
 		return root;
 	}
 
+	@Override
+	public FormulaFactory getFormulaFactory() {
+		return getRoot().getFormulaFactory();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTree#getSequent()
 	 */
@@ -138,7 +144,7 @@ public final class ProofTree implements IProofTree {
 	 * @see org.eventb.core.prover.IProofTree#getProofDependencies()
 	 */
 	public IProofDependencies getProofDependencies() {
-		return getRoot().computeProofDeps().finished(root.getFormulaFactory());
+		return getRoot().computeProofDeps().finished(getFormulaFactory());
 	}
 	
 	public String toString(){
