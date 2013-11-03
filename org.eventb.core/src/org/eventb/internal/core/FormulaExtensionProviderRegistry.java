@@ -75,8 +75,9 @@ public class FormulaExtensionProviderRegistry {
 
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
 			IEventBRoot root) {
-		if (provider == null)
+		if (provider == null) {
 			return Collections.emptySet();
+		}
 		return provider.getFormulaExtensions(root);
 	}
 
