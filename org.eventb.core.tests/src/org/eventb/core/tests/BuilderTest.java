@@ -56,6 +56,7 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.preferences.TacticsProfilesCache;
 import org.junit.After;
@@ -350,6 +351,7 @@ public abstract class BuilderTest {
 	public void cleanupWorkspaceAndProofAttempts() throws Exception {
 		cleanupWorkspace();
 		deleteAllProofAttempts();
+		PrimeFormulaExtensionProvider.clear();
 	}
 
 	/**

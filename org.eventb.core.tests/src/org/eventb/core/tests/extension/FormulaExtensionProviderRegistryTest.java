@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collections;
-import java.util.Set;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
+import static org.junit.Assert.assertSame;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tests.EventBTest;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,30 +25,31 @@ import org.junit.Test;
  */
 public class FormulaExtensionProviderRegistryTest extends EventBTest {
 
-	private IContextRoot contextRoot;
-
-	@Before
-	public void createContextRoot() throws Exception {
-		contextRoot = createContext("ctx");
+	/**
+	 * Ensures that the factory associated to an Event-B root which is not
+	 * registered is the regular one.
+	 */
+	@Test
+	public void normalFactory() throws Exception {
+		final IContextRoot root = createContext("ctx");
+		assertFormulaFactory(root, FormulaFactory.getDefault());
 	}
 
 	/**
-	 * Tests that a 'Prime' extension is added to the existing default
-	 * extensions of the factory through the formula extension provider
-	 * mechanism. This test aims to show that the mechanism of extension
-	 * providers works. The extension 'Prime' is static so it is possible to
-	 * compare instances.
+	 * Ensures that the factory associated to an Event-B root can contain some
+	 * extensions.
 	 */
 	@Test
-	public void testFormulaFactoriesEquals() {
-		final Set<IFormulaExtension> expected = Collections.singleton(Prime
-				.getPrime());
+	public void specializedFactory() throws Exception {
+		final IContextRoot root = createContext("ctx");
+		PrimeFormulaExtensionProvider.add(root);
+		assertFormulaFactory(root, EXT_FACTORY);
+	}
 
-		final FormulaFactory factory1 = FormulaExtensionProviderRegistry
-				.getExtensionProviderRegistry().getFormulaFactory(contextRoot);
-		final Set<IFormulaExtension> actual = factory1.getExtensions();
-		
-		assertEquals("wrong extensions", expected, actual);
+	private void assertFormulaFactory(IContextRoot root, FormulaFactory expected) {
+		final FormulaExtensionProviderRegistry registry = getExtensionProviderRegistry();
+		final FormulaFactory actual = registry.getFormulaFactory(root);
+		assertSame(expected, actual);
 	}
 
 }
