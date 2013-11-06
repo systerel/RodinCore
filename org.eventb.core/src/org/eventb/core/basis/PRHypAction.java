@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add implementation for IForwardAndHideHypAction
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -16,10 +17,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.rodinp.core.IInternalElementType;
@@ -58,13 +61,22 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		if (actionType.startsWith(ISelectionHypAction.SHOW_ACTION_TYPE))
 			return ProverFactory.makeShowHypAction(getHyps(store));
 
+		final FormulaFactory factory = store.getFormulaFactory();
 		if (actionType.startsWith(IForwardInfHypAction.ACTION_TYPE)){
 			Collection<Predicate> hyps = getHyps(store);
-			FreeIdentifier[] addedFreeIdents = getFreeIdents(store.getFormulaFactory());
+			FreeIdentifier[] addedFreeIdents = getFreeIdents(factory);
 			Collection<Predicate> infHyps = getInfHyps(store);
 			return ProverFactory.makeForwardInfHypAction(hyps,addedFreeIdents, infHyps);
 		}
-		
+		if (actionType.startsWith(IRewriteHypAction.ACTION_TYPE)) {
+			final Collection<Predicate> hyps = getHyps(store);
+			final Collection<Predicate> toHide = getHiddenHyps(store);
+			hyps.addAll(toHide);
+			final FreeIdentifier[] addedFreeIdents = getFreeIdents(factory);
+			final Collection<Predicate> infHyps = getInfHyps(store);
+			return ProverFactory.makeRewriteHypAction(hyps, addedFreeIdents,
+					infHyps, toHide);
+		}
 		return null;
 	}
 
@@ -83,8 +95,17 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 			setHyps(forwardInf.getHyps(), store, monitor);
 			setFreeIdents(forwardInf.getAddedFreeIdents(), monitor);
 			setInfHyps(forwardInf.getInferredHyps(), store, monitor);
+		} else if (actionType.equals(IRewriteHypAction.ACTION_TYPE)) {
+			final IRewriteHypAction rewrite = ((IRewriteHypAction) a);
+			final Collection<Predicate> hiddenHyps = rewrite
+					.getDisappearingHyps();
+			setHiddenHyps(hiddenHyps, store, monitor);
+			setFreeIdents(rewrite.getAddedFreeIdents(), monitor);
+			setInfHyps(rewrite.getInferredHyps(), store, monitor);
+			final Collection<Predicate> hyps = rewrite.getHyps();
+			hyps.removeAll(hiddenHyps);
+			setHyps(hyps, store, monitor);
 		}
 	}
-
 
 }

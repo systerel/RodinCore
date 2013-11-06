@@ -30,7 +30,7 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 
 	// Internal field to enforce that only forward inferences that were not skipped 
 	// while building a proof are used to process proof dependencies.
-	private boolean skipped = true;
+	protected boolean skipped = true;
 	
 
 	public ForwardInfHypAction(final Collection<Predicate> hyps, final FreeIdentifier[] addedIdents, final Collection<Predicate> inferredHyps) {

@@ -126,7 +126,13 @@ public final class EventBAttributes {
 	 */
 	public static IAttributeType.String UNSEL_HYPS_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prUnsel");
-	
+
+	/**
+	 * @since 3.0
+	 */
+	public static final IAttributeType.String HIDDEN_HYPS_ATTRIBUTE =
+			RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prHidden");
+
 	public static IAttributeType.String INF_HYPS_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prInfHyps");
 	

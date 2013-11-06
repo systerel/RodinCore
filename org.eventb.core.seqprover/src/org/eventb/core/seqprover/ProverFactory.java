@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.RewriteHypAction;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 import org.eventb.internal.core.seqprover.ProofRule;
 import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
@@ -737,6 +739,57 @@ public final class ProverFactory {
 	 */
 	public static IForwardInfHypAction makeForwardInfHypAction(Collection<Predicate> hyps, Collection<Predicate> inferredHyps){
 		return new ForwardInfHypAction(hyps,NO_FREE_IDENTS,inferredHyps);
+	}
+
+	/**
+	 * Returns a new rewrite hypothesis action (i.e. a forward inference
+	 * followed by a hide action).
+	 *
+	 * @param neededHyps
+	 *            the hypotheses required by the forward inference (should not
+	 *            be <code>null</code>)
+	 * @param addedFreeIdents
+	 *            fresh free identifiers added by the forward inference (should
+	 *            not be <code>null</code>)
+	 * @param inferredHyps
+	 *            the inferred hypotheses (should not be <code>null</code>)
+	 * @param disappearingHyps
+	 *            the hypotheses which disappear from the sequent. Disappearing
+	 *            hypotheses are a subset of the needed hypotheses
+	 * @return a new rewrite hypothesis action which will perform a forward
+	 *         inference followed by a hide action
+	 * @since 3.0
+	 */
+	public static IRewriteHypAction makeRewriteHypAction(
+			Collection<Predicate> neededHyps, FreeIdentifier[] addedFreeIdents,
+			Collection<Predicate> inferredHyps,
+			Collection<Predicate> disappearingHyps) {
+		return new RewriteHypAction(neededHyps, addedFreeIdents, inferredHyps,
+				disappearingHyps);
+	}
+
+	/**
+	 * Returns a new rewrite hypothesis action (i.e. a forward inference
+	 * followed by a hide action).
+	 *
+	 * @param neededHyps
+	 *            the hypotheses required by the forward inference (should not
+	 *            be <code>null</code>)
+	 * @param inferredHyps
+	 *            the inferred hypotheses (should not be <code>null</code>)
+	 * @param disappearingHyps
+	 *            the hypotheses which disappear from the sequent. Disappearing
+	 *            hypotheses are a subset of the needed hypotheses
+	 * @return a new rewrite hypothesis action which will perform a forward
+	 *         inference followed by a hide action
+	 * @since 3.0
+	 */
+	public static IRewriteHypAction makeRewriteHypAction(
+			Collection<Predicate> neededHyps,
+			Collection<Predicate> inferredHyps,
+			Collection<Predicate> disappearingHyps) {
+		return makeRewriteHypAction(neededHyps, NO_FREE_IDENTS, inferredHyps,
+				disappearingHyps);
 	}
 
 	/**

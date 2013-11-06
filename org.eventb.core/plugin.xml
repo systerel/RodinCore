@@ -466,6 +466,11 @@
             name="%eventBprUnsel">
       </attributeType>
       <attributeType
+            id="prHidden"
+            kind="string"
+            name="%eventBprHidden">
+      </attributeType>
+      <attributeType
             id="prInfHyps"
             kind="string"
             name="%eventBprInfHyps"/>
@@ -2172,6 +2177,9 @@
          </attributeType>
          <attributeType
                typeId="org.eventb.core.prInfHyps">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.core.prHidden">
          </attributeType>
          <childType
                typeId="org.eventb.core.prIdent">

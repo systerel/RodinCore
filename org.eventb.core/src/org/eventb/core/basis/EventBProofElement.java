@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,14 @@
  *     Systerel - added unselected hyps attribute
  *     Systerel - used nested classes instead of anonymous ones
  *     Systerel - collected used reasoners and moved them to proof root
+ *     Systerel - added hidden hyps attribute
  *******************************************************************************/
 package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.GOAL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.HIDDEN_HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.INF_HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
@@ -250,7 +252,26 @@ public abstract class EventBProofElement extends InternalElement implements
 		String sepRefs = getAttributeValue(UNSEL_HYPS_ATTRIBUTE);
 		return deserializeCSV(sepRefs, store);
 	}
-	
+
+	/**
+	 * @since 3.0
+	 */
+	public void setHiddenHyps(Collection<Predicate> hyps,
+			IProofStoreCollector store, IProgressMonitor monitor)
+			throws RodinDBException {
+		String refs = serializeCSV(hyps, store);
+		setAttributeValue(HIDDEN_HYPS_ATTRIBUTE, refs, monitor);
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	public Set<Predicate> getHiddenHyps(IProofStoreReader store)
+			throws RodinDBException {
+		String sepRefs = getAttributeValue(HIDDEN_HYPS_ATTRIBUTE);
+		return deserializeCSV(sepRefs, store);
+	}
+
 	public void setInfHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		String refs = serializeCSV(hyps, store);
 		setAttributeValue(INF_HYPS_ATTRIBUTE, refs, monitor);

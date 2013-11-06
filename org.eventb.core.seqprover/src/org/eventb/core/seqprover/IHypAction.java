@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add IRewriteHypAction
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -178,6 +179,42 @@ public interface IHypAction {
 		 */
 		Collection<Predicate> getInferredHyps();
 	
+	}
+	
+	/**
+	 * Interface implemented by hypothesis actions that perform forward
+	 * inference on some sequent hypotheses, and then hide some of them. Such
+	 * action can be seen as a rewrite action.
+	 *
+	 * @see IHypAction
+	 * @since 3.0
+	 */
+	public interface IRewriteHypAction extends IForwardInfHypAction {
+
+		/**
+		 * The only legal action type for rewrite hypothesis actions.
+		 */
+		String ACTION_TYPE = "REWRITE";
+
+		/**
+		 * Returns the set of hypotheses hidden by this action.
+		 *
+		 * <p>
+		 * In case the forward inference part of this action can be performed on
+		 * a sequent, these hypotheses will disappear from the resulting sequent
+		 * (i.e. they are hidden by this action). The exact description of what
+		 * is performed can be found in the documentation of
+		 * {@link IInternalProverSequent}.
+		 * </p>
+		 * These hypotheses are not serialized in the action hypothesis
+		 * attribute. Thus, disappearing hypotheses shall be added needed
+		 * hypotheses when creating an instance of {@link IRewriteHypAction}
+		 * from a serialized proof.
+		 *
+		 * @return the set of hypotheses which are hidden by this action
+		 */
+		Collection<Predicate> getDisappearingHyps();
+
 	}
 
 	/**

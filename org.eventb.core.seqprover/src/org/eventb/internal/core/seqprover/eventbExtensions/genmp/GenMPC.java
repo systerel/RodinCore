@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
@@ -43,7 +44,6 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP.Level;
 
 /**
@@ -326,9 +326,8 @@ public class GenMPC {
 		}
 		if (rewrittenHyp != hyp) {
 			sourceHyps.add(hyp);
-			hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
-					singleton(rewrittenHyp)));
-			hypActions.add(ProverFactory.makeHideHypAction(singleton(hyp)));
+			hypActions.add(makeRewriteHypAction(sourceHyps,
+					singleton(rewrittenHyp), singleton(hyp)));
 		}
 	}
 

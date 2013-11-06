@@ -21,6 +21,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
@@ -78,6 +79,19 @@ public class HypActionTests {
 		s1.clear();
 		assertEquals(1, action.getHyps().size());
 		assertEquals(p1, action.getHyps().iterator().next());
+	}
+
+	@Test
+	public void testRewriteHypActionField() {
+		final Predicate p1 = TestLib.genPred("1=1");
+		final Predicate p2 = TestLib.genPred("2=2");
+		final List<Predicate> s1 = getPredList(p1);
+		final List<Predicate> s2 = getPredList(p2);
+		final IRewriteHypAction action = ProverFactory.makeRewriteHypAction(s1,
+				s1, s2);
+		action.getDisappearingHyps().clear();
+		assertEquals(1, s2.size());
+		assertEquals(s2.get(0).toString(), "2=2");
 	}
 
 	private static List<Predicate> getPredList(Predicate... predicates) {
