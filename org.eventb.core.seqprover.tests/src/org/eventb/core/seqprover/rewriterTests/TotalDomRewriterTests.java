@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 ETH Zurich and others.
+ * Copyright (c) 2009, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +81,8 @@ public class TotalDomRewriterTests {
 	}
 
 	private static <T> void assertSingleton(T expectedSingle, Collection<T> coll) {
-		assertEquals(Collections.singleton(expectedSingle), coll);
+		assertEquals(1, coll.size());
+		assertTrue(coll.contains(expectedSingle));
 	}
 
 	private static void assertSubstitutions(IProverSequent sequent,
