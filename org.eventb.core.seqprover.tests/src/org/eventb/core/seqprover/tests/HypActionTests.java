@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 ETH Zurich and others.
+ * Copyright (c) 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static java.util.Collections.emptyList;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
+import org.eventb.internal.core.seqprover.RewriteHypAction;
 import org.eventb.internal.core.seqprover.SelectionHypAction;
 import org.junit.Test;
 
@@ -42,8 +46,8 @@ public class HypActionTests {
 	 */
 	@Test
 	public void testFwdInfHypActionField() {
-		final Predicate p1 = TestLib.genPred("1=1");
-		final Predicate p2 = TestLib.genPred("2=2");
+		final Predicate p1 = genPred("1=1");
+		final Predicate p2 = genPred("2=2");
 		final FreeIdentifier x = factory.makeFreeIdentifier("x", null);
 
 		final List<Predicate> s1 = getPredList(p1);
@@ -72,7 +76,7 @@ public class HypActionTests {
 	 */
 	@Test
 	public void testSelectHypActionField() {
-		final Predicate p1 = TestLib.genPred("1=1");
+		final Predicate p1 = genPred("1=1");
 		final List<Predicate> s1 = getPredList(p1);
 		final ISelectionHypAction action = ProverFactory
 				.makeSelectHypAction(s1);
@@ -81,17 +85,25 @@ public class HypActionTests {
 		assertEquals(p1, action.getHyps().iterator().next());
 	}
 
+	/**
+	 * Ensures that {@link RewriteHypAction} manipulates a copy of the
+	 * collection of predicates representing disappearing hypotheses and which
+	 * are given to its constructor.
+	 * <p>
+	 * This test checks only the disappearing hypothesis field, as other fields
+	 * are covered by above tests.
+	 * </p>
+	 */
 	@Test
 	public void testRewriteHypActionField() {
-		final Predicate p1 = TestLib.genPred("1=1");
-		final Predicate p2 = TestLib.genPred("2=2");
-		final List<Predicate> s1 = getPredList(p1);
+		final List<Predicate> s1 = emptyList();
+		final Predicate p2 = genPred("2=2");
 		final List<Predicate> s2 = getPredList(p2);
-		final IRewriteHypAction action = ProverFactory.makeRewriteHypAction(s1,
-				s1, s2);
-		action.getDisappearingHyps().clear();
-		assertEquals(1, s2.size());
-		assertEquals(s2.get(0).toString(), "2=2");
+		final IRewriteHypAction action = makeRewriteHypAction(s2, s1, s2);
+		s2.clear();
+		final Collection<Predicate> dHyps = action.getDisappearingHyps();
+		assertEquals(1, dHyps.size());
+		assertEquals(p2, dHyps.iterator().next());
 	}
 
 	private static List<Predicate> getPredList(Predicate... predicates) {

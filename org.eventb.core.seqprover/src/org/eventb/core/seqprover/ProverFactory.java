@@ -744,7 +744,13 @@ public final class ProverFactory {
 	/**
 	 * Returns a new rewrite hypothesis action (i.e. a forward inference
 	 * followed by a hide action).
-	 *
+	 * <p>
+	 * Disappearing hypotheses are not serialized in the action hypothesis
+	 * attribute. Thus, disappearing hypotheses shall be added to needed
+	 * hypotheses when creating an instance of {@link IRewriteHypAction} from a
+	 * serialized proof.
+	 * </p>
+	 * 
 	 * @param neededHyps
 	 *            the hypotheses required by the forward inference (should not
 	 *            be <code>null</code>)
@@ -771,7 +777,13 @@ public final class ProverFactory {
 	/**
 	 * Returns a new rewrite hypothesis action (i.e. a forward inference
 	 * followed by a hide action).
-	 *
+	 * <p>
+	 * Disappearing hypotheses are not serialized in the action hypothesis
+	 * attribute. Thus, disappearing hypotheses shall be added to needed
+	 * hypotheses when creating an instance of {@link IRewriteHypAction} from a
+	 * serialized proof.
+	 * </p>
+	 * 
 	 * @param neededHyps
 	 *            the hypotheses required by the forward inference (should not
 	 *            be <code>null</code>)

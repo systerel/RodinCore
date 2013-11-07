@@ -204,12 +204,8 @@ public interface IHypAction {
 		 * a sequent, these hypotheses will disappear from the resulting sequent
 		 * (i.e. they are hidden by this action). The exact description of what
 		 * is performed can be found in the documentation of
-		 * {@link IInternalProverSequent}.
+		 * {@link IInternalProverSequent#hideHypotheses(Collection)}.
 		 * </p>
-		 * These hypotheses are not serialized in the action hypothesis
-		 * attribute. Thus, disappearing hypotheses shall be added needed
-		 * hypotheses when creating an instance of {@link IRewriteHypAction}
-		 * from a serialized proof.
 		 *
 		 * @return the set of hypotheses which are hidden by this action
 		 */

@@ -36,7 +36,7 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 		super();
 		assert hyps != null;
 		this.actionType = actionType;
-		this.hyps = hyps == null ? NO_HYPS : hyps;
+		this.hyps = hyps == null ? NO_HYPS : new ArrayList<Predicate>(hyps);
 	}
 
 	public Collection<Predicate> getHyps() {

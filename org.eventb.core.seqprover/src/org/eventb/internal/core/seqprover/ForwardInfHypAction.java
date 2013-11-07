@@ -38,9 +38,9 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		assert hyps != null;
 		assert addedIdents != null;
 		assert inferredHyps != null;
-		this.hyps = hyps;
-		this.addedIdents = addedIdents;
-		this.inferredHyps = inferredHyps;
+		this.hyps = new ArrayList<Predicate>(hyps);
+		this.addedIdents = addedIdents.clone();
+		this.inferredHyps = new ArrayList<Predicate>(inferredHyps);
 	}
 		
 	public Collection<Predicate> getHyps() {
