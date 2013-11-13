@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
@@ -63,11 +64,23 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return ELEMENT_TYPE;
 	}
 	
-	// TODO fix usage of monitor.
 	@Override
-	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {
-		
-		clear(false, monitor);
+	public void setProofTree(IProofTree pt, IProgressMonitor monitor)
+			throws RodinDBException {
+		final SubMonitor sm = SubMonitor.convert(monitor);
+		try {
+			doSetProofTree(pt, sm);
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
+	}
+	
+	private void doSetProofTree(IProofTree pt, SubMonitor sm)
+			throws RodinDBException {
+		sm.setWorkRemaining(20);
+		clear(false, sm.newChild(1));
 		
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
 		
@@ -78,19 +91,19 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		IProofStoreCollector store = new ProofStoreCollector(proofDeps.getUsedFreeIdents());
 
 		// Write out the proof tree dependencies
-		if (proofDeps.getGoal() !=null) setGoal(proofDeps.getGoal(), store, null);
-		setHyps(proofDeps.getUsedHypotheses(),store,null);
+		if (proofDeps.getGoal() !=null) setGoal(proofDeps.getGoal(), store, sm.newChild(1));
+		setHyps(proofDeps.getUsedHypotheses(),store,sm.newChild(2));
 		// The used free idents are stored as the base type env in the store
-		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), monitor);
+		setIntroFreeIdents(proofDeps.getIntroducedFreeIdents(), sm.newChild(1));
 		
 		// write out the proof skeleton
-		setSkeleton(pt.getRoot(), store, monitor);
+		setSkeleton(pt.getRoot(), store, sm.newChild(12));
 
 		//	Update the status
 		int confidence = pt.getConfidence();
-		setConfidence(confidence, null);
+		setConfidence(confidence, sm.newChild(1));
 		
-		store.writeOut(this, monitor);
+		store.writeOut(this, sm.newChild(2));
 	}
 
 	@Override
