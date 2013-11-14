@@ -20,6 +20,7 @@ public class Messages {
 	public static String RuleDetailsProvider_antecedent_title;
 	public static String RuleDetailsProvider_deselect_title;
 	public static String RuleDetailsProvider_forwardinference_title;
+	public static String RuleDetailsProvider_rewrite_title;
 	public static String RuleDetailsProvider_goal;
 	public static String RuleDetailsProvider_hide_title;
 	public static String RuleDetailsProvider_inputsequent_title;

@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -349,10 +350,14 @@ public class RuleDetailsProvider {
 		}
 		if (type.equals(SHOW_ACTION_TYPE)) {
 			return RuleDetailsProvider_show_title;
-		} else {
-			// it is a forward inference
+		}
+		if (type.equals(IForwardInfHypAction.ACTION_TYPE)) {
 			return RuleDetailsProvider_forwardinference_title;
 		}
+		if (type.equals(IRewriteHypAction.ACTION_TYPE)) {
+			return Messages.RuleDetailsProvider_rewrite_title;
+		}
+		return "Unknown hypothesis action: " + type;
 	}
 
 	/*
