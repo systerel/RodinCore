@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.eventb.internal.core.seqprover.SelectionHypAction;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
@@ -77,7 +79,7 @@ public class DependRule {
 	}
 
 	private static class Fwd extends AHypAction {
-		private final Set<Predicate> inferredHyps;
+		protected final Set<Predicate> inferredHyps;
 		final FreeIdentifier[] addedFreeIdents;
 
 		public Fwd(IForwardInfHypAction hypAction) {
@@ -168,6 +170,40 @@ public class DependRule {
 		}
 
 	}
+	
+	private static class Rewrite extends Fwd {
+
+		private Set<Predicate> disappearingHyps;
+		
+		public Rewrite(IRewriteHypAction hypAction) {
+			super(hypAction);
+			this.disappearingHyps = new LinkedHashSet<Predicate>(
+					hypAction.getDisappearingHyps());
+		}
+
+		@Override
+		public IHypAction toHypAction() {
+			return ProverFactory.makeRewriteHypAction(hyps, addedFreeIdents,
+					inferredHyps, disappearingHyps);
+		}
+
+		@Override
+		public void compress(ProducedSequent sequent,
+				Set<Predicate> producedHyps, Set<Predicate> removedHyps) {
+			super.compress(sequent, producedHyps, removedHyps);
+			// perform HIDE
+			final Iterator<Predicate> iter = hyps.iterator();
+			while (iter.hasNext()) {
+				final Predicate hyp = iter.next();
+				// FIXME removes a single hide, i.e all non produced
+				// hypActions
+				if (removedHyps.contains(hyp)) {
+					iter.remove();
+				}
+			}
+		}
+		
+	}
 
 	private static class DependAntecedent {
 		private final List<AHypAction> hypActions = new ArrayList<AHypAction>();
@@ -177,7 +213,9 @@ public class DependRule {
 		public DependAntecedent(IAntecedent antecedent) {
 			this.original = antecedent;
 			for (IHypAction hypAction : antecedent.getHypActions()) {
-				if (hypAction instanceof IForwardInfHypAction) {
+				if (hypAction instanceof IRewriteHypAction) {
+					hypActions.add(new Rewrite((IRewriteHypAction) hypAction));
+				} else if (hypAction instanceof IForwardInfHypAction) {
 					hypActions.add(new Fwd((IForwardInfHypAction) hypAction));
 				} else if (hypAction instanceof ISelectionHypAction) {
 					hypActions.add(new Select((ISelectionHypAction) hypAction));

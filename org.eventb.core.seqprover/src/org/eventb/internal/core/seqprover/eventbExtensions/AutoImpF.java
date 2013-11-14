@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -97,15 +99,8 @@ public class AutoImpF extends EmptyInputReasoner {
 				// hypActions.add(ProverFactory.makeSelectHypAction(inferredHyps));
 				continue;
 			}
-
-			// make the forward inference action
-			hypActions.add(ProverFactory.makeForwardInfHypAction(
-					sourceHyps, inferredHyps));
-
-			// Hide the original hypothesis. IMPORTANT: Do it after the
-			// forward inference hypothesis action
-			hypActions.add(ProverFactory.makeHideHypAction(Collections.singleton(hyp)));
-
+			hypActions.add(makeRewriteHypAction(sourceHyps, inferredHyps,
+					Collections.singleton(hyp)));
 		}
 
 		if (!hypActions.isEmpty()) {

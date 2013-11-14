@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -118,10 +119,7 @@ public class ProofSimplifierTests {
 		final IProofTree simplified = ProverLib.simplify(prTree, null);
 
 		final IProofRule proofRule = simplified.getRoot().getRule();
-		assertHypActions(proofRule,
-				IHypAction.IForwardInfHypAction.ACTION_TYPE, 1);
-		assertHypActions(proofRule,
-				IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE, 1);
+		assertHypActions(proofRule, IRewriteHypAction.ACTION_TYPE, 1);
 	}
 
 	@Test

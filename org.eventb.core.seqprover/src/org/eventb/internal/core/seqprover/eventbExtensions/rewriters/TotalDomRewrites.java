@@ -11,8 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
-import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
 
 import java.util.Arrays;
@@ -146,11 +145,11 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		} else {
 			// Hypothesis rewriting
 			final Predicate inferredHyp = rewritten;
+			final Set<Predicate> lHyp = singleton(hyp);
+			final Set<Predicate> lInfHyp = singleton(inferredHyp);
 			final List<IHypAction> hypActions = Arrays.<IHypAction> asList(
-					makeForwardInfHypAction(singleton(hyp),
-							singleton(inferredHyp)),
-					makeHideHypAction(singleton(hyp)),
-					makeSelectHypAction(singleton(inferredHyp)));
+					makeRewriteHypAction(lHyp, lInfHyp, lHyp),
+					makeSelectHypAction(lInfHyp));
 			final IAntecedent antecedent = ProverFactory.makeAntecedent(null,
 					null, null, hypActions);
 			return ProverFactory.makeProofRule(this, input, null, neededHyp,
@@ -171,13 +170,6 @@ public class TotalDomRewrites implements IVersionedReasoner {
 			return "total function dom substitution in goal";
 		return "total function dom substitution in hyp ("
 				+ pred.getSubFormula(position) + ")";
-	}
-
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	private Expression getFunction(Predicate pred, IPosition position) {

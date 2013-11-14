@@ -13,8 +13,10 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
-import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
+
+import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -111,10 +113,11 @@ public class OnePointRule extends HypothesisReasoner implements
 			a1 = makeAntecedent(simplified);
 			a2 = makeAntecedent(replacementWD);
 		} else {
-			final IHypAction fwdInf = makeForwardInfHypAction(
-					singleton(applyTo), singleton(simplified));
-			final IHypAction hideHyp = makeHideHypAction(singleton(applyTo));
-			a1 = makeAntecedent(null, null, null, asList(fwdInf, hideHyp));
+			final Set<Predicate> applyToHyp = singleton(applyTo);
+			final IHypAction rewrite = makeRewriteHypAction(applyToHyp,
+					singleton(simplified), applyToHyp);
+			final IHypAction hideHyp = makeHideHypAction(applyToHyp);
+			a1 = makeAntecedent(null, null, null, asList(rewrite));
 			a2 = makeAntecedent(replacementWD, null, hideHyp);
 		}
 		return new IAntecedent[] { a1, a2 };

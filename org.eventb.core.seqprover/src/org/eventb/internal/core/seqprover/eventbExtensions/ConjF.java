@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Collections;
+import static java.util.Collections.singleton;
+
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
 
@@ -46,14 +48,16 @@ public final class ConjF extends ForwardInfReasoner {
 	 */
 	@ProverRule("AND_L")
 	@Override
-	protected IForwardInfHypAction getForwardInf(IProverSequent sequent,
+	protected IRewriteHypAction getRewriteAction(IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException {
 		if (! Lib.isConj(pred)) {
 			throw new IllegalArgumentException(
 					"Predicate is not a conjunction: " + pred);
 		}
-		
-		return ProverFactory.makeForwardInfHypAction(Collections.singleton(pred), Lib.breakPossibleConjunct(pred));
+		final Set<Predicate> inferredHyp = Lib.breakPossibleConjunct(pred);
+		final Set<Predicate> neededHyp = singleton(pred);
+		return ProverFactory.makeRewriteHypAction(neededHyp, inferredHyp,
+				neededHyp);
 	}
 	
 	/* (non-Javadoc)

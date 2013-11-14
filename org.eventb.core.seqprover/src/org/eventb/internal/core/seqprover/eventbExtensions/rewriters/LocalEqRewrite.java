@@ -14,13 +14,12 @@ import static java.util.Collections.singleton;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
-import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
-import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +35,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -310,11 +310,10 @@ public class LocalEqRewrite implements IReasoner {
 			final Set<Predicate> neededHyps = new HashSet<Predicate>();
 			neededHyps.add(hyp);
 			neededHyps.add(eqPred);
-			List<IHypAction> hypAct = new ArrayList<IHypAction>();
-			hypAct.add(makeForwardInfHypAction(neededHyps, singleton(newHyp)));
-			hypAct.add(makeHideHypAction(singleton(hyp)));
+			final IRewriteHypAction rewrite = makeRewriteHypAction(neededHyps,
+					singleton(newHyp), singleton(hyp));
 			return makeProofRule(this, input, null, "lae in " + hyp.toString(),
-					hypAct);
+					Collections.<IHypAction> singletonList(rewrite));
 		}
 	}
 

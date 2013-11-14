@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
+import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -124,14 +126,15 @@ public abstract class ForwardInfReasoner implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 			"Expected at least one hyp action."));
 		}
-		if (! (hypActions.get(0) instanceof IForwardInfHypAction)) {
+		if (! (hypActions.get(0) instanceof IRewriteHypAction)) {
 			throw new SerializeException(new IllegalStateException(
-			"Expected the first hyp action to be a forward inference."));
+			"Expected the first hyp action to be a rewrite action."));
 		}
 
-		IForwardInfHypAction fwdHypAction = (IForwardInfHypAction) hypActions.get(0);
+		final IRewriteHypAction rwAction = (IRewriteHypAction) hypActions
+				.get(0);
 
-		Collection<Predicate> requiredHyps = fwdHypAction.getHyps();
+		final Collection<Predicate> requiredHyps = rwAction.getHyps();
 		final int length = requiredHyps.size();
 
 		if (length != 1) {
@@ -155,40 +158,41 @@ public abstract class ForwardInfReasoner implements IReasoner {
 		}
 
 		final String display = getDisplay(pred);
-		final IForwardInfHypAction forwardInf;
+		final IRewriteHypAction rewriteAction;
 		try {
-			forwardInf = getForwardInf(seq, pred);
+			rewriteAction = getRewriteAction(seq, pred);
 		} catch (IllegalArgumentException e) {
 			return new ReasonerFailure(this, input, e.getMessage());
 		}
 		
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
-		hypActions.add(forwardInf);
-		hypActions.add(ProverFactory.makeHideHypAction(forwardInf.getHyps()));
-		hypActions.add(ProverFactory.makeSelectHypAction(forwardInf.getInferredHyps()));		
+		hypActions.add(rewriteAction);
+		hypActions.add(makeSelectHypAction(rewriteAction.getInferredHyps()));		
 		hypActions.addAll(getAdditionalHypActions(seq, pred));
 		
 		return ProverFactory.makeProofRule(this, input, display, hypActions);
 	}
 	
 	/**
-	 * Return the forward inference to put in the generated rule, or throw an
-	 * <code>IllegalArgumentException</code> in case of reasoner failure. In
-	 * the latter case, the message associated to the exception will be returned
-	 * in the reasoner failure.
+	 * Return the rewrite action to put in the generated rule, or throw an
+	 * <code>IllegalArgumentException</code> in case of reasoner failure. In the
+	 * latter case, the message associated to the exception will be returned in
+	 * the reasoner failure.
 	 * 
 	 * @param sequent
 	 *            the current sequent
 	 * @param pred
-	 *            the required predicate for the forward inference. There is no
+	 *            the required predicate for the rewrite action. There is no
 	 *            guarantee that this predicate is indeed a hypothesis of the
 	 *            given sequent
-	 *            
-	 * @return the forward inference of the generated rule
+	 * 
+	 * @return the rewrite action of the generated rule
 	 * @throws IllegalArgumentException
-	 *             if no forward inference could be generated with the given predicate.
+	 *             if no rewrite action could be generated with the given
+	 *             predicate.
+	 * @since 3.0
 	 */
-	protected abstract IForwardInfHypAction getForwardInf (IProverSequent sequent,
+	protected abstract IRewriteHypAction getRewriteAction (IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException;
 	
 	
@@ -206,7 +210,7 @@ public abstract class ForwardInfReasoner implements IReasoner {
 	 * hyp action.
 	 * 
 	 * <p>
-	 * This method only gets called if {@link #getForwardInf(IProverSequent, Predicate)} did not
+	 * This method only gets called if {@link #getRewriteAction(IProverSequent, Predicate)} did not
 	 * throw an {@link IllegalArgumentException}. Subclasses should override this method only if they
 	 * want to provide additional hyp actions.
 	 * <p>

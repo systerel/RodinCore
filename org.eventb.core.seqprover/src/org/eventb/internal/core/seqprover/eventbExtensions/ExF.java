@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,16 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
+
+import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
@@ -48,7 +50,7 @@ public class ExF extends ForwardInfReasoner {
 
 	@ProverRule("XST_L")
 	@Override
-	protected IForwardInfHypAction getForwardInf(IProverSequent sequent,
+	protected IRewriteHypAction getRewriteAction(IProverSequent sequent,
 			Predicate pred) {
 
 		if (!Lib.isExQuant(pred)) {
@@ -59,8 +61,11 @@ public class ExF extends ForwardInfReasoner {
 		final ISealedTypeEnvironment typenv = sequent.typeEnvironment();
 		final FreshInstantiaton inst = new FreshInstantiaton(exQ, typenv);
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
-		return makeForwardInfHypAction(singleton(pred), freshIdents,
-				breakPossibleConjunct(inst.getResult()));
+		final Set<Predicate> inferredHyps = breakPossibleConjunct(inst
+				.getResult());
+		final Set<Predicate> neededHyp = singleton(pred);
+		return makeRewriteHypAction(neededHyp, freshIdents, inferredHyps,
+				neededHyp);
 	}
 
 }

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,16 +79,17 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 				continue;
 			}
 
-
-			// make the forward inference action
-			if (!inferredHyps.isEmpty())
-				hypActions.add(ProverFactory.makeForwardInfHypAction(
-						originalHyps, inferredHyps));
-
-			// Hide the original hypothesis.
-			// IMPORTANT: Do it after the forward inference hypothesis action
-			if (hideOriginal)
-				hypActions.add(ProverFactory.makeHideHypAction(originalHyps));
+			if (!inferredHyps.isEmpty()) {
+				if (hideOriginal) {
+					// do a rewrite action
+					hypActions.add(makeRewriteHypAction(originalHyps,
+							inferredHyps, originalHyps));
+				} else {
+					// do a simple forward inference action
+					hypActions.add(makeForwardInfHypAction(originalHyps,
+							inferredHyps));
+				}
+			}
 		}
 
 		Predicate goal = seq.goal();

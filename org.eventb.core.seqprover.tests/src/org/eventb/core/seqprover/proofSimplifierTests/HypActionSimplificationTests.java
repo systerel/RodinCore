@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
 package org.eventb.core.seqprover.proofSimplifierTests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.autoRewrites;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
@@ -41,8 +41,9 @@ import org.junit.runners.Parameterized.Parameters;
  */
 public class HypActionSimplificationTests extends AbstractSimplificationTests {
 	
-	private static IHypAction fwd(String hyp, String inf) {
-		return makeForwardInfHypAction(asList(p(hyp)), asList(p(inf)));
+	private static IHypAction rw(String needed, String inf, String disappear) {
+		return makeRewriteHypAction(asList(p(needed)), asList(p(inf)),
+				asList(p(disappear)));
 	}
 
 	private static IHypAction hide(String hyp) {
@@ -138,9 +139,9 @@ public class HypActionSimplificationTests extends AbstractSimplificationTests {
 				Collections.<IHypAction>emptyList()),
 				
 		/**
-		 * 5 hyp actions:
-		 *  'x={0 ↦ 1}∼': forward inference + hide
-		 *  '¬ FALSE=y': forward inference + hide
+		 * 3 hyp actions:
+		 *  'x={0 ↦ 1}∼': rewrite
+		 *  '¬ FALSE=y': rewrite
 		 *  '0=0': hide
 		 * the step producing the hyp action remains after simplification
 		 *  
@@ -155,20 +156,20 @@ public class HypActionSimplificationTests extends AbstractSimplificationTests {
 		 * Expected:
 		 * 0
 		 * 1
-		 * and the 2 hyp actions on 'x={0 ↦ 1}∼'
+		 * and the one hyp action on 'x={0 ↦ 1}∼'
 		 */
 		test("x={0 ↦ 1}∼ ;; ¬ FALSE=y ;; 0=0 |- x={1 ↦ 0}",
 				// initial
 				autoRewrites(
 						hyp()),
 				"x={0 ↦ 1}∼ |- x={1 ↦ 0}",
-				asList(fwd("x={0 ↦ 1}∼", "x={1 ↦ 0}"), hide("x={0 ↦ 1}∼"),
-						fwd("¬ FALSE = y", "TRUE = y"), hide("¬ FALSE=y"),
+				asList(rw("x={0 ↦ 1}∼", "x={1 ↦ 0}", "x={0 ↦ 1}∼"),
+						rw("¬ FALSE = y", "TRUE = y", "¬ FALSE=y"),
 						hide("0=0")),
 				// expected
 				autoRewrites(
 						hyp()),
-				asList(fwd("x={0 ↦ 1}∼", "x={1 ↦ 0}"), hide("x={0 ↦ 1}∼")))
+				asList(rw("x={0 ↦ 1}∼", "x={1 ↦ 0}", "x={0 ↦ 1}∼")))
 				
 				
 		);
