@@ -60,9 +60,8 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 	}	
 
 	public IInternalProverSequent perform(IInternalProverSequent seq) {
-		IInternalProverSequent result = seq.performfwdInf(hyps, addedIdents, inferredHyps);
-		if (result == null)
-			return null;
+		final IInternalProverSequent result = seq.performfwdInf(hyps,
+				addedIdents, inferredHyps);
 		skipped = (result == seq);
 		return result;
 	}

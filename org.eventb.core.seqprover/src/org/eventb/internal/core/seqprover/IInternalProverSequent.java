@@ -187,20 +187,21 @@ public interface IInternalProverSequent extends IProverSequent{
      * contain predicate variables. In case the sequent is not modified, a reference to
 	 * the original sequent is returned.
      * The case of non-modification can therefore be checked using
-	 * <code>==</code>. In case of type-check error, <code>null</code> is
+	 * <code>==</code>. In case of type-check error, <code>this</code> is
 	 * returned.
 	 * </p>
 	 * 
 	 * @param hyps
 	 *            Hypotheses needed to perform the forward inference, or
-	 *            <code>null</code> if none.
+	 *            <code>null</code> if none
 	 * @param addedIdents
 	 *            Free identifiers added by the forward inference, or
-	 *            <code>null</code> if none.
+	 *            <code>null</code> if none
 	 * @param inferredHyps
 	 *            Inferred hypotheses, or <code>null</code> if none.
 	 * @return A sequent with the given forward inference performed on the
-	 *         hypotheses or <code>null</code> in case of type-check error
+	 *         hypotheses or the sequent itself (i.e. <code>this</code>) in case
+	 *         of type-check error
 	 */
 	IInternalProverSequent performfwdInf(Collection<Predicate> hyps, FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps);
 	

@@ -317,7 +317,7 @@ public class ProverSequentTests {
 		seq = TestLib.genSeq(" 1=1 ;; ⊥ |- ⊥ ");
 		newSeq = ((IInternalProverSequent)seq).performfwdInf(hyps, null,
 				Collections.singleton(pv_P));
-		assertNull(newSeq);
+		assertSame(seq, newSeq);
 	}
 	
 	private Set<Predicate> mSet(Predicate...preds) {
