@@ -44,7 +44,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.Replac
  * </p>
  * 
  * @author Nicolas Beauger
- * @author Thomas Müller
+ * @author Thomas Muller
  * @author Benoît Lucet
  */
 public abstract class OnePointProcessor<T extends Formula<T>> {
