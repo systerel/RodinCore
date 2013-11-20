@@ -171,9 +171,9 @@ public interface IUserSupport extends IElementChangedListener {
 	boolean hasUnsavedChanges();
 
 	/**
-	 * Returns the formula factory to use.
+	 * Returns the formula factory to use for the current proof obligation.
 	 * 
-	 * @return the formula factory to use according to the input PS file
+	 * @return the formula factory to use according to the current PO
 	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();

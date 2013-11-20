@@ -244,6 +244,11 @@ public class ProofState implements IProofState {
 		return status;
 	}
 
+	@Override
+	public FormulaFactory getFormulaFactory() {
+		return pt != null ? pt.getFormulaFactory() : null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

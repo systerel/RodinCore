@@ -680,8 +680,18 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return saving ;
 	}
 
+	/*
+	 * We return the formula factory of the current proof state if any, the
+	 * common factory of this component otherwise.
+	 */
 	@Override
 	public FormulaFactory getFormulaFactory() {
+		if (currentPS != null) {
+			final FormulaFactory factory = currentPS.getFormulaFactory();
+			if (factory != null) {
+				return factory;
+			}
+		}
 		return pc.getFormulaFactory();
 	}
 	

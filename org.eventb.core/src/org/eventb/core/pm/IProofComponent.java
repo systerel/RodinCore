@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.rodinp.core.IOpenable;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for accessing to the proofs of an event-B component. This
+ * Common protocol for accessing the proofs of an event-B component. This
  * interface provides a unique facade for manipulating proofs in a consistent
  * manner.
  * <p>
@@ -38,9 +38,9 @@ import org.rodinp.core.RodinDBException;
  * <li>the PO file contains the lemmas of the proof obligations generated for
  * the component;</li>
  * <li>the PR file contains the proofs created by the user or the auto-prover;</li>
- * <li>the PS file contains the statuses of the proof obligations, i.e.,
- * whether the proofs stored in the PR file do discharge the lemmas contained in
- * the PO file.</li>
+ * <li>the PS file contains the statuses of the proof obligations, i.e., whether
+ * the proofs stored in the PR file do discharge the lemmas contained in the PO
+ * file.</li>
  * </ul>
  * </p>
  * <p>
@@ -169,11 +169,12 @@ public interface IProofComponent {
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the formula factory to use.
-	 * The result is read from the proof state file of this component.
+	 * Returns the formula factory which is used for constructing new proof
+	 * attempts. It is also the factory to use for parsing the proof obligations
+	 * of this component.
 	 * 
-	 * @return a formula factory
-	 * @since 2.0
+	 * @return the formula factory of the proof obligations
+	 * @since 3.0
 	 */
 	FormulaFactory getFormulaFactory();
 

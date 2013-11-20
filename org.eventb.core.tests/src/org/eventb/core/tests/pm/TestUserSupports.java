@@ -15,9 +15,12 @@ package org.eventb.core.tests.pm;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.DEFAULT;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -38,6 +41,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pm.UserSupportDeltaProcessor;
 import org.junit.Before;
@@ -680,6 +684,31 @@ public class TestUserSupports extends TestPM {
 			}
 		}
 
+	}
+
+	/**
+	 * Ensures that the user support returns the factory of the corresponding
+	 * proof obligation file when no proof has been selected.
+	 */
+	@Test
+	public void formulaFactoryNoCurrentProof() throws Exception {
+		assertSame(DEFAULT, userSupport.getFormulaFactory());
+
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertSame(EXT_FACTORY, userSupport.getFormulaFactory());
+	}
+
+	/**
+	 * Ensures that the user support returns the factory of the current proof
+	 * tree, independently of the factory of the proof obligation file.
+	 */
+	@Test
+	public void formulaFactoryCurrentProof() throws Exception {
+		userSupport.nextUndischargedPO(false, monitor);
+		assertSame(DEFAULT, userSupport.getFormulaFactory());
+
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertSame(DEFAULT, userSupport.getFormulaFactory());
 	}
 
 }

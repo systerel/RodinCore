@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
@@ -76,6 +77,15 @@ public interface IProofState extends IProofTreeChangedListener {
 	 * @return a {@link IPSStatus}
 	 */
 	public abstract IPSStatus getPSStatus();
+
+	/**
+	 * Returns the formula factory of the current proof tree.
+	 * 
+	 * @return the formula factory of the proof tree if any, <code>null</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	public abstract FormulaFactory getFormulaFactory();
 
 	/**
 	 * Get the current proof tree.
