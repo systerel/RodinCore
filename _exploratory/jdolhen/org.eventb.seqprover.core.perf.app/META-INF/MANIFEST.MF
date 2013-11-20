@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.eventb.seqprover.core.perf.app;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.filesystem,
+ org.eventb.core.seqprover,
+ org.eventb.core,
+ org.rodinp.core;bundle-version="1.6.1"
+Bundle-Localization: plugin
+Bundle-Activator: org.eventb.seqprover.core.perf.app.AppPlugin
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.core.resources,
+ org.rodinp.core
