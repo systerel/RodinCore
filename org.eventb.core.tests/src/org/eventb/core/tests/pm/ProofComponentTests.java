@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.DEFAULT;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.core.tests.pom.POUtil.addSequent;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.eventb.core.tests.pom.POUtil.addSequent;
-import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +35,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinElement;
@@ -417,6 +421,18 @@ public class ProofComponentTests extends AbstractProofTests {
 		assertFalse(psRoot.getStatus(PO3).exists());
 		final IPSRoot snapshot = (IPSRoot) psRoot.getSnapshot();
 		assertFalse(snapshot.getStatus(PO3).exists());
+	}
+
+	/**
+	 * Ensures that a proof component returns the formula factory associated to
+	 * its proof obligation file.
+	 */
+	@Test
+	public void formulaFactory() throws Exception {
+		assertSame(DEFAULT, pc.getFormulaFactory());
+
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertSame(EXT_FACTORY, pc.getFormulaFactory());
 	}
 
 }

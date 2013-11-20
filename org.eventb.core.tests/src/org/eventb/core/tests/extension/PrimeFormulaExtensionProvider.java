@@ -39,8 +39,10 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	public static final FormulaFactory EXT_FACTORY = getInstance(Prime
 			.getPrime());
 
-	// The default formula factory
-	private static final FormulaFactory DEFAULT = getInstance();
+	/**
+	 * The default formula factory.
+	 */
+	public static final FormulaFactory DEFAULT = getInstance();
 
 	// Set of roots for which the prime extension shall be returned
 	private static final Set<IEventBRoot> rootsWithPrime = new HashSet<IEventBRoot>();
