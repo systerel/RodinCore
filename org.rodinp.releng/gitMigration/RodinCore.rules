@@ -1,0 +1,122 @@
+#
+#  Rules for importing the Core Rodin platform sources from Subversion
+#
+
+create repository RodinCore
+end repository
+
+# Ignore anything committed to the root instead of the trunk
+match /(_exploratory|ac|fr|org)[^/]*/
+end match
+
+#---------------------------------------------------------------
+#  BRANCHES
+#---------------------------------------------------------------
+
+match /branches/New_Editor/
+  repository RodinCore
+  branch New_Editor
+end match
+
+# Ignore faulty branch Editor
+match /branches/RodinCore/Editor/
+  max revision 10586
+end match
+
+# This is the right branch
+match /branches/RodinCore/Editor/
+  min revision 10589
+  repository RodinCore
+  branch Editor
+end match
+
+# Ignore branch from CVS
+match /branches/UNDO_DEV/
+end match
+
+match /branches/RodinCore/([^/]+)/
+  repository RodinCore
+  branch \1
+end match
+
+# Ignore other branches
+match /branches/[^/]+/
+end match
+
+#---------------------------------------------------------------
+#  TAGS
+#---------------------------------------------------------------
+
+# Ignore faulty components in RodinCore tags
+match /tags/RodinCore/[^/]+/(WikiRodin|ac[^/]*)/
+end match
+
+match /tags/RodinCore/ast2.4.1/
+  repository RodinCore
+  branch refs/tags/org.eventb.core.ast/2.4.1
+end match
+
+# Official release tags
+match /tags/RodinCore/([^/]+)/
+  repository RodinCore
+  branch refs/tags/RodinCore/\1
+end match
+
+match /tags/RodinEditor/v-([^/]+)/
+  repository RodinCore
+  branch refs/tags/RodinEditor/\1
+end match
+
+# Ignore other tags (incl. CVS and faulty 2.7RC1)
+match /tags/[^/]+/
+end match
+
+#---------------------------------------------------------------
+#  TRUNK
+#---------------------------------------------------------------
+
+# Select true core plug-ins
+match /trunk/RodinCore/((ch|fr|org)[^/]+/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+match /trunk/(_exploratory/(beauger|billaude|hmaria|nbeauger|voisin)/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+match /trunk/(_exploratory/lvoisin/(org[^/]+)/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+match /trunk/(_exploratory/tmuller/org[^/]+/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+match /trunk/(_exploratory/tshoang/(ch.ethz.eventb.keyboard|org.eventb|org.rodinp)[^/]*/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+# Ignore XProver sources
+match /trunk/org.eventb.xprover[^/]*/
+end match
+
+# Sources from CVS
+match /trunk/((fr|org.eventb|org.rodinp)[^/]*/)
+  repository RodinCore
+  branch master
+  prefix \1
+end match
+
+# Ignore other files
+match /trunk/[^/]*/
+end match
