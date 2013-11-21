@@ -26,17 +26,13 @@
    </url>
 
    <includes
-         id="org.eclipse.platform"
-         version="0.0.0"
-         search-location="self"/>
-
-   <includes
-         id="org.eclipse.equinox.p2.user.ui"
-         version="0.0.0"/>
-
-   <includes
          id="org.rodinp"
          version="0.0.0"/>
+
+   <requires>
+      <import feature="org.eclipse.platform"/>
+      <import feature="org.eclipse.equinox.p2.user.ui"/>
+   </requires>
 
    <plugin
          id="org.rodinp.platform"
