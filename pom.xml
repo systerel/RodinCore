@@ -3,49 +3,57 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+   <!-- #################################################### -->
+   <!-- This is the Event-B Maven-Tycho build aggregator POM -->
+   <!-- It acts as a global aggregator to avoid the creation -->
+   <!-- of intermediary aggregator POM files                 -->
+   <!-- #################################################### -->
 	<groupId>org.eventb</groupId>
-	<artifactId>eventb-parent</artifactId>
-	<version>3.0-SNAPSHOT</version>
+	<artifactId>eventb.aggregator</artifactId>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<!-- <module>org.rodinp.core</module>
-		<module>org.rodinp.core.emf</module>
-		<module>org.rodinp.keyboard.core</module>
-		<module>org.rodinp.keyboard.ui</module>
-		<module>org.rodinp</module>
-		<module>org.rodinp-feature</module>
+	   <!-- Parts which should be built ##################### -->
+	   <!-- before building the repository                    -->
+      <module>org.eventb.parent</module>
+	   <module>org.rodinp.core</module>
+      <module>org.rodinp.core.emf</module>
+      <module>org.rodinp.keyboard.core</module>
+      <module>org.rodinp.keyboard.ui</module>
+      <module>org.rodinp</module>
+      <module>org.rodinp-feature</module>
+ 
+      <module>org.eventb.core.ast</module>
+      <module>org.eventb.core.seqprover</module>
+      <module>org.eventb.core</module>
+      <module>org.eventb.pp</module>
+      <module>org.eventb.pp.ui</module>
+      <module>org.eventb.pptrans</module>
+ 
+      <module>org.eventb.keyboard</module>
+      <module>ch.ethz.eventb.keyboard.latex</module>
+      <module>fr.systerel.explorer</module>
+      <module>org.eventb.doc.user</module>
+ 
+      <module>org.eventb.ui</module>
+      <module>org.eventb.ui.symboltable</module>
+      <module>org.eventb.ide</module>
+      <module>org.eventb.ide-feature</module>
+ 
+      <module>fr.systerel.editor</module>
+      <module>fr.systerel.editor.help</module>
+      <module>fr.systerel.editor-feature</module>
+ 
+      <module>org.rodinp.platform</module>
+      <module>org.rodinp.platform-feature</module>
+      <!-- #################################################### -->  
+		<!-- PRODUCT & P2 REPOSITORY BUILDS (at once) ########### -->
+	   <module>org.rodinp.platform.repository</module>   
+	   <!-- #################################################### -->
 
-		<module>org.eventb.core.ast</module>
-		<module>org.eventb.core.seqprover</module>
-		<module>org.eventb.core</module>
-
-		<module>org.eventb.pp</module>
-		<module>org.eventb.pp.ui</module>
-		<module>org.eventb.pptrans</module>
-
-		<module>org.eventb.keyboard</module>
-		<module>ch.ethz.eventb.keyboard.latex</module>
-
-		<module>fr.systerel.explorer</module>
-
-		<module>org.eventb.doc.user</module>
-
-		<module>org.eventb.ui</module>
-		<module>org.eventb.ui.symboltable</module>
-		<module>org.eventb.ide</module>
-		<module>org.eventb.ide-feature</module>
-
-		<module>fr.systerel.editor</module>
-		<module>fr.systerel.editor.help</module>
-		<module>fr.systerel.editor-feature</module>
-
-		<module>org.rodinp.platform</module>
-		<module>org.rodinp.platform-feature</module> -->
-		<module>org.rodinp.platform.product</module>
-		<module>org.rodinp.updateSite</module>
-
-		<!-- non UI tests -->
+        <!-- Tests that should be built ######################### -->
+		<!-- Non UI tests -->
 		<module>org.rodinp.core.tests</module>
 		<module>org.rodinp.core.emf.tests</module>
 		<module>org.eventb.core.tests</module>
@@ -53,7 +61,6 @@
 		<module>org.eventb.core.seqprover.tests</module>
 		<module>org.eventb.pp.tests</module>
 		<module>org.eventb.pptrans.tests</module>
-
 		<!-- UI related tests -->
 		<module>fr.systerel.editor.tests</module>
 		<module>fr.systerel.explorer.tests</module>
@@ -62,153 +69,10 @@
 		<module>org.eventb.keyboard.tests</module>
 		<module>org.eventb.ui.symboltable.tests</module>
 		<module>org.eventb.ui.tests</module>
-		
+      <!-- #################################################### -->
+      <!-- DEV PLATFORM BUILD ################################# -->
 		<module>org.rodinp.dev</module>
+		<!-- #################################################### -->
 	</modules>
 
-	<properties>
-		<tycho-version>0.18.1</tycho-version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<organization>
-		<name>Event-B.org</name>
-		<url>http://www.event-b.org/</url>
-	</organization>
-
-	<name>Rodin Platform</name>
-	<description>
-    The Rodin Platform is an Eclipse-based IDE for Event-B that provides effective support for refinement and mathematical proof. 
-    The platform is open source, contributes to the Eclipse framework and is further extendable with plugins. 
-  </description>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-packaging-plugin</artifactId>
-					<version>${tycho-version}</version>
-					<configuration>
-						<format>yyyyMMddHHmm-'${git-commit}'</format>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.7</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>plugin-source</id>
-						<goals>
-							<goal>plugin-source</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-versions-plugin</artifactId>
-				<version>${tycho-version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<environments>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>    <groupId>org.eventb</groupId>
-    <artifactId>eventb-parent</artifactId>
-    <version>3.0-SNAPSHOT</version>
-							
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86_64</arch>
-						</environment>
-					</environments>
-					<resolver>p2</resolver>
-					<pomDependencies>consider</pomDependencies>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.4</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>index</report>
-							<report>cim</report>
-							<report>scm</report>
-							<report>issue-tracking</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
-
-	<profiles>
-		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<www-basedir>/tmp/rodin-build/rodin-3.0</www-basedir>
-			</properties>
-			<repositories>
-				<repository>
-					<id>indigo</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/releases/indigo</url>
-				</repository>
-				<repository>
-					<id>handbook</id>
-					<layout>p2</layout>
-					<url>http://handbook.event-b.org/updatesite</url>
-				</repository>
-			</repositories>
-		</profile>
-
-	</profiles>
 </project>

@@ -4,8 +4,9 @@
   
   <parent>
     <groupId>org.eventb</groupId>
-    <artifactId>eventb-parent</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <artifactId>parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <relativePath>../org.eventb.parent/pom.xml</relativePath>
   </parent>
   
   <groupId>org.eventb</groupId>
