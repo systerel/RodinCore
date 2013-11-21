@@ -306,6 +306,11 @@
             id="prReas"
             name="%eventBprReasoner">
       </internalElementType>
+      <internalElementType
+            class="org.eventb.core.basis.Language"
+            id="lang"
+            name="%eventBLang">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">

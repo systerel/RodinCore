@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.DEFAULT;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
 import static org.junit.Assert.assertSame;
 
 import org.eventb.core.IContextRoot;
+import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.tests.EventBTest;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Unit tests for the formula extension provider registry.
@@ -50,6 +53,37 @@ public class FormulaExtensionProviderRegistryTest extends EventBTest {
 		final FormulaExtensionProviderRegistry registry = getExtensionProviderRegistry();
 		final FormulaFactory actual = registry.getFormulaFactory(root);
 		assertSame(expected, actual);
+	}
+
+	/**
+	 * Ensures that both the default and a specialized factory can be serialized
+	 * to and deserialized from a language element.
+	 */
+	@Test
+	public void serializeFactory() throws Exception {
+		final ILanguage lang = createLanguage();
+
+		lang.setFormulaFactory(EXT_FACTORY, null);
+		assertSame(EXT_FACTORY, lang.getFormulaFactory(null));
+
+		lang.setFormulaFactory(DEFAULT, null);
+		assertSame(DEFAULT, lang.getFormulaFactory(null));
+
+	}
+
+	/**
+	 * Ensures that it is not possible to deserialize a factory from an empty
+	 * element.
+	 */
+	@Test(expected = RodinDBException.class)
+	public void deserializeFactoryError() throws Exception {
+		final ILanguage lang = createLanguage();
+		lang.getFormulaFactory(null);
+	}
+
+	private ILanguage createLanguage() throws RodinDBException {
+		final IContextRoot root = createContext("ctx");
+		return root.createChild(ILanguage.ELEMENT_TYPE, null, null);
 	}
 
 }

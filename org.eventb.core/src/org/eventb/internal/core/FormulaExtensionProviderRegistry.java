@@ -20,13 +20,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Singleton class implementing the formula extension provider registry.
@@ -83,6 +86,22 @@ public class FormulaExtensionProviderRegistry {
 
 	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) {
 		return FormulaFactory.getInstance(getFormulaExtensions(root));
+	}
+
+	public synchronized FormulaFactory getFormulaFactory(ILanguage language,
+			IProgressMonitor pm) throws RodinDBException {
+		if (provider != null) {
+			return provider.loadFormulaFactory(language, pm);
+		}
+		// No formula extensions available
+		return FormulaFactory.getDefault();
+	}
+
+	public synchronized void setFormulaFactory(ILanguage language,
+			FormulaFactory ff, IProgressMonitor pm) throws RodinDBException {
+		if (provider != null) {
+			provider.saveFormulaFactory(language, ff, pm);
+		}
 	}
 
 	/**

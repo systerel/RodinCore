@@ -12,16 +12,22 @@ package org.eventb.core.extension;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ILanguage;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for providing extensions to the Event-B mathematical language
+ * to be used in models and proofs.  Implementations of this interface must be
+ * registered using the <code>org.eventb.core.formulaExtensionProvider</code>
+ * extension point.
  * <p>
- * The formula extension provider define formula extensions that can be
- * retrieved according to a given project scope.
- * </p>
  * This interface is intended to be implemented by clients.
+ * </p>
  * 
  * @author Thomas Muller
  * @since 2.0
@@ -60,4 +66,42 @@ public interface IFormulaExtensionProvider {
 	 * @since 3.0
 	 */
 	Set<IRodinFile> getFactoryFiles(IEventBRoot root);
+
+	/**
+	 * Returns the formula factory previously stored in the given element. If no
+	 * formula factory was stored previously in this element, this is an error
+	 * and should be reported by throwing a Rodin DB exception.
+	 * 
+	 * @param element
+	 *            a Rodin element containing a serialized formula factory
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @return the contained formula factory
+	 * @throws RodinDBException
+	 *             if a problem occurs while deserializing
+	 * @since 3.0
+	 */
+	FormulaFactory loadFormulaFactory(ILanguage element,
+			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Serializes the given formula factory into the given element. It is
+	 * guaranteed that this element is empty (no child, nor attribute) when this
+	 * method is called.
+	 * 
+	 * @param element
+	 *            a Rodin element where to serialize
+	 * @param factory
+	 *            a formula factory to serialize
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws RodinDBException
+	 *             if a problem occurs while serializing
+	 * @since 3.0
+	 */
+	void saveFormulaFactory(ILanguage element, FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException;
+
 }

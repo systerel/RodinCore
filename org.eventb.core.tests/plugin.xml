@@ -153,5 +153,28 @@
             name="Test Profile #3">
       </tacticProfile>
    </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+            id="factoryName"
+            kind="string"
+            name="Factory Name for Tests">
+      </attributeType>
+   </extension>
+   <extension
+         point="org.rodinp.core.itemRelations">
+      <relationship
+            parentTypeId="org.eventb.core.contextFile">
+         <childType
+               typeId="org.eventb.core.lang">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.eventb.core.lang">
+         <attributeType
+               typeId="org.eventb.core.tests.factoryName">
+         </attributeType>
+      </relationship>
+   </extension>
 
 </plugin>
