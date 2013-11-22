@@ -71,6 +71,8 @@
 		<module>org.eventb.ui.tests</module>
       <!-- #################################################### -->
       <!-- DEV PLATFORM BUILD ################################# -->
+		<module>org.rodinp.platform.sources-feature</module>
+		<module>org.rodinp.platform.tests-feature</module>
 		<module>org.rodinp.dev</module>
 		<!-- #################################################### -->
 	</modules>

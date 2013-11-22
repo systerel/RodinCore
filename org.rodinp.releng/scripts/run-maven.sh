@@ -18,4 +18,4 @@ cd $MAIN_DIR
 GIT_COMMIT=`git log -1 --format='%h'`
 echo "Building Rodin with Maven for git commit: $GIT_COMMIT"
 
-mvn clean install -Dgit-commit=$GIT_COMMIT $@ # -DskipTests -fn 
+mvn clean install -Dgit-commit=$GIT_COMMIT $@ # -DskipTests -fae
