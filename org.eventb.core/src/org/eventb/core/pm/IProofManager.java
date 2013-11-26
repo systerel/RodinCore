@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,27 @@
  *******************************************************************************/
 package org.eventb.core.pm;
 
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 
 /**
  * The proof manager is the basis for manipulating event-B proofs. There is only
- * one manager per running Eclipse platform.
+ * one manager per running Eclipse platform. It can be retrieved by calling
+ * {@link EventBPlugin#getProofManager()}.
  * <p>
  * The proof manager provides clients with means for manipulating proofs in a
  * safe and consistent way. For each event-B component, the manager provides a
- * unique facade ({@link IProofComponent} to the three files which contain
- * proof related data, and allows to modify them in a consistent way (so that
- * proof statuses reported to the user always reflect the actual contents of the
- * PO and proof files).
- * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
+ * unique facade ({@link IProofComponent} to the three files which contain proof
+ * related data, and allows to modify them in a consistent way (so that proof
+ * statuses reported to the user always reflect the actual contents of the PO
+ * and proof files).
  * </p>
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @see EventBPlugin#getProofManager()
  */
 public interface IProofManager {
 
