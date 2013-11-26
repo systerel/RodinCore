@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.core.ProofSkeletonBuilder;
 import org.eventb.internal.core.basis.ProofStoreCollector;
 import org.eventb.internal.core.basis.ProofStoreReader;
@@ -255,8 +254,13 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	@Override
 	public IProofTree getProofTree(IProgressMonitor monitor)
 			throws RodinDBException {
-		return ProofSkeletonBuilder.buildProofTree(this, new ProofMonitor(
-				monitor));
+		try {
+			return ProofSkeletonBuilder.buildProofTree(this, monitor);
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
 	}
 
 	/**

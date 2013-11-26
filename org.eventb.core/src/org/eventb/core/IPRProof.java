@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,9 +159,8 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * </p>
 	 * 
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code>. Note that no
-	 *            progress will be reported by this method. The monitor is used
-	 *            only for cancellation
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * @return the proof tree, or <code>null</code> if the proof tree could not
 	 *         be rebuilt.
 	 * @throws RodinDBException
@@ -198,8 +197,8 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * @param factory
 	 *            The formula factory to be used
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * @return the stored proof skeleton
 	 * 
 	 * @throws RodinDBException
