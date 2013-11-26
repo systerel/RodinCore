@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,12 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Implements the creation of a fresh proof attempt. Instances must be run while
+ * locking all files of the corresponding proof component.
+ * 
+ * @author Laurent Voisin
+ */
 class CreateProofAttemptOperation implements IWorkspaceRunnable {
 
 	private final ProofComponent pc;

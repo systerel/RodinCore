@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,13 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * Implements saving of a proof in the proof file, maintaining the proof status
+ * at the same time. Instances must be run while locking all files of the
+ * corresponding proof component.
+ * 
+ * @author Laurent Voisin
+ */
 class CommitProofOperation implements IWorkspaceRunnable {
 
 	private final ProofAttempt pa;
