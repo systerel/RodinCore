@@ -22,12 +22,9 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<excludes>
-						<!-- these tests are not compatible with Tycho -->
-						<exclude>**/TestPrettyPrint.java</exclude>
-						<exclude>**/ModuleGraphTest*.java</exclude>
-						<exclude>**/BaseConfigGraphTest*.java</exclude>
-					</excludes>
+					<includes>
+                      <include>**/*.java</include>
+					</includes>
 					<testRuntime>p2Installed</testRuntime>
 				</configuration>
 			</plugin>

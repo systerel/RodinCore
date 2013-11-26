@@ -25,9 +25,15 @@
           <includes>
             <include>**/*.java</include>
           </includes>
-          <excludes>
-   	    <exclude>**/ProcessMonitorTests.java</exclude>
-          </excludes>
+          <dependencies>
+            <dependency>
+               <!-- Be sure to have org.eclipse.core.filesystem platform dependent fragment in test target -->
+               <type>p2-installable-unit</type>
+               <groupId>org.eclipse.tycho</groupId>
+               <artifactId>org.eclipse.platform.feature.group</artifactId>
+               <version>3.7</version>
+            </dependency>
+          </dependencies>
         </configuration>
       </plugin>
     </plugins>

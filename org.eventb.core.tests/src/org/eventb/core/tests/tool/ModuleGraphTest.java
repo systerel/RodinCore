@@ -61,7 +61,6 @@ public class ModuleGraphTest extends Declarations {
 		}
 
 		@Override
-		@Test
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			assertEquals("sorting failed", "[" + sorted + "]", graph.getSorted().toString());
@@ -102,7 +101,6 @@ public class ModuleGraphTest extends Declarations {
 		}
 
 		@Override
-		@Test
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			ModuleFactory factory = new ModuleFactory(graph, map);
