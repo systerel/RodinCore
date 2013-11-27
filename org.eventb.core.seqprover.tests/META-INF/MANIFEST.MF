@@ -8,7 +8,8 @@ Require-Bundle: org.eventb.core.ast.tests,
  org.eventb.core.seqprover,
  org.eclipse.core.runtime,
  org.junit,
- org.eventb.core.ast
+ org.eventb.core.ast,
+ org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
  org.eventb.core.seqprover.rewriterTests,
