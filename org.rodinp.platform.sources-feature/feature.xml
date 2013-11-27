@@ -21,6 +21,13 @@
       <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
    </url>
 
+   <requires>
+      <import feature="org.eclipse.platform.source"/>
+      <import plugin="org.eclipse.emf.ecore.source"/>
+      <import plugin="org.hamcrest.core.source"/>
+      <import plugin="org.junit.source"/>
+   </requires>
+
    <plugin
          id="fr.systerel.editor.source"
          download-size="0"
