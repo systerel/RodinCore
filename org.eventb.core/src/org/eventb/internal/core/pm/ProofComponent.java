@@ -17,13 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
@@ -33,7 +29,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.seqprover.IProofSkeleton;
-import org.eventb.internal.core.Messages;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -62,7 +57,6 @@ public class ProofComponent implements IProofComponent {
 	@Override
 	public IProofAttempt createProofAttempt(String poName, String owner,
 			IProgressMonitor pm) throws RodinDBException {
-		checkFormulaFactoryCompatibility();
 		final CreateProofAttemptOperation cpa = new CreateProofAttemptOperation(
 				this, poName, owner);
 		RodinCore.run(cpa, getSchedulingRule(), pm);
@@ -200,23 +194,9 @@ public class ProofComponent implements IProofComponent {
 	@Override
 	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException {
-		checkFormulaFactoryCompatibility();
 		final IWorkspaceRunnable op = new SaveProofComponentOperation(this,
 				force);
 		RodinCore.run(op, getSchedulingRule(), monitor);
-	}
-
-	public void checkFormulaFactoryCompatibility() throws RodinDBException {
-		final FormulaFactory poFF = psRoot.getPORoot().getFormulaFactory();
-		final FormulaFactory prFF = psRoot.getPRRoot().getFormulaFactory();
-		if (!poFF.equals(prFF)) {
-			final IStatus st = new Status(IStatus.ERROR,
-					EventBPlugin.PLUGIN_ID,
-					Messages.ProofComponent_IncompatibleFormulaFactory(psRoot
-							.getComponentName()));
-			final CoreException e = new CoreException(st);
-			throw new RodinDBException(e);
-		}
 	}
 
 	@Override

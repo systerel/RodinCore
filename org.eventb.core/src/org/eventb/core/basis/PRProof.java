@@ -14,6 +14,7 @@
 package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.PR_SETS_ATTRIBUTE;
+import static org.eventb.core.EventBPlugin.getProofManager;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.ILanguage;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRReasoner;
@@ -33,6 +36,7 @@ import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
@@ -78,11 +82,14 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	
 	private void doSetProofTree(IProofTree pt, SubMonitor sm)
 			throws RodinDBException {
-		sm.setWorkRemaining(20);
+		sm.setWorkRemaining(21);
 		clear(false, sm.newChild(1));
 		
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
-		
+
+		final FormulaFactory ff = pt.getFormulaFactory();
+		setFormulaFactory(ff, sm.newChild(1));
+
 		// compute proof tree dependencies
 		IProofDependencies proofDeps = pt.getProofDependencies();
 
@@ -306,6 +313,34 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		for (IProofSkeleton childNode : proofSkeleton.getChildNodes()) {
 			addUsedReasoners(childNode, usedReasoners);
 		}
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public FormulaFactory getFormulaFactory(IProgressMonitor monitor)
+			throws RodinDBException {
+		final ILanguage lang = getLanguage();
+		if (lang.exists()) {
+			return lang.getFormulaFactory(monitor);
+		}
+		// Backward compatibility: return the factory of the proof component
+		final IEventBRoot root = (IEventBRoot) getRoot();
+		final IProofComponent pc = getProofManager().getProofComponent(root);
+		return pc.getFormulaFactory();
+	}
+
+	private void setFormulaFactory(FormulaFactory factory, IProgressMonitor pm)
+			throws RodinDBException {
+		final SubMonitor sm = SubMonitor.convert(pm, 100);
+		final ILanguage language = getLanguage();
+		language.create(null, sm.newChild(10));
+		language.setFormulaFactory(factory, sm.newChild(90));
+	}
+
+	private ILanguage getLanguage() {
+		return getInternalElement(ILanguage.ELEMENT_TYPE, "L");
 	}
 
 }

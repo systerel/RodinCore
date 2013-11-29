@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.seqprover.IConfidence.DISCHARGED_MAX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -21,6 +22,7 @@ import java.util.Set;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.tests.BuilderTest;
@@ -68,6 +70,11 @@ public abstract class AbstractProofTests extends BuilderTest {
 		assertEquals(confidence, status.getConfidence());
 		assertEquals(broken, status.isBroken());
 		assertEquals(manual, status.getHasManualProof());
+	}
+
+	protected void assertClosedBrokenManualProof(IProofComponent pc, String name)
+			throws RodinDBException {
+		assertStatus(DISCHARGED_MAX, true, true, pc.getStatus(name));
 	}
 
 }

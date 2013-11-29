@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,12 @@
 package org.eventb.core.tests.pom;
 
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
+import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.core.tests.pom.TestLib.genSeq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +33,7 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
@@ -77,10 +81,11 @@ public class ProofSerializationTests extends BuilderTest {
 
 	private static void checkDeserialization(IPRProof proof,
 			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
-		IProofSkeleton skel = proof.getSkeleton(factory, null);
+		final FormulaFactory fac = proof.getFormulaFactory(null);
+		IProofSkeleton skel = proof.getSkeleton(fac, null);
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
-		assertEquals(hasDeps, proof.getProofDependencies(factory, null).hasDeps());
+		assertEquals(hasDeps, proof.getProofDependencies(fac, null).hasDeps());
 	}
 
 	private static ITactic autoRewriteL2() {
@@ -406,4 +411,20 @@ public class ProofSerializationTests extends BuilderTest {
 
 		checkReplay(sequent, proof);
 	}
+	
+	/**
+	 * Ensures that a closed proof tree using a specialized factory is correctly
+	 * serialized and deserialized.
+	 */
+	@Test
+	public void specializedFactoryClosedProof() throws Exception {
+		final IPRProof proof = prRoot.getProof("proof");
+		proof.create(null, null);
+		final IProverSequent sequent = genSeq(EXT_FACTORY, "prime({2}) |- ⊤");
+		final IProofTree proofTree = makeProofTree(sequent, null);
+		new AutoTactics.TrueGoalTac().apply(proofTree.getRoot(), null);
+		assertTrue(proofTree.isClosed());
+		checkProofTreeSerialization(proof, proofTree, true);
+	}
+
 }

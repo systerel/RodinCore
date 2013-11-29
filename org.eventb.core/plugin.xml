@@ -2090,6 +2090,9 @@
          <childType
                typeId="org.eventb.core.prReas">
          </childType>
+         <childType
+               typeId="org.eventb.core.lang">
+         </childType>
       </relationship>
       <relationship
             parentTypeId="org.eventb.core.prIdent">

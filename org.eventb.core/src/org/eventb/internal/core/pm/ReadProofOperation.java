@@ -13,6 +13,8 @@ package org.eventb.internal.core.pm;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eventb.core.IPRProof;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofSkeleton;
 
@@ -42,7 +44,13 @@ class ReadProofOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		result = pc.getProof(poName).getSkeleton(ff, monitor);
+		final SubMonitor sm = SubMonitor.convert(monitor, 100);
+		final IPRProof proof = pc.getProof(poName);
+		final FormulaFactory prFac = proof.getFormulaFactory(sm.newChild(10));
+		if (ff != prFac) {
+			return;
+		}
+		result = proof.getSkeleton(ff, sm.newChild(90));
 	}
 
 }

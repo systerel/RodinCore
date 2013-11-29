@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
@@ -190,9 +191,9 @@ public class PSUpdater {
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {
-			final FormulaFactory ff = psRoot.getFormulaFactory();
+			final FormulaFactory ff = pc.getFormulaFactory();
 			final IProverSequent seq = POLoader.readPO(poSequent, ff);
-			broken = isBroken(seq, prProof, ff, monitor);
+			broken = isBroken(seq, prProof, monitor);
 			if (AutoPOM.PERF_PROOFREUSE) 
 			{
 				if (broken) 
@@ -227,14 +228,25 @@ public class PSUpdater {
 
 	// Check only the dependencies of the proof, not all of it.
 	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
-			FormulaFactory ff, IProgressMonitor pm) {
+			IProgressMonitor pm) {
+		final SubMonitor sm = SubMonitor.convert(pm, 100);
 		try {
+			final FormulaFactory seqFactory = seq.getFormulaFactory();
+			final FormulaFactory proofFactory = prProof.getFormulaFactory(sm
+					.newChild(10));
+			if (seqFactory != proofFactory) {
+				return true;
+			}
 			final IProofDependencies deps = prProof
-					.getProofDependencies(ff, pm);
+					.getProofDependencies(proofFactory, sm.newChild(90));
 			return !ProverLib.proofReusable(deps, seq);
 		} catch (Throwable e) {
 			log(e, "while updating status of proof " + prProof);
 			return true;
+		} finally {
+			if (pm != null) {
+				pm.done();
+			}
 		}
 	}
 

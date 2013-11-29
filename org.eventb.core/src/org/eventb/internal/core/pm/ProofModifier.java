@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,10 @@ import org.rodinp.core.RodinDBException;
 /* package */ abstract class ProofModifier {
 
 	protected final IPRProof proof;
-	protected final FormulaFactory factory;
 	protected final String owner;
 	private final boolean simplify;
 
 	public ProofModifier(IPRProof proof, String owner, boolean simplify) {
-		this.factory = ((IEventBRoot) proof.getRoot()).getFormulaFactory();
 		this.proof = proof;
 		this.owner = owner;
 		this.simplify = simplify;
@@ -123,7 +121,17 @@ import org.rodinp.core.RodinDBException;
 
 	private IProofSkeleton getPrSkel(IProofComponent pc,
 			IProgressMonitor monitor) throws RodinDBException {
-		return pc.getProofSkeleton(proof.getElementName(), factory, monitor);
+		final SubMonitor sm = SubMonitor.convert(monitor, 100);
+		try {
+			final FormulaFactory factory;
+			factory = proof.getFormulaFactory(sm.newChild(10));
+			final String name = proof.getElementName();
+			return pc.getProofSkeleton(name, factory, sm.newChild(90));
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
 	}
 
 	private IProofAttempt createPrAttempt(IProofComponent pc,

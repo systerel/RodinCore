@@ -133,7 +133,6 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		if (isDisposed()) {
 			throw new IllegalStateException(this + " has been disposed");
 		}
-		component.checkFormulaFactoryCompatibility();
 		final CommitProofOperation op = new CommitProofOperation(this, manual,
 				simplify);
 		RodinCore.run(op, component.getSchedulingRule(), monitor);
@@ -157,6 +156,14 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 	}
 
 	private boolean checkBroken() throws RodinDBException {
+		return languageHasChanged() || stampHasChanged();
+	}
+	
+	private boolean languageHasChanged() {
+		return ff != component.getFormulaFactory();
+	}
+
+	private boolean stampHasChanged() throws RodinDBException {
 		try {
 			if (poStamp == null) {
 				return getPOSequent().hasPOStamp();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.lemma;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.core.tests.pom.TestLib.genPred;
+import static org.junit.Assert.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -43,6 +43,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.ResourceUtils;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -90,13 +91,18 @@ public class PSUpdateTests extends BuilderTest {
 
 	private void addPO(String name, IPOSequent nextSibling)
 			throws RodinDBException {
+		addPO(name, nextSibling, BTRUE);
+	}
+
+	private void addPO(String name, IPOSequent nextSibling, Predicate goal)
+			throws RodinDBException {
 		final IPOSequent poSequent = poRoot.getSequent(name);
 		poSequent.create(nextSibling, null);
 		poSequent.setAccuracy(true, null);
 		poSequent.setPOStamp(123, null);
 		final IPOPredicate poGoal = poSequent.getGoal("G");
 		poGoal.create(null, null);
-		poGoal.setPredicate(BTRUE, null);
+		poGoal.setPredicate(goal, null);
 	}
 
 	private void changePO(String name) throws RodinDBException {
@@ -791,6 +797,87 @@ public class PSUpdateTests extends BuilderTest {
 	@Test
 	public void testNoSignatureInReasoner() throws Exception {
 		doSignTest("unexpected for this reasoner", "org.eventb.core.seqprover.trueGoal", true);
+	}
+
+	/**
+	 * Ensure that a proof is kept valid when updating its proof obligation
+	 * without really changing it nor its factory, even when using a specialized
+	 * factory.
+	 */
+	@Test
+	public void specializedFactoryNotChanged() throws Exception {
+		createPOFile();
+		PrimeFormulaExtensionProvider.add(poRoot);
+		addPO("1", null, genPred(EXT_FACTORY, "prime({2})"));
+		runBuilder("1");
+
+		changePO("1");
+		runBuilder("1");
+		assertFalse(psRoot.getStatus("1").isBroken());
+	}
+
+	/**
+	 * Ensure that a non-empty proof becomes invalid when updating a proof
+	 * obligation without really changing it, if PO factory changes and that it
+	 * gets recovered when resetting the PO factory.
+	 */
+	@Test
+	public void specializedFactoryChangedToDefault() throws Exception {
+		createPOFile();
+		PrimeFormulaExtensionProvider.add(poRoot);
+		addPO("1", null, genPred(EXT_FACTORY, "⊤"));
+		runBuilder("1");
+
+		addProof("1");
+		changePO("1");
+		PrimeFormulaExtensionProvider.clear();
+		runBuilder("1");
+		assertTrue(psRoot.getStatus("1").isBroken());
+
+		changePO("1");
+		PrimeFormulaExtensionProvider.add(poRoot);
+		runBuilder("1");
+		assertFalse(psRoot.getStatus("1").isBroken());
+	}
+
+	/**
+	 * Ensure that a non-empty proof becomes invalid when updating a proof
+	 * obligation without really changing it, if PO factory changes.
+	 */
+	@Test
+	public void defaultFactoryChangedToSpecialized() throws Exception {
+		createPOFile();
+		addPO("1", null, genPred(ff, "⊤"));
+		runBuilder("1");
+
+		addProof("1");
+		changePO("1");
+		PrimeFormulaExtensionProvider.add(poRoot);
+		runBuilder("1");
+		assertTrue(psRoot.getStatus("1").isBroken());
+
+		changePO("1");
+		PrimeFormulaExtensionProvider.clear();
+		runBuilder("1");
+		assertFalse(psRoot.getStatus("1").isBroken());
+	}
+
+	/**
+	 * Ensures that an empty proof has no formula factory. This is detected by
+	 * changing the factory of the proof obligation and checking that the proof
+	 * used instantaneously the same factory (without need to rebuild).
+	 */
+	@Test
+	public void emptyProofHasNofactory() throws Exception {
+		createPOFile();
+		addPO("1", null, genPred(ff, "⊤"));
+		runBuilder("1");
+
+		final IPRProof proof = poRoot.getPRRoot().getProof("1");
+		assertSame(ff, proof.getFormulaFactory(null));
+
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertSame(EXT_FACTORY, proof.getFormulaFactory(null));
 	}
 
 }

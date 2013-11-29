@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.eventb.core.EventBAttributes.POSTAMP_ATTRIBUTE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.seqprover.IConfidence.DISCHARGED_MAX;
 import static org.eventb.core.seqprover.IConfidence.UNATTEMPTED;
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.core.tests.pom.POUtil.addPredicateSet;
 import static org.eventb.core.tests.pom.POUtil.addSequent;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
@@ -38,6 +37,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.tests.DeltaListener;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
@@ -223,6 +223,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 					"	m.bpr[*]: {CHILDREN}\n" + 
 					"		m[org.eventb.core.prFile][*]: {CHILDREN}\n" + 
 					"			PO1[org.eventb.core.prProof][*]: {CHILDREN | ATTRIBUTE}\n" + 
+					"				L[org.eventb.core.lang][+]: {}\n" +
 					"				r0[org.eventb.core.prRule][+]: {}\n" + 
 					"				p0[org.eventb.core.prPred][+]: {}\n" + 
 					"				r0[org.eventb.core.prReas][+]: {}\n" + 
@@ -262,6 +263,46 @@ public class ProofAttemptTests extends AbstractProofTests {
 		pa.commit(true, null);
 		assertNonEmptyProof(pc.getProofSkeleton(PO1, ff, null));
 		assertStatus(DISCHARGED_MAX, false, true, pc.getStatus(PO1));
+	}
+
+	/**
+	 * Ensures that one can commit a proof attempt and save the proof file, even
+	 * if the formula factory has changed since the creation of the attempt.
+	 * However, the proof is considered broken.
+	 */
+	@Test
+	public void commitPOFactoryChanged() throws Exception {
+		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
+		dischargeTrueGoal(pa);
+		
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertTrue(pa.isBroken());
+		
+		pa.commit(true, null);
+		assertClosedBrokenManualProof(pc, PO1);
+		
+		pc.save(null, false);
+		assertClosedBrokenManualProof(pc, PO1);
+	}
+
+	/**
+	 * Ensures that one cannot read the skeleton of a proof with a different
+	 * formula factory and that a proof attempt does not read it either.
+	 */
+	@Test
+	public void cannotReadSkeletonFactoryChanged() throws Exception {
+		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
+		dischargeTrueGoal(pa);
+		pa.commit(true, null);
+		pa.dispose();
+		
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertNull(pc.getProofSkeleton(PO1, EXT_FACTORY, null));
+
+		final IProofAttempt pa2 = pc.createProofAttempt(PO1, TEST, null);
+		assertSame(EXT_FACTORY , pa2.getFormulaFactory());
+		final IProofTree tree = pa2.getProofTree();
+		assertFalse(tree.proofAttempted());
 	}
 
 	private void createPOFile() throws RodinDBException {

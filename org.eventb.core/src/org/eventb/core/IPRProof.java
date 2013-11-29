@@ -35,11 +35,12 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * <p>
  * This interface is meant to be used as follows. An instance of IProofTree may
- * be serialised into the database using the
+ * be serialized into the database using the
  * {@link #setProofTree(IProofTree, IProgressMonitor)} method. This serializes
- * the proof skeleton ({@link IProofSkeleton}) and proof dependencies
- * {@link IProofDependencies} of this proof tree which may later be deserialized
- * using the {@link #getSkeleton(FormulaFactory, IProgressMonitor)} and
+ * the formula factory, the proof skeleton ({@link IProofSkeleton}) and proof
+ * dependencies {@link IProofDependencies} of this proof tree which may later be
+ * deserialized using the {@link #getFormulaFactory(IProgressMonitor)},
+ * {@link #getSkeleton(FormulaFactory, IProgressMonitor)} and
  * {@link #getProofDependencies(FormulaFactory, IProgressMonitor)} methods.
  * </p>
  * <p>
@@ -168,18 +169,36 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 */
 	public IProofTree getProofTree(IProgressMonitor monitor)
 			throws RodinDBException;
+	
+	/**
+	 * Returns the formula factory of this proof. The returned factory can be
+	 * used subsequently to parse the proof dependencies and proof skeleton of
+	 * this proof.
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @return the formula factory to use for parsing this proof
+	 * @throws RodinDBException
+	 *             if a problem occurs while reading the formula factory
+	 * @since 3.0
+	 */
+	FormulaFactory getFormulaFactory(IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Returns the proof dependencies for proof tree stored in this proof
-	 * element.
-	 * 
+	 * element. Normally, the given factory should be the result of
+	 * {@link #getFormulaFactory(IProgressMonitor)}. Optionally, another factory
+	 * can be used but it is up to the caller to ensure that it will be
+	 * able to parse the stored proof.
 	 * <p>
 	 * In case no proof tree is stored in this proof element, this method
-	 * returns the broadest result (i.e. with no dependencies)
+	 * returns the broadest result (i.e. without any dependency)
 	 * </p>
 	 * 
 	 * @param factory
-	 *            The formula factory to be used
+	 *            the formula factory to use
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
@@ -192,10 +211,13 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 
 	/**
 	 * Returns the proof skeleton of the proof tree stored in this proof
-	 * element.
+	 * element. Normally, the given factory should be the result of
+	 * {@link #getFormulaFactory(IProgressMonitor)}. Optionally, another factory
+	 * can be used but it is up to the caller to ensure that it will be
+	 * able to parse the stored proof.
 	 * 
 	 * @param factory
-	 *            The formula factory to be used
+	 *            the formula factory to use
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
