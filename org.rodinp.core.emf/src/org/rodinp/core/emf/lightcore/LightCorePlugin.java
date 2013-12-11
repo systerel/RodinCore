@@ -18,6 +18,9 @@ import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
 
 /**
  * Activator for the RODIN-EMF core plug-in
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class LightCorePlugin extends Plugin implements BundleActivator {
 
