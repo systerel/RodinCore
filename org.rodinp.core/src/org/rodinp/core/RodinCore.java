@@ -65,6 +65,7 @@ import org.rodinp.internal.core.version.ConversionResult;
  * activated automatically if not already active.
  * </p>
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 
