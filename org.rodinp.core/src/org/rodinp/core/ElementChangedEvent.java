@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,14 @@ import java.util.EventObject;
  * of a tree of Rodin elements. The changes to the elements are described by
  * the associated delta object carried by this event.
  * <p>
- * This class is not intended to be instantiated or subclassed by clients.
  * Instances of this class are automatically created by the Rodin database.
  * </p>
  *
  * @see IElementChangedListener
  * @see IRodinElementDelta
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ElementChangedEvent extends EventObject {
 	

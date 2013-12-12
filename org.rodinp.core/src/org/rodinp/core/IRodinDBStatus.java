@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,11 @@ import org.eclipse.core.runtime.IStatus;
  * failure</li>
  * <li>string - optional string associated with the failure</li>
  * </ul>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see IStatus
  * @see IRodinDBStatusConstants
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRodinDBStatus extends IStatus {
 

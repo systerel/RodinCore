@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,15 +22,12 @@ import org.rodinp.internal.core.RodinDBStatus;
  * A checked exception representing a failure in the Rodin database. Rodin
  * database exceptions contain a Rodin-specific status object describing the
  * cause of the exception.
- * <p>
- * This class is not intended to be subclassed by clients. Instances of this
- * class are automatically created by the Rodin database when problems arise, so
- * there is generally no need for clients to create instances.
- * </p>
- * 
+ *
  * @see IRodinDBStatus
  * @see IRodinDBStatusConstants
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RodinDBException extends CoreException {
 

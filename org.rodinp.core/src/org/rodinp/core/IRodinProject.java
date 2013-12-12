@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,13 +33,13 @@ import org.rodinp.internal.core.ElementTypeManager;
  * considered as a non-Rodin resource project and not part of the database.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients. An instance of
- * one of these handles can be created via
+ * An instance of one of these handles can be created via
  * <code>RodinCore.create(project)</code>.
  * </p>
  * 
  * @see RodinCore#valueOf(IProject)
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 

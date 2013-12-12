@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,12 +56,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * type using methods <code>makeValue()</code> or obtained from the database
  * using {@link IInternalElement#getAttributeValues()}.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @author Laurent Voisin
- * 
+ *
  * @see IAttributeType.Boolean#makeValue(boolean)
  * @see IAttributeType.Handle#makeValue(IRodinElement)
  * @see IAttributeType.Integer#makeValue(int)
@@ -70,6 +67,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see IInternalElement#getAttributeValues()
  * @see IInternalElement#setAttributeValue(IAttributeValue, IProgressMonitor)
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAttributeValue {
 

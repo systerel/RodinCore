@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,6 @@ import org.rodinp.core.IRodinFile;
 /**
  * Common protocol for specifying a location in a {@link IInternalElement} in
  * the Rodin database.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see IRodinLocation
  * @see IAttributeLocation
@@ -27,6 +24,7 @@ import org.rodinp.core.IRodinFile;
  * @author Nicolas Beauger
  * @author Laurent Voisin
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInternalLocation extends IRodinLocation {
 

@@ -15,14 +15,12 @@ package org.rodinp.core;
 
 /**
  * Status codes used with Rodin database status objects.
- * <p>
- * This interface declares constants only; it is not intended to be implemented
- * or extended.
- * </p>
  * 
  * @see IRodinDBStatus
  * @see org.eclipse.core.runtime.IStatus#getCode()
  * @since 1.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRodinDBStatusConstants {
 	
@@ -322,6 +320,7 @@ public interface IRodinDBStatusConstants {
 	 * element whose type is not compatible with the type of its parent element.
 	 * The parent element can be retrieved using <code>getElements()</code> on
 	 * the status object.
+	 * @since 1.7
 	 */
 	int INVALID_CHILD_TYPE = 1006;
 
@@ -330,6 +329,7 @@ public interface IRodinDBStatusConstants {
 	 * while the attribute type, of the attribute to set, is not allowed
 	 * considering the owner element type. The owner element can be retrieved
 	 * using <code>getElements()</code> on the status object.
+	 * @since 1.7
 	 */
 	int INVALID_ATTRIBUTE_TYPE = 1007;
 

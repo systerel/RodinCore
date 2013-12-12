@@ -56,8 +56,8 @@ package org.rodinp.core;
  * @see RodinCore#getLongAttrType(java.lang.String)
  * @see RodinCore#getStringAttrType(java.lang.String)
  * @since 1.0
- * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAttributeType {
 
@@ -185,6 +185,7 @@ public interface IAttributeType {
 	 * this type.
 	 * 
 	 * @return the types of element that can carry an attribute of this type
+	 * @since 1.7
 	 */
 	IInternalElementType<?>[] getElementTypes();
 
@@ -196,6 +197,7 @@ public interface IAttributeType {
 	 *            an internal element type
 	 * @return <code>true</code> iff an element of the given type can carry an
 	 *         attribute of this type
+	 * @since 1.7
 	 */
 	boolean isAttributeOf(IInternalElementType<?> elementType);
 

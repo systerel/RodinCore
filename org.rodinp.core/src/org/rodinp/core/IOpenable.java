@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * all its internal elements, but opening a project does not open all files
  * in the project.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ *
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IOpenable {
 

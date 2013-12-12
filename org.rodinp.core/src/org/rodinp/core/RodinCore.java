@@ -65,6 +65,7 @@ import org.rodinp.internal.core.version.ConversionResult;
  * activated automatically if not already active.
  * </p>
  * @since 1.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 
 public class RodinCore extends Plugin {
