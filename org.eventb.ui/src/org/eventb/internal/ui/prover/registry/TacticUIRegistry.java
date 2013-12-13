@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *******************************************************************************/
-package org.eventb.internal.ui.prover;
+package org.eventb.internal.ui.prover.registry;
 
 import static java.util.Collections.unmodifiableList;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
@@ -25,16 +25,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.registry.AbstractInfo;
-import org.eventb.internal.ui.prover.registry.ExtensionParser;
-import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
+import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy.PositionApplicationFactory;
-import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy.PredicateApplicationFactory;
-import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticApplicationProxy.TacticApplicationFactory;
-import org.eventb.internal.ui.prover.registry.TacticProviderInfo;
-import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 
 /**
  * Registry of all tactic and proof command contributions to the prover UI.

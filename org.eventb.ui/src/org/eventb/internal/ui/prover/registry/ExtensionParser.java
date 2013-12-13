@@ -27,7 +27,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.internal.ui.prover.TacticUIRegistry;
 
 /**
  * Utility class for parsing the extensions contributed to extension point

@@ -104,10 +104,10 @@ import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.DropdownInfo;
 import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
+import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 
 /**

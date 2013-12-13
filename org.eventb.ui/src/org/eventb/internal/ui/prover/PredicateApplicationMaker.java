@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
+import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
 
 /**
  * Class able to create controls to place in a predicate row which will allow

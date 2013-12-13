@@ -56,6 +56,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
+import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
 import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
 import org.eventb.internal.ui.utils.ListMultimap;

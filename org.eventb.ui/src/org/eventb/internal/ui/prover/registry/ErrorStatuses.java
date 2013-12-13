@@ -11,7 +11,7 @@
 package org.eventb.internal.ui.prover.registry;
 
 import static org.eclipse.core.runtime.IStatus.ERROR;
-import static org.eventb.internal.ui.prover.TacticUIRegistry.PROOFTACTICS_ID;
+import static org.eventb.internal.ui.prover.registry.TacticUIRegistry.PROOFTACTICS_ID;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import org.eclipse.core.runtime.IConfigurationElement;
