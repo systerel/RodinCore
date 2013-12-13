@@ -136,7 +136,8 @@ public class EventBImage {
 	 * 
 	 * @param path
 	 *            relative path of the image within this Event-B UI Plugin
-	 * @return the image descriptor
+	 * @return the image descriptor, or <code>null</code> if the image could not
+	 *         be found
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return getImageDescriptor(EventBUIPlugin.PLUGIN_ID, path);
@@ -149,7 +150,8 @@ public class EventBImage {
 	 * 
 	 * @param path
 	 *            relative path of the image
-	 * @return the image descriptor
+	 * @return the image descriptor, or <code>null</code> if the image could not
+	 *         be found
 	 */
 	public static ImageDescriptor getImageDescriptor(String pluginID,
 			String path) {
