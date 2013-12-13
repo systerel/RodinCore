@@ -38,7 +38,7 @@ public abstract class GlobalTacticDropdownToolItem {
 
 	private GlobalDropdownSelectionListener listener;
 
-	TacticUIInfo active = null;  // FIXME why package ?
+	private TacticUIInfo active = null;
 
 	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 
@@ -48,7 +48,8 @@ public abstract class GlobalTacticDropdownToolItem {
 	 *         This class provides the "drop down" functionality for our
 	 *         dropdown tool items.
 	 */
-	class GlobalDropdownSelectionListener extends SelectionAdapter {
+	@SuppressWarnings("synthetic-access")
+	private class GlobalDropdownSelectionListener extends SelectionAdapter {
 		ToolItem dropdown;
 
 		private Menu menu;
