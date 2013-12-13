@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rodin Keyboard Core Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.rodinp.keyboard.core;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.rodinp.internal.keyboard.core.RodinKeyboardCorePlugin
@@ -10,3 +10,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.rodinp.internal.keyboard.core;x-friends:="org.rodinp.keyboard.core.tests",
  org.rodinp.internal.keyboard.core.symbols;x-friends:="org.rodinp.keyboard.core.tests",
  org.rodinp.keyboard.core;uses:="org.rodinp.internal.keyboard.core.symbols"
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin

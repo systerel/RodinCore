@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rodin Keyboard UI Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.rodinp.keyboard.ui.tests
 Bundle-Version: 2.0.0.qualifier
 Require-Bundle: org.eclipse.ui,
@@ -11,4 +11,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit
 Export-Package: org.rodinp.keyboard.ui.tests
 Bundle-Localization: plugin
+Bundle-Vendor: %providerName
 
