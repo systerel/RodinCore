@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,9 @@ public class TacticUILoader {
 
 	public TacticUIInfo load() {
 		final Target target = getTarget();
+		if (target == null) {
+			return null;
+		}
 		final ImageDescriptor iconDesc = getImageDesc();
 		final boolean interrupt = configuration.getAttribute("interrupt")
 				.equalsIgnoreCase("true");
@@ -106,7 +109,9 @@ public class TacticUILoader {
 		try {
 			return Target.valueOf(target);
 		} catch (IllegalArgumentException e) {
-			return Target.global;  // TODO maintain backward compatibility or fix it ?
+			ProverUIUtils.debug("Invalid target :" + target
+					+ " for extension " + id);
+			return null;
 		}
 	}
 
