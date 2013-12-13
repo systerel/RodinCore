@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -88,7 +88,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * duplicates specified in elements to be processed.
 	 */
 	protected void groupElements() throws RodinDBException {
-		childrenToRemove = new HashMap<RodinFile, IRegion>(1);
+		childrenToRemove = new LinkedHashMap<RodinFile, IRegion>(1);
 		for (IRodinElement element: elementsToProcess) {
 			if (! (element instanceof InternalElement)) {
 				error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
