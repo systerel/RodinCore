@@ -159,6 +159,7 @@ public class TestTypes extends AbstractTests {
 		assertNotType("ℙ(ℕ)");
 		assertNotType("ℙ1(ℤ)");
 		assertNotType("S ⇸ T");
+		assertNotType("nil⦂List(ℤ)");
 	}
 
 	private void assertNotType(String image) {
@@ -183,11 +184,21 @@ public class TestTypes extends AbstractTests {
 		assertIsNotATypeExpression("S × y");
 	}
 
-	private void assertIsNotATypeExpression(String image) {
+	private static void assertIsNotATypeExpression(String image) {
 		final Expression expr = parseExpression(image, typenv);
 		assertFalse(expr.isATypeExpression());
+		assertToTypeIllegal(expr);
 	}
 
+	private static void assertToTypeIllegal(Expression expr) {
+		try {
+			expr.toType();
+			fail("IllegalStateException expected calling toType() on " + expr);
+		} catch(IllegalStateException e) {
+			// as expected
+		}
+	}
+	
 	/**
 	 * Ensures that a type, which can be translated to another factory, is
 	 * properly translated.
@@ -255,4 +266,21 @@ public class TestTypes extends AbstractTests {
 		}
 	}
 
+	/**
+	 * Ensures that, when calling toType() on expressions that are not type
+	 * checked, IllegalStateException is thrown.
+	 */
+	@Test
+	public void testToTypeNotChecked() throws Exception {
+		assertIllegalToTypeNotTypeChecked("A");
+		assertIllegalToTypeNotTypeChecked("ℙ(A)");
+		assertIllegalToTypeNotTypeChecked("A×B");
+		assertIllegalToTypeNotTypeChecked("List(A)");
+	}
+	
+	private static void assertIllegalToTypeNotTypeChecked(String image) {
+		final Expression expr = parseExpression(image, tf);
+		// no type check
+		assertToTypeIllegal(expr);
+	}
 }

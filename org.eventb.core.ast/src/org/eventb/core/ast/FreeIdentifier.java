@@ -299,6 +299,9 @@ public class FreeIdentifier extends Identifier {
 
 	@Override
 	public Type toType() {
+		if (!isATypeExpression()) {
+			return super.toType();
+		}
 		return getFactory().makeGivenType(getName());
 	}
 

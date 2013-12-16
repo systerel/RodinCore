@@ -575,11 +575,10 @@ public class UnaryExpression extends Expression {
 		return getTag() == POW && child.isATypeExpression();
 	}
 
-	@Deprecated
 	@Override
-	public Type toType() throws InvalidExpressionException {
+	public Type toType() {
 		if (getTag() != POW)
-			throw new InvalidExpressionException();
+			return super.toType();
 		Type childAsType = child.toType();
 		return getFactory().makePowerSetType(childAsType);
 	}

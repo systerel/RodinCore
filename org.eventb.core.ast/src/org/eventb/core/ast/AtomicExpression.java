@@ -421,7 +421,7 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	public Type toType() throws InvalidExpressionException {
+	public Type toType() {
 		final FormulaFactory factory = getFactory();
 		switch (getTag()) {
 		case INTEGER:
@@ -429,7 +429,7 @@ public class AtomicExpression extends Expression {
 		case BOOL:
 			return factory.makeBooleanType();
 		default:
-			throw new InvalidExpressionException();
+			return super.toType();
 		}
 	}
 

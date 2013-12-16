@@ -793,7 +793,7 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public Type toType() throws InvalidExpressionException {
+	public Type toType() {
 		final FormulaFactory factory = getFactory();
 		Type leftAsType = left.toType();
 		Type rightAsType = right.toType();
@@ -804,7 +804,7 @@ public class BinaryExpression extends Expression {
 		case REL:
 			return factory.makePowerSetType(result);
 		default:
-			throw new InvalidExpressionException();
+			return super.toType();
 		}
 	}
 

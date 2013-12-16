@@ -496,10 +496,9 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 	
 	@Override
-	public Type toType()
-			throws InvalidExpressionException {
-		if (!extension.isATypeConstructor()) {
-			throw new InvalidExpressionException();
+	public Type toType() {
+		if (!isATypeExpression()) {
+			return super.toType();
 		}
 		final List<Type> typeParams = new ArrayList<Type>();
 		for (Expression child : childExpressions) {

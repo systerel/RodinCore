@@ -51,7 +51,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -274,11 +273,6 @@ public class MainParsers {
 				final Type type = expression.toType();
 				return new SubParseResult<Type>(type, exprResult.getKind(),
 						exprResult.isClosed());
-			} catch (InvalidExpressionException e) {
-				// cannot happen (already checked)
-				throw new IllegalStateException(
-						"The expression has been reckoned as a valid type expression, but could not be translated into a type.",
-						e);
 			} finally {
 				pc.stopParsingType();
 			}

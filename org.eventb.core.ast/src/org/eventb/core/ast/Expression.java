@@ -158,14 +158,16 @@ public abstract class Expression extends Formula<Expression> {
 	 * </p>
 	 * 
 	 * @return the type represented by this expression
-	 * @throws InvalidExpressionException
-	 *             when this expression doesn't denote a type
+	 * @throws IllegalStateException
+	 *             when this expression doesn't denote a type or is not
+	 *             type-checked
 	 * @see Type#toExpression()
 	 * @see #isATypeExpression()
 	 * @since 2.0
 	 */
-	public Type toType() throws InvalidExpressionException {
-		throw new InvalidExpressionException();
+	public Type toType() {
+		throw new IllegalStateException("Expression does not denote a type: "
+				+ this.toString());
 	}
 	
 	/**
