@@ -523,7 +523,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	
 	@Override
 	public void elementChanged(final ElementChangedEvent event) {
-		if (pc == null) {
+		if (pc == null || proofStates == null) {
 			// No file to listen to yet
 			return;
 		}
