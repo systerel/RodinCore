@@ -149,8 +149,14 @@ public class ExtensionParser {
 		@Override
 		protected void parse(String id, IConfigurationElement element)
 				throws ErroneousElement {
+			final String toolbarId = element.getAttribute("toolbar");
+			if (toolbarId == null || toolbarId.isEmpty()) {
+				if (ProverUIUtils.DEBUG)
+					ProverUIUtils.debug("Did NOT register dropdown with id " + id + ": missing toolbar ID");
+				return;
+			}
 			dropdownRegistry.put(id, new DropdownInfo(globalRegistry, id,
-					element));
+					toolbarId));
 			printDebugRegistration(id, DROPDOWN_TAG);
 		}
 
