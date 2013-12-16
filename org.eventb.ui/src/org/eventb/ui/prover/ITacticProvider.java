@@ -26,6 +26,17 @@ public interface ITacticProvider {
 
 	/**
 	 * Returns a list of tactic applications according to the given arguments.
+	 * <p>
+	 * The returned list of tactic applications may be empty if the tactic is
+	 * not applicable, but NEVER <code>null</code>. When the tactic is
+	 * applicable, the size of the returned list may be:
+	 * <ul>
+	 * <li>one or more for a local tactic (with target goal or hypothesis or
+	 * any)</li>
+	 * <li>exactly one for a global tactic (with target global)</li>
+	 * </ul>
+	 * Tactic providers that fail to respect these rules will be ignored.
+	 * </p>
 	 * 
 	 * @param node
 	 *            the current proof tree node
@@ -35,7 +46,7 @@ public interface ITacticProvider {
 	 * @param globalInput
 	 *            the input for the tactic (taken from the input text in the
 	 *            Proof Control View) in case of global tactic
-	 * @return a (possibly empty) list of tactic applications; never returns
+	 * @return a (possibly empty) list of tactic applications; never
 	 *         <code>null</code>
 	 * @since 2.0
 	 */

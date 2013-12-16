@@ -53,7 +53,6 @@ public class TacticProviderInfo extends TacticUIInfo {
 			String globalInput) {
 		final List<ITacticApplication> applications = getApplicationsFromClient(
 				us, null, globalInput);
-		// TODO document protocol in extension point
 		switch (applications.size()) {
 		case 0:
 			// not applicable
