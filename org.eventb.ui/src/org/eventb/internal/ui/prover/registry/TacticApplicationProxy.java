@@ -29,7 +29,7 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 	/**
 	 * Protocol of an abstract factory for creating proxys.
 	 */
-	public abstract static class TacticApplicationFactory<T extends TacticApplicationProxy<?>> {
+	public static abstract class TacticApplicationFactory<T extends TacticApplicationProxy<?>> {
 
 		/**
 		 * Returns a new proxy object for the given application or
@@ -56,7 +56,7 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 	 * @param <V>
 	 *            type of the value returned by client code
 	 */
-	protected abstract class SafeCall<V> implements ISafeRunnable {
+	protected static abstract class SafeCall<V> implements ISafeRunnable {
 
 		V result;
 
