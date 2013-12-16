@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
+import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.eventb.core.IEvent.INITIALISATION;
+
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -410,8 +414,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		hasMarker(mfvt, EventBAttributes.CONVERGENCE_ATTRIBUTE);
 	}
 
-	private static final IConvergenceElement.Convergence[] cvg(
-			IConvergenceElement.Convergence... cvgs) {
+	private static final Convergence[] cvg(Convergence... cvgs) {
 		return cvgs;
 	}
 
@@ -422,31 +425,21 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testCvg_11_convergentMerge() throws Exception {
 
-		IConvergenceElement.Convergence[][] cvgMatrix = new IConvergenceElement.Convergence[][] {
-				cvg(Convergence.ORDINARY, Convergence.ORDINARY,
-						Convergence.ORDINARY),
-				cvg(Convergence.ORDINARY, Convergence.ANTICIPATED,
-						Convergence.ORDINARY),
-				cvg(Convergence.ORDINARY, Convergence.CONVERGENT,
-						Convergence.ORDINARY),
-				cvg(Convergence.ANTICIPATED, Convergence.ORDINARY,
-						Convergence.ORDINARY),
-				cvg(Convergence.ANTICIPATED, Convergence.ANTICIPATED,
-						Convergence.ANTICIPATED),
-				cvg(Convergence.ANTICIPATED, Convergence.CONVERGENT,
-						Convergence.ANTICIPATED),
-				cvg(Convergence.CONVERGENT, Convergence.ORDINARY,
-						Convergence.ORDINARY),
-				cvg(Convergence.CONVERGENT, Convergence.ANTICIPATED,
-						Convergence.ANTICIPATED),
-				cvg(Convergence.CONVERGENT, Convergence.CONVERGENT,
-						Convergence.CONVERGENT) };
+		final Convergence[][] cvgMatrix = {
+				cvg(ORDINARY, ORDINARY, ORDINARY),
+				cvg(ORDINARY, ANTICIPATED, ORDINARY),
+				cvg(ORDINARY, CONVERGENT, ORDINARY),
+				cvg(ANTICIPATED, ORDINARY, ORDINARY),
+				cvg(ANTICIPATED, ANTICIPATED, ANTICIPATED),
+				cvg(ANTICIPATED, CONVERGENT, ANTICIPATED),
+				cvg(CONVERGENT, ORDINARY, ORDINARY),
+				cvg(CONVERGENT, ANTICIPATED, ANTICIPATED),
+				cvg(CONVERGENT, CONVERGENT, CONVERGENT) };
 
-		for (IConvergenceElement.Convergence[] cvgs : cvgMatrix) {
+		for (Convergence[] cvgs : cvgMatrix) {
 			IMachineRoot abs = createMachine("abs");
 			addInitialisation(abs);
-			if (cvgs[0] == Convergence.CONVERGENT
-					|| cvgs[1] == Convergence.CONVERGENT)
+			if (cvgs[0] == CONVERGENT || cvgs[1] == CONVERGENT)
 				addVariant(abs, "1");
 			IEvent evt = addEvent(abs, "evt");
 			evt.setConvergence(cvgs[0], null);
@@ -472,12 +465,12 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 			ISCMachineRoot file = mac.getSCMachineRoot();
 
-			ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
-			if (cvgs[2] == Convergence.CONVERGENT) {
+			ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+			if (cvgs[2] == CONVERGENT) {
 				isConvergent(events[1]);
-			} else if (cvgs[2] == Convergence.ANTICIPATED) {
+			} else if (cvgs[2] == ANTICIPATED) {
 				isAnticipated(events[1]);
-			} else if (cvgs[2] == Convergence.ORDINARY) {
+			} else if (cvgs[2] == ORDINARY) {
 				isOrdinary(events[1]);
 			}
 			if (cvgs[0] == cvgs[2] && cvgs[1] == cvgs[2]) {
