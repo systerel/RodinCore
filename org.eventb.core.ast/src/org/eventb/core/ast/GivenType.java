@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidGivenType;
 import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
 
 import java.util.Set;
@@ -39,6 +40,18 @@ public class GivenType extends Type {
 		super(ff, true);
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
+	}
+	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeGivenType(FreeIdentifier)
+	 * @since 3.0
+	 */
+	protected GivenType(FormulaFactory ff, FreeIdentifier freeIdent) {
+		super(ff, true, freeIdent);
+		ensureValidGivenType(freeIdent);
+		this.name = freeIdent.getName();
 	}
 
 	@Override

@@ -57,8 +57,16 @@ public abstract class Type {
 	 * @since 3.0
 	 */
 	protected Type(FormulaFactory fac, boolean solved) {
+		this(fac, solved, null);
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	protected Type(FormulaFactory fac, boolean solved, Expression expr) {
 		this.fac = fac;
 		this.solved = solved;
+		this.expr = expr;
 	}
 
 	// Build the expression that denotes the set corresponding to this type

@@ -13,14 +13,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.INTEGER;
 import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.MAPSTO;
@@ -29,19 +25,31 @@ import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
+import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 import org.junit.Test;
 
 public class TestSourceLocation extends AbstractTests {
@@ -91,7 +99,7 @@ public class TestSourceLocation extends AbstractTests {
 		assertFalse(s11.equals(s01));
 	}
 
-	private void addAllPairs(HashMap<SourceLocation, Formula<?>> pairs,
+	private void addAllPairs(Map<SourceLocation, Formula<?>> pairs,
 			final int start, final int end, Formula<?> sub) {
 
 		for (int i = start; i <= end; ++ i) {
@@ -102,7 +110,7 @@ public class TestSourceLocation extends AbstractTests {
 	}
 
 	private void testAllLocations(Formula<?> formula, int max,
-			HashMap<SourceLocation, Formula<?>> children) {
+			Map<SourceLocation, Formula<?>> children) {
 
 		// All locations inside the formula
 		for (int i = 0; i < max; ++i) {
@@ -117,7 +125,7 @@ public class TestSourceLocation extends AbstractTests {
 					assertTrue(actual.getSourceLocation().contains(sloc));
 					Formula<?> expected = children.get(sloc);
 					if (expected == null) expected = formula;
-					assertEquals("Wrong sub-formula",
+					assertEquals("Wrong sub-formula at " + sloc,
 							expected, actual);
 				}
 			}
@@ -129,7 +137,7 @@ public class TestSourceLocation extends AbstractTests {
 	}
 
 	private void assertPositions(Formula<?> formula, int max, Object... args) {
-		HashMap<SourceLocation, Formula<?>> children =
+		Map<SourceLocation, Formula<?>> children =
 			new HashMap<SourceLocation, Formula<?>>();
 		int idx = 0;
 		while (idx < args.length) {
@@ -162,6 +170,11 @@ public class TestSourceLocation extends AbstractTests {
 	private final Expression b1 = mBoundIdentifier(1);
 	private final Expression union10 = mAssociativeExpression(BUNION, b1, b0);
 	private final Expression map10 = mBinaryExpression(MAPSTO, b1, b0);
+    
+    private final GivenType t_S = ff.makeGivenType("S");
+    private final Type t_pow_S = ff.makePowerSetType(t_S);
+    
+    private final GivenType t_T = ff.makeGivenType("T");
 	
 	private final Predicate btrue = mLiteralPredicate(BTRUE);
 	private final Predicate bfalse = mLiteralPredicate(BFALSE);
@@ -260,6 +273,40 @@ public class TestSourceLocation extends AbstractTests {
 		// Tests with additional characters before or after the formula
 		assertPositionsE("(a)");
 		assertPositionsE(" a ");
+	}
+
+	@Test
+	public void testOftypeInBoundVariable() throws Exception {
+		final Predicate pred = parsePredicate("∀x⦂S·⊤");
+		assertEquals(
+				mQuantifiedPredicate(FORALL, mList(mBoundIdentDecl("x", t_S)),
+						btrue), pred);
+		final FreeIdentifier[] freeIdentifiers = pred.getFreeIdentifiers();
+		assertEquals(1, freeIdentifiers.length);
+		final FreeIdentifier S = freeIdentifiers[0];
+		assertEquals("S", S.getName());
+		assertEquals(t_pow_S, S.getType());
+		assertEquals("wrong source location", new SourceLocation(3, 3),
+				S.getSourceLocation());
+	}
+
+	@Test
+	public void testOftypeInTypedGeneric() throws Exception {
+		final Expression expr = parseExpression("∅ ⦂ ℙ(S×S×ℙ(T))", ff);
+		assertEquals(mEmptySet(ff.makePowerSetType(ff.makeProductType(
+				ff.makeProductType(t_S, t_S), ff.makePowerSetType(t_T)))), expr);
+
+		final FreeIdentifier[] freeIdentifiers = expr.getFreeIdentifiers();
+		assertEquals(2, freeIdentifiers.length);
+		final FreeIdentifier S = freeIdentifiers[0];
+		assertEquals("S", S.getName());
+		assertEquals("wrong source location for S", new SourceLocation(6, 6),
+				S.getSourceLocation());
+
+		final FreeIdentifier T = freeIdentifiers[1];
+		assertEquals("T", T.getName());
+		assertEquals("wrong source location for T", new SourceLocation(12, 12),
+				T.getSourceLocation());
 	}
 
 }

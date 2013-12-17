@@ -1975,6 +1975,31 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns the type which corresponds to the carrier-set named after the
+	 * given free identifier.
+	 * <p>
+	 * The free identifier argument must be typed as a valid given type, i.e its
+	 * type must be a powerset over a given type of its name. That is, for an
+	 * identifier named 'S', its type must be POW(S).
+	 * </p>
+	 * <p>
+	 * Calling {@link GivenType#toExpression()} on the returned type will return
+	 * the given free identifier. Thus, in particular, the source location (if
+	 * any) is retained.
+	 * </p>
+	 * 
+	 * @param freeIdentifier
+	 *            a free identifier typed as a given set
+	 * @return a new given type with given identifier name
+	 * @throws IllegalArgumentException
+	 *             if the given free identifier is not typed as a given set.
+	 * @since 3.0
+	 */
+	public GivenType makeGivenType(FreeIdentifier freeIdentifier) {
+		return new GivenType(this, freeIdentifier);
+	}
+
+	/**
 	 * Returns the type which corresponds to the set of all integers.
 	 * 
 	 * @return the predefined integer type

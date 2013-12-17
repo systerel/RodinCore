@@ -302,7 +302,7 @@ public class FreeIdentifier extends Identifier {
 		if (!isATypeExpression()) {
 			return super.toType();
 		}
-		return getFactory().makeGivenType(getName());
+		return getFactory().makeGivenType(this);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ package org.eventb.internal.core.ast;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 
 /**
@@ -56,4 +57,12 @@ public class FormulaChecks {
 					+ left.length + " vs " + right.length);
 		}
 	}
+
+	public static void ensureValidGivenType(FreeIdentifier freeIdent) {
+		if (!freeIdent.isATypeExpression()) {
+			throw new IllegalArgumentException("Invalid given type: "
+					+ freeIdent.toStringWithTypes());
+		}
+	}
+
 }
