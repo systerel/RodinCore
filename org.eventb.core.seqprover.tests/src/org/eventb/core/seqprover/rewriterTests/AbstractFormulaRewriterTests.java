@@ -287,6 +287,34 @@ public abstract class AbstractFormulaRewriterTests {
 	 * its string image) to an expected expression (represented by its string
 	 * image).
 	 * <p>
+	 * The type environment is described as usual. For instance, to describe a
+	 * type environment where <code>S</code> is a given set and <code>x</code>
+	 * is an integer, one would pass the strings <code>"S=ℙ(S); x=ℤ"</code>.
+	 * </p>
+	 *
+	 * @param inputImage
+	 *            the string image of the input expression.
+	 * @param expectedImage
+	 *            the string image of the expected expression.
+	 * @param typenvImage
+	 *            the string image of the type environment
+	 * @param rewrite
+	 *            tells whether the predicate shall be rewritten
+	 */
+	protected void rewriteExpr(String inputImage, String expectedImage,
+			String typenvImage, boolean rewrite) {
+		if (rewrite) {
+			rewriteExpr(inputImage, expectedImage, typenvImage);
+		} else {
+			noRewriteExpr(inputImage, typenvImage);
+		}
+	}
+
+	/**
+	 * Test the rewriter for rewriting from an input expression (represented by
+	 * its string image) to an expected expression (represented by its string
+	 * image).
+	 * <p>
 	 * Both expressions must type-check by themselves without a given type
 	 * environment.
 	 * </p>

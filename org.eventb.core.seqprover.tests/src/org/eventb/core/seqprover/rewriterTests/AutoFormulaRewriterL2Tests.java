@@ -1064,20 +1064,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewriteExpr("card({x, y · x↦y∈S ∣ y↦x})", "S=ℙ(T×U)");
 		noRewriteExpr("card({x, y · x↦y+1∈S ∣ x↦y+1})", "S=ℙ(T×ℤ)");
 
-		if (level3AndHigher) {
-			rewriteExpr("card({x · x∈S∪{x} ∣ x})", "card(T)", //
-					"S=ℙ(T); T=ℙ(T)");
-			rewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "card(T×U)", //
-					"S=ℙ(T×U); T=ℙ(T); U=ℙ(U)");
-			rewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
-					"card({x, y · x∈S ∧ y∈U∪{y} ∣ x↦y})", //
-					"S=ℙ(T); U=ℙ(V)");
-		} else {
-			noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S=ℙ(T)");
-			noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S=ℙ(T×U)");
-			noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
-					"S=ℙ(T); U=ℙ(V)");
-		}
+		rewriteExpr("card({x · x∈S∪{x} ∣ x})", "card(T)", "S=ℙ(T); T=ℙ(T)",
+				level3AndHigher);
+		rewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "card(T×U)",
+				"S=ℙ(T×U); T=ℙ(T); U=ℙ(U)", level3AndHigher);
+		rewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
+				"card({x, y · x∈S ∧ y∈U∪{y} ∣ x↦y})", "S=ℙ(T); U=ℙ(V)",
+				level3AndHigher);
 	}
 
 	/**
@@ -1672,15 +1665,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewriteExpr("{x, y · x↦y∈S ∣ y↦x}", "S=ℙ(T×U)");
 		noRewriteExpr("{x, y · x↦y+1∈S ∣ x↦y+1}", "S=ℙ(T×ℤ)");
 
-		if (level3AndHigher) {
-			rewriteExpr("{x · x∈S∪{x} ∣ x}", "T", "S=ℙ(T); T=ℙ(T)");
-			rewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
-					"{x, y · x∈S ∧ y∈U∪{y} ∣ x↦y}", //
-					"S=ℙ(T); U=ℙ(V)");
-		} else {
-			noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S=ℙ(T)");
-			noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S=ℙ(T); U=ℙ(V)");
-		}
+		rewriteExpr("{x · x∈S∪{x} ∣ x}", "T", "S=ℙ(T); T=ℙ(T)", level3AndHigher);
+		rewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
+				"{x, y · x∈S ∧ y∈U∪{y} ∣ x↦y}", "S=ℙ(T); U=ℙ(V)",
+				level3AndHigher);
 		noRewriteExpr("{x, y⦂ℙ(T) · x∈y ∣ x}", "T=ℙ(T)");
 	}
 

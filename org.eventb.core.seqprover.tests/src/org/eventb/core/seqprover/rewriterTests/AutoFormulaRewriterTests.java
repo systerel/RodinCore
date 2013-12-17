@@ -358,11 +358,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		// (f <+ {E |-> F})(E) = F
 		rewriteExpr("(f  {x + 2 ↦ 3})(x + 2)", "3");
 		noRewriteExpr("(f  {2 ↦ 3}  g)(2)");
-		if (level2AndHigher) {
-			rewriteExpr("(f  {2 ↦ 3, 4 ↦ 5})(2)", "3");
-		} else {
-			noRewriteExpr("(f  {2 ↦ 3, 4 ↦ 5})(2)");
-		}
+		rewriteExpr("(f  {2 ↦ 3, 4 ↦ 5})(2)", "3", "", level2AndHigher);
  
 		// E : {F} == E = F (if F is a single expression)
 		rewritePred("x + 2 ∗ y ∈ {y + 2 ∗ x}", "x + 2 ∗ y = y + 2 ∗ x");
@@ -545,11 +541,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		// verify that no exception is thrown when no rewrite occurs
 		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w=ℤ×ℤ");
 		// Rewriting fails as "x" is not a maplet
-		if (level2AndHigher) {
-			rewriteExpr("{x·x∈ℤ×ℤ∣x}(1)", "(ℤ×ℤ)(1)");
-		} else {
-			noRewriteExpr("{x·x∈ℤ×ℤ∣x}(1)");
-		}
+		rewriteExpr("{x·x∈ℤ×ℤ∣x}(1)", "(ℤ×ℤ)(1)", "", level2AndHigher);
 		// Rewriting fails as "pair" is not an explicit maplet
 		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
 		
