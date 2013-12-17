@@ -388,23 +388,15 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 
 		// Typ = {} == false (where Typ is a type expression) is NOT done here
 		noRewritePred("ℤ = ∅");
-		if (level4AndHigher) {
-			// However powerset rewriting has been added at level 4
-			rewritePred("ℙ(ℤ) = ∅", "⊥");
-		} else {
-			noRewritePred("ℙ(ℤ) = ∅");
-		}
 
-		
+		// However powerset rewriting has been added at level 4
+		rewritePred("ℙ(ℤ) = ∅", "⊥", "", level4AndHigher);
+				
 		// {} = Typ == false (where Typ is a type expression) is NOT done here
 		noRewritePred("∅ = ℤ");
-		if (level4AndHigher) {
-			// However powerset rewriting has been added at level 4
-			rewritePred("∅ = ℙ(ℤ)", "⊥");
-		} else {
-			noRewritePred("∅ = ℙ(ℤ)");
-		}
 		
+		// However powerset rewriting has been added at level 4
+		rewritePred("∅ = ℙ(ℤ)", "⊥", "", level4AndHigher);
 
 		// E : Typ == true (where Typ is a type expression) is NOT done here
 		noRewritePred("E ∈ ℤ");

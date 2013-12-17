@@ -61,11 +61,7 @@ public abstract class PredicateSimplifierTests extends
 
 	protected void rewriteCond(boolean condition, String inputImage,
 			String expectedImage) {
-		if (condition) {
-			rewritePred(inputImage, expectedImage);
-		} else {
-			noRewritePred(inputImage);
-		}
+		rewritePred(inputImage, expectedImage, "", condition);
 	}
 
 	protected void rewriteMultiImp(String inputImage, String expectedImage) {
