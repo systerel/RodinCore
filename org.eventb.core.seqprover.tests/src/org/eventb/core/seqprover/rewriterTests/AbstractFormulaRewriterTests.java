@@ -228,6 +228,35 @@ public abstract class AbstractFormulaRewriterTests {
 	protected void rewritePred(String inputImage, String expectedImage) {
 		new PredicateTest(ff, rewriter, "").run(inputImage, expectedImage);
 	}
+	
+	/**
+	 * Tests the rewriter for rewriting conditionally from an empty set input
+	 * predicate to an expected predicate (represented by its string image). The
+	 * input empty set predicate is composed from a given input expression
+	 * (represented by its string image).
+	 * <p>
+	 * The type environment is described as usual. For instance, to describe a
+	 * type environment where <code>S</code> is a given set and <code>x</code>
+	 * is an integer, one would pass the strings <code>"S=ℙ(S); x=ℤ"</code>.
+	 * </p>
+	 *
+	 * @param inputImage
+	 *            the string image of the input predicate
+	 * @param expectedImage
+	 *            the string image of the output predicate
+	 * @param typenvImage
+	 *            the string image of the type environment
+	 * @param rewrite
+	 *            tells whether the predicate shall be rewritten
+	 */
+	protected void rewritePredEmptySet(String inputImage, String expectedImage,
+			String typenvImage, boolean rewrite) {
+		rewritePred(inputImage + " = ∅", expectedImage, typenvImage, rewrite);
+		rewritePred(inputImage + " ⊆ ∅", expectedImage, typenvImage, rewrite);
+		rewritePred("∅ = " + inputImage, expectedImage, typenvImage, rewrite);
+		// Not applicable (wrong right-hand side)
+		noRewritePred(inputImage + " = ZZZ", typenvImage);
+	}
 
 	/**
 	 * Ensures that the rewriter does not change the given predicate.
