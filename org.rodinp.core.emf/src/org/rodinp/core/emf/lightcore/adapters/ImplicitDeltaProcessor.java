@@ -89,11 +89,8 @@ public class ImplicitDeltaProcessor {
 			return needRecalculate;
 		}
 		if (element instanceof IRodinFile) {
-			final IInternalElement deltaRoot = ((IRodinFile) element).getRoot();
-			// implicit children are calculated for other roots
-			if (!deltaRoot.equals(rodinRoot)) {
-				return true;
-			}
+			// Can not filter delta at a finer grain
+			return true;
 		}
 		return false;
 	}
