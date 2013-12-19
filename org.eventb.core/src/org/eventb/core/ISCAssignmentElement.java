@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -36,7 +37,7 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	String getAssignmentString() throws RodinDBException;
+	String getAssignmentString() throws CoreException;
 
 	/**
 	 * Returns the typed assignment contained in this element.
@@ -44,13 +45,14 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * @return the assignment of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             assignment could not be parsed or type-checked
 	 * 
 	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
 	 * @since 3.0
 	 */
-	Assignment getAssignment(ITypeEnvironment typenv) throws RodinDBException;
+	Assignment getAssignment(ITypeEnvironment typenv) throws CoreException;
 
 	/**
 	 * Sets the assignment contained in this element.

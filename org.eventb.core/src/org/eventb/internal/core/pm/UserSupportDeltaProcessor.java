@@ -14,6 +14,7 @@ package org.eventb.internal.core.pm;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
@@ -235,7 +236,7 @@ public class UserSupportDeltaProcessor {
 							toBeTrashed.add(proofState);
 							toBeRebuilt.add(proofState);
 						}
-					} catch (RodinDBException e) {
+					} catch (CoreException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

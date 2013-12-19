@@ -65,7 +65,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	@Override
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
-			throws RodinDBException {
+			throws CoreException {
 		
 		final IRodinFile psFile = RodinCore.valueOf(target);
 		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();

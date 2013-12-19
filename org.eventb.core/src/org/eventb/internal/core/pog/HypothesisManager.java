@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -146,7 +145,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return target.getPredicateSet(allHypName).getPredicate(PRD_NAME_PREFIX + index);
 	}
 
-	public void createHypotheses(IProgressMonitor monitor) throws RodinDBException {
+	public void createHypotheses(IProgressMonitor monitor) throws CoreException {
 		
 		if (identifiers.size() > 0)
 			addIdentifiers(monitor);
@@ -173,7 +172,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	
 	}
 	
-	private void addIdentifiers(IProgressMonitor monitor) throws RodinDBException {
+	private void addIdentifiers(IProgressMonitor monitor) throws CoreException {
 		IPOPredicateSet set = createPredicateSet(identHypName, rootHypName, monitor);
 		for (FreeIdentifier identifier : identifiers) {
 			String idName = identifier.getName();
@@ -189,7 +188,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 			String currentName, 
 			int previous, 
 			String previousName, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		IPOPredicateSet set = createPredicateSet(currentName, previousName, monitor);
 		for (int k=previous; k<current; k++) {
 			IPOPredicate predicate = set.getPredicate(PRD_NAME_PREFIX + previous++);
@@ -203,7 +202,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	private IPOPredicateSet createPredicateSet(
 			String name, 
 			String previousName, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		IPOPredicateSet set = target.getPredicateSet(name);
 		set.create(null, monitor);
 		set.setParentPredicateSet(target.getPredicateSet(previousName), monitor);

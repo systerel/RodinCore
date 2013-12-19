@@ -115,7 +115,8 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 
 	@Override
-	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
+	public IProofDependencies getProofDependencies(FormulaFactory factory,
+			IProgressMonitor monitor) throws CoreException {
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return UNATTEMPTED_PROOF_DEPS;
 		final IProofStoreReader store = new ProofStoreReader(this, factory);
 		
@@ -154,7 +155,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	
 	@Override
 	public IProofSkeleton getSkeleton(FormulaFactory factory,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		if (getConfidence() == IConfidence.UNATTEMPTED) {
 			return UNATTEMPTED_PROOF_SKEL;
@@ -290,7 +291,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	
 	// TODO consider making public
 	private Set<IReasonerDesc> getUsedReasoners(IProofStoreReader store)
-			throws RodinDBException {
+			throws CoreException {
 		final Set<IReasonerDesc> usedReasoners = new HashSet<IReasonerDesc>();
 		final IPRReasoner[] reasoners = PRProof.this.getReasoners();
 		if (reasoners.length == 0) { // old storage: reasoners in skeleton

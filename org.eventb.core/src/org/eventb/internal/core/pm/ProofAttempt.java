@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.pm;
 
 import static org.rodinp.core.IRodinElementDelta.REMOVED;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
@@ -52,7 +53,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 
 	private boolean disposed;
 
-	ProofAttempt(ProofComponent component, String name, String owner) throws RodinDBException {
+	ProofAttempt(ProofComponent component, String name, String owner) throws CoreException {
 		this.component = component;
 		this.name = name;
 		this.owner = owner;
@@ -68,7 +69,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 	}
 
 	private IProofTree createProofTree(final IPOSequent poSequent)
-			throws RodinDBException {
+			throws CoreException {
 		final IProverSequent sequent = POLoader.readPO(poSequent, ff);
 		return ProverFactory.makeProofTree(sequent, this);
 	}

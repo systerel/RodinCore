@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * A selection hint points a prover at hypotheses that are most likely useful in proving
@@ -62,57 +62,74 @@ public interface IPOSelectionHint extends IPOHint {
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSelHint"); //$NON-NLS-1$
 	
 	/**
-	 * Returns the predicate handle in case the hint is a predicate selection hint.
+	 * Returns the predicate handle in case the hint is a predicate selection
+	 * hint.
 	 * 
 	 * @return the predicate handle
-	 * @throws RodinDBException if there was a problem accessing the database, or
-	 * 		this is not a predicate selection hint
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or this is not
+	 *             a predicate selection hint
 	 */
-	IPOPredicate getPredicate() throws RodinDBException;
+	IPOPredicate getPredicate() throws CoreException;
 	
 	/**
 	 * Makes this a predicate selection hint, and sets the predicate.
 	 * 
-	 * @param predicate the predicate of the hint
+	 * @param predicate
+	 *            the predicate of the hint
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             predicate was invalid
 	 */
-	void setPredicate(IPOPredicate predicate, IProgressMonitor monitor) throws RodinDBException;
+	void setPredicate(IPOPredicate predicate, IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Returns the predecessor of the first predicate set contained in the interval.
+	 * Returns the predecessor of the first predicate set contained in the
+	 * interval.
 	 * 
-	 * @return the predecessor of the first predicate set contained in the interval
-	 * @throws RodinDBException if there was a problem accessing the database, or
-	 * 		this is not an interval selection hint
+	 * @return the predecessor of the first predicate set contained in the
+	 *         interval
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or this is not
+	 *             an interval selection hint
 	 */
-	IPOPredicateSet getStart() throws RodinDBException;
+	IPOPredicateSet getStart() throws CoreException;
 	
 	/**
-	 * Returns the last predicate set contained in the interval or <code>null</code>.
-	 * If the returned value is <code>null</code>, then this is a predicate selection hint.
+	 * Returns the last predicate set contained in the interval or
+	 * <code>null</code>. If the returned value is <code>null</code>, then this
+	 * is a predicate selection hint.
 	 * <p>
-	 * Use this method to determine whether this is a predicate or an interval selection hint.
+	 * Use this method to determine whether this is a predicate or an interval
+	 * selection hint.
 	 * </p>
 	 * 
 	 * @return the last predicate set contained in the interval
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or this is not
+	 *             an interval selection hint
 	 */
-	IPOPredicateSet getEnd() throws RodinDBException;
+	IPOPredicateSet getEnd() throws CoreException;
 	
 	/**
 	 * Makes this an interval selection hint, and sets the interval.
 	 * 
-	 * @param start the predecessor of the first predicate set contained in the interval
-	 * @param end the last predicate set contained in the interval
+	 * @param start
+	 *            the predecessor of the first predicate set contained in the
+	 *            interval
+	 * @param end
+	 *            the last predicate set contained in the interval
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or this is not
+	 *             an interval selection hint
 	 */
-	void setInterval(IPOPredicateSet start, IPOPredicateSet end, IProgressMonitor monitor) 
-	throws RodinDBException;
+	void setInterval(IPOPredicateSet start, IPOPredicateSet end,
+			IProgressMonitor monitor) throws CoreException;
 	
 }

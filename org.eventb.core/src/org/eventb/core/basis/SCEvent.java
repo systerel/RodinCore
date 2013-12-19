@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
@@ -68,7 +69,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 * @see org.eventb.core.ISCEvent#getAbstractSCEvents()
 	 */
 	@Override
-	public ISCEvent[] getAbstractSCEvents() throws RodinDBException {
+	public ISCEvent[] getAbstractSCEvents() throws CoreException {
 		final ISCRefinesEvent[] refinesClauses =
 			getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE);
 		final ISCEvent[] result = new ISCEvent[refinesClauses.length];
@@ -138,7 +139,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)
-			throws RodinDBException {
+			throws CoreException {
 
 		final FormulaFactory factory = mchTypenv.getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = mchTypenv.makeBuilder();

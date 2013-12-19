@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -47,11 +48,14 @@ public interface ISCExpressionElement extends IInternalElement {
 	 * @return the expression of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             expression could not be parsed or typechecked
 	 * 
 	 * @see ISCMachineRoot#getTypeEnvironment()
 	 * @since 3.0
 	 */
-	Expression getExpression(ITypeEnvironment typenv) throws RodinDBException;
+	Expression getExpression(ITypeEnvironment typenv) throws CoreException;
 
 	/**
 	 * Sets the expression contained in this element.

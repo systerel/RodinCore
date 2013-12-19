@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -44,10 +45,11 @@ public interface ISCExtendsContext extends ITraceableElement {
 	 * Returns the abstract SC context file introduced by this extends clause.
 	 * 
 	 * @return the abstract SC context file
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or
+	 *             if the handle of the abstract context is invalid
 	 */
-	ISCContextRoot getAbstractSCContext() throws RodinDBException;
+	ISCContextRoot getAbstractSCContext() throws CoreException;
 
 	/**
 	 * Sets the abstract SC context file introduced by this extends clause.

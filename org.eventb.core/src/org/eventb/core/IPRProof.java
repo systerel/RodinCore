@@ -165,7 +165,8 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * @return the proof tree, or <code>null</code> if the proof tree could not
 	 *         be rebuilt.
 	 * @throws CoreException
-	 *             if there was a problem accessing the Rodin database
+	 *             if there was a problem accessing the Rodin database, or while
+	 *             computing the proof tree for the current proof
 	 */
 	public IProofTree getProofTree(IProgressMonitor monitor)
 			throws CoreException;
@@ -204,10 +205,12 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 *            is not desired
 	 * @return The proof dependencies for proof tree stored in this proof
 	 *         element
-	 * @throws RodinDBException
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or computing +
+	 *             the proof dependencies
 	 */
 	IProofDependencies getProofDependencies(FormulaFactory factory,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the proof skeleton of the proof tree stored in this proof
@@ -223,10 +226,12 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 *            is not desired
 	 * @return the stored proof skeleton
 	 * 
-	 * @throws RodinDBException
+	 * @throws CoreException
+	 *             if a problem occurred when accessing the database, or if the
+	 *             proof skeleton is invalid
 	 */
 	IProofSkeleton getSkeleton(FormulaFactory factory, IProgressMonitor monitor)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Returns a handle to the identifier child with the given name. That child

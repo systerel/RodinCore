@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
@@ -43,7 +44,7 @@ public class SCContextUtil {
 	 */
 	public static void augmentTypeEnvironment(ISCContext ctx,
 			ITypeEnvironmentBuilder typenv, FormulaFactory factory)
-			throws RodinDBException {
+			throws CoreException {
 
 		for (ISCCarrierSet set : ctx.getSCCarrierSets()) {
 			typenv.add(set.getIdentifier(factory));

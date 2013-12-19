@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -116,7 +115,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	// indirectly.
 	private void copySeesClause(ISCMachineRoot scMachine,
 			ISCMachineRoot scAbsMachFile, ISCInternalContext scContext,
-			int count) throws RodinDBException {
+			int count) throws CoreException {
 
 		final String ctxName = scContext.getElementName();
 		for (ISCSeesContext clause : scAbsMachFile.getSCSeesClauses()) {

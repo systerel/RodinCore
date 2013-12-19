@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.core.EventBAttributes.GENERATED_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
@@ -42,7 +43,7 @@ public class RefineMachine implements IRefinementParticipant {
 	@Override
 	public void process(IInternalElement refinedRoot,
 			IInternalElement sourceRoot, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		final IMachineRoot con = (IMachineRoot) refinedRoot;
 		final IMachineRoot abs = (IMachineRoot) sourceRoot;
 		con.setConfiguration(abs.getConfiguration(), null);
@@ -91,7 +92,7 @@ public class RefineMachine implements IRefinementParticipant {
 	}
 
 	private static void createEvents(IMachineRoot con, IMachineRoot abs,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		final IEvent[] absEvts = abs.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		for (IEvent absEvt : absEvts) {
 			createEvent(con, absEvt, monitor);
@@ -99,7 +100,7 @@ public class RefineMachine implements IRefinementParticipant {
 	}
 
 	private static void createEvent(IMachineRoot con, IEvent absEvt,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		final IEvent conEvt = con.createChild(IEvent.ELEMENT_TYPE, null,
 				monitor);
 		copyAttributes(conEvt, absEvt, monitor);
@@ -118,7 +119,7 @@ public class RefineMachine implements IRefinementParticipant {
 	}
 
 	private static void setConvergence(IEvent conEvt, IEvent absEvt,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		final Convergence absCvg = absEvt.getConvergence();
 		final Convergence conCvg = computeRefinementConvergence(absCvg);
 		conEvt.setConvergence(conCvg, monitor);

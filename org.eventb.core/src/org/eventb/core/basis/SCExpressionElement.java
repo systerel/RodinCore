@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCExpressionElement;
 import org.eventb.core.ast.Expression;
@@ -18,7 +21,6 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -53,20 +55,20 @@ public abstract class SCExpressionElement extends EventBElement
 	 */
 	@Override
 	public Expression getExpression(ITypeEnvironment typenv)
-			throws RodinDBException {
+			throws CoreException {
 		final String contents = getExpressionString();
 		final FormulaFactory factory = typenv.getFormulaFactory();
 		final IRodinElement source = getSourceIfExists();
 		final IParseResult pResult = factory.parseExpression(contents, source);
 		if (pResult.hasProblem()) {
-			throw Util.newRodinDBException(
-					Messages.database_SCExpressionParseFailure, this);
+			throw newCoreException(Messages.database_SCExpressionParseFailure,
+					this);
 		}
 		final Expression result = pResult.getParsedExpression();
 		final ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (!tcResult.isSuccess()) {
-			throw Util.newRodinDBException(
-					Messages.database_SCExpressionTCFailure, this);
+			throw newCoreException(Messages.database_SCExpressionTCFailure,
+					this);
 		}
 		assert result.isTypeChecked();
 		return result;

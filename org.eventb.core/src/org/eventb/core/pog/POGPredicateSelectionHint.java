@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
-import org.rodinp.core.RodinDBException;
 
 /**
  * A predicate selection hint specifies a single predicate.
@@ -48,7 +48,7 @@ class POGPredicateSelectionHint implements IPOGHint {
 
 	@Override
 	public void create(IPOSequent sequent, String name, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		IPOSelectionHint selectionHint = sequent.createChild(
 				IPOSelectionHint.ELEMENT_TYPE, null, monitor);
 		selectionHint.setPredicate(predicate, null);

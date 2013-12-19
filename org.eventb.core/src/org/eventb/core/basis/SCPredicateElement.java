@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
@@ -20,7 +23,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -54,21 +56,19 @@ implements ISCPredicateElement {
 	 * @since 3.0
 	 */
 	@Override
-	public Predicate getPredicate(ITypeEnvironment typenv)
-			throws RodinDBException {
+	public Predicate getPredicate(ITypeEnvironment typenv) throws CoreException {
 		final String contents = getPredicateString();
 		final FormulaFactory factory = typenv.getFormulaFactory();
 		final IRodinElement source = getSourceIfExists();
 		final IParseResult pResult = factory.parsePredicate(contents, source);
 		if (pResult.hasProblem()) {
-			throw Util.newRodinDBException(
-					Messages.database_SCPredicateParseFailure, this);
+			throw newCoreException(Messages.database_SCPredicateParseFailure,
+					this);
 		}
 		final Predicate result = pResult.getParsedPredicate();
 		final ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (!tcResult.isSuccess()) {
-			throw Util.newRodinDBException(
-					Messages.database_SCPredicateTCFailure, this);
+			throw newCoreException(Messages.database_SCPredicateTCFailure, this);
 		}
 		assert result.isTypeChecked();
 		return result;

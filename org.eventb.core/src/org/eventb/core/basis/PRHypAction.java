@@ -13,6 +13,7 @@ package org.eventb.core.basis;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IProofStoreCollector;
@@ -47,7 +48,7 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 	}
 
 	@Override
-	public IHypAction getAction(IProofStoreReader store) throws RodinDBException {
+	public IHypAction getAction(IProofStoreReader store) throws CoreException {
 	
 		// read in the action type
 		String actionType = getElementName();

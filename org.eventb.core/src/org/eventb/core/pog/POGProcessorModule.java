@@ -155,7 +155,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	private void putPOGHints(
 			IPOSequent sequent, 
 			IPOGHint[] hints, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		if (hints == null)
 			return;

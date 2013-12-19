@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -90,10 +91,10 @@ public final class POLoader {
 	 * @param factory
 	 *            the formula factory to use
 	 * @return the sequent of the given proof obligation
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 */
 	public static IProverSequent readPO(IPOSequent poSeq, FormulaFactory factory)
-			throws RodinDBException {
+			throws CoreException {
 		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		final Set<Predicate> hypotheses = new LinkedHashSet<Predicate>();
 		final Set<Predicate> selHyps = new LinkedHashSet<Predicate>();
@@ -152,7 +153,7 @@ public final class POLoader {
 	private static void loadHypotheses(IPOSequent poSeq,
 			SelectionHints selHints, Set<Predicate> hypotheses,
 			Set<Predicate> selHyps, ITypeEnvironmentBuilder typeEnv,
-			FormulaFactory factory) throws RodinDBException {
+			FormulaFactory factory) throws CoreException {
 
 		IPOPredicateSet[] dbHyps = poSeq.getHypotheses();
 		if (dbHyps.length == 0) {
@@ -169,7 +170,7 @@ public final class POLoader {
 	private static void loadPredicateSet(IPOPredicateSet poPredSet,
 			SelectionHints selHints, Set<Predicate> hypotheses,
 			Set<Predicate> selHyps, ITypeEnvironmentBuilder typeEnv,
-			FormulaFactory factory) throws RodinDBException {
+			FormulaFactory factory) throws CoreException {
 
 		final IPOPredicateSet parentSet = poPredSet.getParentPredicateSet();
 		if (parentSet != null) {
@@ -204,7 +205,7 @@ public final class POLoader {
 	 */
 	private static Predicate readGoal(IPOSequent poSeq,
 			ITypeEnvironment typeEnv, FormulaFactory factory)
-			throws RodinDBException {
+			throws CoreException {
 		
 		IPOPredicate[] dbGoals = poSeq.getGoals();
 		if (dbGoals.length == 0) {
@@ -445,7 +446,7 @@ public final class POLoader {
 		 * 			The PO sequent to collect hints from
 		 * @throws RodinDBException
 		 */
-		protected SelectionHints(IPOSequent poSeq) throws RodinDBException {
+		protected SelectionHints(IPOSequent poSeq) throws CoreException {
 			preds = new HashSet<IPOPredicate>();
 			predSets = new HashSet<IPOPredicateSet>();
 			IPOSelectionHint[] dbSelHints = poSeq.getSelectionHints();

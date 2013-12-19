@@ -12,6 +12,7 @@ package org.eventb.core;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -106,9 +107,11 @@ public interface IConvergenceElement extends IInternalElement {
 	/**
 	 * Returns the convergence stored in this attribute.
 	 * 
-	 * @return the convergence; one of  {@link Convergence#ORDINARY}, 
-	 * {@link Convergence#CONVERGENT}, {@link Convergence#ANTICIPATED}
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @return the convergence; one of {@link Convergence#ORDINARY},
+	 *         {@link Convergence#CONVERGENT}, {@link Convergence#ANTICIPATED}
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             convergence value is invalid
 	 */
-	Convergence getConvergence() throws RodinDBException;
+	Convergence getConvergence() throws CoreException;
 }

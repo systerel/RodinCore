@@ -14,13 +14,15 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEventBProject;
 import org.eventb.internal.core.EventBProject;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -225,12 +227,13 @@ public abstract class EventBElement extends InternalElement {
 	 * 
 	 * @see org.eventb.core.IConvergenceElement#getConvergence(IProgressMonitor)
 	 */
-	public IConvergenceElement.Convergence getConvergence() throws RodinDBException {
+	public IConvergenceElement.Convergence getConvergence()
+			throws CoreException {
 		int intValue = getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
 		try {
 			return IConvergenceElement.Convergence.valueOf(intValue);
 		} catch (IllegalArgumentException e) {
-			throw Util.newRodinDBException(
+			throw newCoreException(
 					Messages.database_EventInvalidConvergenceFailure, this);
 		}
 	}

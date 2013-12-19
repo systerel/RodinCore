@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ISealedTypeEnvironment;
@@ -46,12 +47,13 @@ public interface IPRStoredExpr extends IInternalElement {
 	 * @param baseTypenv
 	 *            common type environment of the proof tree
 	 * @return the expression stored in this element
-	 * @throws RodinDBException
-	 *             in case of an error accessing the Rodin database
+	 * @throws CoreException
+	 *             in case of an error accessing the Rodin database, or if the
+	 *             expression does not parse or type-check
 	 * @since 3.0
 	 */
 	Expression getExpression(ISealedTypeEnvironment baseTypenv)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Stores the given expression in this element. The given expression must be

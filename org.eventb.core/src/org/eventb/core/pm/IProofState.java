@@ -13,6 +13,7 @@ package org.eventb.core.pm;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
@@ -292,10 +293,11 @@ public interface IProofState extends IProofTreeChangedListener {
 	 * 
 	 * @return <code>>true</code> if the proof is reusable. Return
 	 *         <code>false</code> otherwise.
-	 * @throws RodinDBException
-	 *             if some problems occurred.
+	 * @throws CoreException
+	 *             if some problems occurred accessing the database, or if the
+	 *             current proof is invalid
 	 */
-	public abstract boolean isProofReusable() throws RodinDBException;
+	public abstract boolean isProofReusable() throws CoreException;
 
 	/**
 	 * Unload the current proof tree, i.e. the proof state will become

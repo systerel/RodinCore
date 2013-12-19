@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
@@ -603,7 +604,7 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#isProofReusable()
 	 */
 	@Override
-	public boolean isProofReusable() throws RodinDBException {
+	public boolean isProofReusable() throws CoreException {
 		if (pa == null || pa.isDisposed()) {
 			return false;
 		}

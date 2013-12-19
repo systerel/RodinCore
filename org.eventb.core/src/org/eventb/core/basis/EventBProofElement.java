@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOStampedElement;
@@ -196,7 +197,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		setAttributeValue(GOAL_ATTRIBUTE, ref , monitor);
 	}
 	
-	public Predicate getGoal(IProofStoreReader store) throws RodinDBException {
+	public Predicate getGoal(IProofStoreReader store) throws CoreException {
 		String ref = getAttributeValue(GOAL_ATTRIBUTE);
 		return store.getPredicate(ref);
 	}
@@ -218,7 +219,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	}
 
 	private static Set<Predicate> deserializeCSV(String sepRefs,
-			IProofStoreReader store) throws RodinDBException {
+			IProofStoreReader store) throws CoreException {
 		final String[] refs = sepRefs.split(",");
 		final Set<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for (String ref : refs) {
@@ -232,7 +233,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		setAttributeValue(HYPS_ATTRIBUTE, refs, monitor);
 	}
 
-	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
+	public Set<Predicate> getHyps(IProofStoreReader store) throws CoreException {
 		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
 		return deserializeCSV(sepRefs, store);
 	}
@@ -248,7 +249,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	/**
 	 * @since 2.0
 	 */
-	public Set<Predicate> getUnselHyps(IProofStoreReader store) throws RodinDBException {
+	public Set<Predicate> getUnselHyps(IProofStoreReader store) throws CoreException {
 		String sepRefs = getAttributeValue(UNSEL_HYPS_ATTRIBUTE);
 		return deserializeCSV(sepRefs, store);
 	}
@@ -267,7 +268,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	 * @since 3.0
 	 */
 	public Set<Predicate> getHiddenHyps(IProofStoreReader store)
-			throws RodinDBException {
+			throws CoreException {
 		String sepRefs = getAttributeValue(HIDDEN_HYPS_ATTRIBUTE);
 		return deserializeCSV(sepRefs, store);
 	}
@@ -277,7 +278,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		setAttributeValue(INF_HYPS_ATTRIBUTE, refs, monitor);
 	}
 	
-	public Set<Predicate> getInfHyps(IProofStoreReader store) throws RodinDBException {
+	public Set<Predicate> getInfHyps(IProofStoreReader store) throws CoreException {
 		String sepRefs = getAttributeValue(INF_HYPS_ATTRIBUTE);
 		return deserializeCSV(sepRefs, store);
 	}
@@ -293,7 +294,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		return hasAttribute(UNSEL_HYPS_ATTRIBUTE);
 	}
 	
-	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {
+	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws CoreException {
 		IPRIdentifier[] children = getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 		FreeIdentifier[] freeIdents = new FreeIdentifier[children.length];
 		for (int i = 0; i < freeIdents.length; i++) {
@@ -331,7 +332,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		return getProofRule(ref);
 	}
 	
-	public IProofSkeleton getSkeleton(IProofStoreReader store) throws RodinDBException {
+	public IProofSkeleton getSkeleton(IProofStoreReader store) throws CoreException {
 		final String comment = getComment();
 
 		IPRProofRule[] rules = getProofRules();

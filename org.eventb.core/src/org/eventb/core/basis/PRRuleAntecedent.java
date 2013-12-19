@@ -14,6 +14,7 @@ package org.eventb.core.basis;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRHypAction;
 import org.eventb.core.IPRRuleAntecedent;
@@ -46,7 +47,7 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 	}
 	
 	@Override
-	public IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException {
+	public IAntecedent getAntecedent(IProofStoreReader store) throws CoreException {
 
 		Predicate goal = null;
 		if (hasGoal()) goal = getGoal(store);

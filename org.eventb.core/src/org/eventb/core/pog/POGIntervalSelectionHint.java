@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
-import org.rodinp.core.RodinDBException;
 
 /**
  * An interval selection hint specifies a sequence of predicate sets.
@@ -61,7 +61,7 @@ class POGIntervalSelectionHint implements IPOGHint {
 
 	@Override
 	public void create(IPOSequent sequent, String name, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		IPOSelectionHint selectionHint = sequent.createChild(
 				IPOSelectionHint.ELEMENT_TYPE, null, monitor);
 		selectionHint.setInterval(start, end, null);

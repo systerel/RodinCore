@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -107,7 +108,7 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment()
-			throws RodinDBException {
+			throws CoreException {
 		final FormulaFactory factory = getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx: getAbstractSCContexts()) {

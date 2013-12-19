@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -38,7 +39,7 @@ public interface IPRProofRule extends IInternalElement {
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prRule"); //$NON-NLS-1$
 
 	IProofSkeleton getProofSkeleton(IProofStoreReader store, String comment)
-			throws RodinDBException;
+			throws CoreException;
 
 	void setProofRule(IProofSkeleton rule, IProofStoreCollector store,
 			IProgressMonitor monitor) throws RodinDBException;

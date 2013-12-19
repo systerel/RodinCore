@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -78,10 +79,11 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * </p>
 	 * 
 	 * @return an array of all abstract SC events
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or one
+	 *             abstract SC event is invalid
 	 */
-	ISCEvent[] getAbstractSCEvents() throws RodinDBException;
+	ISCEvent[] getAbstractSCEvents() throws CoreException;
 
 	/**
 	 * Returns a handle to a child SC parameter with the given element name.
@@ -186,12 +188,13 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @param mchTypenv
 	 *            type environment of the parent machine
 	 * @return the type environment of this event
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or computing
+	 *             the type environment
 	 * @see ISCMachineRoot#getTypeEnvironment()
 	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)
-			throws RodinDBException;
+			throws CoreException;
 
 }

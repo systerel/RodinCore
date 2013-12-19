@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -142,7 +141,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			IPOSequent[] sequents, 
 			Set<IPOPredicateSet> chPrdSets,
 			long freshStamp, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		boolean changed = false;
 		
 		for (IPOSequent sequent : sequents) {
@@ -179,7 +178,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			IPORoot oldRoot, 
 			IPOPredicateSet[] predSets, 
 			long freshStamp,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		HashSet<IPOPredicateSet> done = new HashSet<IPOPredicateSet>(predSets.length * 4 / 3 + 1);
 		HashSet<IPOPredicateSet> chPrdSets = new HashSet<IPOPredicateSet>(predSets.length);
 

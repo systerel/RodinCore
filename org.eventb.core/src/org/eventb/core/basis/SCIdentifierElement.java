@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCIdentifierElement;
@@ -20,7 +23,6 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -55,11 +57,11 @@ public abstract class SCIdentifierElement extends EventBElement
 	}
 	
 	@Override
-	public Type getType(FormulaFactory factory) throws RodinDBException {
+	public Type getType(FormulaFactory factory) throws CoreException {
 		final String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
 		final IParseResult parserResult = factory.parseType(contents);
 		if (parserResult.hasProblem()) {
-			throw Util.newRodinDBException(
+			throw newCoreException(
 					Messages.database_SCIdentifierTypeParseFailure, this);
 		}
 		return parserResult.getParsedType();
@@ -72,11 +74,11 @@ public abstract class SCIdentifierElement extends EventBElement
 
 	@Override
 	public FreeIdentifier getIdentifier(FormulaFactory factory)
-			throws RodinDBException {
+			throws CoreException {
 		final Type type = getType(factory);
 		final String name = getElementName();
 		if (!factory.isValidIdentifierName(name)) {
-			throw Util.newRodinDBException(
+			throw newCoreException(
 					Messages.database_SCIdentifierNameParseFailure, this);
 		}
 		final IRodinElement source = getSourceIfExists();

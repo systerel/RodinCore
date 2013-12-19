@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -46,10 +47,11 @@ public interface ISCSeesContext extends ITraceableElement {
 	 * Returns the seen SC context file introduced by this sees clause.
 	 * 
 	 * @return the seen SC context file
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or the seen
+	 *             context is invalid
 	 */
-	ISCContextRoot getSeenSCContext() throws RodinDBException;
+	ISCContextRoot getSeenSCContext() throws CoreException;
 
 	/**
 	 * Sets the seen SC context file introduced by this sees clause.

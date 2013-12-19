@@ -33,7 +33,6 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Core methods for rebuilding a IProofTree from a IPRProof.
@@ -43,12 +42,17 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofSkeletonBuilder {
 
-	/*
-	 * Computes the root sequent of the given proof based on its dependencies.
+	/**
+	 * Computes the root sequent of the given proof.
+	 * 
+	 * @param pr
+	 *            the input proof.
+	 * @return the IProverSequent that is the root node of the proof tree.
+	 * @throws CoreException
 	 */
 	private static IProverSequent buildRootSequent(IPRProof pr,
 			FormulaFactory ff, IProgressMonitor pm)
-			throws RodinDBException {
+			throws CoreException {
 		final LiteralPredicate bfalseGoal = ff.makeLiteralPredicate(
 				Formula.BFALSE, null);
 
@@ -96,7 +100,6 @@ public class ProofSkeletonBuilder {
 	 * @param pm
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
-
 	 * @return the computed IProofTree, or null if the proof tree could not be
 	 *         rebuilt.
 	 * @throws CoreException 

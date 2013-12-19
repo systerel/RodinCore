@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -56,14 +57,16 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scMachineFile"); //$NON-NLS-1$
 
 	/**
-	 * Returns a handle to the statically checked versions of the abstractions of
-	 * this SC machine.
+	 * Returns a handle to the statically checked versions of the abstractions
+	 * of this SC machine.
 	 * 
-	 * @return a array of handles to the statically checked versions of the abstractions
+	 * @return a array of handles to the statically checked versions of the
+	 *         abstractions
 	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 *             if there was a problem accessing the database, or if one
+	 *             abstract SC machine is invalid
 	 */
-	IRodinFile[] getAbstractSCMachines() throws RodinDBException;
+	IRodinFile[] getAbstractSCMachines() throws CoreException;
 
 	/**
 	 * Returns a handle to a child SC refines clause with the given element name.
@@ -232,10 +235,11 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	 * </p>
 	 * 
 	 * @return the type environment of this machine
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or computing
+	 *             the type environment
 	 * @since 3.0
 	 */
-	ITypeEnvironmentBuilder getTypeEnvironment() throws RodinDBException;
+	ITypeEnvironmentBuilder getTypeEnvironment() throws CoreException;
 
 }

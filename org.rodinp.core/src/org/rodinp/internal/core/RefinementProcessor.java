@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,12 @@ import static org.eclipse.core.runtime.SubMonitor.convert;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.RefinementRegistry.RefinementException;
 import org.rodinp.internal.core.util.Util;
 
@@ -36,7 +36,7 @@ public class RefinementProcessor {
 	}
 
 	public boolean refine(IInternalElement targetRoot, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		final IInternalElementType<? extends IInternalElement> rootType = sourceRoot
 				.getElementType();
 		try {

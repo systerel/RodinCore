@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -86,21 +87,28 @@ public interface IPOPredicateSet extends IInternalElement, IPOStampedElement {
 	
 	/**
 	 * Sets the parent predicate set of this predicate set.
-	 * @param predicateSet the predicate set; 
-	 * 		if it is <code>null</code> this predicate set is turned into a root predicate set
+	 * 
+	 * @param predicateSet
+	 *            the predicate set; if it is <code>null</code> this predicate
+	 *            set is turned into a root predicate set
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             given predicateSet was invalid
 	 */
-	void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) throws RodinDBException;
+	void setParentPredicateSet(IPOPredicateSet predicateSet,
+			IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Returns the parent predicate set of this predicate set, 
-	 * or <code>null</code> if this is the root set.
+	 * Returns the parent predicate set of this predicate set, or
+	 * <code>null</code> if this is the root set.
 	 * 
 	 * @return the parent predicate set, or <code>null</code>
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             parent set handle was invalid
 	 */
-	IPOPredicateSet getParentPredicateSet() throws RodinDBException;
+	IPOPredicateSet getParentPredicateSet() throws CoreException;
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -39,10 +40,11 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 *            the formula factory to use for building the result
 	 * 
 	 * @return the type of this identifier
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the type
+	 *             could not be parsed
 	 */
-	Type getType(FormulaFactory factory) throws RodinDBException;
+	Type getType(FormulaFactory factory) throws CoreException;
 
 	/**
 	 * Sets the type of this element to a new value.
@@ -63,10 +65,11 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 * @param factory
 	 *            the formula factory to use for building the result
 	 * @return the AST representation of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             identifier is invalid
 	 */
-	FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException;
+	FreeIdentifier getIdentifier(FormulaFactory factory) throws CoreException;
 	
 	/**
 	 * Returns the name of the identifier as a character string.

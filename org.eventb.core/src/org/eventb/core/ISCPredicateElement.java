@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -50,15 +51,16 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * @return the predicate of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             predicate does not parse or type-check
 	 * 
 	 * @see ISCContextRoot#getTypeEnvironment()
 	 * @see ISCMachineRoot#getTypeEnvironment()
 	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
 	 * @since 3.0
 	 */
-	Predicate getPredicate(ITypeEnvironment typenv) throws RodinDBException;
+	Predicate getPredicate(ITypeEnvironment typenv) throws CoreException;
 
 	/**
 	 * Sets the predicate contained in this element.

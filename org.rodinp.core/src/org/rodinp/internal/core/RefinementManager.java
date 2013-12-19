@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementManager;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Nicolas Beauger
@@ -43,7 +43,7 @@ public class RefinementManager implements IRefinementManager {
 	@Override
 	public boolean refine(IInternalElement sourceRoot,
 			IInternalElement targetRoot, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		return new RefinementProcessor(sourceRoot).refine(targetRoot, monitor);
 	}
 

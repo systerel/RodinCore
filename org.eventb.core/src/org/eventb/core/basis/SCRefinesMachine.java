@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -59,7 +61,7 @@ public class SCRefinesMachine extends EventBElement implements
 	}
 
 	@Override
-	public IRodinFile getAbstractSCMachine() throws RodinDBException {
+	public IRodinFile getAbstractSCMachine() throws CoreException {
 		IRodinElement target = getAbstractSCMachineHandle();
 		if (target instanceof IRodinFile) {
 			IRodinFile rf = (IRodinFile) target;
@@ -67,7 +69,7 @@ public class SCRefinesMachine extends EventBElement implements
 				return rf;
 			}
 		}
-		throw Util.newRodinDBException(
+		throw newCoreException(
 				Messages.database_SCRefinesMachineTypeFailure, this);
 	}
 

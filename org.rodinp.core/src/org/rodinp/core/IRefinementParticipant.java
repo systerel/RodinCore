@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -32,10 +33,11 @@ public interface IRefinementParticipant {
 	 *            the source of the refinement
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code>
-	 * @throws RodinDBException
-	 *             if a database operation fails
+	 * @throws CoreException
+	 *             if a database operation fails, or is the refinement
+	 *             participant is invalid
 	 */
 	void process(IInternalElement targetRoot, IInternalElement sourceRoot,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor) throws CoreException;
 
 }

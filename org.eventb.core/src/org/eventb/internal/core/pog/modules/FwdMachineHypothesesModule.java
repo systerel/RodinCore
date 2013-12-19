@@ -120,7 +120,7 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 	private void createContextHypSet(
 			IRodinFile scMachineFile, 
 			IPORoot target, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		IPOPredicateSet ctxRootSet = target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME);
 		ctxRootSet.create(null, monitor);
 		ISCMachineRoot scMachineRoot = (ISCMachineRoot) scMachineFile.getRoot();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.internal.core.tool.state.State;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -40,7 +40,7 @@ extends State implements IPredicateTable<PE> {
 	public PredicateTable(
 			PE[] elements, 
 			ITypeEnvironment typeEnvironment, 
-			FormulaFactory factory) throws RodinDBException {
+			FormulaFactory factory) throws CoreException {
 		predicateElements = Arrays.asList(elements);
 		predicates = new ArrayList<Predicate>(elements.length);
 		

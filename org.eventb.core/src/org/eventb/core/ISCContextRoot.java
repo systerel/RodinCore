@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -107,10 +108,11 @@ public interface ISCContextRoot extends ISCContext, IEventBRoot, IAccuracyElemen
 	 * </p>
 	 * 
 	 * @return the type environment of this context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or while
+	 *             computing the type environment for this root
 	 * @since 3.0
 	 */
-	ITypeEnvironmentBuilder getTypeEnvironment() throws RodinDBException;
+	ITypeEnvironmentBuilder getTypeEnvironment() throws CoreException;
 
 }

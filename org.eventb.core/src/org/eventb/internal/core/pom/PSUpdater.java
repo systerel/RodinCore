@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -103,7 +104,7 @@ public class PSUpdater {
 
 	
 	public void updatePO(IPOSequent poSequent, IProgressMonitor pm)
-			throws RodinDBException {
+			throws CoreException {
 		final String poName = poSequent.getElementName();
 		final IPSStatus status = pc.getStatus(poName);
 		unusedStatuses.remove(status);
@@ -186,7 +187,7 @@ public class PSUpdater {
 	
 	// Returns true if the new status is pending or less
 	private boolean updateStatus(IPSStatus status, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 
 		final IPOSequent poSequent = status.getPOSequent();
 		final IPRProof prProof = status.getProof();

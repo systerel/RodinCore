@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 	protected void copyContexts(
 			IPOPredicateSet rootSet, 
 			ISCInternalContext[] contexts, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		for (ISCInternalContext context : contexts) {
 			
@@ -79,7 +79,7 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 	protected void fetchCarriersSetsAndConstants(
 			ISCContext context, 
 			IPOPredicateSet rootSet, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		for (ISCCarrierSet set : context.getSCCarrierSets()) {
 			FreeIdentifier identifier = fetchIdentifier(set);
 			createIdentifier(rootSet, identifier, monitor);
@@ -101,7 +101,8 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 		poIdentifier.setType(type, monitor);
 	}
 
-	protected FreeIdentifier fetchIdentifier(ISCIdentifierElement ident) throws RodinDBException {
+	protected FreeIdentifier fetchIdentifier(ISCIdentifierElement ident)
+			throws CoreException {
 		FreeIdentifier identifier = ident.getIdentifier(factory);
 		typeEnvironment.add(identifier);
 		return identifier;

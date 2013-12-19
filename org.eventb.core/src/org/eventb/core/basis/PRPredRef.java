@@ -12,6 +12,7 @@ package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.STORE_REF_ATTRIBUTE;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IProofStoreCollector;
@@ -39,7 +40,7 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 
 	@Override
 	public Predicate[] getPredicates(IProofStoreReader store)
-			throws RodinDBException {
+			throws CoreException {
 
 		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
 		final String[] refs = value.split(",", -1);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ISealedTypeEnvironment;
@@ -30,9 +31,9 @@ public interface IProofStoreReader {
 	/**
 	 * @since 3.0
 	 */
-	ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException;
-	Predicate getPredicate(String name) throws RodinDBException;
-	Expression getExpression(String ref)  throws RodinDBException;
+	ISealedTypeEnvironment getBaseTypeEnv() throws CoreException;
+	Predicate getPredicate(String name) throws CoreException;
+	Expression getExpression(String ref)  throws CoreException;
 
 	/**
 	 * @since 2.2

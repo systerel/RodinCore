@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.ast.Formula;
@@ -44,12 +45,13 @@ public class PRUtil {
 	 * @return the type environment to use for parsing the formula stored in the
 	 *         given Rodin element
 	 * @throws RodinDBException
-	 *             in case of problem accessing the Rodin database
+	 *             in case of problem accessing the Rodin database, or if a
+	 *             component of the resulting type environment is invalid
 	 * @since 3.0
 	 */
 	public static ISealedTypeEnvironment buildTypenv(IInternalElement ie,
 			ISealedTypeEnvironment baseTypenv)
-			throws RodinDBException {
+			throws CoreException {
 		final FormulaFactory ff = baseTypenv.getFormulaFactory();
 		final ITypeEnvironmentBuilder result = getLocalTypenv(ie, ff);
 		mergeTypenv(result, baseTypenv);
@@ -57,7 +59,7 @@ public class PRUtil {
 	}
 
 	private static ITypeEnvironmentBuilder getLocalTypenv(IInternalElement ie,
-			FormulaFactory ff) throws RodinDBException {
+			FormulaFactory ff) throws CoreException {
 		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (final IPRIdentifier child : getPRIdentifiers(ie)) {
 			result.add(child.getIdentifier(ff));

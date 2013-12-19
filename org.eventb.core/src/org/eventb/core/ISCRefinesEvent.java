@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -43,10 +44,11 @@ public interface ISCRefinesEvent extends ITraceableElement, IInternalElement {
 	 * Returns the abstract event introduced by this refines clause.
 	 * 
 	 * @return the abstract SC event
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             abstract SC event is invalid
 	 */
-	ISCEvent getAbstractSCEvent() throws RodinDBException;
+	ISCEvent getAbstractSCEvent() throws CoreException;
 
 	/**
 	 * Sets the abstract event introduced by this refines clause.

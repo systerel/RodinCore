@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IGraph;
 
 /**
@@ -54,44 +53,23 @@ public class Util {
 	}
 
 	/**
-	 * Creates a new Rodin database exception with the given message.
-	 * <p>
-	 * The created database exception just wraps up a core exception created
-	 * with {@link #newCoreException(String)}.
-	 * </p>
+	 * Creates a new core exception for this plug-in with the given message and
+	 * message arguments.
 	 * 
 	 * @param message
 	 *            a human-readable message, localized to the current locale.
 	 *            Should be one of the messages defined in the {@link Messages}
 	 *            class
-	 *            
-	 *  @see #newCoreException(String)
-	 */
-	public static RodinDBException newRodinDBException(String message) {
-		return new RodinDBException(newCoreException(message));
-	}
-
-	/**
-	 * Creates a new Rodin database exception with the given message and message arguments.
-	 * <p>
-	 * The created database exception just wraps up a core exception created
-	 * with {@link #newCoreException(String)}.
-	 * </p>
 	 * 
-	 * @param message
-	 *            a human-readable message, localized to the current locale.
-	 *            Should be one of the messages defined in the {@link Messages}
-	 *            class
-	 *            
 	 * @param args
-	 * 			  parameters to bind with the message
-	 *            
-	 *  @see #newCoreException(String)
+	 *            parameters to bind with the message
+	 * 
+	 * @see #newCoreException(String)
 	 */
-	public static RodinDBException newRodinDBException(String message,
+	public static CoreException newCoreException(String message,
 			Object... args) {
-		
-		return newRodinDBException(Messages.bind(message, args));
+
+		return newCoreException(Messages.bind(message, args));
 	}
 
 	/**

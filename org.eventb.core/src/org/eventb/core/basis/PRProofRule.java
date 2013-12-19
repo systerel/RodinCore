@@ -15,6 +15,7 @@ package org.eventb.core.basis;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRExprRef;
@@ -94,7 +95,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 	@Override
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
-			final String comment) throws RodinDBException {
+			final String comment) throws CoreException {
 
 		Predicate goal = null;
 		if (hasGoal()) goal = getGoal(store);		

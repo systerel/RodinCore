@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.pm.IProofManager;
@@ -38,7 +39,7 @@ public interface IPRExprRef extends IInternalElement {
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prExprRef"); //$NON-NLS-1$
 
 	Expression[] getExpressions(IProofStoreReader store)
-			throws RodinDBException;
+			throws CoreException;
 
 	void setExpressions(Expression[] expr, IProofStoreCollector store,
 			IProgressMonitor monitor) throws RodinDBException;

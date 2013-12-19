@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOIdentifier;
@@ -56,11 +57,10 @@ public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 	}
 	
 	@Override
-	public IPOPredicateSet getParentPredicateSet() 
-	throws RodinDBException {
+	public IPOPredicateSet getParentPredicateSet() throws CoreException {
 		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE))
 			return (IPOPredicateSet) getTranslatedAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE);
-		else 
+		else
 			return null;
 	}
 
@@ -80,12 +80,13 @@ public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 	}
 
 	@Override
-	public void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) 
-	throws RodinDBException {
+	public void setParentPredicateSet(IPOPredicateSet predicateSet,
+			IProgressMonitor monitor) throws CoreException {
 		if (predicateSet == null)
 			removeAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE, monitor);
 		else
-			setTranslatedAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, predicateSet, monitor);
+			setTranslatedAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE,
+					predicateSet, monitor);
 	}
 
 }

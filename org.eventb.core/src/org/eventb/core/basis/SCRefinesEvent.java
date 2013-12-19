@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -56,11 +58,10 @@ public class SCRefinesEvent extends EventBElement implements ISCRefinesEvent {
 	}
 
 	@Override
-	public ISCEvent getAbstractSCEvent() throws RodinDBException {
+	public ISCEvent getAbstractSCEvent() throws CoreException {
 		IRodinElement target = getAbstractSCEventHandle();
-		if (! (target instanceof ISCEvent)) {
-			throw Util.newRodinDBException(
-					Messages.database_SCRefinesEventTypeFailure,
+		if (!(target instanceof ISCEvent)) {
+			throw newCoreException(Messages.database_SCRefinesEventTypeFailure,
 					this);
 		}
 		return (ISCEvent) target;

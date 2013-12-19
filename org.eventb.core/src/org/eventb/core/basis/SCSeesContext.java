@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCSeesContext;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -59,7 +61,7 @@ public class SCSeesContext extends EventBElement implements
 	}
 
 	@Override
-	public ISCContextRoot getSeenSCContext() throws RodinDBException {
+	public ISCContextRoot getSeenSCContext() throws CoreException {
 		IRodinElement target = getSeenSCContextHandle();
 		if (target instanceof IRodinFile) {
 			IRodinFile rf = (IRodinFile) target;
@@ -67,7 +69,7 @@ public class SCSeesContext extends EventBElement implements
 				return (ISCContextRoot) rf.getRoot();
 			}
 		}
-		throw Util.newRodinDBException(
+		throw newCoreException(
 				Messages.database_SCSeesContextTypeFailure, this);
 	}
 

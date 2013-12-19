@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -37,7 +38,7 @@ public interface IPRRuleAntecedent extends IInternalElement {
 	IInternalElementType<IPRRuleAntecedent> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prAnte"); //$NON-NLS-1$
 
-	IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException;
+	IAntecedent getAntecedent(IProofStoreReader store) throws CoreException;
 
 	void setAntecedent(IAntecedent antecedent, IProofStoreCollector store,
 			IProgressMonitor monitor) throws RodinDBException;

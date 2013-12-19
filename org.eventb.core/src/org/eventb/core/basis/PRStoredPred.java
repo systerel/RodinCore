@@ -14,6 +14,7 @@ package org.eventb.core.basis;
 import static org.eventb.internal.core.basis.PRUtil.buildTypenv;
 import static org.eventb.internal.core.basis.PRUtil.setPRIdentifiers;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.ast.ISealedTypeEnvironment;
@@ -43,7 +44,7 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 	 */
 	@Override
 	public Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
-			throws RodinDBException {
+			throws CoreException {
 		final ISealedTypeEnvironment typenv = buildTypenv(this, baseTypenv);
 		return super.getPredicate(typenv);
 	}

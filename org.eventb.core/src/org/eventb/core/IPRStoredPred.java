@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -46,12 +47,14 @@ public interface IPRStoredPred extends IInternalElement {
 	 * @param baseTypenv
 	 *            common type environment of the proof tree
 	 * @return the predicate stored in this element
-	 * @throws RodinDBException
-	 *             in case of an error accessing the Rodin database
+	 * @throws CoreException
+	 *             in case of an error accessing the Rodin database, or if the
+	 *             given type environment is invalid, or if the predicate could
+	 *             not be parsed or type-checked
 	 * @since 3.0
 	 */
 	Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Stores the given predicate in this element. The given predicate must be

@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -42,7 +43,7 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 	}
 
 	@Override
-	public IPOPredicateSet getEnd() throws RodinDBException {
+	public IPOPredicateSet getEnd() throws CoreException {
 		if (hasAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE))
 			return (IPOPredicateSet) getTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE);
 		else
@@ -50,32 +51,33 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 	}
 
 	@Override
-	public IPOPredicate getPredicate() throws RodinDBException {
+	public IPOPredicate getPredicate() throws CoreException {
 		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicate)
 			return (IPOPredicate) element;
 		else
-			throw Util.newRodinDBException(Messages.database_POPredicateSelectionHintFailure);
+			throw newCoreException(Messages.database_POPredicateSelectionHintFailure);
 	}
 
 	@Override
-	public IPOPredicateSet getStart() throws RodinDBException {
+	public IPOPredicateSet getStart() throws CoreException {
 		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicateSet)
 			return (IPOPredicateSet) element;
 		else
-			throw Util.newRodinDBException(Messages.database_POIntervalSelectionHintFailure);
+			throw newCoreException(Messages.database_POIntervalSelectionHintFailure);
 	}
 
 	@Override
-	public void setInterval(IPOPredicateSet start, IPOPredicateSet end, IProgressMonitor monitor) 
-	throws RodinDBException{
+	public void setInterval(IPOPredicateSet start, IPOPredicateSet end,
+			IProgressMonitor monitor) throws CoreException {
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, start, monitor);
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE, end, null);
 	}
 
 	@Override
-	public void setPredicate(IPOPredicate predicate, IProgressMonitor monitor) throws RodinDBException {
+	public void setPredicate(IPOPredicate predicate, IProgressMonitor monitor)
+			throws CoreException {
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, predicate, monitor);
 		removeAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE, null);
 	}

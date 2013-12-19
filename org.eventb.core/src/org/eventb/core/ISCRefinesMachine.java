@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -44,11 +45,13 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	/**
 	 * Returns the abstract SC machine file introduced by this refines clause.
 	 * 
-	 * @return the abstract SC machine file ( <code>IRodinFile<ISCMachineRoot></code> )
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
+	 * @return the abstract SC machine file (
+	 *         <code>IRodinFile<ISCMachineRoot></code> )
+	 * @throws CoreException
+	 *             if there was a problem accessing the database, or if the
+	 *             abstract SC machine is invalid
 	 */
-	IRodinFile getAbstractSCMachine() throws RodinDBException;
+	IRodinFile getAbstractSCMachine() throws CoreException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.

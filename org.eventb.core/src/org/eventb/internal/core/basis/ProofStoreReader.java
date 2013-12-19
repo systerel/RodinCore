@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRExprRef;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
@@ -66,7 +67,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	 * @since 3.0
 	 */
 	@Override
-	public ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException {
+	public ISealedTypeEnvironment getBaseTypeEnv() throws CoreException {
 		if (baseTypEnv == null) {
 			ITypeEnvironmentBuilder buildTypEnv = factory.makeTypeEnvironment();
 			for (String set : prProof.getSets()) {
@@ -81,7 +82,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	}
 
 	@Override
-	public Predicate getPredicate(String ref) throws RodinDBException {
+	public Predicate getPredicate(String ref) throws CoreException {
 		Predicate pred = predicates.get(ref);
 		if (pred == null) {
 			getBaseTypeEnv();
@@ -93,7 +94,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	}
 
 	@Override
-	public Expression getExpression(String ref) throws RodinDBException {
+	public Expression getExpression(String ref) throws CoreException {
 		Expression expr = expressions.get(ref);
 		if (expr == null) {
 			getBaseTypeEnv();
@@ -153,7 +154,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			try {
 				final IPRExprRef prExprRef = prProofRule.getPRExprRef(key);
 				return prExprRef.getExpressions(store);
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				throw new SerializeException(e);
 			}
 		}
@@ -163,7 +164,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			try {
 				final IPRPredRef prPredRef = prProofRule.getPRPredRef(key);
 				return prPredRef.getPredicates(store);
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				throw new SerializeException(e);
 			}
 		}

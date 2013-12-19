@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,15 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPORoot;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -35,8 +36,8 @@ public abstract class EventBPOElement extends EventBElement {
 		return root.getPORoot().equals(root);
 	}
 
-	protected IRodinElement getTranslatedAttributeValue(IAttributeType.Handle attrType) 
-	throws RodinDBException{
+	protected IRodinElement getTranslatedAttributeValue(
+			IAttributeType.Handle attrType) throws CoreException {
 		IRodinElement element = getAttributeValue(attrType);
 		
 		if (element instanceof IInternalElement) {
@@ -53,15 +54,12 @@ public abstract class EventBPOElement extends EventBElement {
 			}
 				
 		} else
-			throw Util.newRodinDBException(
-					"Internal PO handle translation only possible for internal elements");
+			throw newCoreException("Internal PO handle translation only possible for internal elements");
 	}
 	
-	protected void setTranslatedAttributeValue(
-			IAttributeType.Handle attrType, 
-			IRodinElement element, 
-			IProgressMonitor monitor)
-	throws RodinDBException {
+	protected void setTranslatedAttributeValue(IAttributeType.Handle attrType,
+			IRodinElement element, IProgressMonitor monitor)
+			throws CoreException {
 		
 		if (element instanceof IInternalElement) {
 		
@@ -77,8 +75,7 @@ public abstract class EventBPOElement extends EventBElement {
 			}
 			
 		} else
-			throw Util.newRodinDBException(
-					"Internal PO handle translation only possible for internal elements");
+			throw newCoreException("Internal PO handle translation only possible for internal elements");
 	}
 
 }

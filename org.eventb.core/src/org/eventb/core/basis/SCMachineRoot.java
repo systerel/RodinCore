@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
@@ -75,7 +76,7 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	}
 
 	@Override
-	public IRodinFile[] getAbstractSCMachines() throws RodinDBException {
+	public IRodinFile[] getAbstractSCMachines() throws CoreException {
 		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses();
 		final int length = refinesMachines.length;
 		IRodinFile[] machineFiles = new IRodinFile[length];
@@ -140,7 +141,7 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment()
-			throws RodinDBException {
+			throws CoreException {
 		final FormulaFactory factory = getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx : getSCSeenContexts()) {

@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.Util.newCoreException;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.internal.core.Messages;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -58,10 +60,10 @@ public class SCExtendsContext extends EventBElement implements
 	}
 
 	@Override
-	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
+	public ISCContextRoot getAbstractSCContext() throws CoreException {
 		IRodinElement target = getAbstractSCContextHandle();
 		if (!(target instanceof ISCContextRoot)) {
-			throw Util.newRodinDBException(
+			throw newCoreException(
 					Messages.database_SCExtendsContextTypeFailure, this);
 		}
 		return (ISCContextRoot) target;
