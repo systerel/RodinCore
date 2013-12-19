@@ -16,4 +16,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/internal/ui/searchhypothesis/SearchBox.java" type="org.eventb.internal.ui.searchhypothesis.SearchBox">
+        <filter comment="Exception to the @noextend rule" id="571473929">
+            <message_arguments>
+                <message_argument value="ToolBarContributionItem"/>
+                <message_argument value="SearchBox"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
