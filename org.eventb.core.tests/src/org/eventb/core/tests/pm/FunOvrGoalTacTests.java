@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
@@ -88,7 +89,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		psRoot = poRoot.getPSRoot();
 	}
 	
-	private void createPOFile() throws RodinDBException {
+	private void createPOFile() throws CoreException {
 		IRodinFile poFile = rodinProject.getRodinFile("po.bpo");
 		poFile.create(true, null);
 		poRoot = (IPORoot) poFile.getRoot();

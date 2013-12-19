@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,21 +105,21 @@ public abstract class BasicSCTest extends EventBTest {
 		super();
 	}
 
-	private static IConvergenceElement.Convergence getConvergence(ISCEvent event) throws RodinDBException {
+	private static IConvergenceElement.Convergence getConvergence(ISCEvent event) throws CoreException {
 		return event.getConvergence();
 	}
 	
-	public static void isOrdinary(ISCEvent event) throws RodinDBException {
+	public static void isOrdinary(ISCEvent event) throws CoreException {
 		assertEquals("event should be ordinary", 
 				IConvergenceElement.Convergence.ORDINARY, getConvergence(event));
 	}
 
-	public static void isAnticipated(ISCEvent event) throws RodinDBException {
+	public static void isAnticipated(ISCEvent event) throws CoreException {
 		assertEquals("event should be anticipated", 
 				IConvergenceElement.Convergence.ANTICIPATED, getConvergence(event));
 	}
 
-	public static void isConvergent(ISCEvent event) throws RodinDBException {
+	public static void isConvergent(ISCEvent event) throws CoreException {
 		assertEquals("event should be convergent", 
 				IConvergenceElement.Convergence.CONVERGENT, getConvergence(event));
 	}
@@ -132,21 +132,21 @@ public abstract class BasicSCTest extends EventBTest {
 		return names;
 	}
 
-	private Set<String> getRefinedNameSet(ISCRefinesEvent[] elements) throws RodinDBException {
+	private Set<String> getRefinedNameSet(ISCRefinesEvent[] elements) throws CoreException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCRefinesEvent element : elements)
 			names.add(element.getAbstractSCEvent().getLabel());
 		return names;
 	}
 
-	private Set<String> getSeenNameSet(ISCSeesContext[] elements) throws RodinDBException {
+	private Set<String> getSeenNameSet(ISCSeesContext[] elements) throws CoreException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCSeesContext element : elements)
 			names.add(element.getSeenSCContext().getComponentName());
 		return names;
 	}
 
-	private Set<String> getExtendedNameSet(ISCExtendsContext[] elements) throws RodinDBException {
+	private Set<String> getExtendedNameSet(ISCExtendsContext[] elements) throws CoreException {
 		HashSet<String> names = new HashSet<String>(elements.length * 4 / 3 + 1);
 		for(ISCExtendsContext element : elements)
 			names.add(element.getAbstractSCContext().getComponentName());
@@ -181,7 +181,7 @@ public abstract class BasicSCTest extends EventBTest {
 //		return table;
 //	}
 //
-	private Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws RodinDBException {
+	private Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws CoreException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCAssignmentElement assignment : elements)
 			table.put(((ILabeledElement) assignment).getLabel(), assignment.getAssignmentString());
@@ -251,7 +251,7 @@ public abstract class BasicSCTest extends EventBTest {
 
 	private void containsAssignments(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
-			ISCAssignmentElement[] assignmentElements) throws RodinDBException {
+			ISCAssignmentElement[] assignmentElements) throws CoreException {
 		assert labels.length == strings.length;
 		Hashtable<String, String> table = getAssignmentTable(assignmentElements);
 		for (int k=0; k<labels.length; k++) {
@@ -368,7 +368,7 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	public void containsActions(ISCEvent event, ITypeEnvironment environment, String[] actionLabels, String[] actions) throws RodinDBException {
+	public void containsActions(ISCEvent event, ITypeEnvironment environment, String[] actionLabels, String[] actions) throws CoreException {
 		ISCAction[] acts =  event.getSCActions();
 		
 		assertEquals("wrong number of actions", actions.length, acts.length);
@@ -482,7 +482,7 @@ public abstract class BasicSCTest extends EventBTest {
 		assertEquals("element is not accurate", true, acc);
 	}
 
-	public void refinesEvents(ISCEvent event, String... strings) throws RodinDBException {
+	public void refinesEvents(ISCEvent event, String... strings) throws CoreException {
 		ISCRefinesEvent[] refines = event.getSCRefinesClauses();
 		
 		assertEquals("wrong number of refines clauses", strings.length, refines.length);
@@ -496,7 +496,7 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	public void extendsContexts(ISCContextRoot root, String... names) throws RodinDBException {
+	public void extendsContexts(ISCContextRoot root, String... names) throws CoreException {
 		ISCExtendsContext[] scExtends = root.getSCExtendsClauses();
 		
 		assertEquals("wrong number of extends clauses", names.length, scExtends.length);
@@ -531,7 +531,7 @@ public abstract class BasicSCTest extends EventBTest {
 				children.length);
 	}
 	
-	public void seesContexts(ISCMachineRoot scMachine, String... names) throws RodinDBException {
+	public void seesContexts(ISCMachineRoot scMachine, String... names) throws CoreException {
 		ISCSeesContext[] sees = scMachine.getSCSeesClauses();
 		
 		assertEquals("wrong number of sees clauses", names.length, sees.length);

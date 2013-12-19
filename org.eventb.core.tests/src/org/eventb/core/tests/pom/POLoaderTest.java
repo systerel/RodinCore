@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicateSet;
@@ -27,7 +27,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.POLoader;
 import org.junit.Test;
-import org.rodinp.core.RodinDBException;
 
 /**
  * This class contains unit tests to test the proof loader.
@@ -50,7 +49,7 @@ public class POLoaderTest extends BuilderTest {
 
 	private IPORoot poRoot;
 
-	private void createPOFile() throws RodinDBException {
+	private void createPOFile() throws CoreException {
 		poRoot = createPOFile("x");
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x=ℤ"),

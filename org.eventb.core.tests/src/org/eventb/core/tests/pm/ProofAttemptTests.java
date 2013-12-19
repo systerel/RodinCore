@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
@@ -287,7 +288,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	}
 
 
-	private void createPOFile() throws RodinDBException {
+	private void createPOFile() throws CoreException {
 		poRoot = createPOFile("m");
 		final ITypeEnvironment typenv = mTypeEnvironment();
 		final IPOPredicateSet hyp = addPredicateSet(poRoot, "hyp", null,

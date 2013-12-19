@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
@@ -35,7 +36,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Utility methods for writing a PO file.
@@ -172,11 +172,11 @@ public class POUtil {
 	 * @param predStrings
 	 *            predicates of the set as strings
 	 * @return a handle to the created set
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 */
 	public static IPOPredicateSet addPredicateSet(IPORoot poRoot, String setName,
 			IPOPredicateSet parentSet, ITypeEnvironment typEnv,
-			String... predStrings) throws RodinDBException {
+			String... predStrings) throws CoreException {
 
 		IPOPredicateSet poSet = poRoot.getPredicateSet(setName);
 		createPredicateSet(poSet, parentSet, typEnv, predStrings);
@@ -198,11 +198,11 @@ public class POUtil {
 	 *            local type environment
 	 * @param localHypStrings
 	 *            local hypotheses as strings
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 */
 	public static void addSequent(IPORoot poRoot, String poName, long poStamp,
 			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
-			String... localHypStrings) throws RodinDBException {
+			String... localHypStrings) throws CoreException {
 		
 		IPOSequent poSeq = poRoot.getSequent(poName);
 		poSeq.create(null, null);
@@ -230,11 +230,11 @@ public class POUtil {
 	 *            local type environment
 	 * @param localHypStrings
 	 *            local hypotheses as strings
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 */
 	public static void addSequent(IPORoot poRoot, String poName,
 			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
-			String... localHypStrings) throws RodinDBException {
+			String... localHypStrings) throws CoreException {
 		addSequent(poRoot, poName, IPOStampedElement.INIT_STAMP, goalString, globalSet, typEnv, localHypStrings);
 	}
 
@@ -250,11 +250,11 @@ public class POUtil {
 	 *            type environment for the set
 	 * @param predStrings
 	 *            predicates of the set as strings
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 */
 	private static void createPredicateSet(IPOPredicateSet poSet,
 			IPOPredicateSet parentSet, ITypeEnvironment typEnv,
-			String... predStrings) throws RodinDBException,
+			String... predStrings) throws CoreException,
 			NoSuchElementException {
 
 		poSet.create(null, null);

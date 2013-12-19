@@ -15,6 +15,7 @@ import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
@@ -34,7 +35,6 @@ import org.eventb.core.tests.ResourceUtils;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.core.tests.pom.TestLib;
 import org.junit.Test;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Nicolas Beauger
@@ -54,7 +54,7 @@ public class ProofSimplifierTests extends BuilderTest {
 				.createPSFile(rodinProject, CTX_BARE_NAME, contents);
 	}
 
-	private void createPOFile1() throws RodinDBException {
+	private void createPOFile1() throws CoreException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
 		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("c=ℤ", factory);
@@ -109,7 +109,7 @@ public class ProofSimplifierTests extends BuilderTest {
 		assertTrue(simplified.getRoot().getChildNodes().length == 0);
 	}
 
-	private void createPOFile2() throws RodinDBException {
+	private void createPOFile2() throws CoreException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
 		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("c=ℤ", factory);

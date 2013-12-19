@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -73,7 +74,7 @@ public abstract class EventBPOTest extends EventBTest {
 			Set<String> nameSet, 
 			IPORoot root, 
 			IPOPredicateSet predicateSet, 
-			boolean forSequent) throws RodinDBException {
+			boolean forSequent) throws CoreException {
 
 		assertTrue("predicate set should exist", predicateSet.exists());
 		
@@ -89,7 +90,7 @@ public abstract class EventBPOTest extends EventBTest {
 			getIdentifiersFromPredSets(nameSet, root, parentPredicateSet, forSequent);
 	}
 	
-	public void containsIdentifiers(IPORoot root, String... strings) throws RodinDBException {
+	public void containsIdentifiers(IPORoot root, String... strings) throws CoreException {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
@@ -104,7 +105,7 @@ public abstract class EventBPOTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	public void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws RodinDBException {
+	public void sequentHasIdentifiers(IPOSequent sequent, String... strings) throws CoreException {
 		
 		IPOPredicateSet predicateSet = sequent.getHypotheses()[0].getParentPredicateSet();
 		

@@ -322,7 +322,7 @@ public class ProofSerializationTests extends BuilderTest {
 	
 	// check repaired input correctly applies  
 	private static void checkReplay(final IProverSequent sequent,
-			final IPRProof proof) throws RodinDBException {
+			final IPRProof proof) throws CoreException {
 		final IProofSkeleton oldSkel = proof.getSkeleton(factory, null);
 		final IProofTree replayTree = ProverFactory.makeProofTree(
 				sequent, null);

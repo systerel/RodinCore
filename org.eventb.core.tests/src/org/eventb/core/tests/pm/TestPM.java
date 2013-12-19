@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,16 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static org.junit.Assert.fail;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.fail;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.tests.pom.POUtil;
 import org.junit.Before;
-import org.rodinp.core.RodinDBException;
 
 public abstract class TestPM extends BasicTest {
 	
@@ -33,7 +33,7 @@ public abstract class TestPM extends BasicTest {
 		manager.setConsiderHiddenHypotheses(false);
 	}
 
-	protected IPORoot createPOFileWithContents(String fileName) throws RodinDBException {
+	protected IPORoot createPOFileWithContents(String fileName) throws CoreException {
 		final IPORoot poRoot = super.createPOFile(fileName);
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x=ℤ"), "¬x=1", "¬x=2", "x∈ℕ");

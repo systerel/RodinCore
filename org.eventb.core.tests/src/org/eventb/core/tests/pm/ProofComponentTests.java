@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -86,7 +87,7 @@ public class ProofComponentTests extends AbstractProofTests {
 		}
 	}
 
-	private void createPOFile() throws RodinDBException {
+	private void createPOFile() throws CoreException {
 		poRoot.getRodinFile().create(true, null);
 		addSequent(poRoot, PO1, "⊤", null, mTypeEnvironment()); //$NON-NLS-1$
 		addSequent(poRoot, PO2, "⊥", null, mTypeEnvironment()); //$NON-NLS-1$
