@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.ui" version="2">
+    <resource path="src/org/eventb/internal/ui/eventbeditor/EventBEditor.java" type="org.eventb.internal.ui.eventbeditor.EventBEditor">
+        <filter comment="Exception to the @noinstantiate rule" id="572522506">
+            <message_arguments>
+                <message_argument value="ElementChangedEvent"/>
+                <message_argument value="EventBEditor&lt;R&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/ui/eventbeditor/elementdesc/NullAttributeDesc.java" type="org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc">
         <filter comment="Exception to the @noinstantiate rule" id="574619656">
             <message_arguments>
