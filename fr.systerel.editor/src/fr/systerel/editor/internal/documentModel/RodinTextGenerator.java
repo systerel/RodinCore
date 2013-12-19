@@ -35,6 +35,7 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
@@ -50,7 +51,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
@@ -191,7 +191,7 @@ public class RodinTextGenerator {
 					stream.addPresentationRegion(WHITESPACE + suffix, element);
 					sizer.append(WHITESPACE + suffix);
 				}
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				value = "failure while loading";
 				e.printStackTrace();
 			}

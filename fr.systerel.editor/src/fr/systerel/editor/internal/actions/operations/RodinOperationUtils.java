@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.actions.operations;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.log;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.showError;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
@@ -69,12 +70,12 @@ public class RodinOperationUtils {
 				return;
 			}
 			ElementManipulationFacade.changeAttribute(ielement, manip, value);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			logAndInformAttributeChangeError(e);
 		}
 	}
 
-	private static void logAndInformAttributeChangeError(RodinDBException e) {
+	private static void logAndInformAttributeChangeError(CoreException e) {
 		log(e.getStatus());
 		showError("Error when changing an attribute value", //
 				"An error occured. Check the log file for"

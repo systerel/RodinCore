@@ -25,6 +25,7 @@ import java.util.Map;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -354,7 +355,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			if (toSet != null)
 				changeAttribute(inter.getElement(), manip,
 						toSet);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
