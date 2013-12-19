@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.rodinp.core.RodinDBException;
 
 public class CComboEditComposite extends AbstractEditComposite {
 	
@@ -64,7 +63,7 @@ public class CComboEditComposite extends AbstractEditComposite {
 			if (!manipulation.hasValue(element, null))
 				return COMBO_VALUE_UNDEFINED;
 			return manipulation.getValue(element, null);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 			return COMBO_VALUE_UNDEFINED;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
@@ -24,13 +25,13 @@ public class AtomicOperation extends AbstractEventBOperation {
 	abstract class AbstractNavigation {
 
 		abstract void doRun(IProgressMonitor monitor, final IAdaptable info)
-				throws RodinDBException;
+				throws CoreException;
 
 		void run(IProgressMonitor monitor, final IAdaptable info)
 				throws RodinDBException {
 			RodinCore.run(new IWorkspaceRunnable() {
 				@Override
-				public void run(IProgressMonitor m) throws RodinDBException {
+				public void run(IProgressMonitor m) throws CoreException {
 					doRun(m, info);
 				}
 			}, context.getRodinFile().getSchedulingRule(), monitor);
@@ -44,7 +45,7 @@ public class AtomicOperation extends AbstractEventBOperation {
 	private final AbstractNavigation execute = new AbstractNavigation() {
 		@Override
 		void doRun(IProgressMonitor monitor, IAdaptable info)
-				throws RodinDBException {
+				throws CoreException {
 			operation.doExecute(monitor, info);
 		}
 	};
@@ -52,7 +53,7 @@ public class AtomicOperation extends AbstractEventBOperation {
 	private final AbstractNavigation undo = new AbstractNavigation() {
 		@Override
 		void doRun(IProgressMonitor monitor, IAdaptable info)
-				throws RodinDBException {
+				throws CoreException {
 			operation.doUndo(monitor, info);
 		}
 	};
@@ -60,7 +61,7 @@ public class AtomicOperation extends AbstractEventBOperation {
 	private final AbstractNavigation redo = new AbstractNavigation() {
 		@Override
 		void doRun(IProgressMonitor monitor, IAdaptable info)
-				throws RodinDBException {
+				throws CoreException {
 			operation.doRedo(monitor, info);
 		}
 	};

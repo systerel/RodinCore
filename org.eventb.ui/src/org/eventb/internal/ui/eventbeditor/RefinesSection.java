@@ -17,6 +17,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -243,7 +244,7 @@ public class RefinesSection extends SectionPart implements
 				value = NULL_VALUE;
 			}
 			setComboText(value);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			// TODO Refesh?
 
 			e.printStackTrace();

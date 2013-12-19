@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Operation Node to create an element. A root operation create the element and
@@ -36,7 +36,7 @@ public class OperationCreateElement extends AbstractEventBOperation implements
 
 	@Override
 	public void doExecute(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		operationCreate.doExecute(monitor, info);
 		final IInternalElement element = operationCreate.getCreatedElement();
 		operationChildren.setParent(element);
@@ -45,14 +45,14 @@ public class OperationCreateElement extends AbstractEventBOperation implements
 
 	@Override
 	public void doRedo(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		operationCreate.doRedo(monitor, info);
 		operationChildren.doRedo(monitor, info);
 	}
 
 	@Override
 	public void doUndo(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		operationCreate.doUndo(monitor, info);
 	}
 

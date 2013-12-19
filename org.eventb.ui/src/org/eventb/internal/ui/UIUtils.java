@@ -697,7 +697,7 @@ public class UIUtils {
 						OperationFactory.changeAttribute(rodinFile, factory,
 								element, value));
 			}
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			log(e, "Error changing attribute for element "
 					+ element.getElementName());
 			if (UIUtils.DEBUG)
@@ -707,7 +707,7 @@ public class UIUtils {
 
 	private static boolean attributeHasChanged(IInternalElement element,
 			IAttributeManipulation manipulation, String value,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		final String newValue = (value == null) ? "" : value;
 		final String oldValue = !manipulation.hasValue(element, monitor) ? ""
 				: manipulation.getValue(element, monitor);

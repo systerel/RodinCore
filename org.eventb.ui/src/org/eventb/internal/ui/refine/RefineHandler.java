@@ -14,6 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -59,7 +60,7 @@ public class RefineHandler extends AbstractHandler {
 		}
 
 		@Override
-		public void run(IProgressMonitor monitor) throws RodinDBException {
+		public void run(IProgressMonitor monitor) throws CoreException {
 			targetRoot.getRodinFile().create(false, monitor);
 
 			final IRefinementManager refMgr = RodinCore.getRefinementManager();

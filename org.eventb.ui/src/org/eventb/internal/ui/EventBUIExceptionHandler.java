@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -248,7 +248,7 @@ public class EventBUIExceptionHandler {
 	 * @param awareness
 	 *            the level of awareness.
 	 */
-	public static void handleGetAttributeException(RodinDBException e,
+	public static void handleGetAttributeException(CoreException e,
 			UserAwareness awareness) {
 		handleException(e,
 				"Exception throws when getting the value of an attribute",

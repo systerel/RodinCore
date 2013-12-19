@@ -15,6 +15,7 @@ package org.eventb.internal.ui.propertiesView;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
@@ -127,7 +128,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 		UIUtils.setStringAttribute(element, getFactory(), text, monitor);
 	}
 
-	private String getText() throws RodinDBException {
+	private String getText() throws CoreException {
 		final IAttributeManipulation factory = getFactory();
 		if (!factory.hasValue(element, null))
 			return "";
@@ -149,7 +150,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 			if(element != null) {
 				textWidget.setEditable(!isReadOnly(element));
 			}
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			EventBUIExceptionHandler.handleGetAttributeException(e,
 					EventBUIExceptionHandler.UserAwareness.IGNORE);		
 		}

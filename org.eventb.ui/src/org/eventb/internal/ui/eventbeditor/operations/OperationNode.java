@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 class OperationNode extends AbstractEventBOperation implements OperationTree,
 		Iterable<OperationTree> {
@@ -31,7 +31,7 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 
 	@Override
 	public void doExecute(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		for (OperationTree child: children) {
 				child.doExecute(monitor, info);
 		}
@@ -39,7 +39,7 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 
 	@Override
 	public void doRedo(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		for (OperationTree child: children) {
 			child.doRedo(monitor, info);
 		}
@@ -47,7 +47,7 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 
 	@Override
 	public void doUndo(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		for (int i = children.size() - 1; 0 <= i; i--) {
 			children.get(i).doUndo(monitor, info);
 		}

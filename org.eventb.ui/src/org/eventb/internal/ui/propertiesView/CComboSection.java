@@ -21,6 +21,7 @@ import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
 import static org.eventb.internal.ui.UIUtils.disableMouseWheel;
 import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -47,7 +48,6 @@ import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 public abstract class CComboSection extends AbstractPropertySection implements
 		IElementChangedListener {
@@ -126,7 +126,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		try {
 			if (element.exists() && getFactory().hasValue(element, null))
 				return getFactory().getValue(element, null);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 		return COMBO_VALUE_UNDEFINED;

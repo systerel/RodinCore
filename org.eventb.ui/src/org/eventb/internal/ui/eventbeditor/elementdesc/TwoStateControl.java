@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -18,7 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 
 public class TwoStateControl {
 
@@ -48,7 +48,7 @@ public class TwoStateControl {
 			if (!element.exists() || !manipulation.hasValue(element, null))
 				return notSelectedValue;
 			return manipulation.getValue(element, null);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 			return notSelectedValue;
 		}

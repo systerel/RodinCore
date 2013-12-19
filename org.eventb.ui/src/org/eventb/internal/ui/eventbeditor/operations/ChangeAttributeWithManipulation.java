@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.ui.manipulation.IAttributeManipulation;
@@ -32,7 +33,7 @@ class ChangeAttributeWithManipulation extends OperationLeaf {
 
 	@Override
 	public void doExecute(IProgressMonitor monitor, IAdaptable info)
-			throws RodinDBException {
+			throws CoreException {
 		if (manipulation.hasValue(element, monitor)) {
 			valueUndo = manipulation.getValue(element, monitor);
 		}

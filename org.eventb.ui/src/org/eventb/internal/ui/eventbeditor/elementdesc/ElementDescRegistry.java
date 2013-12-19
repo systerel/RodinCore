@@ -153,7 +153,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			if (!attrDesc.getManipulation().hasValue(element, null))
 				return defaultAttributeValue;
 			return attrDesc.getManipulation().getValue(element, null);
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 			return defaultAttributeValue;
 		}

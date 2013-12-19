@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.internal.ui.eventbeditor.manipulation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.UIUtils;
@@ -64,7 +65,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 			try {
 				if (hasValue(clause, null))
 					usedNames.add(getValue(clause, null));
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				UIUtils.log(e, "when reading clause " + clause);
 			}
 		}
@@ -95,7 +96,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 				return getValue(element, null);
 			else
 				return "";
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			UIUtils.log(e, "When getting the value of element " + element);
 			return "";
 		}

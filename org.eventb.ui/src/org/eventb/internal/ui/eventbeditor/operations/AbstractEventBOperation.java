@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Common implementation for event-B undoable operations. It handles building
@@ -31,13 +31,13 @@ public abstract class AbstractEventBOperation extends AbstractOperation {
 	}
 
 	public abstract void doExecute(IProgressMonitor monitor,
-			final IAdaptable info) throws RodinDBException;
+			final IAdaptable info) throws CoreException;
 
 	public abstract void doUndo(IProgressMonitor monitor, final IAdaptable info)
-			throws RodinDBException;
+			throws CoreException;
 
 	public abstract void doRedo(IProgressMonitor monitor, final IAdaptable info)
-			throws RodinDBException;
+			throws CoreException;
 
 	@Override
 	public final IStatus execute(IProgressMonitor monitor, final IAdaptable info)
@@ -45,8 +45,8 @@ public abstract class AbstractEventBOperation extends AbstractOperation {
 		try {
 			doExecute(monitor, info);
 			return Status.OK_STATUS;
-		} catch (RodinDBException e) {
-			return wrapUpRodinDBException(e);
+		} catch (CoreException e) {
+			return wrapCoreException(e);
 		}
 	}
 
@@ -56,8 +56,8 @@ public abstract class AbstractEventBOperation extends AbstractOperation {
 		try {
 			doRedo(monitor, info);
 			return Status.OK_STATUS;
-		} catch (RodinDBException e) {
-			return wrapUpRodinDBException(e);
+		} catch (CoreException e) {
+			return wrapCoreException(e);
 		}
 	}
 
@@ -67,12 +67,12 @@ public abstract class AbstractEventBOperation extends AbstractOperation {
 		try {
 			doUndo(monitor, info);
 			return Status.OK_STATUS;
-		} catch (RodinDBException e) {
-			return wrapUpRodinDBException(e);
+		} catch (CoreException e) {
+			return wrapCoreException(e);
 		}
 	}
 
-	private IStatus wrapUpRodinDBException(RodinDBException e)
+	private IStatus wrapCoreException(CoreException e)
 			throws ExecutionException {
 		final IStatus status = e.getStatus();
 		// If cancellation, propagate the status

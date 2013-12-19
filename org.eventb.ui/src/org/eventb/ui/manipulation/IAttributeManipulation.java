@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.ui.manipulation;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -73,11 +74,11 @@ public interface IAttributeManipulation {
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            and cancellation are not desired
 	 * @return the string value of the attribute
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 *             if some problem occurred
 	 */
 	String getValue(IRodinElement element, IProgressMonitor monitor)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Sets the value of the attribute of the given element from a
