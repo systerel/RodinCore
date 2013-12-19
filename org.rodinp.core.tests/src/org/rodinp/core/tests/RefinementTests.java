@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,7 +152,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	private static void assertRefCalls(boolean successExpected,
 			IInternalElement sourceRoot, boolean ordered, Integer... expected)
-			throws RodinDBException {
+			throws CoreException {
 		final String refinedName = "refined_"
 				+ sourceRoot.getRodinFile().getElementName();
 		final IRodinFile targetFile = sourceRoot.getRodinProject()
@@ -167,12 +167,12 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	private static void assertUnorderedRefinementCalls(
 			IInternalElement abstractRoot, Integer... expected)
-			throws RodinDBException {
+			throws CoreException {
 		assertRefCalls(true, abstractRoot, false, expected);
 	}
 
 	private static void assertRefinementCalls(IInternalElement abstractRoot,
-			Integer... expected) throws RodinDBException {
+			Integer... expected) throws CoreException {
 		assertRefCalls(true, abstractRoot, true, expected);
 	}
 
