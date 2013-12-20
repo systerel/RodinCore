@@ -14,7 +14,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.RELIMAGE;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -26,8 +25,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -45,14 +42,6 @@ public class CompImgRewrites extends AbstractManualRewrites {
 		if (pred == null)
 			return "Comp. img. rewrites in goal";
 		return "Comp img. rewrites in hyp (" + pred + ")";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	/**

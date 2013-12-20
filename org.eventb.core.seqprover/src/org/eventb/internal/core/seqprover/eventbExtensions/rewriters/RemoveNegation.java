@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import java.util.Arrays;
-
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
@@ -32,14 +28,6 @@ public class RemoveNegation extends AbstractManualRewrites implements IReasoner 
 		if (pred != null)
 			return "remove ¬ in " + pred.getSubFormula(position);
 		return "remove ¬ in goal";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	@Override

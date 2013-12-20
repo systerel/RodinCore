@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import java.util.Arrays;
-
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 
 public class RanDistLeftRewrites extends AbstractManualRewrites {
@@ -36,14 +32,6 @@ public class RanDistLeftRewrites extends AbstractManualRewrites {
 			return "rewrites range distribution left in goal";
 		return "rewrites range distribution left in hyp ("
 				+ pred.getSubFormula(position) + ")";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	@Override

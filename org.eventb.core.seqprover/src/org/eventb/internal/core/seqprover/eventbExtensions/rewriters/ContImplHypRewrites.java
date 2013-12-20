@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,7 +26,6 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IRepairableInputReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
@@ -45,14 +43,6 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		assert pred != null;
 		return "mp impl (" + pred.getSubFormula(position) + ")";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	@Override

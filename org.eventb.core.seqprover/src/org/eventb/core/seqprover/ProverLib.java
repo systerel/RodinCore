@@ -31,6 +31,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ProofRule;
@@ -107,6 +108,7 @@ public class ProverLib {
 	 */
 	public static boolean deepEquals(IProofRule r1, IProofRule r2) {
 		if (r1 == r2) return true;
+		if (r1 == null || r2 == null) return false;
 		final IReasonerDesc desc1 = r1.getReasonerDesc();
 		final IReasonerDesc desc2 = r2.getReasonerDesc();
 		if (!deepEquals(desc1, desc2)) return false;
@@ -155,7 +157,15 @@ public class ProverLib {
 	public static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
 		if (ha1 == ha2) return true;
 		if (! ha1.getActionType().equals(ha2.getActionType())) return false;
-		if (ha1 instanceof IForwardInfHypAction) {
+		if (ha1 instanceof IRewriteHypAction) {
+			if (! (ha2 instanceof IRewriteHypAction)) return false;
+			final IRewriteHypAction rw1 = (IRewriteHypAction) ha1;
+			final IRewriteHypAction rw2 = (IRewriteHypAction) ha2;
+			if (!deepEquals(rw1.getHyps(), rw2.getHyps())) return false;
+			if (!deepEquals(rw1.getInferredHyps(), rw2.getInferredHyps())) return false;
+			if (!Arrays.deepEquals(rw1.getAddedFreeIdents(), rw2.getAddedFreeIdents())) return false;
+			if (!deepEquals(rw1.getDisappearingHyps(), rw2.getDisappearingHyps())) return false;
+		} else if (ha1 instanceof IForwardInfHypAction) {
 			if (! (ha2 instanceof IForwardInfHypAction)) return false;
 			final IForwardInfHypAction fiha1 = (IForwardInfHypAction) ha1;
 			final IForwardInfHypAction fiha2 = (IForwardInfHypAction) ha2;

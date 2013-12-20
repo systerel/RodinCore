@@ -11,9 +11,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static java.util.Collections.singletonList;
 import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE;
+import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +44,7 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
-import org.eventb.internal.core.seqprover.ForwardInfHypAction;
+import org.eventb.internal.core.seqprover.RewriteHypAction;
 import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 public abstract class AbstractManualRewrites implements IReasoner {
@@ -151,24 +156,8 @@ public abstract class AbstractManualRewrites implements IReasoner {
 				return hypReasonerFailure(input, position, hyp);
 			}
 			
-			final Collection<Predicate> inferredHyps = Lib
-				.breakPossibleConjunct(inferredHyp);
-			// Check if rewriting generated something interesting
-			inferredHyps.remove(DLib.True(seq.getFormulaFactory()));
-			final List<IHypAction> hypActions;
-			// make the forward inference action
-			if (!inferredHyps.isEmpty()) {
-				final IHypAction forwardInf = ProverFactory
-					.makeForwardInfHypAction(Collections.singleton(hyp),
-							inferredHyps);
-				hypActions = Arrays.asList(forwardInf,
-						getHypAction(hyp, position), ProverFactory
-								.makeSelectHypAction(inferredHyps));
-			}
-			else {
-				hypActions = Arrays.asList(getHypAction(hyp, position),
-						ProverFactory.makeSelectHypAction(inferredHyps));				
-			}
+			final List<IHypAction> hypActions = getHypActions(hyp, position,
+					inferredHyp, seq.getFormulaFactory());
 			return ProverFactory.makeProofRule(this, input, neededHyps,
 					getDisplayName(hyp, position), hypActions);
 		}
@@ -230,14 +219,35 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	protected abstract String getDisplayName(Predicate pred, IPosition position);
 
 	/**
-	 * Returns the action to perform on hypotheses.
+	 * Returns the actions to perform on hypotheses.
+	 * <p>
+	 * Implementations may override this method to perform more hypothesis
+	 * actions.
+	 * </p>
 	 * 
-	 * @param pred
+	 * @param hyp
 	 *            the hypothesis predicate that gets rewritten
-	 * @return the action to perform on hypotheses.
+	 * @param inferredHyp
+	 *            the inferred hypothesis after rewrite occurred
+	 * @return the actions to perform on hypotheses
 	 */
-	protected abstract IHypAction getHypAction(Predicate pred,
-			IPosition position);
+	protected List<IHypAction> getHypActions(Predicate hyp, IPosition position,
+			Predicate inferredHyp, FormulaFactory ff) {
+		final List<IHypAction> actions = new ArrayList<IHypAction>();
+		// check if rewriting generated something interesting
+		final Collection<Predicate> inferredHyps = breakPossibleConjunct(inferredHyp);
+		inferredHyps.remove(DLib.True(ff));
+		final List<Predicate> lHyp = singletonList(hyp);
+		// if it is the case, make the rewrite action followed by select action
+		if (!inferredHyps.isEmpty()) {
+			actions.add(makeRewriteHypAction(lHyp, inferredHyps, lHyp));
+			actions.add(makeSelectHypAction(inferredHyps));
+		} else {
+			// nothing inferred, make the sole hide action
+			actions.add(makeHideHypAction(lHyp));
+		}
+		return actions;
+	}
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
@@ -263,9 +273,9 @@ public abstract class AbstractManualRewrites implements IReasoner {
 					"Expected at least one hyp action!"));
 		}
 		final IHypAction hypAction = hypActions.get(0);
-		if (hypAction instanceof ForwardInfHypAction) {
-			final ForwardInfHypAction fHypAction = (ForwardInfHypAction) hypAction;
-			final Collection<Predicate> hyps = fHypAction.getHyps();
+		if (hypAction instanceof RewriteHypAction) {
+			final RewriteHypAction rwHypAction = (RewriteHypAction) hypAction;
+			final Collection<Predicate> hyps = rwHypAction.getHyps();
 			if (hyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
 						"Expected single required hyp in rewrite hyp action!"));

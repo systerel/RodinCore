@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import java.util.Arrays;
-
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 
 public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites implements
 		IReasoner {
@@ -29,14 +25,6 @@ public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites i
 		if (pred != null)
 			return "remove ⊆ with ∖ in " + pred.getSubFormula(position);
 		return "remove ⊆ with ∖ in goal";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 	protected abstract IFormulaRewriter makeRewriter();

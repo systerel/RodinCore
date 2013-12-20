@@ -11,7 +11,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl.getNeededHyp;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -20,10 +19,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -93,14 +90,6 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 		if (hyp == null)
 			return "Functional image simplification in goal";
 		return "Functional image simplification in hyp";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
 }

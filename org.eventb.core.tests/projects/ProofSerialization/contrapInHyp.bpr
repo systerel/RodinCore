@@ -3,13 +3,11 @@
 <org.eventb.core.prProof name="oldContrapHyp" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1" org.eventb.core.psManual="true">
 <org.eventb.core.prRule name="org.eventb.core.seqprover.doubleImplGoalRewrites" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="mp impl (0=0⇒⊥)" org.eventb.core.prHyps="">
 <org.eventb.core.prAnte name="0">
-<org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p2"/>
-<org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p1"/>
+<org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHyps="p1" org.eventb.core.prInfHyps="p2" org.eventb.core.prHidden="p1"/>
 <org.eventb.core.prHypAction name="SELECT2" org.eventb.core.prHyps="p2"/>
 <org.eventb.core.prRule name="org.eventb.core.seqprover.autoRewritesL2:1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
 <org.eventb.core.prAnte name="0" org.eventb.core.prGoal="p3">
-<org.eventb.core.prHypAction name="FORWARD_INF0" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p3"/>
-<org.eventb.core.prHypAction name="HIDE1" org.eventb.core.prHyps="p2"/>
+<org.eventb.core.prHypAction name="REWRITE0" org.eventb.core.prHyps="p2" org.eventb.core.prInfHyps="p3" org.eventb.core.prHidden="p2"/>
 <org.eventb.core.prRule name="org.eventb.core.seqprover.falseHyp" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="⊥ hyp" org.eventb.core.prHyps="p3"/>
 </org.eventb.core.prAnte>
 </org.eventb.core.prRule>

@@ -14,10 +14,8 @@ import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.TBIJ;
 import static org.eventb.core.ast.Formula.UPTO;
-import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -29,7 +27,6 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -46,14 +43,6 @@ public class FiniteDefRewrites extends AbstractManualRewrites {
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		return "finite definition";
-	}
-
-	@Override
-	protected IHypAction getHypAction(Predicate pred, IPosition position) {
-		if (pred == null) {
-			return null;
-		}
-		return makeHideHypAction(Arrays.asList(pred));
 	}
 
 	@Override
