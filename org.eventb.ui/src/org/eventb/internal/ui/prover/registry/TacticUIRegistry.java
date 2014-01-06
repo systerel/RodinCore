@@ -12,6 +12,7 @@
 package org.eventb.internal.ui.prover.registry;
 
 import static java.util.Collections.unmodifiableList;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.util.ArrayList;
@@ -89,9 +90,9 @@ public class TacticUIRegistry {
 	}
 
 	private void show(Iterable<? extends AbstractInfo> list, String name) {
-		System.out.println("Contents of registry : " + name + ":");
+		debug("Contents of registry : " + name + ":");
 		for (final AbstractInfo info : list) {
-			System.out.println("\t" + info.getID());
+			debug("\t" + info.getID());
 		}
 	}
 
