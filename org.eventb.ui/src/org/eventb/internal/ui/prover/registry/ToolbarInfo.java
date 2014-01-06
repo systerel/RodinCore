@@ -35,7 +35,6 @@ public class ToolbarInfo extends AbstractInfo {
 		this.dropdownRegistry = dropdownRegistry;
 	}
 
-	// FIXME this method is not thread safe
 	public List<DropdownInfo> getDropdowns() {
 		assert dropdownRegistry != null;
 
@@ -55,7 +54,6 @@ public class ToolbarInfo extends AbstractInfo {
 		return dropdowns;
 	}
 
-	// FIXME this method is not thread safe
 	public List<TacticUIInfo> getTactics() {
 		assert globalRegistry != null;
 
