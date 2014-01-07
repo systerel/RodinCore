@@ -18,6 +18,12 @@
             id="signature"
             name="Signature Reasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.tests.pom.ContextDependentReasoner"
+            contextDependent="true"
+            id="contextDependentReasoner"
+            name="contextDependentReasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

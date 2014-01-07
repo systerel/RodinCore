@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,9 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Test;
@@ -105,11 +108,15 @@ public class PSUpdateTests extends BuilderTest {
 	}
 
 	private void addProof(String name) throws RodinDBException {
+		addProof(name, lemma(BTRUE.toString()));
+	}
+	
+	private void addProof(String name, ITactic tactic) throws RodinDBException {
 		final IProofManager pm = EventBPlugin.getProofManager();
 		final IProofComponent pc = pm.getProofComponent(poRoot);
 		final IProofAttempt pa = pc.createProofAttempt(name, "test", null);
 		final IProofTreeNode root = pa.getProofTree().getRoot();
-		lemma(BTRUE.toString()).apply(root, null);
+		tactic.apply(root, null);
 		pa.commit(true, null);
 		pc.save(null, false);
 	}
@@ -789,6 +796,34 @@ public class PSUpdateTests extends BuilderTest {
 		PrimeFormulaExtensionProvider.add(poRoot);
 		assertSame(EXT_FACTORY, proof.getFormulaFactory(null));
 	}
+	
+	/**
+	 * Verify that context dependent proof statuses are updated when the builder
+	 * runs, even if the PO stamp did not change.
+	 */
+	@Test
+	public void testContextDependentProof() throws Exception {
+		final String proofName = "ctxDepProof";
+		createPOFile();
+		addPO(proofName, null);
+		runBuilder(proofName);
 
-	//TODO test update context dependent proof success+failure
+		ContextDependentReasoner.setContextValidity(true);
+		addProof(proofName, BasicTactics.reasonerTac(
+				new ContextDependentReasoner(), new EmptyInput()));
+		assertFalse(psRoot.getStatus(proofName).isBroken());
+
+		// change resource without changing contents nor PO stamp
+		poRoot.getRodinFile().getResource().touch(null);
+		ContextDependentReasoner.setContextValidity(false);
+		runBuilder(proofName);
+		assertTrue(psRoot.getStatus(proofName).isBroken());
+		
+		// change resource without changing contents nor PO stamp
+		poRoot.getRodinFile().getResource().touch(null);
+		ContextDependentReasoner.setContextValidity(true);
+		runBuilder(proofName);
+		assertFalse(psRoot.getStatus(proofName).isBroken());
+	}
+
 }
