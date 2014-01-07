@@ -83,7 +83,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	// The comparison is done per predicate set and per sequent.
 	// Changed parent predicate sets are taken into account in the
 	// comparison: if a parent predicate set has changed, then the 
-	// child pedicate set or sequent is considered changed too.
+	// child predicate set or sequent is considered changed too.
 	//
 	// TODO progress monitor
 	private boolean compareAndSave(
