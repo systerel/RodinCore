@@ -25,8 +25,11 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
- * @author Nicolas Beauger
+ * Makes a distinct case on an inductive datatypes.
  * 
+ * Antecedents are created for each constructor.
+ * 
+ * @author Nicolas Beauger
  */
 public class DTInduction extends DTReasoner {
 

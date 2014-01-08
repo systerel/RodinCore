@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,11 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
- * @author Nicolas Beauger
+ * Makes a distinct case on simple (non inductive) datatypes.
  * 
+ * Antecedents are created for each constructor.
+ * 
+ * @author Nicolas Beauger
  */
 public class DTDistinctCase extends DTReasoner {
 
