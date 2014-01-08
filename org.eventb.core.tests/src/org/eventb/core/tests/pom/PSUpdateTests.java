@@ -15,7 +15,10 @@ import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.lemma;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.core.tests.pom.TestLib.genPred;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -32,17 +35,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ISignatureReasoner;
-import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.tests.BuilderTest;
-import org.eventb.core.tests.ResourceUtils;
 import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
@@ -715,90 +709,6 @@ public class PSUpdateTests extends BuilderTest {
 		assertFalse(psRoot.getStatus("2").isBroken());
 	}
 	
-	public static class Signature extends EmptyInputReasoner implements ISignatureReasoner {
-
-		public static final String ID = "org.eventb.core.tests.signature";
-
-		public static final String SIGNATURE = "reasoner signature";
-		
-		@Override
-		public String getReasonerID() {
-			return ID;
-		}
-
-		@Override
-		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-				IProofMonitor pm) {
-			if (seq.goal().getTag() == Formula.IN) {
-				return ProverFactory.makeProofRule(this, input, seq.goal(),
-						"It's a non reusable success", new IAntecedent[0]);
-			} else {
-				return ProverFactory.reasonerFailure(this, input,
-						"only discharges IN goals");
-			}
-		}
-
-		@Override
-		public String getSignature() {
-			return SIGNATURE;
-		}
-
-	}
-	
-	private static String makeSignatureProof(String signature, String reasonerId) {
-		final String signPart = signature == null ? ""
-				: " org.eventb.core.prRSig=\"" + signature + "\" ";
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-				+ "<org.eventb.core.prFile version=\"1\">"
-				+ "<org.eventb.core.prProof name=\"signProof\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\" org.eventb.core.psManual=\"true\">"
-				+ "<org.eventb.core.prRule name=\"r0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"any display\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
-				+ "</org.eventb.core.prRule>"
-				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"⊤\"/>"
-				+ "<org.eventb.core.prReas name=\"r0\" org.eventb.core.prRID=\""
-				+ reasonerId
-				+ "\""
-				+ signPart
-				+ "/>" 
-				+ "</org.eventb.core.prProof>"
-				+ "</org.eventb.core.prFile>";
-	}
-	
-	private void doSignatureTest(String proofSignature, boolean brokenExpected) throws Exception {
-		doSignTest(proofSignature, Signature.ID, brokenExpected);
-	}
-	
-	private void doSignTest(String proofSignature, String reasonerId, boolean brokenExpected) throws Exception {
-		final String contents = makeSignatureProof(proofSignature, reasonerId);
-		final String proofName = "signProof";
-		ResourceUtils.createPRFile(rodinProject, "x", contents);
-		
-		createPOFile();
-		addPO(proofName, null);
-		runBuilder(proofName);
-		final boolean broken = psRoot.getStatus(proofName).isBroken();
-		assertEquals(brokenExpected, broken);
-	}
-
-	@Test
-	public void testSameSignature() throws Exception {
-		doSignatureTest(Signature.SIGNATURE, false);
-	}
-	
-	@Test
-	public void testDifferentSignature() throws Exception {
-		doSignatureTest("other signature", true);
-	}
-	
-	@Test
-	public void testNoSignatureInProof() throws Exception {
-		doSignatureTest(null, true);
-	}
-	
-	@Test
-	public void testNoSignatureInReasoner() throws Exception {
-		doSignTest("unexpected for this reasoner", "org.eventb.core.seqprover.trueGoal", true);
-	}
-
 	/**
 	 * Ensure that a proof is kept valid when updating its proof obligation
 	 * without really changing it nor its factory, even when using a specialized

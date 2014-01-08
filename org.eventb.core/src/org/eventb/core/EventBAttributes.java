@@ -145,12 +145,6 @@ public final class EventBAttributes {
 	public static IAttributeType.String PR_REASONER_ID_ATTRIBUTE = 
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRID");
 	
-	/**
-	 * @since 2.2
-	 */
-	public static IAttributeType.String PR_REASONER_SIGNATURE_ATTRIBUTE = 
-		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRSig");
-	
 	private EventBAttributes() {
 		// Non-instantiable class
 	}

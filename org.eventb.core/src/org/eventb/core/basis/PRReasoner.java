@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
-import static org.eventb.core.EventBAttributes.PR_REASONER_SIGNATURE_ATTRIBUTE;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRReasoner;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.core.seqprover.SequentProver;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -46,10 +42,6 @@ public class PRReasoner extends InternalElement implements IPRReasoner {
 	public IReasonerDesc getReasoner() throws RodinDBException {
 		final String rid = getAttributeValue(EventBAttributes.PR_REASONER_ID_ATTRIBUTE);
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
-		if (hasAttribute(PR_REASONER_SIGNATURE_ATTRIBUTE)) {
-			final String signature = getAttributeValue(PR_REASONER_SIGNATURE_ATTRIBUTE);
-			return registry.getReasonerDesc(rid, signature);
-		}
 		return registry.getReasonerDesc(rid);
 	}
 
@@ -58,13 +50,6 @@ public class PRReasoner extends InternalElement implements IPRReasoner {
 			throws RodinDBException {
 		setAttributeValue(EventBAttributes.PR_REASONER_ID_ATTRIBUTE,
 				reasoner.getVersionedId(), monitor);
-		final IReasoner instance = reasoner.getInstance();
-		if (instance instanceof ISignatureReasoner) {
-			final String signature = ((ISignatureReasoner) instance)
-					.getSignature();
-			setAttributeValue(PR_REASONER_SIGNATURE_ATTRIBUTE, signature,
-					monitor);
-		}
 	}
 
 }

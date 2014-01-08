@@ -413,10 +413,6 @@
             kind="integer"
             name="%eventBConvergenceAttribute"/>
       <attributeType
-            id="signature"
-            kind="integer"
-            name="%eventBSignatureAttribute"/>
-      <attributeType
             id="confidence"
             kind="integer"
             name="%eventBprConfidence"/>
@@ -538,11 +534,6 @@
             id="prRID"
             kind="string"
             name="%eventBprRIDAttribute">
-      </attributeType>
-      <attributeType
-            id="prRSig"
-            kind="string"
-            name="%eventBprRSigAttribute">
       </attributeType>
    </extension>
    <extension

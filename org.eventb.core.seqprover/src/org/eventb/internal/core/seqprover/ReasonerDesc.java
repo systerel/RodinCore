@@ -25,7 +25,6 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -46,7 +45,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 public class ReasonerDesc implements IReasonerDesc {
 	// TODO there are 3 types of reasoner descriptors:
 	// * live (version from registry, dynamic signature)
-	// * stored (version and signature from proof file)
+	// * stored (version from proof file)
 	// * unknown
 	// => make 3 types
 	
@@ -137,9 +136,6 @@ public class ReasonerDesc implements IReasonerDesc {
 	private int version = UNKNOWN_VERSION;
 	private final boolean isLive;
 
-	// computed at call time for live descriptors, stored for others
-	private final String signature;
-
 	/**
 	 * Reasoner instance lazily loaded using <code>configurationElement</code>
 	 */
@@ -154,17 +150,15 @@ public class ReasonerDesc implements IReasonerDesc {
 		this.id = nameSpace + "." + localId;
 		this.name = element.getAttribute("name");
 		this.isLive = true;
-		this.signature = null;
 	}
 
 	private ReasonerDesc(IConfigurationElement configurationElement,
-			IReasoner instance, String id, String name, int version, String signature) {
+			IReasoner instance, String id, String name, int version) {
 		this.configurationElement = configurationElement;
 		this.instance = instance;
 		this.id = id;
 		this.name = name;
 		this.version = version;
-		this.signature = signature;
 		this.isLive = false;
 	}
 
@@ -184,7 +178,7 @@ public class ReasonerDesc implements IReasonerDesc {
 		final IReasoner dummyInstance = getDummyInstance(id);
 		final String unknownName = Messages.bind(Messages.reasonerDesc_unknown,
 				id);
-		return new ReasonerDesc(null, dummyInstance, id, unknownName, UNKNOWN_VERSION, null);
+		return new ReasonerDesc(null, dummyInstance, id, unknownName, UNKNOWN_VERSION);
 	}
 
 	/**
@@ -209,7 +203,7 @@ public class ReasonerDesc implements IReasonerDesc {
 			version = UNKNOWN_VERSION;
 		}
 		return new ReasonerDesc(null, reasoner, id, Messages.bind(
-				Messages.reasonerDesc_unknown, reasonerID), version, null);
+				Messages.reasonerDesc_unknown, reasonerID), version);
 	}
 
 	/**
@@ -223,19 +217,7 @@ public class ReasonerDesc implements IReasonerDesc {
 	public ReasonerDesc copyWithVersion(int version) {
 		final String baseId = decodeId(id);
 		return new ReasonerDesc(configurationElement, instance,
-				baseId, name, version, signature);
-	}
-
-	/**
-	 * Returns a copy of this ReasonerDesc with the given signature
-	 * 
-	 * @param signature
-	 *            the desired signature
-	 * @return a new ReasonerDesc with the given signature
-	 */
-	public IReasonerDesc copyWithSignature(String signature) {
-		return new ReasonerDesc(configurationElement, instance,
-				id, name, version, signature);
+				baseId, name, version);
 	}
 
 	public IReasoner getInstance() {
@@ -314,27 +296,5 @@ public class ReasonerDesc implements IReasonerDesc {
 
 	public boolean hasVersionConflict() {
 		return getVersion() != getRegisteredVersion();
-	}
-	
-	// reasoner signature at call time
-	private String getInstanceSignature() {
-		final IReasoner inst = getInstance();
-		if (inst instanceof ISignatureReasoner) {
-			return ((ISignatureReasoner) inst).getSignature();
-		} else {
-			return null;
-		}
-	}
-
-	public boolean hasSignatureConflict() {
-		final String instSignature = getInstanceSignature();
-		return !equalOrNull(instSignature, signature);
-	}
-	
-	private static boolean equalOrNull(String s1, String s2) {
-		if (s1 == null || s2 == null) {
-			return s1 == null && s2 == null;
-		}
-		return s1.equals(s2);
 	}
 }

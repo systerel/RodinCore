@@ -102,11 +102,6 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return desc;
 	}
 	
-	public IReasonerDesc getReasonerDesc(String id, String signature) {
-		final ReasonerDesc desc = getReasonerDesc(id);
-		return desc.copyWithSignature(signature);
-	}
-	
 	// version is considered borne by the reasoner instance
 	public synchronized IReasonerDesc getLiveReasonerDesc(String id) {
 		if (registry == null) {

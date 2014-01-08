@@ -289,8 +289,12 @@ public class ProverLib {
 		if (registry.isDummyReasoner(instance)) {
 			return false;
 		}
-		return !reasoner.hasVersionConflict()
-				&& !reasoner.hasSignatureConflict();
+		
+		if (reasoner.hasVersionConflict()) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	/**

@@ -97,27 +97,4 @@ public interface IReasonerRegistry {
 	 * @return a descriptor of the reasoner with the given id
 	 */
 	IReasonerDesc getReasonerDesc(String id);
-
-	/**
-	 * Returns a descriptor of the reasoner with the given id.
-	 * <p>
-	 * The returned descriptor will bear the given signature instead of that of
-	 * the reasoner.
-	 * </p>
-	 * <p>
-	 * As for {@link #getReasonerDesc(String)}, the given parameter can be an
-	 * encoding of both the id and the desired version of a reasoner.
-	 * </p>
-	 * 
-	 * @param id
-	 *            the id of a reasoner; alternatively, the encoding of an id
-	 *            with a version
-	 * @param signature
-	 *            a String
-	 * @return a descriptor of the reasoner with the given id, bearing the given
-	 *         signature
-	 * @since 2.2
-	 * @see IReasonerRegistry#getReasonerDesc(String)
-	 */
-	IReasonerDesc getReasonerDesc(String id, String signature);
 }
