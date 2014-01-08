@@ -10,6 +10,7 @@
  *     ETH Zurich - adapted from org.eclipse.jdt.core.ICompilationUnit
  *     Systerel - removed unnamed internal elements
  *     Systerel - separation of file and root element
+ *     Systerel - generalize per-project deltas
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -22,6 +23,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -62,6 +64,13 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * The list of renamings supplied to the operation
 	 */
 	protected String[] renamingsList = null;
+
+	/**
+	 * Table specifying deltas for resources being copied/moved/renamed/deleted.
+	 * Keyed by elements' project(s), and values are the corresponding deltas.
+	 */
+	protected Map<IRodinProject, RodinElementDelta> deltasPerProject //
+	= new HashMap<IRodinProject, RodinElementDelta>();
 	
 	/**
 	 * Creates a new <code>MultiOperation</code> on <code>elementsToProcess</code>.
@@ -319,4 +328,19 @@ public abstract class MultiOperation extends RodinDBOperation {
 			}
 		}
 	}
+
+	/**
+	 * Returns the <code>RodinElementDelta</code> for <code>rodinProject</code>,
+	 * creating it and putting it in <code>deltasPerProject</code> if it does
+	 * not exist yet.
+	 */
+	protected RodinElementDelta getDeltaFor(IRodinProject rodinProject) {
+		RodinElementDelta delta = deltasPerProject.get(rodinProject);
+		if (delta == null) {
+			delta = newRodinElementDelta();
+			deltasPerProject.put(rodinProject, delta);
+		}
+		return delta;
+	}
+
 }

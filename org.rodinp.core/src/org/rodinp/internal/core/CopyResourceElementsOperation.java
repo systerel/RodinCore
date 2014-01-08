@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.rodinp.internal.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -54,14 +52,6 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 	protected ArrayList<IRodinElement> createdElements;
 	
 	/**
-	 * Table specifying deltas for elements being 
-	 * copied/moved/renamed. Keyed by elements' project(s), and
-	 * values are the corresponding deltas.
-	 */
-	protected Map<IRodinProject, RodinElementDelta> deltasPerProject = 
-		new HashMap<IRodinProject, RodinElementDelta>(1);
-	
-	/**
 	 * When executed, this operation will copy the given resources to the
 	 * given container.
 	 */
@@ -97,20 +87,6 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 		super(resourceToCopy, force);
 	}
 
-	/**
-	 * Returns the <code>RodinElementDelta</code> for <code>rodinProject</code>,
-	 * creating it and putting it in <code>fDeltasPerProject</code> if
-	 * it does not exist yet.
-	 */
-	private RodinElementDelta getDeltaFor(IRodinProject rodinProject) {
-		RodinElementDelta delta = deltasPerProject.get(rodinProject);
-		if (delta == null) {
-			delta = newRodinElementDelta();
-			deltasPerProject.put(rodinProject, delta);
-		}
-		return delta;
-	}
-	
 	/*
 	 * @see MultiOperation
 	 */
