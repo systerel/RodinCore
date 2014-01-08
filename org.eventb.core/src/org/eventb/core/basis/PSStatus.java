@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * This class should not be used in any other way than subclassing it
  * in a database extension. In particular, clients should not use it,
- * but rather use its associated interface <code>IPRSequent</code>.
+ * but rather use its associated interface {@link IPSStatus}.
  * </p>
  *
  * @author Farhad Mehta
@@ -95,51 +95,5 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 		return psRoot.getPORoot().getSequent(getElementName());
 	}
 
-//	public boolean getHasManualProof() throws RodinDBException {
-//		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
-//	}
-//	
-//	public void setManualProof(boolean value, IProgressMonitor monitor)
-//			throws RodinDBException {
-//
-//		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
-//	}
-//
-//	/**
-//	 * Returns whether this attribute exists and has a <code>true</code> value.
-//	 * 
-//	 * @param attrType
-//	 *    attribute to test
-//	 * @return <code>true</code> iff both the attribute exists and is true
-//	 * @throws RodinDBException
-//	 */
-//	private boolean isAttributeTrue(IAttributeType.Boolean attrType)
-//			throws RodinDBException {
-//		return hasAttribute(attrType) && getAttributeValue(attrType);
-//	}
-//	
-//	/**
-//	 * Sets the given attribute to the given value, removing the attribute if
-//	 * this would result in setting it to its default value (<code>true</code>).
-//	 * 
-//	 * @param attrType
-//	 *            attribute to set
-//	 * @param value
-//	 *            value to set
-//	 * @param monitor
-//	 *            a progress monitor, or <code>null</code> if progress
-//	 *            reporting is not desired
-//	 * @throws RodinDBException
-//	 */
-//	private void setAttributeTrue(final IAttributeType.Boolean attrType,
-//			boolean value, IProgressMonitor monitor) throws RodinDBException {
-//
-//		if (value) {
-//			setAttributeValue(attrType, true, monitor);
-//		} else {
-//			removeAttribute(attrType, monitor);
-//		}
-//	}
-	
 }
 
