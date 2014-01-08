@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class PSUpdater {
 		if (! status.exists()) {
 			status.create(null, pm);
 		}
-		if (!hasSameStampAsPo(status)) {
+		if (!hasSameStampAsPo(status) || status.isContextDependent()) {
 			if (updateStatus(status, pm)) {
 				outOfDateStatuses.add(status);
 			}

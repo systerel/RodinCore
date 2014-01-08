@@ -12,6 +12,7 @@
 package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.CONTEXT_DEPENDENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PROOF_BROKEN_ATTRIBUTE;
 
@@ -95,5 +96,22 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 		return psRoot.getPORoot().getSequent(getElementName());
 	}
 
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public boolean isContextDependent() throws RodinDBException {
+		return isAttributeTrue(CONTEXT_DEPENDENT_ATTRIBUTE);
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public void setContextDependent(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeTrue(CONTEXT_DEPENDENT_ATTRIBUTE, value, monitor);
+	}
+	
 }
 

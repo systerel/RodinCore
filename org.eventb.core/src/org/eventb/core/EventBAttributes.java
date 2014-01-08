@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,6 +105,12 @@ public final class EventBAttributes {
 	public static IAttributeType.Boolean PROOF_BROKEN_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psBroken");
 	
+	/**
+	 * @since 3.0
+	 */
+	public static IAttributeType.Boolean CONTEXT_DEPENDENT_ATTRIBUTE =
+			RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".contextDependent");
+		
 	// TODO : rename to .prManual
 	public static IAttributeType.Boolean MANUAL_PROOF_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".psManual");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,11 @@ import static org.eventb.core.seqprover.ProverLib.simplify;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.core.ProofMonitor;
@@ -45,12 +47,12 @@ class CommitProofOperation implements IWorkspaceRunnable {
 	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
-			pm.beginTask("Committing proof", 1 + 3 + 3);
+			pm.beginTask("Committing proof", 1 + 3 + 4);
 			final IProofTree proofTree = getProofTree(pm);
 			if (pm.isCanceled())
 				return;
 			commitProof(proofTree, pm);
-			commitStatus(pm);
+			commitStatus(proofTree.getProofDependencies(), pm);
 		} finally {
 			pm.done();
 		}
@@ -98,14 +100,20 @@ class CommitProofOperation implements IWorkspaceRunnable {
 		proof.setHasManualProof(manual, new SubProgressMonitor(pm, 1));
 	}
 
-	// Consumes three ticks of the given progress monitor
-	public void commitStatus(IProgressMonitor pm) throws RodinDBException {
+	// Consumes four ticks of the given progress monitor
+	public void commitStatus(IProofDependencies proofDeps, IProgressMonitor pm)
+			throws RodinDBException {
+		final SubMonitor monitor = SubMonitor.convert(pm);
 		final IPSStatus status = pa.getStatus();
-		status.copyProofInfo(new SubProgressMonitor(pm, 1));
-		status.setBroken(pa.isBroken(), new SubProgressMonitor(pm, 1));
+		status.copyProofInfo(monitor.newChild(1));
+		status.setBroken(pa.isBroken(), monitor.newChild(1));
 		final Long poStamp = pa.getPoStamp();
 		if (poStamp != null) {
-			status.setPOStamp(poStamp, new SubProgressMonitor(pm, 1));
+			status.setPOStamp(poStamp, monitor.newChild(1));
+		} else {
+			monitor.worked(1);
 		}
+		status.setContextDependent(proofDeps.isContextDependent(),
+				monitor.newChild(1));
 	}
 }

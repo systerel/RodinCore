@@ -535,6 +535,11 @@
             kind="string"
             name="%eventBprRIDAttribute">
       </attributeType>
+      <attributeType
+            id="contextDependent"
+            kind="boolean"
+            name="%contextDependentAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -2221,6 +2226,9 @@
          </attributeType>
          <attributeType
                typeId="org.eventb.core.psBroken">
+         </attributeType>
+         <attributeType
+               typeId="org.eventb.core.contextDependent">
          </attributeType>
       </relationship>
    </extension>

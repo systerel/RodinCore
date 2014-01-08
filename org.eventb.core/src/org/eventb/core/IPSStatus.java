@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,4 +179,18 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 */
 	void copyProofInfo(IProgressMonitor monitor) throws RodinDBException;
 
+	/**
+	 * @throws RodinDBException 
+	 * @since 3.0
+	 */
+	boolean isContextDependent() throws RodinDBException;
+
+	/**
+	 * @param value
+	 * @param monitor
+	 * @throws RodinDBException
+	 * @since 3.0
+	 */
+	void setContextDependent(boolean value, IProgressMonitor monitor)
+			throws RodinDBException;
 }
