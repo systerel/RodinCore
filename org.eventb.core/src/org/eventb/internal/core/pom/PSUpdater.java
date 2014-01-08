@@ -34,6 +34,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
 import org.rodinp.core.IRodinElement;
@@ -238,8 +239,15 @@ public class PSUpdater {
 				return true;
 			}
 			final IProofDependencies deps = prProof
-					.getProofDependencies(proofFactory, sm.newChild(90));
-			return !ProverLib.proofReusable(deps, seq);
+					.getProofDependencies(proofFactory, sm.newChild(75));
+			final IProofSkeleton skeleton;
+			if (deps.isContextDependent()) {
+				skeleton = prProof.getSkeleton(proofFactory, sm.newChild(15));
+			} else {
+				sm.setWorkRemaining(0);
+				skeleton = null;
+			}
+			return !ProverLib.isProofReusable(deps, seq, skeleton);
 		} catch (Throwable e) {
 			log(e, "while updating status of proof " + prProof);
 			return true;

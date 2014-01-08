@@ -82,6 +82,18 @@ In the latter case, the version of the reasoner will be stored into proofs that 
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="contextDependent" type="boolean">
+            <annotation>
+               <documentation>
+                  true if the reasoner output depends on the context, false otherwise.
+Defaults to false.
+
+Most reasoners are context free, but some are parameterized by external parameters. For instance, a reasoner that applies user defined rules which may change over time is highly context dependent.
+
+When a proof uses a context dependent reasoner, the reasoner is called again to check if the proof is reusable.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

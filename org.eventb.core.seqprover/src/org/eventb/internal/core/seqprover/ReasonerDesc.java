@@ -136,11 +136,22 @@ public class ReasonerDesc implements IReasonerDesc {
 	private int version = UNKNOWN_VERSION;
 	private final boolean isLive;
 
+	private final boolean contextDependent;
+
 	/**
 	 * Reasoner instance lazily loaded using <code>configurationElement</code>
 	 */
 	private IReasoner instance;
 
+	private static boolean isContextDependent(IConfigurationElement element) {
+		final String ctxDepStr = element.getAttribute("contextDependent");
+		if (ctxDepStr == null || ctxDepStr.isEmpty()) {
+			// default
+			return false;
+		}
+		return ctxDepStr.equalsIgnoreCase("true");
+	}
+	
 	public ReasonerDesc(IConfigurationElement element)
 			throws ReasonerLoadingException {
 		this.configurationElement = element;
@@ -150,15 +161,17 @@ public class ReasonerDesc implements IReasonerDesc {
 		this.id = nameSpace + "." + localId;
 		this.name = element.getAttribute("name");
 		this.isLive = true;
+		this.contextDependent = isContextDependent(element);
 	}
 
 	private ReasonerDesc(IConfigurationElement configurationElement,
-			IReasoner instance, String id, String name, int version) {
+			IReasoner instance, String id, String name, int version, boolean contextDependent) {
 		this.configurationElement = configurationElement;
 		this.instance = instance;
 		this.id = id;
 		this.name = name;
 		this.version = version;
+		this.contextDependent = contextDependent;
 		this.isLive = false;
 	}
 
@@ -178,7 +191,7 @@ public class ReasonerDesc implements IReasonerDesc {
 		final IReasoner dummyInstance = getDummyInstance(id);
 		final String unknownName = Messages.bind(Messages.reasonerDesc_unknown,
 				id);
-		return new ReasonerDesc(null, dummyInstance, id, unknownName, UNKNOWN_VERSION);
+		return new ReasonerDesc(null, dummyInstance, id, unknownName, UNKNOWN_VERSION, false);
 	}
 
 	/**
@@ -203,7 +216,7 @@ public class ReasonerDesc implements IReasonerDesc {
 			version = UNKNOWN_VERSION;
 		}
 		return new ReasonerDesc(null, reasoner, id, Messages.bind(
-				Messages.reasonerDesc_unknown, reasonerID), version);
+				Messages.reasonerDesc_unknown, reasonerID), version, false);
 	}
 
 	/**
@@ -217,7 +230,7 @@ public class ReasonerDesc implements IReasonerDesc {
 	public ReasonerDesc copyWithVersion(int version) {
 		final String baseId = decodeId(id);
 		return new ReasonerDesc(configurationElement, instance,
-				baseId, name, version);
+				baseId, name, version, contextDependent);
 	}
 
 	public IReasoner getInstance() {
@@ -296,5 +309,10 @@ public class ReasonerDesc implements IReasonerDesc {
 
 	public boolean hasVersionConflict() {
 		return getVersion() != getRegisteredVersion();
+	}
+
+	@Override
+	public boolean isContextDependent() {
+		return contextDependent;
 	}
 }

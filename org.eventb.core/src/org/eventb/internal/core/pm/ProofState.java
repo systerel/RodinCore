@@ -38,6 +38,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
@@ -608,7 +609,9 @@ public class ProofState implements IProofState {
 		}
 		final IProverSequent seq = POLoader.readPO(status.getPOSequent(), pa
 				.getFormulaFactory());
-		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
+		final IProofDependencies proofDeps = pt.getProofDependencies();
+		
+		return ProverLib.isProofReusable(proofDeps, seq, pt.getRoot());
 	}
 
 	/*

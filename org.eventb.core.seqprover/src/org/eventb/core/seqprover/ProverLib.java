@@ -16,19 +16,28 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
+import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
+import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
@@ -223,26 +232,34 @@ public class ProverLib {
 	 * Returns whether the given proof dependencies allow a reuse of the
 	 * corresponding proof on the given sequent.
 	 * <p>
-	 * This method does take reasoner versions into account since 2.2 and is
-	 * henceforth fully equivalent to
-	 * {@link #isProofReusable(IProofDependencies, IProofSkeleton, IProverSequent)}
-	 * , without requiring the extraction of a proof skeleton .
+	 * This method does take reasoner versions into account since 2.2.
+	 * </p>
+	 * <p>
+	 * This method does take context dependent proofs into account since 3.0.
+	 * Callers MUST provide a non <code>null</code> proof skeleton when given
+	 * proof dependencies are context dependent.
 	 * </p>
 	 * 
 	 * @param proofDependencies
 	 *            proof dependencies of a proof to reuse
 	 * @param sequent
 	 *            a sequent on which to check reusability
+	 * @param skeleton
+	 *            the skeleton of the proof to check for reusability if proof
+	 *            dependencies are context dependent; <code>null</code> is
+	 *            accepted for context free proof dependencies
 	 * @return <code>true</code> iff the proof dependencies allow to reuse the
 	 *         proof on the sequent
+	 * @throws IllegalArgumentException
+	 *             if proof dependencies are context dependent and the given
+	 *             skeleton is <code>null</code>
+	 * @see IProofDependencies#isContextDependent()
+	 * @since 3.0
 	 */
-	public static boolean proofReusable(IProofDependencies proofDependencies,
-			IProverSequent sequent) {
-		return isProofDepsReusable(proofDependencies, sequent);
-	}
-
-	private static boolean isProofDepsReusable(
-			IProofDependencies proofDependencies, IProverSequent sequent) {
+	public static boolean isProofReusable(IProofDependencies proofDependencies,
+			IProverSequent sequent, IProofSkeleton skeleton) {
+		
+		
 		if (! proofDependencies.hasDeps()) return true;
 		if (proofDependencies.getGoal() != null && ! sequent.goal().equals(proofDependencies.getGoal())) return false;
 		if (! sequent.containsHypotheses(proofDependencies.getUsedHypotheses())) return false;
@@ -250,11 +267,100 @@ public class ProverLib {
 		if (! Collections.disjoint(
 				sequent.typeEnvironment().getNames(),
 				proofDependencies.getIntroducedFreeIdents())) return false;	
-		final Set<IReasonerDesc> usedReasoners = proofDependencies.getUsedReasoners();
-		for (IReasonerDesc reasonerDesc : usedReasoners) {
-			if (!isReasonerReusable(reasonerDesc)) return false;
+
+		for (IReasonerDesc reasonerDesc : proofDependencies.getUsedReasoners()) {
+			if (!isReasonerReusable(reasonerDesc, null)) {
+				return false;
+			}
 		}
+		
+		if (!proofDependencies.isContextDependent()) return true;
+		
+		if (skeleton == null) {
+			throw new IllegalArgumentException(
+					"Context dependent proof without given proof skeleton for "
+							+ sequent);
+		}
+		
+		return areContextDependentRulesReusable(skeleton);
+	}
+	
+	// traverse skeleton to check if context dependent rules are reusable
+	private static boolean areContextDependentRulesReusable(IProofSkeleton skeleton) {
+		final Deque<IProofSkeleton> nodes = new ArrayDeque<IProofSkeleton>();
+		nodes.add(skeleton);
+		
+		while(!nodes.isEmpty()) {
+			final IProofSkeleton node = nodes.pop();
+			final IProofRule rule = node.getRule();
+			if (rule == null) continue;
+			
+			final IReasonerDesc reasoner = rule.getReasonerDesc();
+			if (reasoner.isContextDependent()
+					&& !isContextDependentRuleReusable(rule)) {
+				return false;
+			}
+			nodes.addAll(asList(node.getChildNodes()));
+		}
+		
 		return true;
+	}
+
+	/**
+	 * Ensures that a given rule is replayable from a simple sequent
+	 * (constructed from needed hypotheses, goal and acted hypotheses), and that
+	 * the replay produces the exact same rule.
+	 * <p>
+	 * The sequent must contain the same type environment as the original
+	 * sequent from which the rule was created to ensure that the reasoner input
+	 * still type-checks.
+	 * </p>
+	 * 
+	 * @param app
+	 * @param rule
+	 */
+	private static boolean isContextDependentRuleReusable(IProofRule rule) {
+		final IProverSequent sequent = makeSequent(rule);
+		final IReasoner reasoner = rule.generatedBy();
+		final IReasonerInput input = rule.generatedUsing();
+		final IReasonerOutput output = reasoner.apply(sequent, input, Util.getNullProofMonitor());;
+		return output instanceof IProofRule
+				&& ProverLib.deepEquals(rule, (IProofRule) output);
+	}
+
+	private static IProverSequent makeSequent(	IProofRule rule) {
+		final ITypeEnvironment typenv = rule.getTypeEnvironment();
+		final Predicate goal = getGoal(rule, typenv.getFormulaFactory());
+		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
+		hyps.addAll(rule.getNeededHyps());
+		hyps.addAll(actedHyps(rule));
+		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
+	}
+
+	/**
+	 * Returns the hypotheses that are acted upon by some antecedent of this
+	 * rule. In other terms, the hypotheses returned are the ones that are
+	 * needed for the given rule to apply fully, although they are not required
+	 * to apply this rule.
+	 * 
+	 * @param rule
+	 *            some proof rule
+	 * @return the hypotheses acted upon by the given rule
+	 */
+	private static Set<Predicate> actedHyps(IProofRule rule) {
+		final Set<Predicate> result = new LinkedHashSet<Predicate>();
+		for (final IAntecedent antecedent : rule.getAntecedents()) {
+			for (final IHypAction action : antecedent.getHypActions()) {
+				final IInternalHypAction act = (IInternalHypAction) action;
+				result.addAll(act.getHyps());
+			}
+		}
+		return result;
+	}
+	
+	private static Predicate getGoal(IProofRule rule, FormulaFactory ff) {
+		final Predicate goal = rule.getGoal();
+		return goal == null ? DLib.False(ff) : goal;
 	}
 
 	/**
@@ -273,14 +379,21 @@ public class ProverLib {
 	 * @param rule
 	 *            a proof rule
 	 * @return <code>true</code> iff the proof rule is reusable
-	 * @since 1.3
+	 * @since 3.0
 	 */
 	public static boolean isRuleReusable(IProofRule rule) {
 		final IReasonerDesc reasoner = rule.getReasonerDesc();
-		return isReasonerReusable(reasoner);
+		if (reasoner.isContextDependent()
+				&& !isContextDependentRuleReusable(rule)) {
+			return false;
+		}
+		final IReasonerInput input = rule.generatedUsing();
+		return isReasonerReusable(reasoner, input);
 	}
 
-	private static boolean isReasonerReusable(final IReasonerDesc reasoner) {
+	// NB: to check reusability of context dependent reasoners, also check
+	// reusability of all rules where the reasoner is applied.
+	private static boolean isReasonerReusable(IReasonerDesc reasoner, IReasonerInput input) {
 		final ReasonerRegistry registry = ReasonerRegistry.getReasonerRegistry();
 		if (!registry.isRegistered(reasoner.getId())) {
 			return false;

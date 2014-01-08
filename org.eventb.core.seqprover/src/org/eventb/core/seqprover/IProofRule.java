@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 
 
@@ -248,4 +249,11 @@ public interface IProofRule extends IReasonerOutput{
 	 */
 	IProverSequent[] apply(IProverSequent seq);
 
+	/**
+	 * Returns the type environment needed to type check this proof rule.
+	 * 
+	 * @return a type environment
+	 * @since 3.0
+	 */
+	ITypeEnvironment getTypeEnvironment();
 }

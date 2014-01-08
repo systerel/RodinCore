@@ -13,7 +13,7 @@ package org.eventb.core.seqprover.tests;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.ProverLib.proofReusable;
+import static org.eventb.core.seqprover.ProverLib.isProofReusable;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genPreds;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
@@ -306,7 +306,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.hyp().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(proofReusable(proofDependencies,sequent));
+		assertTrue(isProofReusable(proofDependencies,sequent, null));
 		assertEquals(genPred("x=1"), proofDependencies.getGoal());
 		assertEquals(genPreds("x=1"), proofDependencies.getUsedHypotheses());
 		assertEquals(mTypeEnvironment("x=ℤ").makeSnapshot(),
@@ -320,7 +320,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		Tactics.impI().apply(proofTree.getRoot(), null);
 		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(proofReusable(proofDependencies,sequent));
+		assertTrue(isProofReusable(proofDependencies,sequent, null));
 		
 		assertEquals(genPred("x=1 ⇒ x=1"), proofDependencies.getGoal());
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
@@ -336,7 +336,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.lemma("y=2").apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(proofReusable(proofDependencies,sequent));
+		assertTrue(isProofReusable(proofDependencies,sequent, null));
 		assertNull(proofDependencies.getGoal());
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
 		assertEquals(mTypeEnvironment("y=ℤ").makeSnapshot(),
@@ -349,7 +349,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		Tactics.allI().apply(proofTree.getRoot(), null);
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(proofReusable(proofDependencies,sequent));
+		assertTrue(isProofReusable(proofDependencies,sequent, null));
 		assertEquals(genPred("∀ x· x∈ℤ"), proofDependencies.getGoal());
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
 		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
@@ -365,7 +365,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		BasicTactics.onPending(0, Tactics.hyp()).apply(proofTree.getRoot(), null);
 		
 		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
+		assertTrue(ProverLib.isProofReusable(proofDependencies,sequent, null));
 		
 		assertEquals(genPred("1=2"), proofDependencies.getGoal());
 		assertEquals(genPreds("1=2", "3=3 ∨ 4=4"), proofDependencies.getUsedHypotheses());
@@ -373,6 +373,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
 		assertEquals(new HashSet<IReasonerDesc>(asList(disjEDesc, hypDesc)),
 				proofDependencies.getUsedReasoners());
+		
+		// TODO test isContextDependent()
 	}
 
 	private static IReasonerDesc getDesc(String id) {

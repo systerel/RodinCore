@@ -790,4 +790,5 @@ public class PSUpdateTests extends BuilderTest {
 		assertSame(EXT_FACTORY, proof.getFormulaFactory(null));
 	}
 
+	//TODO test update context dependent proof success+failure
 }

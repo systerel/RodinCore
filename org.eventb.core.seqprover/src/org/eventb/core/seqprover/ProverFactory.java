@@ -90,6 +90,19 @@ public final class ProverFactory {
 		public Set<IReasonerDesc> getUsedReasoners() {
 			return usedReasoners;
 		}
+
+		@Override
+		public boolean isContextDependent() {
+			if (usedReasoners == null) {
+				return false;
+			}
+			for(IReasonerDesc reasoner : usedReasoners) {
+				if (reasoner.isContextDependent()) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -744,12 +757,12 @@ public final class ProverFactory {
 	 * @since 3.0
 	 */
 	public static IProofDependencies makeProofDependencies(
-			final boolean hasDeps,
-			final Predicate goal,
-			final Set<Predicate> usedHypotheses,
-			final ISealedTypeEnvironment usedFreeIdents,
-			final Set<String> introducedFreeIdents,
-			final Set<IReasonerDesc> usedReasoners) {
+			boolean hasDeps,
+			Predicate goal,
+			Set<Predicate> usedHypotheses,
+			ISealedTypeEnvironment usedFreeIdents,
+			Set<String> introducedFreeIdents,
+			Set<IReasonerDesc> usedReasoners) {
 
 		return new ProofDeps(usedFreeIdents, hasDeps, usedHypotheses,
 				introducedFreeIdents, goal, usedReasoners);

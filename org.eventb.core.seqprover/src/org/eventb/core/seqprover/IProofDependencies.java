@@ -31,6 +31,8 @@ import org.eventb.core.ast.Predicate;
  * <li>No introduced free identifiers (ignoring their types) are present in the
  * type environment of the sequent and</li>
  * <li>Used reasoners have no version conflict</li>
+ * <li>There are no context dependent reasoners or all rules that use context
+ * dependent reasoners are reusable</li>
  * </ul>
  * 
  * @author Farhad Mehta
@@ -103,4 +105,14 @@ public interface IProofDependencies {
 	 * @since 2.2
 	 */
 	Set<IReasonerDesc> getUsedReasoners();
+	
+	/**
+	 * Returns whether the proof is context dependent, i.e uses context
+	 * dependent reasoners.
+	 * 
+	 * @return <code>true</code> if the proof is context dependent,
+	 *         <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	boolean isContextDependent();
 }

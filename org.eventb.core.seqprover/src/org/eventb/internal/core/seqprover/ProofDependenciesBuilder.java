@@ -91,11 +91,11 @@ public class ProofDependenciesBuilder {
 	 * @return The {@link IProofDependencies} collected by this {@link ProofDependenciesBuilder}.
 	 */
 	public final IProofDependencies finished(FormulaFactory ff){
-		boolean hasDeps = (goal != null ||
+		final boolean hasDeps = (goal != null ||
 				! usedHypotheses.isEmpty() ||
 				! usedFreeIdents.isEmpty() ||
 				! introducedFreeIdents.isEmpty() ||
-				! usedReasoners.isEmpty()); 
+				! usedReasoners.isEmpty());
 		final ITypeEnvironmentBuilder usedTypEnv = ff.makeTypeEnvironment();
 		for (FreeIdentifier freeIdent : usedFreeIdents) {
 			usedTypEnv.add(freeIdent);
@@ -103,7 +103,9 @@ public class ProofDependenciesBuilder {
 		
 		final IProofDependencies finishedProofDeps = ProverFactory
 				.makeProofDependencies(hasDeps, goal, usedHypotheses,
-						usedTypEnv.makeSnapshot(), introducedFreeIdents, usedReasoners);
+						usedTypEnv.makeSnapshot(), introducedFreeIdents,
+						usedReasoners);
 		return finishedProofDeps;
 	}
+	
 }

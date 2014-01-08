@@ -120,4 +120,23 @@ public interface IReasonerDesc {
 	 */
 	boolean hasVersionConflict();
 
+	/**
+	 * Returns whether the described reasoner is context dependent.
+	 * <p>
+	 * A reasoner is context dependent if its output depends on its external
+	 * environment: language extensions, additional proof rules, or whatever may
+	 * make it produce a different output at different times when applied with
+	 * the same input.
+	 * </p>
+	 * <p>
+	 * Context dependent reasoners are never reused directly based on proof
+	 * dependencies alone. Instead, their output is checked in every proof where
+	 * they appear, and for all applications inside each proof.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff the reasoner is context dependent
+	 * @since 3.0
+	 */
+	boolean isContextDependent();
+
 }

@@ -132,8 +132,8 @@ public class ProofBuilderTests {
 
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.proofReusable(trivialTree.getProofDependencies(),
-						trueSequent));
+				ProverLib.isProofReusable(trivialTree.getProofDependencies(),
+						trueSequent, null));
 	}
 
 	@Test
@@ -147,8 +147,8 @@ public class ProofBuilderTests {
 		assertTrue("could not reuse", ProofBuilder.reuse(node, trivialTree
 				.getRoot(), null));
 
-		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
-				trivialTree.getProofDependencies(), trivialSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
+				trivialTree.getProofDependencies(), trivialSequent, null));
 	}
 
 	@Test
@@ -163,8 +163,8 @@ public class ProofBuilderTests {
 				.getRoot(), null));
 		assertTrue(t.isClosed());
 
-		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
-				branchTree.getProofDependencies(), branchSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
+				branchTree.getProofDependencies(), branchSequent, null));
 	}
 
 	@Test
@@ -180,8 +180,8 @@ public class ProofBuilderTests {
 
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.proofReusable(branchTree2.getProofDependencies(),
-						branchSequent));
+				ProverLib.isProofReusable(branchTree2.getProofDependencies(),
+						branchSequent, null));
 	}
 
 	@Test
@@ -201,8 +201,8 @@ public class ProofBuilderTests {
 		assertFalse(makeMessage("ProofBuilder.reuse()", false), ProofBuilder
 				.reuse(node, trivialTree.getRoot(), null));
 		assertFalse(makeMessage("ProverLib.proofReusable()", false),
-				ProverLib.proofReusable(trivialTree.getProofDependencies(),
-						trivialSequent));
+				ProverLib.isProofReusable(trivialTree.getProofDependencies(),
+						trivialSequent, null));
 	}
 	
 	private static String makeMessage(String reuser, boolean successExpected) {
@@ -226,8 +226,8 @@ public class ProofBuilderTests {
 				null);
 		final IProofTreeNode node = treeAfterReuse.getRoot();
 
-		final boolean successReusable = ProverLib.proofReusable(
-				reused.getProofDependencies(), sequent);
+		final boolean successReusable = ProverLib.isProofReusable(
+				reused.getProofDependencies(), sequent, null);
 		assertEquals(
 				makeMessage("ProverLib.proofReusable()", successExpected),
 				successExpected, successReusable);
@@ -277,4 +277,5 @@ public class ProofBuilderTests {
 		doVersionTest(reasoner, true);
 	}
 
+	// TODO test reuse context dependent proof success + failure
 }

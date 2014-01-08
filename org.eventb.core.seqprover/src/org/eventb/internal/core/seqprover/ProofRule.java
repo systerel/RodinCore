@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IHypAction;
@@ -291,6 +294,37 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		for (int i = length-1; i >= 0; i--) {
 			((IInternalHypAction)hypActions.get(i)).processDependencies(proofDeps);
 		}
+	}
+
+	private FormulaFactory getFormulaFactory() {
+		if (goal != null) {
+			return goal.getFactory();
+		}
+		if (!neededHypotheses.isEmpty()) {
+			return neededHypotheses.iterator().next().getFactory();
+		}
+		// TODO try with hyp actions in antecedents ?
+		return null;
+	}
+	
+	@Override
+	public ITypeEnvironment getTypeEnvironment() {
+		final FormulaFactory ff = getFormulaFactory();
+		if (ff == null) {
+			// no goal and no needed hypotheses
+			return FormulaFactory.getDefault().makeTypeEnvironment();
+		}
+		final ITypeEnvironmentBuilder typeEnv = ff.makeTypeEnvironment();
+		if (goal != null) {
+			typeEnv.addAll(goal.getFreeIdentifiers());
+		}
+		for (Predicate hyp : neededHypotheses) {
+			typeEnv.addAll(hyp.getFreeIdentifiers());
+		}
+		// TODO added free idents in antecedents ? might be incompatible with
+		// each other...
+		// TODO free idents in hyp actions ?
+		return typeEnv.makeSnapshot();
 	}
 
 }
