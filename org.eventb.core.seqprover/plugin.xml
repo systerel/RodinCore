@@ -431,11 +431,13 @@
       </reasoner>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase"
+            contextDependent="true"
             id="dtDistinctCase"
             name="%dtDistinctCaseName">
       </reasoner>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.DTInduction"
+            contextDependent="true"
             id="dtInduction"
             name="%dtInductionName">
       </reasoner>
