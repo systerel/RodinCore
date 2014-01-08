@@ -48,6 +48,12 @@
             id="failureReasoner"
             name="Failure Reasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.proofBuilderTests.ContextDependentReasoner"
+            contextDependent="true"
+            id="contextDependentReasoner"
+            name="contextDependentReasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

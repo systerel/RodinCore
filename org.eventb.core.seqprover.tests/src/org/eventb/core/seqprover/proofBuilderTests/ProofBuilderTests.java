@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilderTests;
 
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -276,6 +277,28 @@ public class ProofBuilderTests {
 		final FailureReasoner reasoner = new FailureReasoner(2, true);
 		doVersionTest(reasoner, true);
 	}
+	
+	@Test
+	public void reuseContextDependent() throws Exception {
+		final ContextDependentReasoner reasoner = new ContextDependentReasoner();
+		ContextDependentReasoner.setContextValidity(true);
+		
+		final IProverSequent trivialSequent = makeTrivialSequent();
+		final IProofTree ctxTree = makeProofTree(trivialSequent, false, reasonerTac(reasoner, new EmptyInput()));
 
-	// TODO test reuse context dependent proof success + failure
+		IProofTree prTree = ProverFactory.makeProofTree(trivialSequent, null);
+		IProofTreeNode node = prTree.getRoot();
+
+		assertTrue("could not reuse", ProofBuilder.reuse(node, ctxTree
+				.getRoot(), null));
+		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
+				ctxTree.getProofDependencies(), trivialSequent, ctxTree.getRoot()));
+		
+		ContextDependentReasoner.setContextValidity(false);
+		assertFalse("could reuse", ProofBuilder.reuse(node, ctxTree
+				.getRoot(), null));
+		assertFalse("[ProverLib] should not be reusable", ProverLib.isProofReusable(
+				ctxTree.getProofDependencies(), trivialSequent, ctxTree.getRoot()));
+	}
+	
 }
