@@ -39,6 +39,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
@@ -404,8 +405,16 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		for (int i = 0; i < antecedents.length; i++) {
 			trAntecedents[i] = antecedents[i].translate(factory);
 		}
-		// FIXME translate generatedUsing (=input)
-		return new ProofRule(reasonerDesc, generatedUsing, trGoal,
+		
+		final IReasonerInput trGeneratedUsing;
+		if (generatedUsing instanceof ITranslatableReasonerInput) {
+			trGeneratedUsing = ((ITranslatableReasonerInput) generatedUsing)
+					.translate(factory);
+		} else {
+			trGeneratedUsing = generatedUsing;
+		}
+		
+		return new ProofRule(reasonerDesc, trGeneratedUsing, trGoal,
 				trNeededHyps, reasonerConfidence, display, trAntecedents);
 	}
 
@@ -437,6 +446,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		}
 		for (Predicate hyp : neededHypotheses) {
 			typeEnv.addAll(hyp.getFreeIdentifiers());
+		}
+		if (generatedUsing instanceof ITranslatableReasonerInput) {
+			typeEnv.addAll(((ITranslatableReasonerInput) generatedUsing)
+					.getTypeEnvironment(factory));
 		}
 		return typeEnv.makeSnapshot();
 	}
