@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.ProverLib;
 
 /**
  * Implements reading of a proof from the proof file. Instances must be run
@@ -47,10 +48,12 @@ class ReadProofOperation implements IWorkspaceRunnable {
 		final SubMonitor sm = SubMonitor.convert(monitor, 100);
 		final IPRProof proof = pc.getProof(poName);
 		final FormulaFactory prFac = proof.getFormulaFactory(sm.newChild(10));
+		
+		IProofSkeleton skeleton = proof.getSkeleton(prFac, sm.newChild(90));
 		if (ff != prFac) {
-			return;
+			skeleton = ProverLib.translate(skeleton, ff);
 		}
-		result = proof.getSkeleton(ff, sm.newChild(90));
+		result = skeleton;
 	}
 
 }
