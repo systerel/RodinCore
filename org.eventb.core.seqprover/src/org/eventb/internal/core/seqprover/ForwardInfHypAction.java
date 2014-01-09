@@ -86,19 +86,4 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		}
 	}
 	
-//	private boolean allFresh(ITypeEnvironment typEnv, FreeIdentifier[] freeIdents){
-//		for (FreeIdentifier freeIdent : freeIdents)
-//		{
-//			if (typEnv.contains(freeIdent.getName())) return false;
-//		}
-//		return true;
-//	}
-//	
-//	private ITypeEnvironment nonDestructiveAdd(ITypeEnvironment typeEnv, FreeIdentifier[] freeIdents){
-//		if (freeIdents.length == 0) return typeEnv;
-//		ITypeEnvironment newTypEnv = typeEnv.clone();
-//		newTypEnv.addAll(freeIdents);
-//		return newTypEnv;
-//	}
-	
 }
