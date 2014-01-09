@@ -23,6 +23,11 @@ import org.eventb.core.ast.ITypeEnvironment;
  * language extensions in proofs. Proofs using reasoners with a non translatable
  * input will not be fully reusable.
  * </p>
+ * <p>
+ * NB: reasoner inputs that subclass a translatable input must also override the
+ * methods of this interface if they contain formulas (predicates, expression,
+ * identifiers, ...) or contribute to the required type environment anyhow.
+ * </p>
  * 
  * @author beauger
  * @since 3.0

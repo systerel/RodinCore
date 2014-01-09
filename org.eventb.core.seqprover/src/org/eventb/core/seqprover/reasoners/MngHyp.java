@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -25,6 +28,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
@@ -37,7 +41,7 @@ public class MngHyp implements IReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".mngHyp";
 
-	public static class Input implements IReasonerInput {
+	public static class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		ISelectionHypAction action;
 
@@ -68,6 +72,24 @@ public class MngHyp implements IReasoner {
 
 		public boolean hasError() {
 			return false;
+		}
+
+		@Override
+		public IReasonerInput translate(FormulaFactory factory) {
+			final ISelectionHypAction trAction = (ISelectionHypAction) action
+					.translate(factory);
+			return new Input(trAction);
+		}
+
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			for (Predicate hyp : action.getHyps()) {
+				typeEnv.addAll(hyp.getFreeIdentifiers());
+				
+			}
+			return typeEnv;
 		}
 
 	}

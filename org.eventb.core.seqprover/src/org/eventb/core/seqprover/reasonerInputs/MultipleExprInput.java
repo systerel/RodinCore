@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,11 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -25,7 +27,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 /**
  * @since 1.0
  */
-public class MultipleExprInput implements IReasonerInput{
+public class MultipleExprInput implements IReasonerInput, ITranslatableReasonerInput {
 	
 	private Expression[] expressions;
 	private String error;
@@ -125,6 +127,33 @@ public class MultipleExprInput implements IReasonerInput{
 		for (int i = 0; i < expressions.length; i++) {
 			expressions[i] = hints.applyHints(expressions[i]);
 		}
-		
 	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public IReasonerInput translate(FormulaFactory factory) {
+		final Expression[] trExprs = new Expression[expressions.length];
+		for (int i = 0; i < expressions.length; i++) {
+			if (expressions[i] != null) {
+				trExprs[i] = expressions[i].translate(factory);
+			}
+		}
+		return new MultipleExprInput(trExprs);
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+		final ITypeEnvironmentBuilder typeEnv = factory
+				.makeTypeEnvironment();
+		for (int i = 0; i < expressions.length; i++) {
+			typeEnv.addAll(expressions[i].getFreeIdentifiers());
+		}
+		return typeEnv;
+	}
+		
 }

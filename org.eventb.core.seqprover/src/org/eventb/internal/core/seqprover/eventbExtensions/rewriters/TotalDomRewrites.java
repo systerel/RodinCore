@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IHypAction;
@@ -71,6 +73,23 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		
 		public Expression getSubstitute(){
 			return substitute;
+		}
+		
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			typeEnv.addAll(super.getTypeEnvironment(factory));
+			typeEnv.addAll(substitute.getFreeIdentifiers());
+			return typeEnv;
+		}
+
+		@Override
+		public Input translate(FormulaFactory factory) {
+			final AbstractManualRewrites.Input trSuper = super
+					.translate(factory);
+			return new Input(trSuper.getPred(), trSuper.getPosition(),
+					substitute.translate(factory));
 		}
 	}
 

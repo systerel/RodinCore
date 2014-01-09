@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,28 +14,32 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class Review implements IReasoner{
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".review";
 	
-	public static class Input implements IReasonerInput {
+	public static class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		Set<Predicate> hyps;
 		Predicate goal;
@@ -70,6 +74,27 @@ public class Review implements IReasoner{
 
 		public boolean hasError() {
 			return false;
+		}
+		
+		@Override
+		public Input translate(FormulaFactory factory) {
+			final Set<Predicate> trHyps = new LinkedHashSet<Predicate>(hyps.size());
+			for (Predicate hyp : hyps) {
+				trHyps.add(hyp.translate(factory));
+			}
+			final Predicate trGoal = goal.translate(factory);
+			return new Input(trHyps, trGoal, confidence);
+		}
+
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			for (Predicate hyp : hyps) {
+				typeEnv.addAll(hyp.getFreeIdentifiers());
+			}
+			typeEnv.addAll(goal.getFreeIdentifiers());
+			return typeEnv;
 		}
 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eventb.internal.core.seqprover.reasonerInputs;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -67,4 +69,13 @@ public class PFunSetInput extends SingleExprInput {
 		return right;
 	}
 	
+	@Override
+	public IReasonerInput translate(FormulaFactory factory) {
+		final SingleExprInput trSuper = (SingleExprInput) super.translate(factory);
+		return new PFunSetInput(trSuper.getExpression());
+	}
+
+	// type environment does not change because left and right are subformulas
+	// of the expression
+	// so no need to override getTypeEnvironment()
 }

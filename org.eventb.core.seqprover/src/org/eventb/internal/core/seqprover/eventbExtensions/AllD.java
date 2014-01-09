@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -36,6 +37,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
@@ -53,7 +55,7 @@ public class AllD implements IReasoner {
 	private static final String display = "∀ hyp"; 
 	
 	
-	public static class Input implements IReasonerInput {
+	public static class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		private static final String EXPRS_KEY = "exprs";
 		
@@ -76,7 +78,13 @@ public class AllD implements IReasoner {
 			}
 		}
 
-		
+		// constructor used for translation
+		private Input(Predicate pred, MultipleExprInput exprsInput) {
+			this.pred = pred;
+			this.exprsInput = exprsInput;
+			this.error = null;
+		}
+
 		public Input(IReasonerInputReader reader, Predicate pred)
 				throws SerializeException {
 
@@ -104,6 +112,25 @@ public class AllD implements IReasoner {
 
 		public Expression[] computeInstantiations(BoundIdentDecl[] boundIdentDecls) {
 			return exprsInput.computeInstantiations(boundIdentDecls);
+		}
+
+		@Override
+		public IReasonerInput translate(FormulaFactory factory) {
+			final MultipleExprInput trExprsInput = (MultipleExprInput) exprsInput
+					.translate(factory);
+			final Predicate trPred = pred == null ? null : pred
+					.translate(factory);
+			return new Input(trPred, trExprsInput);
+		}
+
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
+			typeEnv.addAll(exprsInput.getTypeEnvironment(factory));
+			if (pred != null) {
+				typeEnv.addAll(pred.getFreeIdentifiers());
+			}
+			return typeEnv;
 		}
 
 	}

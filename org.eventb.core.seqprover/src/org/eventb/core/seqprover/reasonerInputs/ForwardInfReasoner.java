@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
@@ -27,6 +30,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
@@ -53,7 +57,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  */
 public abstract class ForwardInfReasoner implements IReasoner {
 	
-	public static final class Input implements IReasonerInput {
+	public static final class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		private Predicate pred;
 
@@ -78,6 +82,25 @@ public abstract class ForwardInfReasoner implements IReasoner {
 		 */
 		public Predicate getPred() {
 			return pred;
+		}
+
+		/**
+		 * @since 3.0
+		 */
+		@Override
+		public IReasonerInput translate(FormulaFactory factory) {
+			return new Input(pred.translate(factory));
+		}
+
+		/**
+		 * @since 3.0
+		 */
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			typeEnv.addAll(pred.getFreeIdentifiers());
+			return typeEnv;
 		}
 	}
 	

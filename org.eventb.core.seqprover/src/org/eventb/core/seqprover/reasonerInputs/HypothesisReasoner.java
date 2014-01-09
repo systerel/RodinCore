@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -21,6 +24,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -37,7 +41,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  */
 public abstract class HypothesisReasoner implements IReasoner {
 	
-	public static final class Input implements IReasonerInput {
+	public static final class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		private Predicate pred;
 
@@ -68,6 +72,30 @@ public abstract class HypothesisReasoner implements IReasoner {
 
 		public Predicate getPred() {
 			return pred;
+		}
+
+		/**
+		 * @since 3.0
+		 */
+		@Override
+		public IReasonerInput translate(FormulaFactory factory) {
+			if (pred == null) {
+				return this;
+			}
+			return new Input(pred.translate(factory));
+		}
+
+		/**
+		 * @since 3.0
+		 */
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			if (pred != null) {
+				typeEnv.addAll(pred.getFreeIdentifiers());
+			}
+			return typeEnv;
 		}
 
 	}

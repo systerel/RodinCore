@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,14 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -42,7 +45,7 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 	
 	protected abstract String getDisplayName();
 
-	public static class Input implements IReasonerInput {
+	public static class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		private Predicate pred;
 
@@ -79,6 +82,24 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 
 		public IPosition getPosition() {
 			return position;
+		}
+
+		@Override
+		public Input translate(FormulaFactory factory) {
+			if (pred == null) {
+				return this;
+			}
+			return new Input(pred.translate(factory), position);
+		}
+
+		@Override
+		public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+			final ITypeEnvironmentBuilder typeEnv = factory
+					.makeTypeEnvironment();
+			if (pred != null) {
+				typeEnv.addAll(pred.getFreeIdentifiers());
+			}
+			return typeEnv;
 		}
 
 	}

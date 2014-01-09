@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,11 @@ package org.eventb.core.seqprover.reasonerInputs;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -24,7 +26,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 /**
  * @since 1.0
  */
-public class SingleExprInput implements IReasonerInput{
+public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInput {
 	
 	private static final String SERIALIZATION_KEY = "expr";
 
@@ -107,6 +109,30 @@ public class SingleExprInput implements IReasonerInput{
 	public void applyHints(ReplayHints hints) {
 		expression = hints.applyHints(expression);
 		
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public IReasonerInput translate(FormulaFactory factory) {
+		if (expression == null) {
+			return this;
+		}
+		return new SingleExprInput(expression.translate(factory));
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+		final ITypeEnvironmentBuilder typeEnv = factory
+				.makeTypeEnvironment();
+		if (expression != null) {
+			typeEnv.addAll(expression.getFreeIdentifiers());
+		}
+		return typeEnv;
 	}
 
 }

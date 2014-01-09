@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,12 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -24,7 +26,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 /**
  * @since 1.0
  */
-public class SinglePredInput implements IReasonerInput{
+public class SinglePredInput implements IReasonerInput, ITranslatableReasonerInput {
 	
 	private static final String SERIALIZATION_KEY = "pred";
 
@@ -91,6 +93,30 @@ public class SinglePredInput implements IReasonerInput{
 	public void applyHints(ReplayHints hints) {
 		predicate = hints.applyHints(predicate);
 		
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public IReasonerInput translate(FormulaFactory factory) {
+		if (predicate == null) {
+			return this;
+		}
+		return new SinglePredInput(predicate.translate(factory));
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+		final ITypeEnvironmentBuilder typeEnv = factory
+				.makeTypeEnvironment();
+		if (predicate != null) {
+			typeEnv.addAll(predicate.getFreeIdentifiers());
+		}
+		return typeEnv;
 	}
 
 }

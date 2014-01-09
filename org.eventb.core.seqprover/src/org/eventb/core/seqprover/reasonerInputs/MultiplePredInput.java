@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,22 @@ package org.eventb.core.seqprover.reasonerInputs;
 
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner.Input;
 
 /**
  * @since 1.0
  */
-public class MultiplePredInput implements IReasonerInput{
+public class MultiplePredInput implements IReasonerInput, ITranslatableReasonerInput {
 	
 	private static final String SERIALIZATION_KEY = "preds";
 
@@ -75,6 +80,31 @@ public class MultiplePredInput implements IReasonerInput{
 			predicates[i] = hints.applyHints(predicates[i]);
 		}
 		
+	}
+	
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public IReasonerInput translate(FormulaFactory factory) {
+		final Predicate[] trPreds = new Predicate[predicates.length];
+		for (int i = 0; i < predicates.length; i++) {
+			trPreds[i] = predicates[i].translate(factory);
+		}
+		return new Input(trPreds);
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	@Override
+	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory) {
+		final ITypeEnvironmentBuilder typeEnv = factory
+				.makeTypeEnvironment();
+		for (int i = 0; i < predicates.length; i++) {
+			typeEnv.addAll(predicates[i].getFreeIdentifiers());
+		}
+		return typeEnv;
 	}
 
 }
