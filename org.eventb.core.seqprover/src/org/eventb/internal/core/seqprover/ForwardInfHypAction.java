@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 
 
@@ -84,6 +87,24 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 				proofDeps.getIntroducedFreeIdents().add(addedIdent.getName());
 			}
 		}
+	}
+
+	@Override
+	public IHypAction translate(FormulaFactory factory) {
+		final Collection<Predicate> trHyps = new ArrayList<Predicate>(hyps.size());
+		for (Predicate hyp : hyps) {
+			trHyps.add(hyp.translate(factory));
+		}
+		
+		final FreeIdentifier[] trAddedIdents = new FreeIdentifier[addedIdents.length];
+		for (int i = 0; i < addedIdents.length; i++) {
+			trAddedIdents[i] = (FreeIdentifier) addedIdents[i].translate(factory);
+		}
+		final Collection<Predicate> trInferredHyps = new ArrayList<Predicate>(inferredHyps.size());
+		for (Predicate inferredHyp : inferredHyps) {
+			trInferredHyps.add(inferredHyp.translate(factory));
+		}
+		return new ForwardInfHypAction(trHyps, trAddedIdents, trInferredHyps);
 	}
 	
 }

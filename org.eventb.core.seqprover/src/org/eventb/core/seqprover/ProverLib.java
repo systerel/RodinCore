@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -515,4 +515,66 @@ public class ProverLib {
 		}
 	}
 
+	private static class TranslatedProofSkeleton implements IProofSkeleton {
+
+		private static final IProofSkeleton[] NO_CHILD = new IProofSkeleton[0];
+		
+		private final IProofSkeleton[] childNodes;
+		private final IProofRule rule;
+		private final String comment;
+
+		public TranslatedProofSkeleton(IProofSkeleton[] childNodes,
+				IProofRule rule, String comment) {
+			this.childNodes = childNodes;
+			this.rule = rule;
+			this.comment = comment;
+		}
+
+		@Override
+		public IProofSkeleton[] getChildNodes() {
+			return childNodes;
+		}
+
+		@Override
+		public IProofRule getRule() {
+			return rule;
+		}
+
+		@Override
+		public String getComment() {
+			return comment;
+		}
+		
+		public static TranslatedProofSkeleton empty(String comment) {
+			return new TranslatedProofSkeleton(NO_CHILD, null, comment);
+		}
+	}
+	
+	/**
+	 * Translates the given skeleton using the given formula factory.
+	 * 
+	 * @param skeleton
+	 *            a proof skeleton to translate
+	 * @return the translated proof skeleton
+	 * @since 3.0
+	 */
+	public static IProofSkeleton translate(IProofSkeleton skeleton,
+			FormulaFactory factory) {
+		try {
+			final IProofRule rule = skeleton.getRule();
+			final IProofRule trRule = rule.translate(factory);
+			final IProofSkeleton[] childNodes = skeleton.getChildNodes();
+			final IProofSkeleton[] trChildNodes = new IProofSkeleton[childNodes.length];
+			for (int i = 0; i < childNodes.length; i++) {
+				trChildNodes[i] = translate(childNodes[i], factory);
+			}
+
+			return new TranslatedProofSkeleton(trChildNodes, trRule,
+					skeleton.getComment());
+		} catch (IllegalArgumentException e) {
+			// translation failed somewhere
+			return TranslatedProofSkeleton.empty(skeleton.getComment());
+		}
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.core.seqprover;
 
 import java.util.Collection;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -178,5 +179,17 @@ public interface IHypAction {
 		Collection<Predicate> getInferredHyps();
 	
 	}
+
+	/**
+	 * Translates this hyp action using the given formula factory.
+	 * 
+	 * @param factory
+	 *            the destination formula factory
+	 * @return the translated hyp action
+	 * @throws IllegalArgumentException
+	 *             if the translation fails
+	 * @since 3.0
+	 */
+	IHypAction translate(FormulaFactory factory);
 
 }

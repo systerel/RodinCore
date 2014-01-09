@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 
 public class SelectionHypAction implements IInternalHypAction, ISelectionHypAction {
@@ -58,6 +61,15 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {
 		// Nothing to do
+	}
+
+	@Override
+	public IHypAction translate(FormulaFactory factory) {
+		final Collection<Predicate> trHyps = new ArrayList<Predicate>(hyps.size());
+		for (Predicate hyp : hyps) {
+			trHyps.add(hyp.translate(factory));
+		}
+		return new SelectionHypAction(actionType, trHyps);
 	}	
 
 }

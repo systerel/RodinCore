@@ -35,12 +35,12 @@ import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 
 // order of stored hypotheses is preserved by using a LinkedHashSet
-public class ProofRule extends ReasonerOutput implements IProofRule{
+public class ProofRule extends ReasonerOutput implements IProofRule {
 	
 	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
 	private static final IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
 
-	public static class Antecedent implements IAntecedent{
+	public static class Antecedent implements IAntecedent {
 		
 		private final FreeIdentifier[] addedFreeIdentifiers;
 		private final Set<Predicate> addedHypotheses;
@@ -131,6 +131,34 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 			// no change if seq == result
 			return result;
 			
+		}
+
+		@Override
+		public IAntecedent translate(FormulaFactory factory) {
+			final Predicate trGoal = goal == null ? null : goal.translate(factory);
+			
+			final FreeIdentifier[] trAddedFreeIdentifiers = new FreeIdentifier[addedFreeIdentifiers.length];
+			for (int i = 0; i < addedFreeIdentifiers.length; i++) {
+				trAddedFreeIdentifiers[i] = (FreeIdentifier) addedFreeIdentifiers[i].translate(factory);
+			}
+			
+			final Set<Predicate> trAddedHypotheses = new LinkedHashSet<Predicate>(addedHypotheses.size());
+			for (Predicate addedHyp : addedHypotheses) {
+				trAddedHypotheses.add(addedHyp.translate(factory));
+			}
+			
+			final Set<Predicate> trUnselectedAddedHyps = new LinkedHashSet<Predicate>(unselectedAddedHyps.size());
+			for (Predicate unselectedAddedHyp : unselectedAddedHyps) {
+				trUnselectedAddedHyps.add(unselectedAddedHyp.translate(factory));
+			}
+			
+			final List<IHypAction> trHypActions = new ArrayList<IHypAction>(hypActions.size());
+			for (IHypAction hypAction : hypActions) {
+				trHypActions.add(hypAction.translate(factory));
+			}
+			
+			return new Antecedent(trGoal, trAddedHypotheses,
+					trUnselectedAddedHyps, trAddedFreeIdentifiers, trHypActions);
 		}
 		
 	}
@@ -325,6 +353,22 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		// each other...
 		// TODO free idents in hyp actions ?
 		return typeEnv.makeSnapshot();
+	}
+
+	@Override
+	public IProofRule translate(FormulaFactory factory) {
+		final Predicate trGoal = goal == null ? null : goal.translate(factory);
+		final Set<Predicate> trNeededHyps = new LinkedHashSet<Predicate>();
+		for(Predicate neededHyp : neededHypotheses) {
+			trNeededHyps.add(neededHyp.translate(factory));
+		}
+		final IAntecedent[] trAntecedents = new IAntecedent[antecedents.length];
+		for (int i = 0; i < antecedents.length; i++) {
+			trAntecedents[i] = antecedents[i].translate(factory);
+		}
+		// FIXME translate generatedUsing (=input)
+		return new ProofRule(reasonerDesc, generatedUsing, trGoal,
+				trNeededHyps, reasonerConfidence, display, trAntecedents);
 	}
 
 }
