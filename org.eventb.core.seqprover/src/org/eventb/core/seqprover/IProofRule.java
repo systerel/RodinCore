@@ -282,4 +282,13 @@ public interface IProofRule extends IReasonerOutput {
 	 */
 	IProofRule translate(FormulaFactory factory);
 
+
+	/**
+	 * Returns the formula factory of this proof rule.
+	 * 
+	 * @return a formula factory
+	 * @since 3.0
+	 */
+	FormulaFactory getFormulaFactory();
+
 }

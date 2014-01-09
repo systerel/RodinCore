@@ -13,14 +13,18 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -28,6 +32,8 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
@@ -163,6 +169,61 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		
 	}
 	
+	private static FormulaFactory findFormulaFactory(
+			Collection<? extends Formula<?>> formulas) {
+		if (formulas != null && !formulas.isEmpty()) {
+			return formulas.iterator().next().getFactory();
+		}
+		return null;
+	}
+	
+	private static FormulaFactory findFormulaFactory(Predicate goal,
+			Set<Predicate> neededHyps, IAntecedent[] antecedents) {
+		if (goal != null) {
+			return goal.getFactory();
+		}
+		
+		FormulaFactory factory;
+		factory = findFormulaFactory(neededHyps);
+		if (factory != null) return factory;
+		
+		for (IAntecedent antecedent : antecedents) {
+			final Predicate anteGoal = antecedent.getGoal();
+			if (anteGoal != null) {
+				return anteGoal.getFactory();
+			}
+			factory = findFormulaFactory(antecedent.getAddedHyps());
+			if (factory != null) return factory;
+			
+			factory = findFormulaFactory(antecedent.getUnselectedAddedHyps());
+			if (factory != null) return factory;
+			
+			factory = findFormulaFactory(asList(antecedent.getAddedFreeIdents()));
+			if (factory != null) return factory;
+			
+			for (IHypAction hypAction : antecedent.getHypActions()) {
+				if (hypAction instanceof ISelectionHypAction) {
+					final ISelectionHypAction select = (ISelectionHypAction) hypAction;
+					factory = findFormulaFactory(select.getHyps());
+					if (factory != null) return factory;
+				} else if (hypAction instanceof IForwardInfHypAction) {
+					final IForwardInfHypAction fwd = (IForwardInfHypAction) hypAction;
+					factory = findFormulaFactory(fwd.getHyps());
+					if (factory != null) return factory;
+
+					factory = findFormulaFactory(fwd.getInferredHyps());
+					if (factory != null) return factory;
+
+					factory = findFormulaFactory(asList(fwd.getAddedFreeIdents()));
+					if (factory != null) return factory;
+				}
+			}
+		}
+		throw new IllegalArgumentException(
+				"Formula factory not found in proof rule.");
+	}
+	
+	private final FormulaFactory factory;
 	private final String display;
 	private final IAntecedent[] antecedents;
 	private final Set<Predicate> neededHypotheses;
@@ -172,6 +233,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	public ProofRule(IReasoner generatedBy, IReasonerInput generatedUsing, Predicate goal, Set<Predicate> neededHyps, Integer confidence, String display, IAntecedent[] antecedents) {
 		super(generatedBy,generatedUsing);
 		
+		this.factory = findFormulaFactory(goal, neededHyps, antecedents);
 		this.goal = goal;
 		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents.clone();
 		this.neededHypotheses = neededHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(neededHyps);
@@ -184,6 +246,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 			String display, IAntecedent[] antecedents) {
 		super(generatedBy,generatedUsing);
 		
+		this.factory = findFormulaFactory(goal, neededHyps, antecedents);
 		this.goal = goal;
 		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents.clone();
 		this.neededHypotheses = neededHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(neededHyps);
@@ -191,6 +254,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		this.display = display == null ? generatedBy.getId() : display;	
 	}
 
+	public FormulaFactory getFormulaFactory() {
+		return factory;
+	}
+	
 	public String getDisplayName() {
 		return display;
 	}
@@ -324,34 +391,15 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		}
 	}
 
-	private FormulaFactory getFormulaFactory() {
-		if (goal != null) {
-			return goal.getFactory();
-		}
-		if (!neededHypotheses.isEmpty()) {
-			return neededHypotheses.iterator().next().getFactory();
-		}
-		// TODO try with hyp actions in antecedents ?
-		return null;
-	}
-	
 	@Override
 	public ITypeEnvironment getTypeEnvironment() {
-		final FormulaFactory ff = getFormulaFactory();
-		if (ff == null) {
-			// no goal and no needed hypotheses
-			return FormulaFactory.getDefault().makeTypeEnvironment();
-		}
-		final ITypeEnvironmentBuilder typeEnv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		if (goal != null) {
 			typeEnv.addAll(goal.getFreeIdentifiers());
 		}
 		for (Predicate hyp : neededHypotheses) {
 			typeEnv.addAll(hyp.getFreeIdentifiers());
 		}
-		// TODO added free idents in antecedents ? might be incompatible with
-		// each other...
-		// TODO free idents in hyp actions ?
 		return typeEnv.makeSnapshot();
 	}
 
