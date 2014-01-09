@@ -102,8 +102,7 @@ public class UserSupportDeltaProcessor {
 	
 	public void processDelta(IRodinElementDelta elementChangedDelta,
 			IProgressMonitor monitor) {
-		IRodinElement element = elementChangedDelta.getElement();
-		IPSRoot input = userSupport.getInput();
+		final IRodinElement element = elementChangedDelta.getElement();
 		
 		// Root DB
 		if (element instanceof IRodinDB) {
@@ -113,36 +112,40 @@ public class UserSupportDeltaProcessor {
 			}			
 		}
 
-		// IRodinProject
-		if (element instanceof IRodinProject) {
-			if (input.getRodinProject().equals(element)) {
-				for (IRodinElementDelta d : elementChangedDelta
-						.getAffectedChildren()) {
-					processDelta(d, monitor);
-				}
-			}
-			return;
-		}
+		final IPSRoot input = userSupport.getInput();
+		if (input != null) {
 
-		// IRodinFile
-		if (element instanceof IRodinFile) {
-			if (input.getRodinFile().equals(element)) {
-				for (IRodinElementDelta d : elementChangedDelta
-						.getAffectedChildren()) {
-					processDelta(d, monitor);
-				}
-			}
-			return;
-		}
-
-		// IPSRoot
-		if (element instanceof IPSRoot) {
-			if (input.equals(element)) {
-				for (IRodinElementDelta d : elementChangedDelta
-						.getAffectedChildren()) {
-					processDelta(d, monitor);
+			// IRodinProject
+			if (element instanceof IRodinProject) {
+				if (input.getRodinProject().equals(element)) {
+					for (IRodinElementDelta d : elementChangedDelta
+							.getAffectedChildren()) {
+						processDelta(d, monitor);
+					}
 				}
 				return;
+			}
+
+			// IRodinFile
+			if (element instanceof IRodinFile) {
+				if (input.getRodinFile().equals(element)) {
+					for (IRodinElementDelta d : elementChangedDelta
+							.getAffectedChildren()) {
+						processDelta(d, monitor);
+					}
+				}
+				return;
+			}
+
+			// IPSRoot
+			if (element instanceof IPSRoot) {
+				if (input.equals(element)) {
+					for (IRodinElementDelta d : elementChangedDelta
+							.getAffectedChildren()) {
+						processDelta(d, monitor);
+					}
+					return;
+				}
 			}
 		}
 		
