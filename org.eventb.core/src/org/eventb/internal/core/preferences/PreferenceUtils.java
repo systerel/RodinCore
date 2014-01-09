@@ -122,9 +122,10 @@ public class PreferenceUtils {
 			final String qualifier = node.name();
 
 			if (key.equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
+				final String newValue = (String) event.getNewValue();
 				EventBPlugin.getUserSupportManager()
 						.setConsiderHiddenHypotheses(
-								(Boolean) event.getNewValue());
+								Boolean.parseBoolean(newValue));
 				return;
 			}
 
