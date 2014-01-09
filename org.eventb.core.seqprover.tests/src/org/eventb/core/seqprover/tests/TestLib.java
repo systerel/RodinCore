@@ -35,9 +35,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * This is a collection of static methods for conveniently constructing objects used for
@@ -52,7 +54,10 @@ import org.eventb.core.seqprover.ProverFactory;
 public class TestLib {
 	
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
-	
+
+	// used for fake proof rules so that they find a formula factory
+	public static final IHypAction FAKE_HYP_ACTION = ProverFactory
+			.makeHideHypAction(Arrays.asList(DLib.True(ff)));
 
 	/**
 	 * Constructs a simple sequent (only with selected hypotheses and a goal) from

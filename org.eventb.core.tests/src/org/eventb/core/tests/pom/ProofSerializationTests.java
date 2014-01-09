@@ -19,6 +19,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.core.tests.pom.TestLib.genPred;
 import static org.eventb.core.tests.pom.TestLib.genSeq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -170,8 +171,10 @@ public class ProofSerializationTests extends BuilderTest {
 		
 		// an identity rule that doesn't do anything.
 		// since a reasoner is used, it does have dependencies
-		Set<Predicate> noHyps = Collections.emptySet();
-		Tactics.mngHyp(ProverFactory.makeHideHypAction(noHyps)).apply(proofTree.getRoot(), null);
+		Set<Predicate> unknownHyp = Collections.singleton(genPred(factory,
+				"∀ UNKNOWN_HYP · UNKNOWN_HYP=0"));
+		Tactics.mngHyp(ProverFactory.makeHideHypAction(unknownHyp)).apply(
+				proofTree.getRoot(), null);
 		checkProofTreeSerialization(proof1, proofTree, true);
 		
 		

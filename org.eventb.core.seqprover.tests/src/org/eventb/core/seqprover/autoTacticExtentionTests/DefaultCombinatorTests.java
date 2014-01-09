@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingDischarge.DISCHARGE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingFailure.FAILURE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess.SUCCESS;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess3.SUCCESS_3;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
@@ -36,8 +39,8 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticDescriptor;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Attempt;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilFailure;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilSuccess;
@@ -144,8 +147,9 @@ public class DefaultCombinatorTests {
 			@Override
 			public IReasonerOutput apply(IProverSequent seq,
 					IReasonerInput input, IProofMonitor pm) {
-				return ProverFactory.makeProofRule(this,
-						input, null, "discharge anything");
+				final Predicate hyp = DLib.True(seq.getFormulaFactory());
+				return makeProofRule(this, input, null, singleton(hyp),
+						"discharge anything");
 			}
 			
 		}
@@ -175,7 +179,7 @@ public class DefaultCombinatorTests {
 	}
 
 	private static IProofTreeNode makeSimpleNode(String goal) {
-		final IProverSequent sequent = genSeq("|- " + goal);
+		final IProverSequent sequent = genSeq("⊤ |- " + goal);
 		final IProofTree tree = makeProofTree(sequent, "test");
 		final IProofTreeNode root = tree.getRoot();
 		return root;

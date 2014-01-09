@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static org.eventb.core.seqprover.tests.TestLib.FAKE_HYP_ACTION;
 import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -138,7 +139,7 @@ public class ProverChecksTests {
 		
 		// The identity rule
 		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null)
+				ProverFactory.makeAntecedent(null,null,FAKE_HYP_ACTION)
 		};
 		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
 		justifications = ProverChecks.genRuleJustifications(rule, factory);

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static java.util.Arrays.asList;
+import static org.eventb.core.seqprover.tests.TestLib.FAKE_HYP_ACTION;
 import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 
 import static org.junit.Assert.assertFalse;
@@ -396,7 +398,8 @@ public class ProofRuleTests {
 			}
 		};
 
-		final IProofRule rule = ProverFactory.makeProofRule(original, emptyInput, "no display", null);
+		final IProofRule rule = ProverFactory.makeProofRule(original,
+				emptyInput, "no display", asList(FAKE_HYP_ACTION));
 		final IReasoner generatedBy = rule.generatedBy(); 
 		assertSame(original, generatedBy);
 
