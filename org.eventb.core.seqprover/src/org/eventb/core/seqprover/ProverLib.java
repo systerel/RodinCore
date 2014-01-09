@@ -29,13 +29,11 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.internal.core.seqprover.IInternalHypAction;
+import org.eventb.internal.core.seqprover.ProofRule;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
@@ -320,47 +318,12 @@ public class ProverLib {
 	 * @param rule
 	 */
 	private static boolean isContextDependentRuleReusable(IProofRule rule) {
-		final IProverSequent sequent = makeSequent(rule);
+		final IProverSequent sequent = ((ProofRule) rule).makeSequent();
 		final IReasoner reasoner = rule.generatedBy();
 		final IReasonerInput input = rule.generatedUsing();
 		final IReasonerOutput output = reasoner.apply(sequent, input, Util.getNullProofMonitor());;
 		return output instanceof IProofRule
 				&& ProverLib.deepEquals(rule, (IProofRule) output);
-	}
-
-	private static IProverSequent makeSequent(	IProofRule rule) {
-		final ITypeEnvironment typenv = rule.getTypeEnvironment();
-		final Predicate goal = getGoal(rule, typenv.getFormulaFactory());
-		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
-		hyps.addAll(rule.getNeededHyps());
-		hyps.addAll(actedHyps(rule));
-		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
-	}
-
-	/**
-	 * Returns the hypotheses that are acted upon by some antecedent of this
-	 * rule. In other terms, the hypotheses returned are the ones that are
-	 * needed for the given rule to apply fully, although they are not required
-	 * to apply this rule.
-	 * 
-	 * @param rule
-	 *            some proof rule
-	 * @return the hypotheses acted upon by the given rule
-	 */
-	private static Set<Predicate> actedHyps(IProofRule rule) {
-		final Set<Predicate> result = new LinkedHashSet<Predicate>();
-		for (final IAntecedent antecedent : rule.getAntecedents()) {
-			for (final IHypAction action : antecedent.getHypActions()) {
-				final IInternalHypAction act = (IInternalHypAction) action;
-				result.addAll(act.getHyps());
-			}
-		}
-		return result;
-	}
-	
-	private static Predicate getGoal(IProofRule rule, FormulaFactory ff) {
-		final Predicate goal = rule.getGoal();
-		return goal == null ? DLib.False(ff) : goal;
 	}
 
 	/**

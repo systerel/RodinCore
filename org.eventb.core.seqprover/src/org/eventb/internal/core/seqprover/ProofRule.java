@@ -39,6 +39,8 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 // order of stored hypotheses is preserved by using a LinkedHashSet
 public class ProofRule extends ReasonerOutput implements IProofRule {
@@ -392,18 +394,6 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	}
 
 	@Override
-	public ITypeEnvironment getTypeEnvironment() {
-		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
-		if (goal != null) {
-			typeEnv.addAll(goal.getFreeIdentifiers());
-		}
-		for (Predicate hyp : neededHypotheses) {
-			typeEnv.addAll(hyp.getFreeIdentifiers());
-		}
-		return typeEnv.makeSnapshot();
-	}
-
-	@Override
 	public IProofRule translate(FormulaFactory factory) {
 		final Predicate trGoal = goal == null ? null : goal.translate(factory);
 		final Set<Predicate> trNeededHyps = new LinkedHashSet<Predicate>();
@@ -419,4 +409,45 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 				trNeededHyps, reasonerConfidence, display, trAntecedents);
 	}
 
+	/*
+	 * Returns the hypotheses that are acted upon by some antecedent of this
+	 * rule. In other terms, the hypotheses returned are the ones that are
+	 * needed for the given rule to apply fully, although they are not required
+	 * to apply this rule.
+	 */
+	private Set<Predicate> actedHyps() {
+		final Set<Predicate> result = new LinkedHashSet<Predicate>();
+		for (final IAntecedent antecedent : getAntecedents()) {
+			for (final IHypAction action : antecedent.getHypActions()) {
+				final IInternalHypAction act = (IInternalHypAction) action;
+				result.addAll(act.getHyps());
+			}
+		}
+		return result;
+	}
+	
+	private Predicate makeGoal() {
+		return goal == null ? DLib.False(factory) : goal;
+	}
+
+	private ITypeEnvironment getTypeEnvironment() {
+		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
+		if (goal != null) {
+			typeEnv.addAll(goal.getFreeIdentifiers());
+		}
+		for (Predicate hyp : neededHypotheses) {
+			typeEnv.addAll(hyp.getFreeIdentifiers());
+		}
+		return typeEnv.makeSnapshot();
+	}
+	
+	public IProverSequent makeSequent() {
+		final ITypeEnvironment typenv = getTypeEnvironment();
+		final Predicate goal = makeGoal();
+		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
+		hyps.addAll(getNeededHyps());
+		hyps.addAll(actedHyps());
+		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
+
+	}
 }

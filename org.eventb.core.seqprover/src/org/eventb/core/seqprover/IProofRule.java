@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 
 
@@ -261,14 +260,6 @@ public interface IProofRule extends IReasonerOutput {
 	 * 		 in case this rule was not applicable to the given sequent.
 	 */
 	IProverSequent[] apply(IProverSequent seq);
-
-	/**
-	 * Returns the type environment needed to type check this proof rule.
-	 * 
-	 * @return a type environment
-	 * @since 3.0
-	 */
-	ITypeEnvironment getTypeEnvironment();
 	
 	/**
 	 * Translates this proof rule with the given formula factory.
