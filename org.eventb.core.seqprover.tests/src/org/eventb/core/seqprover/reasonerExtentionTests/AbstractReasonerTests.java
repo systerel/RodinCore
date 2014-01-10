@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -45,14 +46,17 @@ import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
+import org.eventb.core.seqprover.reasonerExtentionTests.ExtendedOperators.AssocExt;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.eventb.internal.core.seqprover.ProverChecks;
+import org.eventb.internal.core.seqprover.ProverSequent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -212,7 +216,40 @@ public abstract class AbstractReasonerTests {
 			checkNormalReplay(reasonerApp, rule);
 			checkSerialization(reasonerApp, rule);
 			checkJustification(reasonerApp, rule);
+			checkTranslationReplay(reasonerApp, rule);
 		}
+	}
+	
+	private static FormulaFactory augmentFactory(FormulaFactory factory) {
+		return factory.withExtensions(Collections
+				.<IFormulaExtension> singleton(AssocExt.getInstance()));
+	}
+	
+	private void checkTranslationReplay(SuccessfullReasonerApplication app,
+			IProofRule rule) {
+		final IProverSequent sequent = app.getSequent();
+		final FormulaFactory newFactory = augmentFactory(sequent
+				.getFormulaFactory());
+		final IProofRule trRule = rule.translate(newFactory);
+		assertTrue(ProverLib.deepEquals(rule, trRule));
+
+		final IProverSequent trSequent = sequent.translate(newFactory);
+		final IReasonerInput input = app.getInput();
+		final IReasonerInput trInput;
+		if (input instanceof ITranslatableReasonerInput) {
+			trInput = ((ITranslatableReasonerInput) input).translate(newFactory);
+		} else {
+			trInput = input;
+		}
+		final IProverSequent[] newSequents = app.getNewSequents();
+		final IProverSequent[] trNewSequents = new IProverSequent[newSequents.length];
+		for (int i = 0; i < newSequents.length; i++) {
+			trNewSequents[i] = ((ProverSequent) newSequents[i])
+					.translate(newFactory);
+		}
+		final IProofRule newRule = applyAndCheckChildren(new SuccessfullReasonerApplication(
+				trSequent, trInput, trNewSequents));
+		assertTrue(ProverLib.deepEquals(rule, newRule));
 	}
 
 	/**
