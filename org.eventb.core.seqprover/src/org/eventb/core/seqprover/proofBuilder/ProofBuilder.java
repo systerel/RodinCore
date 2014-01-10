@@ -23,6 +23,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
 import org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependencies;
@@ -76,6 +77,15 @@ public class ProofBuilder {
 		return reasoner.apply(sequent, reasonerInput, proofMonitor);
 	}
 
+	private static IProofSkeleton getTranslatedSkeleton(IProofTreeNode node, IProofSkeleton skeleton) {
+		final IProofRule skelRule = skeleton.getRule();
+		if (skelRule == null
+				|| node.getFormulaFactory() == skelRule.getFormulaFactory()) {
+			return skeleton;
+		}
+		return ProverLib.translate(skeleton, node.getFormulaFactory());
+	}
+	
 	/**
 	 * Singleton class; Should not be instantiated.
 	 */
@@ -113,6 +123,12 @@ public class ProofBuilder {
 	 */
 	public static boolean reuse(IProofTreeNode node, IProofSkeleton skeleton,
 			IProofMonitor proofMonitor) {
+		skeleton = getTranslatedSkeleton(node, skeleton);
+		return recReuse(node, skeleton, proofMonitor);
+	}
+		
+	private static boolean recReuse(IProofTreeNode node, IProofSkeleton skeleton,
+				IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -146,7 +162,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= reuse(nodeChildren[i], skelChildren[i],
+			combinedResult &= recReuse(nodeChildren[i], skelChildren[i],
 					proofMonitor);
 		}
 		return combinedResult;
@@ -180,6 +196,12 @@ public class ProofBuilder {
 	 */
 	public static boolean replay(IProofTreeNode node, IProofSkeleton skeleton,
 			IProofMonitor proofMonitor) {
+		skeleton = getTranslatedSkeleton(node, skeleton);
+		return recReplay(node, skeleton, proofMonitor);
+	}
+		
+	private static boolean recReplay(IProofTreeNode node, IProofSkeleton skeleton,
+				IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -218,7 +240,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= replay(nodeChildren[i], skelChildren[i],
+			combinedResult &= recReplay(nodeChildren[i], skelChildren[i],
 					proofMonitor);
 		}
 		return combinedResult;
@@ -268,6 +290,12 @@ public class ProofBuilder {
 	 */
 	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
 			ReplayHints replayHints, IProofMonitor proofMonitor) {
+		skeleton = getTranslatedSkeleton(node, skeleton);
+		return recRebuild(node, skeleton, replayHints, proofMonitor);
+	}
+		
+	private static boolean recRebuild(IProofTreeNode node, IProofSkeleton skeleton,
+				ReplayHints replayHints, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -318,7 +346,7 @@ public class ProofBuilder {
 		if (!(reuseSuccessfull || replaySuccessfull)) {
 			if (ruleIsSkip(node, reuseProofRule)) {
 				// Actually the rule was doing nothing, can be by-passed.
-				return rebuild(node, skelChildren[0], replayHints, proofMonitor);
+				return recRebuild(node, skelChildren[0], replayHints, proofMonitor);
 			} else {
 				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
 						.withDependencies(skeleton);
@@ -352,7 +380,7 @@ public class ProofBuilder {
 				newReplayHints.addHints(reuseProofRule.getAntecedents()[i],
 						node.getRule().getAntecedents()[i]);
 			}
-			combinedResult &= rebuild(nodeChildren[i], skelChildren[i],
+			combinedResult &= recRebuild(nodeChildren[i], skelChildren[i],
 					newReplayHints, proofMonitor);
 		}
 		return combinedResult;
