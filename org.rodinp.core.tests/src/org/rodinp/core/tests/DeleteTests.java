@@ -276,7 +276,7 @@ public class DeleteTests extends ModifyingResourceTests {
 				}
 			}, null);
 			assertNotExists("Should be able to delete a Rodin file", file);
-			assertDeltas("Unexpected delta", "P[*]: {CHILDREN}");
+			assertDeltas("Unexpected delta", "");
 		} finally {
 			stopDeltas();
 			deleteFile("P/X.test");

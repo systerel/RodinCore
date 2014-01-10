@@ -167,6 +167,14 @@ public class RodinElementDelta extends SimpleDelta implements
 						existingChild.resourceDeltas = resDeltas;
 						existingChild.resourceDeltasCounter = child.resourceDeltasCounter;
 					}
+
+					// Cleanup if void
+					if (existingChild.changeFlags == F_CHILDREN
+							&& existingChild.getAffectedChildren().length == 0
+							&& existingChild.getResourceDeltas() == null) {
+						fAffectedChildren = removeAndShrinkArray(
+								fAffectedChildren, existingChildIndex);
+					}
 					return;
 				}
 				break;
