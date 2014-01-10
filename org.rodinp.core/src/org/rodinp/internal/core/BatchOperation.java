@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.RodinDBException;
 
@@ -23,16 +26,24 @@ import org.rodinp.core.RodinDBException;
  */
 public class BatchOperation extends RodinDBOperation {
 
-	protected IWorkspaceRunnable runnable;
+	private final IWorkspaceRunnable runnable;
+	private final ISchedulingRule rule;
 
-	public BatchOperation(IWorkspaceRunnable runnable) {
+	public BatchOperation(IWorkspaceRunnable runnable, ISchedulingRule rule) {
 		this.runnable = runnable;
+		this.rule = rule;
 	}
 
 	@Override
 	protected void executeOperation() throws RodinDBException {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		try {
-			this.runnable.run(this.progressMonitor);
+			if (workspace.isTreeLocked()) {
+				runnable.run(progressMonitor);
+			} else {
+				workspace.run(runnable, rule,
+						IWorkspace.AVOID_UPDATE, progressMonitor);
+			}
 		} catch (RodinDBException re) {
 			throw re;
 		} catch (CoreException ce) {

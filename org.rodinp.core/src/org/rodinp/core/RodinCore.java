@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,9 @@ package org.rodinp.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
@@ -395,27 +392,7 @@ public class RodinCore extends Plugin {
 	 */
 	public static void run(IWorkspaceRunnable action, ISchedulingRule rule,
 			IProgressMonitor monitor) throws RodinDBException {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if (workspace.isTreeLocked()) {
-			new BatchOperation(action).run(monitor);
-		} else {
-			// use IWorkspace.run(...) to ensure that a build will be done in
-			// autobuild mode
-			try {
-				workspace.run(new BatchOperation(action), rule,
-						IWorkspace.AVOID_UPDATE, monitor);
-			} catch (RodinDBException re) {
-				throw re;
-			} catch (CoreException ce) {
-				if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-					Throwable e = ce.getStatus().getException();
-					if (e instanceof RodinDBException) {
-						throw (RodinDBException) e;
-					}
-				}
-				throw new RodinDBException(ce);
-			}
-		}
+		new BatchOperation(action, rule).run(monitor);
 	}	
 
 	@Override
