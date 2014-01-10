@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -653,5 +654,36 @@ public final class ProverSequent implements IInternalProverSequent{
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}		
+	}
+	
+	private static LinkedHashSet<Predicate> translatePreds(
+			Set<Predicate> preds, FormulaFactory factory) {
+		final LinkedHashSet<Predicate> trPreds = new LinkedHashSet<Predicate>(
+				preds.size());
+		for (Predicate pred : preds) {
+			trPreds.add(pred.translate(factory));
+		}
+		return trPreds;
+	}
+
+	@Override
+	public IProverSequent translate(FormulaFactory factory) {
+		final ITypeEnvironment trTypeEnv = typeEnvironment.translate(factory);
+
+		final LinkedHashSet<Predicate> trGlobalHypotheses = translatePreds(
+				globalHypotheses, factory);
+		final LinkedHashSet<Predicate> trLocalHypotheses = translatePreds(
+				localHypotheses, factory);
+
+		final LinkedHashSet<Predicate> trHiddenHypotheses = translatePreds(
+				hiddenHypotheses, factory);
+		final LinkedHashSet<Predicate> trSelectedHypotheses = translatePreds(
+				selectedHypotheses, factory);
+
+		final Predicate trGoal = goal.translate(factory);
+
+		return new ProverSequent(this, trTypeEnv, trGlobalHypotheses,
+				trLocalHypotheses, trHiddenHypotheses, trSelectedHypotheses,
+				trGoal);
 	}
 }

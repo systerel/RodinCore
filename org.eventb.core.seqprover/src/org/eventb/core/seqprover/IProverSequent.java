@@ -244,4 +244,17 @@ public interface IProverSequent{
 	 */
 	Object getOrigin();
 
+
+	/**
+	 * Translates this prover sequent using the given formula factory.
+	 * 
+	 * @param factory
+	 *            the factory to use for translation
+	 * @return the translated prover sequent
+	 * @throws IllegalArgumentException
+	 *             if the translation fails
+	 * @since 3.0
+	 */
+	IProverSequent translate(FormulaFactory factory);
+
 }
