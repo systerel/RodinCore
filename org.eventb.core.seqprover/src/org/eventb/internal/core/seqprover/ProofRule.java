@@ -41,6 +41,7 @@ import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 // order of stored hypotheses is preserved by using a LinkedHashSet
@@ -395,27 +396,33 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	}
 
 	@Override
-	public IProofRule translate(FormulaFactory factory) {
-		final Predicate trGoal = goal == null ? null : goal.translate(factory);
-		final Set<Predicate> trNeededHyps = new LinkedHashSet<Predicate>();
-		for(Predicate neededHyp : neededHypotheses) {
-			trNeededHyps.add(neededHyp.translate(factory));
-		}
-		final IAntecedent[] trAntecedents = new IAntecedent[antecedents.length];
-		for (int i = 0; i < antecedents.length; i++) {
-			trAntecedents[i] = antecedents[i].translate(factory);
-		}
-		
-		final IReasonerInput trGeneratedUsing;
-		if (generatedUsing instanceof ITranslatableReasonerInput) {
-			trGeneratedUsing = ((ITranslatableReasonerInput) generatedUsing)
+	public IProofRule translate(FormulaFactory factory)
+			throws UntranslatableException {
+		try {
+			final Predicate trGoal = goal == null ? null : goal
 					.translate(factory);
-		} else {
-			trGeneratedUsing = generatedUsing;
+			final Set<Predicate> trNeededHyps = new LinkedHashSet<Predicate>();
+			for (Predicate neededHyp : neededHypotheses) {
+				trNeededHyps.add(neededHyp.translate(factory));
+			}
+			final IAntecedent[] trAntecedents = new IAntecedent[antecedents.length];
+			for (int i = 0; i < antecedents.length; i++) {
+				trAntecedents[i] = antecedents[i].translate(factory);
+			}
+
+			final IReasonerInput trGeneratedUsing;
+			if (generatedUsing instanceof ITranslatableReasonerInput) {
+				trGeneratedUsing = ((ITranslatableReasonerInput) generatedUsing)
+						.translate(factory);
+			} else {
+				trGeneratedUsing = generatedUsing;
+			}
+
+			return new ProofRule(reasonerDesc, trGeneratedUsing, trGoal,
+					trNeededHyps, reasonerConfidence, display, trAntecedents);
+		} catch (Exception e) {
+			throw new UntranslatableException(e);
 		}
-		
-		return new ProofRule(reasonerDesc, trGeneratedUsing, trGoal,
-				trNeededHyps, reasonerConfidence, display, trAntecedents);
 	}
 
 	/*

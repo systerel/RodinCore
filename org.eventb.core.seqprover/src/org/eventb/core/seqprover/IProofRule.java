@@ -267,11 +267,11 @@ public interface IProofRule extends IReasonerOutput {
 	 * @param factory
 	 *            the destination formula factory
 	 * @return the translated proof rule
-	 * @throws IllegalArgumentException
+	 * @throws UntranslatableException
 	 *             if this proof rule is not translatable with the given factory
 	 * @since 3.0
 	 */
-	IProofRule translate(FormulaFactory factory);
+	IProofRule translate(FormulaFactory factory) throws UntranslatableException;
 
 
 	/**

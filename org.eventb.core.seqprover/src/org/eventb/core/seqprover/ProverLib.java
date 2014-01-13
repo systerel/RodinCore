@@ -534,7 +534,7 @@ public class ProverLib {
 
 			return new TranslatedProofSkeleton(trChildNodes, trRule,
 					skeleton.getComment());
-		} catch (IllegalArgumentException e) {
+		} catch (UntranslatableException e) {
 			// translation failed somewhere
 			return TranslatedProofSkeleton.empty(skeleton.getComment());
 		}
