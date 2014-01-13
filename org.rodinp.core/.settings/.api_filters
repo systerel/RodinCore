@@ -1,10 +1,78 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.rodinp.core" version="2">
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType">
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IAttributeType"/>
+                <message_argument value="getElementTypes()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IAttributeType"/>
+                <message_argument value="isAttributeOf(IInternalElementType&lt;?&gt;)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IInternalElementType.java" type="org.rodinp.core.IInternalElementType">
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IInternalElementType"/>
+                <message_argument value="canCarry(IAttributeType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IInternalElementType"/>
+                <message_argument value="canParent(IInternalElementType&lt;?&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IInternalElementType"/>
+                <message_argument value="getAttributeTypes()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IInternalElementType"/>
+                <message_argument value="getChildTypes()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403804204">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IInternalElementType"/>
+                <message_argument value="getParentTypes()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IRodinDBStatusConstants.java" type="org.rodinp.core.IRodinDBStatusConstants">
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403767336">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IRodinDBStatusConstants"/>
+                <message_argument value="INVALID_ATTRIBUTE_TYPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adding item relations extends the API. No need to upgrade in major version." id="403767336">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.IRodinDBStatusConstants"/>
+                <message_argument value="INVALID_CHILD_TYPE"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/rodinp/internal/core/RodinDBStatus.java" type="org.rodinp.internal.core.RodinDBStatus">
         <filter comment="Exception to the @noextend rule" id="574619656">
             <message_arguments>
                 <message_argument value="IResourceStatus"/>
                 <message_argument value="RodinDBStatus"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/internal/core/debug/DebugHelpers.java" type="org.rodinp.internal.core.debug.DebugHelpers">
+        <filter comment="Add restriction on internal package visibility. No need for major version upgrade." id="305365105">
+            <message_arguments>
+                <message_argument value="org.rodinp.internal.core.debug.DebugHelpers"/>
+                <message_argument value="org.rodinp.core_1.7.0"/>
             </message_arguments>
         </filter>
     </resource>
