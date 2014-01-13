@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
-import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -58,6 +57,8 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  */
 public class ActionCollection {
 	
+	private static final String PROVER_UI_ID = "org.eventb.ui.editors.ProverUI";
+
 	/**
 	 * Provides an open action for various elements in Rodin 
 	 * (Machines, Contexts, Invariants, ProofObligations...)
@@ -310,7 +311,7 @@ public class ActionCollection {
 		final IRodinFile component = (IRodinFile) UIUtils.getOpenable(ps);
 		final IEditorDescriptor desc = IDE.getDefaultEditor(component
 				.getResource());
-		if (desc.getId().equals(ProverUI.EDITOR_ID))
+		if (desc.getId().equals(PROVER_UI_ID))
 			UIUtils.linkToProverUI(ps);
 		else
 			UIUtils.linkToPreferredEditor(ps);
