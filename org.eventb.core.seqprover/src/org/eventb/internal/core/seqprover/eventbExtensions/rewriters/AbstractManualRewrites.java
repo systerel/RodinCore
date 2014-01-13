@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +40,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
+import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 public abstract class AbstractManualRewrites implements IReasoner {
 
@@ -265,12 +268,22 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			final Collection<Predicate> hyps = fHypAction.getHyps();
 			if (hyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
-						"Expected single required hyp in first forward hyp action!"));
+						"Expected single required hyp in rewrite hyp action!"));
 			}
 			return new Input(hyps.iterator().next(), position);
-		} else {
-			throw new SerializeException(new IllegalStateException(
-					"Expected first hyp action to be a forward hyp action!"));
+		} else if (hypAction.getActionType().equals(HIDE_ACTION_TYPE)) {
+			final SelectionHypAction selHypAction = (SelectionHypAction) hypAction;
+			final Collection<Predicate> hyps = selHypAction.getHyps();
+			if (hyps.size() != 1) {
+				throw new SerializeException(new IllegalStateException(
+						"Expected single required hyp in hide hyp action!"));
+			}
+			return new Input(hyps.iterator().next(), position);
+		}
+		else {
+			throw new SerializeException(
+					new IllegalStateException(
+							"Expected first hyp action to be a rewrite or hide hyp action!"));
 		}
 	}
 

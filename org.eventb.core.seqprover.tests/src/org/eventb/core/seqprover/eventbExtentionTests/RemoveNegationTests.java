@@ -149,6 +149,10 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 
 	String resultP31 = "0=1";
 
+	String P32 = "¬¬⊤";
+
+	String resultP32 = "";
+
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rn";
@@ -190,7 +194,8 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P27, "1", resultP27),
 				new SuccessfulTest(P28, "1.1", resultP28),
 				new SuccessfulTest(P29, "1", resultP29),
-				new SuccessfulTest(P30, "1.1", resultP30)
+				new SuccessfulTest(P30, "1.1", resultP30),
+				new SuccessfulTest(P32, "", "⊤"),
 		};
 	}
 

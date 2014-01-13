@@ -102,6 +102,9 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final StringBuilder sb = new StringBuilder();
 		String sep = "";
 		for (String result : results) {
+			if (result.trim().equals("⊤")) {
+				continue;
+			}
 			sb.append(sep);
 			sb.append(result);
 			sep = " ;; ";
