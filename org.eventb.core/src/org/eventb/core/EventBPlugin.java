@@ -39,6 +39,7 @@ import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.POGUtil;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
+import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.core.pom.POLoader;
 import org.eventb.internal.core.pom.RecalculateAutoStatus;
 import org.eventb.internal.core.preferences.AutoPostTacticManager;
@@ -48,6 +49,7 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.indexer.IPropagator;
 import org.rodinp.core.location.IAttributeLocation;
@@ -579,6 +581,39 @@ public class EventBPlugin extends Plugin {
 			boolean applyPostTactics, IProgressMonitor monitor)
 			throws CoreException {
 		return new ProofRebuilder(proof, applyPostTactics).perform(monitor);
+	}
+	
+	/**
+	 * Updates all given IPSStatus elements by re-running the current auto
+	 * prover on them.
+	 * 
+	 * @param statuses
+	 *            the IPSStatus elements to update
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the user
+	 * @throws RodinDBException
+	 * @since 3.0
+	 */
+	public static void recalculateAutoStatus(Set<IPSStatus> statuses,
+			IProgressMonitor monitor) throws RodinDBException {
+		RecalculateAutoStatus.run(statuses, monitor);
+	}
+	
+	/**
+	 * Runs the auto prover on the proof obligations associated to the given
+	 * proof statuses.
+	 * 
+	 * @param statuses
+	 *            the IPSStatus elements from which proof obligations are
+	 *            retrieved
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the user
+	 * @since 3.0
+	 */
+	public static void runAutoProver(Set<IPSStatus> statuses,
+			IProgressMonitor monitor) throws RodinDBException {
+		AutoProver.run(statuses.toArray(new IPSStatus[statuses.size()]),
+				monitor);
 	}
 
 	/**
