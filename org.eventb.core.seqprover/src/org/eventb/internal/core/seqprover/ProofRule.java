@@ -380,10 +380,8 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	private static IInternalProverSequent performHypActions(List<IHypAction> hypActions,IInternalProverSequent seq){
 		if (hypActions == null) return seq;
 		IInternalProverSequent result = seq;
-		for(IHypAction action : hypActions){
+		for (IHypAction action : hypActions) {
 			result = ((IInternalHypAction) action).perform(result);
-			if (result == null)
-				return null;
 		}
 		return result;
 	}
