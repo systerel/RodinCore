@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.ExplorerPlugin;
 
@@ -54,11 +53,12 @@ public abstract class ProofStatusJob extends WorkspaceJob {
 			final Set<IPSStatus> statuses = input.getStatuses(pendingOnly,
 					subMonitor.newChild(PRECOMPUTE_WORK));
 			perform(statuses, subMonitor.newChild(COMPUTE_WORK));
-		} catch (RodinDBException e) {
-			EventBUIExceptionHandler.handleRodinException(e,
-					UserAwareness.INFORM);
+		} catch (CoreException e) {
+			final String message = "An exception occurred while running " + getName();
+			EventBUIExceptionHandler.handleException(e, message,
+					UserAwareness.INFORM, "Proof Status Job: ");
 			return new Status(Status.ERROR, ExplorerPlugin.PLUGIN_ID,
-					"An exception occurred while running " + getName(), e);
+					message, e);
 		} catch (InterruptedException e) {
 			// set and propagate the interrupt status above
 			Thread.currentThread().interrupt();
@@ -71,6 +71,6 @@ public abstract class ProofStatusJob extends WorkspaceJob {
 	}
 
 	protected abstract void perform(Set<IPSStatus> statuses, SubMonitor monitor)
-			throws RodinDBException, InterruptedException;
+			throws CoreException, InterruptedException;
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -43,7 +44,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 	private static final String GOAL = "∀x⦂ℤ·∃y·x=y";
 
 	private static void assertDischargedClosed(IPSStatus status)
-			throws RodinDBException {
+			throws CoreException {
 		assertFalse(status.isBroken());
 		assertTrue(status.getConfidence() == IConfidence.DISCHARGED_MAX);
 		final IPRProof proof = status.getProof();
@@ -53,7 +54,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 	}
 
 	private static void assertNotDischargedNotClosed(IPSStatus status)
-			throws RodinDBException {
+			throws CoreException {
 		assertFalse(status.isBroken());
 		assertTrue(status.getConfidence() == IConfidence.PENDING);
 		final IPRProof proof = status.getProof();

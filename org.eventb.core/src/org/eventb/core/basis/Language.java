@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.core.basis;
 
 import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.ILanguage;
@@ -51,7 +52,7 @@ public class Language extends InternalElement implements ILanguage {
 
 	@Override
 	public FormulaFactory getFormulaFactory(IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		return getExtensionProviderRegistry().getFormulaFactory(this, monitor);
 	}
 

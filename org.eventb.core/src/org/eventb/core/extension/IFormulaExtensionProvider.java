@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.core.extension;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILanguage;
@@ -78,12 +79,12 @@ public interface IFormulaExtensionProvider {
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
 	 * @return the contained formula factory
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 *             if a problem occurs while deserializing
 	 * @since 3.0
 	 */
 	FormulaFactory loadFormulaFactory(ILanguage element,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Serializes the given formula factory into the given element. It is

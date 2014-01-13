@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.internal.core;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBPlugin;
@@ -98,10 +99,10 @@ public class ProofSkeletonBuilder {
 
 	 * @return the computed IProofTree, or null if the proof tree could not be
 	 *         rebuilt.
-	 * @throws RodinDBException
+	 * @throws CoreException 
 	 */
 	public static IProofTree buildProofTree(IPRProof pr, IProgressMonitor pm)
-			throws RodinDBException {
+			throws CoreException {
 		final SubMonitor sm = SubMonitor.convert(pm, 110);
 		final IProofComponent pc = getProofComponent(pr);
 		final FormulaFactory ff = pr.getFormulaFactory(sm.newChild(10));

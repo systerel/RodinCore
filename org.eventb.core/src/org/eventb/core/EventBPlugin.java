@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -47,7 +48,6 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.indexer.IPropagator;
 import org.rodinp.core.location.IAttributeLocation;
@@ -544,12 +544,12 @@ public class EventBPlugin extends Plugin {
 	 *            progress should be reported and that the operation cannot be
 	 *            cancelled.
 	 * @return <code>true</code> iff the proof has been successfully simplified
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 *             if there was a problem accessing the proof
 	 * @since 3.0
 	 */
 	public static boolean simplifyProof(IPRProof proof, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		return new ProofSimplifier(proof).perform(monitor);
 	}
 
@@ -569,13 +569,13 @@ public class EventBPlugin extends Plugin {
 	 *            progress should be reported and that the operation cannot be
 	 *            cancelled.
 	 * @return <code>true</code> iff the proof has been successfully rebuilt
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 *             if there was a problem accessing the proof
 	 * @since 2.0
 	 */
 	public static boolean rebuildProof(IPRProof proof,
 			boolean applyPostTactics, IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		return new ProofRebuilder(proof, applyPostTactics).perform(monitor);
 	}
 

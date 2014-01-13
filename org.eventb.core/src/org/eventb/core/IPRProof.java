@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofManager;
@@ -164,11 +165,11 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 *            is not desired
 	 * @return the proof tree, or <code>null</code> if the proof tree could not
 	 *         be rebuilt.
-	 * @throws RodinDBException
+	 * @throws CoreException
 	 *             if there was a problem accessing the Rodin database
 	 */
 	public IProofTree getProofTree(IProgressMonitor monitor)
-			throws RodinDBException;
+			throws CoreException;
 	
 	/**
 	 * Returns the formula factory of this proof. The returned factory can be
@@ -179,12 +180,12 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
 	 * @return the formula factory to use for parsing this proof
-	 * @throws RodinDBException
-	 *             if a problem occurs while reading the formula factory
+	 * @throws CoreException
+	 *             if a problem occurs while deserializing
 	 * @since 3.0
 	 */
 	FormulaFactory getFormulaFactory(IProgressMonitor monitor)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Returns the proof dependencies for proof tree stored in this proof

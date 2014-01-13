@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBPlugin;
@@ -56,10 +57,9 @@ import org.rodinp.core.RodinDBException;
 	 *            progress should be reported and that the operation cannot be
 	 *            cancelled.
 	 * @return <code>true</code> iff the proof was successfully modified
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the proof
+	 * @throws CoreException 
 	 */
-	public boolean perform(IProgressMonitor monitor) throws RodinDBException {
+	public boolean perform(IProgressMonitor monitor) throws CoreException {
 		if (!isValidProof()) {
 			return false;
 		}
@@ -120,7 +120,7 @@ import org.rodinp.core.RodinDBException;
 	}
 
 	private IProofSkeleton getPrSkel(IProofComponent pc,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		final SubMonitor sm = SubMonitor.convert(monitor, 100);
 		try {
 			final FormulaFactory factory;

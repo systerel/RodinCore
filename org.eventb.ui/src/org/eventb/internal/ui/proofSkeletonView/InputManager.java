@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -35,7 +36,6 @@ import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Nicolas Beauger
@@ -156,7 +156,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 				}
 				final String tooltip = proof.getElementName();
 				return new ProofTreeInput(prTree, tooltip);
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				return new ProofErrorInput(proof, e
 						.getLocalizedMessage());
 			}
@@ -296,7 +296,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		}
 	}
 
-	public static void printProofSkeleton(IPRProof proof) throws RodinDBException {
+	public static void printProofSkeleton(IPRProof proof) throws CoreException {
 		final FormulaFactory ff = proof.getFormulaFactory(null);
 		final IProofSkeleton skeleton = proof.getSkeleton(ff, null);
 		System.out.println("***********************************");

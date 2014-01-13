@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -260,7 +261,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 
 	@Override
 	public IProofTree getProofTree(IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		try {
 			return ProofSkeletonBuilder.buildProofTree(this, monitor);
 		} finally {
@@ -320,7 +321,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	 */
 	@Override
 	public FormulaFactory getFormulaFactory(IProgressMonitor monitor)
-			throws RodinDBException {
+			throws CoreException {
 		final ILanguage lang = getLanguage();
 		if (lang.exists()) {
 			return lang.getFormulaFactory(monitor);

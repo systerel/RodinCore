@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IInternalElement;
@@ -43,11 +44,11 @@ public interface ILanguage extends IInternalElement {
 	 *            a progress monitor, or <code>null</code> if progress reporting
 	 *            is not desired
 	 * @return the formula factory implementing this language
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the Rodin database
+	 * @throws CoreException
+	 *             if there was a problem while deserializing
 	 */
 	FormulaFactory getFormulaFactory(IProgressMonitor monitor)
-			throws RodinDBException;
+			throws CoreException;
 
 	/**
 	 * Stores a formula factory in this element.

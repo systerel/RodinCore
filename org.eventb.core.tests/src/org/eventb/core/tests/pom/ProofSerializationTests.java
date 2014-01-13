@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRRoot;
@@ -70,7 +71,7 @@ import org.rodinp.core.RodinDBException;
 public class ProofSerializationTests extends BuilderTest {
 	
 	private static void checkProofTreeSerialization(IPRProof proof,
-			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
+			IProofTree proofTree, boolean hasDeps) throws CoreException {
 
 		// Store the proof tree
 		proof.setProofTree(proofTree, null);
@@ -81,7 +82,7 @@ public class ProofSerializationTests extends BuilderTest {
 	}
 
 	private static void checkDeserialization(IPRProof proof,
-			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
+			IProofTree proofTree, boolean hasDeps) throws CoreException {
 		final FormulaFactory fac = proof.getFormulaFactory(null);
 		IProofSkeleton skel = proof.getSkeleton(fac, null);
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
@@ -121,7 +122,7 @@ public class ProofSerializationTests extends BuilderTest {
 	}
 
 	@Test
-	public final void test() throws RodinDBException{
+	public final void test() throws Exception{
 		IPRProof proof1 = prRoot.getProof("proof1");
 		proof1.create(null, null);
 
@@ -191,7 +192,7 @@ public class ProofSerializationTests extends BuilderTest {
 	 * serialized and deserialized.
 	 */
 	@Test
-	public final void testPartialInstantiation() throws RodinDBException {
+	public final void testPartialInstantiation() throws Exception {
 		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null,
 				null);
 
