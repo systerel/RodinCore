@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static org.junit.Assert.*;
 import static org.eventb.core.EventBAttributes.POSTAMP_ATTRIBUTE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.seqprover.IConfidence.DISCHARGED_MAX;
 import static org.eventb.core.seqprover.IConfidence.UNATTEMPTED;
-import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.core.tests.pom.POUtil.addPredicateSet;
 import static org.eventb.core.tests.pom.POUtil.addSequent;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 
@@ -285,25 +286,6 @@ public class ProofAttemptTests extends AbstractProofTests {
 		assertClosedBrokenManualProof(pc, PO1);
 	}
 
-	/**
-	 * Ensures that one cannot read the skeleton of a proof with a different
-	 * formula factory and that a proof attempt does not read it either.
-	 */
-	@Test
-	public void cannotReadSkeletonFactoryChanged() throws Exception {
-		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
-		dischargeTrueGoal(pa);
-		pa.commit(true, null);
-		pa.dispose();
-		
-		PrimeFormulaExtensionProvider.add(poRoot);
-		assertNull(pc.getProofSkeleton(PO1, EXT_FACTORY, null));
-
-		final IProofAttempt pa2 = pc.createProofAttempt(PO1, TEST, null);
-		assertSame(EXT_FACTORY , pa2.getFormulaFactory());
-		final IProofTree tree = pa2.getProofTree();
-		assertFalse(tree.proofAttempted());
-	}
 
 	private void createPOFile() throws RodinDBException {
 		poRoot = createPOFile("m");

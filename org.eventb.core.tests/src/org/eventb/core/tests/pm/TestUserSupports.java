@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPSRoot;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
@@ -711,4 +713,30 @@ public class TestUserSupports extends TestPM {
 		assertSame(DEFAULT, userSupport.getFormulaFactory());
 	}
 
+	/**
+	 * Ensures that one can read the skeleton of a proof with a different
+	 * formula factory.
+	 */
+	@Test
+	public void canReadProofTreeFactoryChanged() throws Exception {
+		userSupport.setInput(psRoot);
+		userSupport.loadProofStates();
+		final IProofState[] states = userSupport.getPOs();
+		final IPSStatus ps = states[0].getPSStatus();
+		userSupport.setCurrentPO(ps, null);
+		final IProofState state = userSupport.getCurrentPO();
+		final IProofTree ptBefore = state.getProofTree();
+		
+		assertSame(DEFAULT, ptBefore.getFormulaFactory());
+		assertTrue(ptBefore.isClosed());
+		
+		// unload and change factory
+		state.unloadProofTree();
+		PrimeFormulaExtensionProvider.add(poRoot);
+
+		state.loadProofTree(null);
+		final IProofTree ptAfter = state.getProofTree();
+		assertSame(EXT_FACTORY, ptAfter.getFormulaFactory());
+		assertTrue(ptAfter.isClosed());
+	}
 }
