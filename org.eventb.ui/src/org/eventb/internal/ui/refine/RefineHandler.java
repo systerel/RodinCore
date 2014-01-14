@@ -48,7 +48,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class RefineHandler extends AbstractHandler {
 
-	private static final class CreateRefinement implements IWorkspaceRunnable {
+	public static final class CreateRefinement implements IWorkspaceRunnable {
 
 		private final IInternalElement sourceRoot;
 		private final IInternalElement targetRoot;
@@ -123,7 +123,7 @@ public class RefineHandler extends AbstractHandler {
 	}
 
 	// Asks the user the name of the refined file to create and returns it.
-	private static IRodinFile askRefinementFileFor(IRodinFile abs,
+	public static IRodinFile askRefinementFileFor(IRodinFile abs,
 			Shell parentShell, RefinementUI refUI, String extension) {
 		final IRodinProject prj = abs.getRodinProject();
 		final InputDialog dialog = new InputDialog(parentShell, refUI.title,
