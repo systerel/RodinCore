@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,10 +117,7 @@ public interface IEventBSharedImages {
 	public static final String IMG_PARAMETER = "Parameter";
 	
 	public static final String IMG_ACTION = "Action";
-	
-	/**
-	 * @since 1.2
-	 */
+
 	public static final String IMG_SH_PROVER = "Search Hypotesis";
 	
 	/**
@@ -225,8 +222,5 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_ACTION_PATH = "icons/full/obj16/act_obj.gif";
 	
-	/**
-	 * @since 1.2
-	 */
 	public static final String IMG_SH_PROVER_PATH = "icons/full/ctool16/sh_prover.gif";
 }
