@@ -6,10 +6,10 @@
    <feature url="features/org.rodinp.platform_3.0.0.qualifier.jar" id="org.rodinp.platform" version="3.0.0.qualifier" os="linux,win32,macosx" ws="gtk,win32,cocoa" arch="x86,x86_64">
       <category name="rodin.dev"/>
    </feature>
-   <feature url="features/org.rodinp_1.6.1.qualifier.jar" id="org.rodinp" version="1.6.1.qualifier">
+   <feature url="features/org.rodinp_1.7.0.qualifier.jar" id="org.rodinp" version="1.7.0.qualifier">
       <category name="rodin.dev"/>
    </feature>
-   <feature url="features/fr.systerel.editor_0.6.5.qualifier.jar" id="fr.systerel.editor" version="0.6.5.qualifier">
+   <feature url="features/fr.systerel.editor_0.7.0.qualifier.jar" id="fr.systerel.editor" version="0.7.0.qualifier">
       <category name="rodin.dev"/>
    </feature>
    <feature url="features/org.rodinp.platform.sources_3.0.0.qualifier.jar" id="org.rodinp.platform.sources" version="3.0.0.qualifier" os="linux,win32,macosx" ws="gtk,win32,cocoa" arch="x86,x86_64">
