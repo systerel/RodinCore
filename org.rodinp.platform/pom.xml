@@ -34,7 +34,7 @@
 					<file>${basedir}/plugin.properties</file>
 					<regex>false</regex>
 					<token>@version@</token>
-					<value>${unqualifiedVersion}_${git-commit}</value>
+					<value>${unqualifiedVersion}${version-suffix}</value>
 				</configuration>
 			</plugin>
 		</plugins>

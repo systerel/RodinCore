@@ -64,7 +64,7 @@
                </execution>
          </executions>
          <configuration> 
-          <finalName>org.rodinp.dev-${unqualifiedVersion}_${git-commit}</finalName>
+          <finalName>org.rodinp.dev-${unqualifiedVersion}${version-suffix}</finalName>
           <!--  Create a zip file containing both metadata and artifact repositories  -->
           <createArtifactRepository>true</createArtifactRepository>
           <includeAllDependencies>true</includeAllDependencies>

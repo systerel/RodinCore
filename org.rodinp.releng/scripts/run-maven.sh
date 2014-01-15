@@ -16,7 +16,14 @@ MAIN_DIR=`readlink -m -n $SCRIPTS_DIR/../..`
 cd $MAIN_DIR
 
 GIT_COMMIT=`git log -1 --format='%h'`
-echo "Building Rodin with Maven for git commit: $GIT_COMMIT"
 
-mvn clean install -Dgit-commit=$GIT_COMMIT $@ # -DskipTests -fae|-fn
+case $1 in 
+    RC* ) RC=$1_
+	  shift ;;
+esac
+
+SUFFIX=$RC$GIT_COMMIT
+echo "Building Rodin $SUFFIX"
+
+mvn clean install -Dversion-suffix=$SUFFIX $@ # -DskipTests -fae|-fn
 git checkout -- $MAIN_DIR/org.rodinp.platform/plugin.properties
