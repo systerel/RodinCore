@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -326,7 +326,8 @@ public class TacticDescriptors {
 			super(id, name, description);
 			this.combinator = combinator;
 			this.combinatorId = combinatorId;
-			this.combinedDescs = combinedDescs;
+			// copy list to avoid self references in combined descriptors
+			this.combinedDescs = new ArrayList<ITacticDescriptor>(combinedDescs);
 			this.combined = new ArrayList<ITactic>(combinedDescs.size());
 		}
 
