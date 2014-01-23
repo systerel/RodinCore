@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.IDynamicTacticRef;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.CombinatorNode;
@@ -282,16 +283,16 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		simpleList.getList().removeAll();
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final String[] autoTacs = reg.getRegisteredIDs();
-		final ITacticDescriptor[] dynTactics = reg.getDynTactics();
+		final IDynamicTacticRef[] dynTacticRefs = reg.getDynTacticRefs();
 		final SimpleNode[] simpleNodes = new SimpleNode[autoTacs.length
-				+ dynTactics.length];
+				+ dynTacticRefs.length];
 		for (int i = 0; i < autoTacs.length; i++) {
 			final String tacticId = autoTacs[i];
 			final ITacticDescriptor desc = reg.getTacticDescriptor(tacticId);
 			simpleNodes[i] = new SimpleNode(desc);
 		}
-		for (int i = 0; i < dynTactics.length; i++) {
-			simpleNodes[autoTacs.length + i] = new SimpleNode(dynTactics[i]);
+		for (int i = 0; i < dynTacticRefs.length; i++) {
+			simpleNodes[autoTacs.length + i] = new SimpleNode(dynTacticRefs[i]);
 		}
 		simpleList.add(simpleNodes);
 	}

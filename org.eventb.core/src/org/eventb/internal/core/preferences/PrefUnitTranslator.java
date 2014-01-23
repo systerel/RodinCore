@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeT
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.getAttribute;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.setAttribute;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.COMBINED;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.DYNAMIC;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETER;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_REF;
@@ -39,6 +40,7 @@ import org.eventb.core.preferences.autotactics.IInjectLog;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.IDynamicTacticRef;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
@@ -138,6 +140,8 @@ public class PrefUnitTranslator implements
 			} else if (desc instanceof IParamTacticDescriptor) {
 				ParamTacticTranslator.getDefault().put(
 						(IParamTacticDescriptor) desc, doc, parent);
+			} else if (desc instanceof IDynamicTacticRef) {
+				DynamicTactic.getDefault().put(desc, doc, parent);
 			} else {
 				SimpleTactic.getDefault().put(desc, doc, parent);
 			}
@@ -162,6 +166,9 @@ public class PrefUnitTranslator implements
 		public ITacticDescriptor get(Node e, InjectLog log) {
 			if (hasName(e, SIMPLE)) {
 				return SimpleTactic.getDefault().get(e, log);
+			}
+			if (hasName(e, DYNAMIC)) {
+				return DynamicTactic.getDefault().get(e, log);
 			}
 			if (hasName(e, PARAMETERIZED)) {
 				return ParamTacticTranslator.getDefault().get(e, log);
@@ -218,6 +225,46 @@ public class PrefUnitTranslator implements
 		@Override
 		public ITacticDescriptor resolveReferences(ITacticDescriptor pref,
 				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
+			return pref;
+		}
+
+	}
+
+	private static class DynamicTactic implements
+			IInternalXMLSerializer<ITacticDescriptor> {
+
+		private DynamicTactic() {
+			// singleton
+		}
+
+		private static final DynamicTactic DEFAULT = new DynamicTactic();
+
+		public static DynamicTactic getDefault() {
+			return DEFAULT;
+		}
+
+		@Override
+		public void put(ITacticDescriptor desc, Document doc, Node parent) {
+			final Element dynamic = createElement(doc, DYNAMIC);
+			setAttribute(dynamic, TACTIC_ID, desc.getTacticID());
+
+			parent.appendChild(dynamic);
+		}
+
+		@Override
+		public ITacticDescriptor get(Node e, InjectLog log) {
+			assertName(e, DYNAMIC);
+			final IAutoTacticRegistry reg = SequentProver
+					.getAutoTacticRegistry();
+			final String tacticId = getAttribute(e, TACTIC_ID);
+			return reg.getDynTacticRef(tacticId);
+		}
+
+		@Override
+		public ITacticDescriptor resolveReferences(ITacticDescriptor pref,
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
+			// the reference to the dynamic tactic is not intended to be
+			// resolved at preference loading time: nothing to do
 			return pref;
 		}
 

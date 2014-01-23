@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,11 +157,32 @@ public interface IAutoTacticRegistry {
 	ICombinatorDescriptor getCombinatorDescriptor(String id);
 
 	/**
-	 * Returns all available dynamically provided tactics.
+	 * Returns references to the dynamic tactics provided at call time.
+	 * <p>
+	 * The returned references will construct the dynamic tactic instance when
+	 * {@link ITacticDescriptor#getTacticInstance()} is called, by fetching the
+	 * dynamic tactic with the given id at call time.
+	 * </p>
 	 * 
-	 * @return an array of tactic descriptors
+	 * @return the dynamic tactic references
 	 * @since 3.0
 	 */
-	ITacticDescriptor[] getDynTactics();
+	IDynamicTacticRef[] getDynTacticRefs();
+
+	/**
+	 * Returns a reference to the dynamic tactic with the given id if it exists
+	 * at call time, else a reference to a placeholder.
+	 * <p>
+	 * Even if the returned reference contains a placeholder, calling
+	 * {@link ITacticDescriptor#getTacticInstance()} later on will fetch in this
+	 * registry the dynamic tactic that is available at that moment.
+	 * </p>
+	 * 
+	 * @param id
+	 *            a dynamic tactic id
+	 * @return a dynamic tactic reference
+	 * @since 3.0
+	 */
+	IDynamicTacticRef getDynTacticRef(String id);
 
 }

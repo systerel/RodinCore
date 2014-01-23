@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,7 +274,7 @@ public class PreferenceUtils {
 	}
 
 	public static enum XMLElementTypes {
-		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_REF;
+		TACTIC_PREF, PREF_UNIT, SIMPLE, DYNAMIC, PARAMETERIZED, PARAMETER, COMBINED, PREF_REF;
 		@Override
 		public String toString() {
 			return super.toString().toLowerCase();

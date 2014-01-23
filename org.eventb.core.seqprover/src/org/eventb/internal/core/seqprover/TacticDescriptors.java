@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static org.eventb.internal.core.seqprover.AutoTacticRegistry.getTacticRegistry;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +20,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.IDynamicTacticRef;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterSetting;
@@ -144,6 +147,25 @@ public class TacticDescriptors {
 			return instance;
 		}
 
+	}
+	
+	/**
+	 * Loads the dynamic tactic from the registry upon tactic instance creation.
+	 */
+	public static class DynamicTacticRef extends AbstractTacticDescriptor
+			implements IDynamicTacticRef {
+
+		public DynamicTacticRef(ITacticDescriptor dynTactic) {
+			super(dynTactic.getTacticID(), dynTactic.getTacticName(), dynTactic
+					.getTacticDescription());
+		}
+
+		@Override
+		public ITactic getTacticInstance() {
+			final ITacticDescriptor dynTactic = getTacticRegistry()
+					.getDynTactic(getTacticID());
+			return dynTactic.getTacticInstance();
+		}
 	}
 
 	public static class ParameterizerDescriptor implements

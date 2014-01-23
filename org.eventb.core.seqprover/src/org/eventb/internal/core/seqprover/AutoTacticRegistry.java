@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IDynTacticProvider;
+import org.eventb.core.seqprover.IDynamicTacticRef;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITacticDescriptor;
@@ -38,6 +39,7 @@ import org.eventb.internal.core.seqprover.Placeholders.CombinatorDescriptorPlace
 import org.eventb.internal.core.seqprover.Placeholders.ParameterizerPlaceholder;
 import org.eventb.internal.core.seqprover.Placeholders.TacticPlaceholder;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.DynamicTacticRef;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.UninstantiableTacticDescriptor;
@@ -65,7 +67,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 
 	private static final String DYN_TACTIC_PROVIDERS_NAME = "dynTacticProvider";
 	
-	private static final IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
+	private static final AutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
 	private static final String[] NO_STRING = new String[0];
 	
@@ -87,7 +89,16 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		// Singleton implementation
 	}
 	
-	public static IAutoTacticRegistry getTacticRegistry() {
+	/**
+	 * Returns the singleton instance.
+	 * <p>
+	 * Note: returns the instance type instead of the interface in order to
+	 * provide non API methods to classes of this plug-in.
+	 * </p>
+	 * 
+	 * @return the auto tactic registry
+	 */
+	public static AutoTacticRegistry getTacticRegistry() {
 		return SINGLETON_INSTANCE;
 	}
 	
@@ -371,8 +382,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		}
 		return combinator;
 	}
-	
-	@Override
+
 	public ITacticDescriptor[] getDynTactics() {
 		final Collection<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
 		for (Entry<String, IDynTacticProvider> entry : dynTacticProviders.entrySet()) {
@@ -391,5 +401,39 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			}
 		}
 		return result.toArray(new ITacticDescriptor[result.size()]) ;
+	}
+
+	/**
+	 * Returns the dynamic tactic with the given id, or a placeholder if no
+	 * dynamic tactic with the given id is provided at call time.
+	 * 
+	 * @param id
+	 *            a dynamic tactic id
+	 * @return a tactic descriptor
+	 * @since 3.0
+	 */
+	public ITacticDescriptor getDynTactic(String id) {
+		for (final ITacticDescriptor desc : getDynTactics()) {
+			if (id.equals(desc.getTacticID())) {
+				return desc;
+			}
+		}
+		return new TacticPlaceholder(id);
+	}
+	
+	@Override
+	public IDynamicTacticRef[] getDynTacticRefs() {
+		final ITacticDescriptor[] dynTactics = getDynTactics();
+		final IDynamicTacticRef[] dynTacticRefs = new IDynamicTacticRef[dynTactics.length];
+		for (int i = 0; i < dynTactics.length; i++) {
+			dynTacticRefs[i] = new DynamicTacticRef(dynTactics[i]);
+		}
+		return dynTacticRefs;
+	}
+	
+	@Override
+	public IDynamicTacticRef getDynTacticRef(String id) {
+		final ITacticDescriptor dynTactic = getDynTactic(id);
+		return new DynamicTacticRef(dynTactic);
 	}
 }
