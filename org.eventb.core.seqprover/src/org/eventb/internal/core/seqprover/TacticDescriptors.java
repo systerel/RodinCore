@@ -297,6 +297,14 @@ public class TacticDescriptors {
 		public ICombinedTacticDescriptor combine(
 				List<ITacticDescriptor> tactics, String id)
 				throws IllegalArgumentException {
+			return combine(tactics, id, descriptor.getTacticName(),
+					descriptor.getTacticDescription());
+		}
+
+		@Override
+		public ICombinedTacticDescriptor combine(
+				List<ITacticDescriptor> tactics, String id, String name,
+				String description) {
 			if (combinator == null) {
 				combinator = loadInstance(element, ITacticCombinator.class,
 						descriptor.getTacticID());
@@ -309,9 +317,8 @@ public class TacticDescriptors {
 								+ (isArityBound ? " exactly, " : " or more, ")
 								+ "but was " + size);
 			}
-			return new CombinedTacticDescriptor(id, descriptor.getTacticName(),
-					descriptor.getTacticDescription(), combinator,
-					descriptor.getTacticID(), tactics);
+			return new CombinedTacticDescriptor(id, name, description,
+					combinator, descriptor.getTacticID(), tactics);
 		}
 
 		private boolean checkCombinedArity(int size) {

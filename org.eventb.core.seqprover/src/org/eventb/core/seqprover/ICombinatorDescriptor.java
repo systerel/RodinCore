@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,30 @@ public interface ICombinatorDescriptor {
 	 */
 	ICombinedTacticDescriptor combine(List<ITacticDescriptor> tactics, String id)
 			throws IllegalArgumentException;
+
+	/**
+	 * Returns a descriptor of the tactic combining given tactics.
+	 * 
+	 * @param tactics
+	 *            a list of tactic descriptors
+	 * @param id
+	 *            the id of the resulting tactic
+	 * @param name
+	 *            the name of the resulting tactic
+	 * @param description
+	 *            the description of the resulting tactic
+	 * @return the combined tactic
+	 * @throws IllegalArgumentException
+	 *             if the size of the given list is not valid regarding
+	 *             specified arity
+	 * @throws IllegalStateException
+	 *             in case there is a problem instantiating the tactic (the
+	 *             class given in the extension point cannot be loaded or does
+	 *             not implement the right interface)
+	 * @since 3.0
+	 */
+	ICombinedTacticDescriptor combine(List<ITacticDescriptor> tactics,
+			String id, String name, String description);
 
 	/**
 	 * Returns the minimum arity of this combinator. This is the minimum

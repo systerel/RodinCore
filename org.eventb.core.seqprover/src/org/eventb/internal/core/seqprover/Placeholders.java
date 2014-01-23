@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,10 +237,10 @@ public class Placeholders {
 	private static class CombinedTacticDescriptorPlaceholder extends
 			CombinedTacticDescriptor {
 
-		public CombinedTacticDescriptorPlaceholder(String id,
-				String combinatorId, List<ITacticDescriptor> combined) {
-			super(id, makePlaceholderId(id), TACTIC_PLACEHOLDER, null,
-					combinatorId, combined);
+		public CombinedTacticDescriptorPlaceholder(String id, String name,
+				String description, String combinatorId,
+				List<ITacticDescriptor> combined) {
+			super(id, name, description, null, combinatorId, combined);
 		}
 
 		@Override
@@ -275,8 +275,16 @@ public class Placeholders {
 		public ICombinedTacticDescriptor combine(
 				List<ITacticDescriptor> tactics, String id)
 				throws IllegalArgumentException {
-			return new CombinedTacticDescriptorPlaceholder(id,
-					tacticPlaceholder.getTacticID(), tactics);
+			return combine(tactics, id, makePlaceholderId(id),
+					TACTIC_PLACEHOLDER);
+		}
+
+		@Override
+		public ICombinedTacticDescriptor combine(
+				List<ITacticDescriptor> tactics, String id, String name,
+				String description) {
+			return new CombinedTacticDescriptorPlaceholder(id, name,
+					description, tacticPlaceholder.getTacticID(), tactics);
 		}
 
 		@Override
