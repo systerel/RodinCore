@@ -16,14 +16,19 @@
 
 	<repositories>
 		<repository>
-			<id>indigo</id>
+			<id>juno-3.8</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/indigo</url>
+			<url>http://download.eclipse.org/eclipse/updates/3.8/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
 			<layout>p2</layout>
 			<url>http://handbook.event-b.org/updatesite</url>
+		</repository>
+		<repository>
+			<id>emf</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/modeling/emf/emf/updates/releases/</url>
 		</repository>
 	</repositories>
 
