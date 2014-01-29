@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,19 +44,19 @@ public abstract class ProofInformationItem {
 			return new ProofInfoIdentItem(element);
 		}
 		if (element instanceof IPredicateElement) {
-			return new ProofInfoPredicateItem(element);
+			return new ProofInfoPredicateItem((IPredicateElement) element);
 		}
 		if (element instanceof IExpressionElement) {
-			return new ProofInfoExpressionItem(element);
+			return new ProofInfoExpressionItem((IExpressionElement) element);
 		}
 		if (element instanceof IAssignmentElement) {
-			return new ProofInfoAssignmentItem(element);
+			return new ProofInfoAssignmentItem((IAssignmentElement) element);
 		}
 		if (element instanceof IRefinesEvent) {
-			return new ProofInfoRefinesEventItem(element);
+			return new ProofInfoRefinesEventItem((IRefinesEvent) element);
 		}
 		if (element instanceof ILabeledElement) {
-			return new ProofInfoLabeledItem(element);			
+			return new ProofInfoMaybeLabeledElement(element);			
 		}
 		return null;
 	}
@@ -89,7 +89,7 @@ public abstract class ProofInformationItem {
 
 	public static class ProofInfoRefinesEventItem extends ProofInfoIdentItem {
 
-		public ProofInfoRefinesEventItem(IRodinElement element) {
+		public ProofInfoRefinesEventItem(IRefinesEvent element) {
 			super(element);
 		}
 
@@ -101,26 +101,32 @@ public abstract class ProofInformationItem {
 
 	}
 
-	public static class ProofInfoLabeledItem extends ProofInformationItem {
+	public static class ProofInfoMaybeLabeledElement extends ProofInformationItem {
 
 		protected String label;
 		protected String separatedText;
 		protected final String SEPARATOR = ": ";
 
-		public ProofInfoLabeledItem(IRodinElement element) {
+		public ProofInfoMaybeLabeledElement(IRodinElement element) {
 			super(element);
 			try {
 				this.label = getLabelText(element);
-				this.separatedText = getSeparatedText();
 			} catch (RodinDBException e) {
 				this.label = N_A;
 			}
+			this.separatedText = getSeparatedText();
 		}
 
-		public String getLabelText(IRodinElement element)
+		public final String getLabelText(IRodinElement element)
 				throws RodinDBException {
-			final ILabeledElement labeledElt = (ILabeledElement) element;
-			return makeHyperlink(id, labeledElt.getLabel());
+			final String elementLabel;
+			if (element instanceof ILabeledElement) {
+				elementLabel = ((ILabeledElement) element).getLabel();
+			} else {
+				// happens for variants
+				return null;
+			}
+			return makeHyperlink(id, elementLabel);
 		}
 
 		public String getSeparatedText() {
@@ -129,18 +135,20 @@ public abstract class ProofInformationItem {
 
 		@Override
 		public String getInfoText() {
+			if (label == null) {
+				return makeHyperlink(id, getSeparatedText());
+			}
 			return label + SEPARATOR + getSeparatedText();
 		}
 
 	}
 
-	public static class ProofInfoPredicateItem extends ProofInfoLabeledItem {
+	public static class ProofInfoPredicateItem extends ProofInfoMaybeLabeledElement {
 
-		public ProofInfoPredicateItem(IRodinElement element) {
+		public ProofInfoPredicateItem(IPredicateElement element) {
 			super(element);
 			try {
-				separatedText = UIUtils.XMLWrapUp(((IPredicateElement) element)
-						.getPredicateString());
+				separatedText = UIUtils.XMLWrapUp(element.getPredicateString());
 			} catch (RodinDBException e) {
 				separatedText = N_A;
 			}
@@ -153,14 +161,13 @@ public abstract class ProofInformationItem {
 
 	}
 
-	public static class ProofInfoExpressionItem extends ProofInfoLabeledItem {
+	public static class ProofInfoExpressionItem extends ProofInfoMaybeLabeledElement {
 
-		public ProofInfoExpressionItem(IRodinElement element) {
+		public ProofInfoExpressionItem(IExpressionElement element) {
 			super(element);
 			try {
 				separatedText = UIUtils
-						.XMLWrapUp(((IExpressionElement) element)
-								.getExpressionString());
+						.XMLWrapUp(element.getExpressionString());
 			} catch (RodinDBException e) {
 				separatedText = N_A;
 			}
@@ -173,14 +180,13 @@ public abstract class ProofInformationItem {
 
 	}
 
-	public static class ProofInfoAssignmentItem extends ProofInfoLabeledItem {
+	public static class ProofInfoAssignmentItem extends ProofInfoMaybeLabeledElement {
 
-		public ProofInfoAssignmentItem(IRodinElement element) {
+		public ProofInfoAssignmentItem(IAssignmentElement element) {
 			super(element);
 			try {
 				separatedText = UIUtils
-						.XMLWrapUp(((IAssignmentElement) element)
-								.getAssignmentString());
+						.XMLWrapUp(element.getAssignmentString());
 			} catch (RodinDBException e) {
 				separatedText = N_A;
 			}
