@@ -39,6 +39,7 @@
 				<configuration>
 					<formats>
 						<linux>tar.gz</linux>
+						<macosx>tar.gz</macosx>
 						<win32>zip</win32>
 					</formats>
 					<products>
