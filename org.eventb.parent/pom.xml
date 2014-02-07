@@ -57,12 +57,6 @@
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.7</version>
 				</plugin>
-				<!-- Define the version of the maven-replacer-plugin -->
-				<plugin>
-				  <groupId>com.google.code.maven-replacer-plugin</groupId>
-				  <artifactId>replacer</artifactId>
-				  <version>1.5.2</version>
-				</plugin>
 				<!-- Deactivate the Maven resource plug-in -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
