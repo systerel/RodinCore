@@ -3,57 +3,58 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-   <!-- #################################################### -->
-   <!-- This is the Event-B Maven-Tycho build aggregator POM -->
-   <!-- It acts as a global aggregator to avoid the creation -->
-   <!-- of intermediary aggregator POM files                 -->
-   <!-- #################################################### -->
+	<!-- #################################################### -->
+	<!-- This is the Event-B Maven-Tycho build aggregator POM -->
+	<!-- It acts as a global aggregator to avoid the creation -->
+	<!-- of intermediary aggregator POM files -->
+	<!-- #################################################### -->
 	<groupId>org.eventb</groupId>
-	<artifactId>eventb.aggregator</artifactId>
+	<artifactId>root</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-	   <!-- Parts which should be built ##################### -->
-	   <!-- before building the repository                    -->
-      <module>org.eventb.parent</module>
-	   <module>org.rodinp.core</module>
-      <module>org.rodinp.core.emf</module>
-      <module>org.rodinp.keyboard.core</module>
-      <module>org.rodinp.keyboard.ui</module>
-      <module>org.rodinp</module>
-      <module>org.rodinp-feature</module>
- 
-      <module>org.eventb.core.ast</module>
-      <module>org.eventb.core.seqprover</module>
-      <module>org.eventb.core</module>
-      <module>org.eventb.pp</module>
-      <module>org.eventb.pp.ui</module>
-      <module>org.eventb.pptrans</module>
- 
-      <module>org.eventb.keyboard</module>
-      <module>ch.ethz.eventb.keyboard.latex</module>
-      <module>fr.systerel.explorer</module>
-      <module>org.eventb.doc.user</module>
- 
-      <module>org.eventb.ui</module>
-      <module>org.eventb.ui.symboltable</module>
-      <module>org.eventb.ide</module>
-      <module>org.eventb.ide-feature</module>
- 
-      <module>fr.systerel.editor</module>
-      <module>fr.systerel.editor.help</module>
-      <module>fr.systerel.editor-feature</module>
- 
-      <module>org.rodinp.platform</module>
-      <module>org.rodinp.platform-feature</module>
-      <!-- #################################################### -->  
-		<!-- PRODUCT & P2 REPOSITORY BUILDS (at once) ########### -->
-	   <module>org.rodinp.platform.repository</module>   
-	   <!-- #################################################### -->
+		<!-- #################################################### -->
+		<!-- RODIN PRODUCT BUILD -->
+		<!-- #################################################### -->
+		<module>org.eventb.parent</module>
+		<module>org.rodinp.core</module>
+		<module>org.rodinp.core.emf</module>
+		<module>org.rodinp.keyboard.core</module>
+		<module>org.rodinp.keyboard.ui</module>
+		<module>org.rodinp</module>
+		<module>org.rodinp-feature</module>
 
-        <!-- Tests that should be built ######################### -->
-		<!-- Non UI tests -->
+		<module>org.eventb.core.ast</module>
+		<module>org.eventb.core.seqprover</module>
+		<module>org.eventb.core</module>
+		<module>org.eventb.pp</module>
+		<module>org.eventb.pp.ui</module>
+		<module>org.eventb.pptrans</module>
+
+		<module>org.eventb.keyboard</module>
+		<module>ch.ethz.eventb.keyboard.latex</module>
+		<module>fr.systerel.explorer</module>
+		<module>org.eventb.doc.user</module>
+
+		<module>org.eventb.ui</module>
+		<module>org.eventb.ui.symboltable</module>
+		<module>org.eventb.ide</module>
+		<module>org.eventb.ide-feature</module>
+
+		<module>fr.systerel.editor</module>
+		<module>fr.systerel.editor.help</module>
+		<module>fr.systerel.editor-feature</module>
+
+		<module>org.rodinp.platform</module>
+		<module>org.rodinp.platform-feature</module>
+
+		<module>org.rodinp.platform.repository</module>
+
+		<!-- #################################################### -->
+		<!-- TEST PLUG-INS -->
+		<!-- #################################################### -->
+		<!-- Core tests -->
 		<module>org.rodinp.core.tests</module>
 		<module>org.rodinp.core.emf.tests</module>
 		<module>org.eventb.core.tests</module>
@@ -61,7 +62,8 @@
 		<module>org.eventb.core.seqprover.tests</module>
 		<module>org.eventb.pp.tests</module>
 		<module>org.eventb.pptrans.tests</module>
-		<!-- UI related tests -->
+
+		<!-- UI tests -->
 		<module>fr.systerel.editor.tests</module>
 		<module>fr.systerel.explorer.tests</module>
 		<module>org.rodinp.keyboard.core.tests</module>
@@ -69,12 +71,13 @@
 		<module>org.eventb.keyboard.tests</module>
 		<module>org.eventb.ui.symboltable.tests</module>
 		<module>org.eventb.ui.tests</module>
-      <!-- #################################################### -->
-      <!-- DEV PLATFORM BUILD ################################# -->
+
+		<!-- #################################################### -->
+		<!-- TARGET PLATFORM FOR OTHER PLUG-IN DEVELOPMENT -->
+		<!-- #################################################### -->
 		<module>org.rodinp.platform.sources-feature</module>
 		<module>org.rodinp.platform.tests-feature</module>
 		<module>org.rodinp.dev</module>
-		<!-- #################################################### -->
 	</modules>
 
 </project>
