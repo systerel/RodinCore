@@ -123,8 +123,6 @@
                      <arch>x86_64</arch>
                   </environment>
                </environments>
-               <!-- Enable POM defined dependencies resolution -->
-               <pomDependencies>consider</pomDependencies>
             </configuration>
          </plugin>
 		</plugins>
