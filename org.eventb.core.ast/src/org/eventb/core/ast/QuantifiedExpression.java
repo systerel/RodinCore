@@ -444,8 +444,7 @@ public class QuantifiedExpression extends Expression {
 			}
 			// Fall through
 		case Implicit:
-			if (expr.getSyntacticallyFreeIdentifiers().length == 0) {
-				// Expression is closed
+			if (isValidImplicitExpr()) {
 				return Form.Implicit;
 			}
 			// Fall through
@@ -455,6 +454,26 @@ public class QuantifiedExpression extends Expression {
 		return Form.Explicit;
 	}
 	
+	/*
+	 * Tells whether the expression is valid for implicit form, that is it
+	 * contains no free identifiers, all locally bound identifiers and no
+	 * externally bound identifier.
+	 * 
+	 * Strictly speaking, we should also check that the bound identifiers occur
+	 * in decreasing order, but this would be too much time consuming. So, we
+	 * accept expressions that would give a different order of bound identifiers
+	 * when unparsed then parsed back.
+	 */
+	private boolean isValidImplicitExpr() {
+		if (expr.getSyntacticallyFreeIdentifiers().length != 0) {
+			return false;
+		}
+
+		final BoundIdentifier[] bids = expr.getBoundIdentifiers();
+		return bids.length == quantifiedIdentifiers.length
+				&& bids[bids.length - 1].getBoundIndex() == bids.length - 1;
+	}
+
 	/**
 	 * Returns the form of this expression. This form corresponds to the way the
 	 * expression was initially parsed. It doesn't have any impact on the

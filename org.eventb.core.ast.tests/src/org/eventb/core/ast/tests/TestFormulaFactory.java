@@ -37,8 +37,10 @@ import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -88,6 +90,7 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final BoundIdentDecl dT = mBoundIdentDecl("t'", POW(tT));
 
 	private static final BoundIdentifier b0 = mBoundIdentifier(0);
+	private static final BoundIdentifier b1 = mBoundIdentifier(1);
 
 	private static final Expression eS = mEmptySet(POW(tS));
 	private static final Expression eT = mEmptySet(POW(tT));
@@ -963,7 +966,7 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test
 	public void quantifiedExpression_LambdaToImplicit() {
 		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
-				mList(dS), P, eS, null, Lambda);
+				mList(dS), P, b0, null, Lambda);
 		assertEquals(Implicit, expr.getForm());
 	}
 
@@ -983,9 +986,31 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test
-	public void quantifiedExpression_LambdaToExplicit() {
+	public void quantifiedExpression_LambdaToExplicit_FreeIdentInExpr() {
 		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
 				mList(dS), P, iS, null, Lambda);
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	@Test
+	public void quantifiedExpression_ImplicitToExplicit_NoBoundIdentInExpr() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, mIntegerLiteral(), null, Implicit);
+		parseExpression(expr.toString());
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	@Test
+	public void quantifiedExpression_ImplicitToExplicit_NotAllBoundIdentsInExpr() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS, dT), P, b0, null, Implicit);
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	@Test
+	public void quantifiedExpression_ImplicitToExplicit_OuterBoundIdentsInExpr() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, mMaplet(b1, b0), null, Implicit);
 		assertEquals(Explicit, expr.getForm());
 	}
 

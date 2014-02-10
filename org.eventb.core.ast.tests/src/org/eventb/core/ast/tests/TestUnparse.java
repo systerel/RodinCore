@@ -22,6 +22,7 @@ import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FCOMP;
@@ -91,8 +92,6 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.tests.Common.TagSupply;
 import org.junit.Ignore;
 import org.junit.Test;
-
-
 
 /**
  * This class tests the unparser, which is the toString method. It is supposed
@@ -1847,6 +1846,27 @@ public class TestUnparse extends AbstractTests {
 						)
 				)
 		);
+
+		// Implicit formulas with bound identifier not in expression
+		routineTestStringExpression(
+				"{x,y·y=y ∣ x}",
+				mQuantifiedExpression(CSET, Implicit, mList(bd_x, bd_y),
+						ff.makeRelationalPredicate(EQUAL, b0, b0,
+								null), b1)
+		);
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ x}",
+				mQuantifiedExpression(CSET, Implicit,
+						mList(bd_x, bd_y), btrue, b1
+				)
+		);
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ y}",
+				mQuantifiedExpression(CSET, Implicit,
+						mList(bd_x, bd_y), btrue, b0
+				)
+		);
+
 		routineTestStringExpression(
 				"{x·⊤ ∣ ⋃y·⊤ ∣ x}",
 				mQuantifiedExpression(CSET, Explicit,
