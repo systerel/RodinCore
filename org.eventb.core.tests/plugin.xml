@@ -14,11 +14,6 @@
             name="Reasoner V2">
       </reasoner>
       <reasoner
-            class="org.eventb.core.tests.pom.PSUpdateTests$Signature"
-            id="signature"
-            name="Signature Reasoner">
-      </reasoner>
-      <reasoner
             class="org.eventb.core.tests.pom.ContextDependentReasoner"
             contextDependent="true"
             id="contextDependentReasoner"
