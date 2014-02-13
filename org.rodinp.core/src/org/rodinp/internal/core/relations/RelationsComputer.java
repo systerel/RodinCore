@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,16 @@ public class RelationsComputer {
 
 	private final Set<InternalElementType<?>> elemTypes;
 	private final Set<AttributeType<?>> attrTypes;
+	private final Set<InternalElementType<?>> ubiqElemTypes;
+	private final Set<AttributeType<?>> ubiqAttrTypes;
 
 	public RelationsComputer() {
 		elemRels = new ElementTypeRelations();
 		attrRels = new AttributeTypeRelations();
 		elemTypes = new LinkedHashSet<InternalElementType<?>>();
 		attrTypes = new LinkedHashSet<AttributeType<?>>();
+		ubiqElemTypes = new LinkedHashSet<InternalElementType<?>>();
+		ubiqAttrTypes = new LinkedHashSet<AttributeType<?>>();
 	}
 
 	/**
@@ -55,16 +59,19 @@ public class RelationsComputer {
 	 */
 	public void setRelations(List<ItemRelation> relations) {
 		for (ItemRelation rel : relations) {
-			final InternalElementType<?> parentType = rel.getParentType();
-			final List<InternalElementType<?>> childTypes = rel
-					.getChildTypes();
-			elemRels.putAll(parentType, childTypes);
-			elemTypes.add(parentType);
+			final List<InternalElementType<?>> childTypes = rel.getChildTypes();
+			final List<AttributeType<?>> relAttrTypes = rel.getAttributeTypes();
+			if (rel instanceof UbiquitousRelation) {
+				ubiqElemTypes.addAll(childTypes);
+				ubiqAttrTypes.addAll(rel.getAttributeTypes());
+			} else {
+				final InternalElementType<?> parentType = rel.getParentType();
+				elemRels.putAll(parentType, childTypes);
+				elemTypes.add(parentType);
+				attrRels.putAll(parentType, relAttrTypes);
+			}
 			elemTypes.addAll(childTypes);
-			final List<AttributeType<?>> attributeTypes = rel
-					.getAttributeTypes();
-			attrRels.putAll(parentType, attributeTypes);
-			attrTypes.addAll(attributeTypes);
+			attrTypes.addAll(relAttrTypes);
 		}
 		setElementRelations();
 		setAttributeRelations();
@@ -94,6 +101,14 @@ public class RelationsComputer {
 	// For testing purposes
 	public Set<AttributeType<?>> getAttributeTypes() {
 		return unmodifiableSet(attrTypes);
+	}
+
+	public Set<InternalElementType<?>> getUbiquitousElementTypes() {
+		return unmodifiableSet(ubiqElemTypes);
+	}
+
+	public Set<AttributeType<?>> getUbiquitousAttributeTypes() {
+		return unmodifiableSet(ubiqAttrTypes);
 	}
 
 }
