@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 
 

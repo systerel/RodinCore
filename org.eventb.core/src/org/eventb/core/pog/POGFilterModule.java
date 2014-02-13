@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
-import org.eventb.internal.core.tool.types.IFilterModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
+import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IProcessorModule;
 
 /**
  * Default implementation of a proof obligation generator filter module. 

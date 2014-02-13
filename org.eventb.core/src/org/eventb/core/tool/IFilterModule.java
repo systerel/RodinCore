@@ -8,33 +8,31 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.tool.types;
+package org.eventb.core.tool;
 
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.sc.ISCProcessorModule;
+import org.eventb.core.pog.IPOGFilterModule;
+import org.eventb.core.sc.ISCFilterModule;
 
 
 /**
- * Basic type for processor modules. A processor module is one of the two
- * kinds of modules ({@link IModule}) used by a core tool.
+ * Basic type for filter modules. A filter module is one of the two kinds of
+ * modules ({@link IModule}) used by a core tool.
  * <p>
- * Processor modules are intended to process a list of elements. 
+ * Filter modules are intended to evaluate a boolean condition on some element.
  * It is implemented by the static checker and the proof obligation generator.
- * </p>
- * <p>
- * A processor module may have filter and processor child modules.
- * The filter child nodes are executed before the processor child modules.
  * </p>
  * 
  * @see IModule
- * @see ISCProcessorModule
- * @see IPOGProcessorModule
+ * @see ISCFilterModule
+ * @see IPOGFilterModule
  * 
  * @author Stefan Hallerstede
- *
+ * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Extend a provided implementation class instead.
  */
-public interface IProcessorModule extends IModule {
+public interface IFilterModule extends IModule {
 
-	// basic type for processor modules 
-
+	// basic type for filter modules 
+	
 }

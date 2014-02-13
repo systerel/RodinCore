@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import java.util.Map;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.sc.modules.ContextModule;
 import org.eventb.internal.core.sc.modules.MachineModule;
 import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
@@ -29,8 +31,6 @@ import org.eventb.internal.core.tool.ModuleDesc;
 import org.eventb.internal.core.tool.ModuleFactory;
 import org.eventb.internal.core.tool.ModuleManager;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
-import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
 

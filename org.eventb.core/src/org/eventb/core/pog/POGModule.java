@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
+import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.Module;
-import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * This is the base class of all proof obligation generator modules.

@@ -15,10 +15,10 @@ import java.util.List;
 
 import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.ISCProcessorModule;
+import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
-import org.eventb.internal.core.tool.types.IFilterModule;
-import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede

@@ -18,7 +18,7 @@ import org.eventb.core.pog.IPOGFilterModule;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.sc.ISCFilterModule;
 import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.core.tool.IModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

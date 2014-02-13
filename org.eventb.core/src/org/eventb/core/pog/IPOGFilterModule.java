@@ -13,8 +13,8 @@ package org.eventb.core.pog;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.tool.types.IFilterModule;
-import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IModule;
 
 /**
  * The filter modules of the proof obligation generator can stop certain proof

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.tool.IFilterModule;
+import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
-import org.eventb.internal.core.tool.types.IFilterModule;
-import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IInternalElementType;
 
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ package org.eventb.internal.core.tool;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IProcessorModule;
+import org.eventb.core.tool.IModule;
+import org.eventb.core.tool.IProcessorModule;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
