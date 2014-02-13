@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.rodinp.internal.core.AttributeTypes;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
+import org.rodinp.internal.core.relations.ElementParser.UbiquitousParser;
 import org.rodinp.internal.core.relations.LegacyItemParsers.LegacyAttributeRelationParser;
 import org.rodinp.internal.core.relations.LegacyItemParsers.LegacyChildRelationParser;
 
@@ -62,8 +63,10 @@ public class ItemRelationParser {
 	 *         <code>false</code> otherwise
 	 */
 	public boolean parse(IConfigurationElement[] elems) {
-		final RelationshipParser parser = new RelationshipParser(this);
-		final ElementListParser listParser = new ElementListParser(this, parser);
+		final RelationshipParser relParser = new RelationshipParser(this);
+		final UbiquitousParser ubiqParser = new UbiquitousParser(this);
+		final ElementListParser listParser = new ElementListParser(this,
+				relParser, ubiqParser);
 		try {
 			listParser.parse(elems);
 		} catch (InvalidRegistryObjectException e) {
