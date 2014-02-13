@@ -31,7 +31,7 @@
                <type>p2-installable-unit</type>
                <groupId>org.eclipse.tycho</groupId>
                <artifactId>org.eclipse.platform.feature.group</artifactId>
-               <version>3.7</version>
+               <version>3.8</version>
             </dependency>
           </dependencies>
         </configuration>
