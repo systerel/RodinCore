@@ -8,6 +8,22 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/internal/ui/eventbeditor/EventBEditor.java" type="org.eventb.internal.ui.eventbeditor.EventBEditor">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="ElementChangedEvent"/>
+                <message_argument value="EventBEditor&lt;R&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/internal/ui/eventbeditor/elementdesc/NullAttributeDesc.java" type="org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="NullAttributeDesc"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/ui/searchhypothesis/SearchBox.java" type="org.eventb.internal.ui.searchhypothesis.SearchBox">
         <filter comment="Exception to the @noextend rule" id="571473929">
             <message_arguments>
