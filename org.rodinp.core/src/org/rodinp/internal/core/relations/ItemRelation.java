@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.rodinp.internal.core.InternalElementType;
 public class ItemRelation {
 
 	private final InternalElementType<?> parentType;
-	private final List<InternalElementType<?>> childTypes;
-	private final List<AttributeType<?>> attributeTypes;
+	protected final List<InternalElementType<?>> childTypes;
+	protected final List<AttributeType<?>> attributeTypes;
 
 	public ItemRelation(InternalElementType<?> parentType) {
 		this.parentType = parentType;
@@ -54,36 +54,57 @@ public class ItemRelation {
 	
 	public boolean isValid() {
 		return parentType != null
-				&& (!(childTypes.isEmpty()) || !(attributeTypes.isEmpty()));
+				&& (!childTypes.isEmpty() || !attributeTypes.isEmpty());
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 17;
-		result = prime * result + parentType.hashCode();
-		result = prime * result + childTypes.hashCode();
+		int result = 1;
 		result = prime * result + attributeTypes.hashCode();
+		result = prime * result + childTypes.hashCode();
+		result = prime * result
+				+ ((parentType == null) ? 0 : parentType.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj.getClass() != ItemRelation.class)
+		}
+		if (obj == null) {
 			return false;
-		final ItemRelation other = ((ItemRelation) obj);
-		return this.parentType.equals(other.parentType)
-				&& this.childTypes.equals(other.childTypes)
-				&& this.attributeTypes.equals(other.attributeTypes);
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		ItemRelation other = (ItemRelation) obj;
+		if (!attributeTypes.equals(other.attributeTypes)) {
+			return false;
+		}
+		if (!childTypes.equals(other.childTypes)) {
+			return false;
+		}
+		if (parentType == null) {
+			if (other.parentType != null) {
+				return false;
+			}
+		} else if (!parentType.equals(other.parentType)) {
+			return false;
+		}
+		return true;
+	}
+
+	protected void appendHeader(StringBuilder sb) {
+		sb.append("Relation : ");
+		sb.append(parentType);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("Relation : ");
-		sb.append(parentType);
+		appendHeader(sb);
 		sb.append("\n");
 		for (IInternalElementType<?> child : childTypes) {
 			final String childId = child.getId();

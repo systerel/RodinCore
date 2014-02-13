@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public abstract class ElementParser {
 	// The name of a configuration element is the same as the XML tag of the
 	// corresponding XML element.
 	private static final String RELATION_ELEMENT_NAME = "relationship";
+	private static final String UBIQ_ELEMENT_NAME = "ubiquitous";
 	private static final String CHILD_ELEMENT_NAME = "childType";
 	private static final String ATTRIBUTE_ELEMENT_NAME = "attributeType";
 
@@ -55,6 +56,38 @@ public abstract class ElementParser {
 				return;
 			}
 			final ItemRelation relation = new ItemRelation(parentType);
+			final ElementListParser childrenParser = new ElementListParser(
+					parent, //
+					new ChildTypeParser(parent, relation),
+					new AttributeTypeParser(parent, relation));
+			childrenParser.parse(element.getChildren());
+			if (relation.isValid()) {
+				parent.addRelation(relation);
+			}
+		}
+
+	}
+	
+	public static class UbiquitousParser extends ElementParser {
+
+		public UbiquitousParser(ItemRelationParser parent) {
+			super(parent, UBIQ_ELEMENT_NAME, null);
+		}
+
+		@Override
+		public void parse(IConfigurationElement element) {
+			assert elementName.equals(element.getName());
+			process(element);
+		}
+
+		@Override
+		protected void process(IConfigurationElement element,
+				String parentTypeId) {
+			// not relevant here
+		}
+
+		protected void process(IConfigurationElement element) {
+			final UbiquitousRelation relation = new UbiquitousRelation();
 			final ElementListParser childrenParser = new ElementListParser(
 					parent, //
 					new ChildTypeParser(parent, relation),
