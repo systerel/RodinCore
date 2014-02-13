@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,10 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.tool.types;
+package org.eventb.core.tool;
 
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.sc.state.ISCState;
-import org.eventb.core.tool.IStateRepository;
-import org.eventb.core.tool.IStateType;
 
 /**
  * Common protocol for states store in a state repository ({@link IStateRepository}).
@@ -37,6 +35,7 @@ import org.eventb.core.tool.IStateType;
  * @see IPOGState
  * 
  * @author Stefan Hallerstede
+ * @since 3.0
  *
  */
 public interface IState {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eventb.internal.core.tool.state;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eventb.core.tool.IState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.BasicDescWithClass;
-import org.eventb.internal.core.tool.types.IState;
 import org.osgi.framework.Bundle;
 
 /**

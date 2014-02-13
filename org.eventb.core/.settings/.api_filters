@@ -48,6 +48,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/core/tool/IStateRepository.java" type="org.eventb.core.tool.IStateRepository">
+        <filter comment="Method always existed, interface has just been moved" id="1211105284">
+            <message_arguments>
+                <message_argument value="getState(IStateType&lt;? extends I&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method always existed, interface has just been moved" id="1211105284">
+            <message_arguments>
+                <message_argument value="setState(I)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/core/preferences/ITacticDescriptorRef.java" type="org.eventb.internal.core.preferences.ITacticDescriptorRef">
         <filter comment="required to reference tactic descriptors seemlessly" id="571473929">
             <message_arguments>

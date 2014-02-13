@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.tool.IState;
 import org.eventb.core.tool.IStateRepository;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.Util;
-import org.eventb.internal.core.tool.types.IState;
 
 /**
  * @author Stefan Hallerstede

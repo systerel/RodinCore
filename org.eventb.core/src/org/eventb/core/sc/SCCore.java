@@ -12,10 +12,10 @@ package org.eventb.core.sc;
 
 import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IState;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.SCModuleManager;
 import org.eventb.internal.core.tool.state.SCStateTypeManager;
-import org.eventb.internal.core.tool.types.IState;
 
 /**
  * @author Stefan Hallerstede

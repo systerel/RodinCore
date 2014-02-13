@@ -37,7 +37,6 @@ Export-Package: org.eventb.core,
  org.eventb.internal.core.tool;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.graph;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.state;x-friends:="org.eventb.core.tests",
- org.eventb.internal.core.tool.types;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.upgrade;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-ExtensibleAPI: true
