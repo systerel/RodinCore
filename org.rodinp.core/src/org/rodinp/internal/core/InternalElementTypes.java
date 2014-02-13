@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.rodinp.internal.core;
 
 import static org.rodinp.internal.core.ElementTypeManager.debug;
 import static org.rodinp.internal.core.ElementTypeManager.getSortedIds;
+
+import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
@@ -31,6 +34,8 @@ public class InternalElementTypes extends
 
 	// Local id of the internalElementTypes extension point of this plug-in
 	protected static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
+	
+	private Set<InternalElementType<?>> ubiquitousElementTypes;
 
 	public InternalElementTypes(ElementTypeManager elementTypeManager) {
 		super(INTERNAL_ELEMENT_TYPES_ID, elementTypeManager);
@@ -59,6 +64,19 @@ public class InternalElementTypes extends
 		for (final InternalElementType<?> type : map.values()) {
 			type.finalizeRelations();
 		}
+	}
+	
+	public void setUbiquitousElementTypes(
+			Set<InternalElementType<?>> ubiquitousElementTypes) {
+		this.ubiquitousElementTypes = ubiquitousElementTypes;
+	}
+
+	public boolean isUbiquitous(InternalElementType<?> elementType) {
+		return ubiquitousElementTypes.contains(elementType);
+	}
+
+	public Collection<? extends InternalElementType<?>> getUbiquitousElementTypes() {
+		return ubiquitousElementTypes;
 	}
 
 }

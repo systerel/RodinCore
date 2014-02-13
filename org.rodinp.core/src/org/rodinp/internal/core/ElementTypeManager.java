@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.rodinp.internal.core;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -203,4 +204,20 @@ public class ElementTypeManager {
 		return typeRegistry.getRodinFileType();
 	}
 	
+	public boolean isUbiquitous(InternalElementType<?> type) {
+		return internalElementTypes.isUbiquitous(type);
+	}
+	
+	public boolean isUbiquitous(AttributeType<?> type) {
+		return attributeTypes.isUbiquitous(type);
+	}
+
+	public Collection<? extends InternalElementType<?>> getUbiquitousElementTypes() {
+		return internalElementTypes.getUbiquitousElementTypes();
+	}
+
+	public Collection<? extends AttributeType<?>> getUbiquitousAttributeTypes() {
+		return attributeTypes.getUbiquitousAttributeTypes();
+	}
+
 }

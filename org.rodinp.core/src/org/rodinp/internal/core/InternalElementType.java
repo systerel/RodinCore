@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,9 @@ public class InternalElementType<T extends IInternalElement> extends
 
 	@Override
 	public boolean canParent(IInternalElementType<?> childType) {
-		return childTypes.contains(childType);
+		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
+		return typeManager.isUbiquitous((InternalElementType<?>) childType)
+				|| childTypes.contains(childType);
 	}
 
 	@Override
@@ -160,19 +162,24 @@ public class InternalElementType<T extends IInternalElement> extends
 
 	@Override
 	public InternalElementType<?>[] getParentTypes() {
+		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
+		if (typeManager.isUbiquitous(this)) {
+			return typeManager.getAllElementTypes();
+		}
 		return parentTypes.toArray(new InternalElementType<?>[parentTypes
 				.size()]);
 	}
 
 	@Override
 	public AttributeType<?>[] getAttributeTypes() {
-		return attributeTypes
-				.toArray(new AttributeType[attributeTypes.size()]);
+		return attributeTypes.toArray(new AttributeType[attributeTypes.size()]);
 	}
 
 	@Override
 	public boolean canCarry(IAttributeType attributeType) {
-		return attributeTypes.contains(attributeType);
+		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
+		return typeManager.isUbiquitous((AttributeType<?>) attributeType)
+				|| attributeTypes.contains(attributeType);
 	}
 
 	public void setRelation(List<InternalElementType<?>> pTypes,
