@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,11 @@ package org.eventb.core;
 import static org.eventb.core.EventBPlugin.PLUGIN_ID;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pog.IPOGFilterModule;
+import org.eventb.core.pog.IPOGProcessorModule;
+import org.eventb.core.sc.ISCFilterModule;
+import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.internal.core.tool.types.IModule;
-import org.eventb.internal.core.tool.types.IPOGFilterModule;
-import org.eventb.internal.core.tool.types.IPOGProcessorModule;
-import org.eventb.internal.core.tool.types.ISCFilterModule;
-import org.eventb.internal.core.tool.types.ISCProcessorModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
