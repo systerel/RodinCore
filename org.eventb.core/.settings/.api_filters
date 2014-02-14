@@ -12,6 +12,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/core/pog/POGModule.java" type="org.eventb.core.pog.POGModule">
+        <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
+            <message_arguments>
+                <message_argument value="Module"/>
+                <message_argument value="POGModule"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/core/pog/POGProcessorModule.java" type="org.eventb.core.pog.POGProcessorModule">
         <filter comment="Method always existed, interface has just been moved" id="1143996420">
             <message_arguments>
@@ -33,6 +41,14 @@
         <filter comment="Method always existed, interface has just been moved" id="1143996420">
             <message_arguments>
                 <message_argument value="getProcessorModules()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/sc/SCModule.java" type="org.eventb.core.sc.SCModule">
+        <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
+            <message_arguments>
+                <message_argument value="Module"/>
+                <message_argument value="SCModule"/>
             </message_arguments>
         </filter>
     </resource>
