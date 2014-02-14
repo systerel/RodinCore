@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.rodinp.internal.keyboard.ui;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,8 +18,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.rodinp.internal.keyboard.ui.translators.IRodinKeyboardTranslator;
-import org.rodinp.internal.keyboard.ui.translators.RodinKeyboardMathTranslator;
-import org.rodinp.internal.keyboard.ui.translators.RodinKeyboardTextTranslator;
+import org.rodinp.internal.keyboard.ui.translators.LegacyRodinKeyboardTranslator.LegacyMathTranslator;
+import org.rodinp.internal.keyboard.ui.translators.LegacyRodinKeyboardTranslator.LegacyTextTranslator;
 
 /**
  * @author htson
@@ -77,8 +76,8 @@ public class RodinModifyListener implements ModifyListener {
 			return;
 		else {
 			translators = new ArrayList<IRodinKeyboardTranslator>();
-			translators.add(new RodinKeyboardMathTranslator());
-			translators.add(new RodinKeyboardTextTranslator());
+			translators.add(new LegacyMathTranslator());
+			translators.add(new LegacyTextTranslator());
 		}
 	}
 

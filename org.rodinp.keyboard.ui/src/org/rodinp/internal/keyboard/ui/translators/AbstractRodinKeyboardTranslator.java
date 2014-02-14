@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,14 +66,21 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 		}
 	}
 	
-	private void translate(AbstractWidgetWrapper widget) {
+	protected void translate(AbstractWidgetWrapper widget) {
 		final String text = widget.getText();
 		final int beginIndex = 0;
 		final int endIndex = text.length();
 		translate(widget, beginIndex, endIndex);
 	}
-	
-	private void translate(AbstractWidgetWrapper widget, int beginIndex,
+
+	/**
+	 * FIXME 
+	 * WARNING THIS IMPLEMENTATION DOES NOT WORK AT ALL
+	 * 
+	 * THIS IMPLEMENTATION IS OVERRIDDEN BY THE LEGACY CODE
+	 * @see LegacyRodinKeyboardTranslator
+	 */
+	protected void translate(AbstractWidgetWrapper widget, int beginIndex,
 			int subStringEndIndex) {
 		if (debug) {
 			debug("***************************************");
