@@ -26,11 +26,10 @@
           </includes>
           <dependencies>
             <dependency>
-               <!-- Be sure to have org.eclipse.core.filesystem platform dependent fragment in test target -->
-               <type>p2-installable-unit</type>
-               <groupId>org.eclipse.tycho</groupId>
-               <artifactId>org.eclipse.platform.feature.group</artifactId>
-               <version>3.8</version>
+              <!-- Add Eclipse feature for platform-specific fragments -->
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.platform</artifactId>
+              <version>0.0.0</version>
             </dependency>
           </dependencies>
         </configuration>
