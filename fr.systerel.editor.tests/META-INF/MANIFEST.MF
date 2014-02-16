@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Rodin Editor Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: fr.systerel.editor.tests
 Bundle-Version: 0.7.0.qualifier
-Bundle-Vendor: Systerel
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  fr.systerel.editor,
@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin

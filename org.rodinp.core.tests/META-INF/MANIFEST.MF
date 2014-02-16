@@ -12,3 +12,4 @@ Export-Package: org.rodinp.core.tests,
  org.rodinp.core.tests.basis,
  org.rodinp.core.tests.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Localization: plugin

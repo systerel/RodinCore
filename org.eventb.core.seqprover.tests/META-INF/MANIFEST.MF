@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Event-B Sequent Prover Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core.seqprover.tests; singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: ETH Zurich
+Bundle-Vendor: %providerName
 Require-Bundle: org.eventb.core.ast.tests,
  org.eventb.core.seqprover,
  org.eclipse.core.runtime,
@@ -14,3 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
  org.eventb.core.seqprover.rewriterTests,
  org.eventb.core.seqprover.tests
+Bundle-Localization: plugin

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Test Event-B Core Plug-in
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core.tests;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: Rodin
+Bundle-Vendor: %providerName
 Require-Bundle: org.eventb.core,
  org.eclipse.core.runtime,
  org.eventb.core.seqprover,
@@ -15,3 +15,4 @@ Require-Bundle: org.eventb.core,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.tests
+Bundle-Localization: plugin
