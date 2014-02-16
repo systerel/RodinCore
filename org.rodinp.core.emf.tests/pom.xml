@@ -24,6 +24,14 @@
           <includes>
             <include>**/*.java</include>
           </includes>
+          <dependencies>
+            <dependency>
+              <!-- Add Eclipse Platform to load host-specific fragments -->
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.platform</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
         </configuration>
       </plugin>
     </plugins>

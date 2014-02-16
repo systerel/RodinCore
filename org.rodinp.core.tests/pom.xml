@@ -25,23 +25,14 @@
 					<includes>
 						<include>**/AllTests.java</include>
 					</includes>
-					<testRuntime>p2Installed</testRuntime>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<configuration>
-					<dependency-resolution>
-						<extraRequirements>
-							<!-- add dependency to product IU under test -->
-							<requirement>
-								<type>p2-installable-unit</type>
-								<id>org.rodinp.platform.product</id>
-								<versionRange>[3.0,3.1)</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
+					<dependencies>
+						<dependency>
+							<!-- Add Eclipse feature for platform-specific fragments -->
+							<type>eclipse-feature</type>
+							<artifactId>org.eclipse.platform</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>
