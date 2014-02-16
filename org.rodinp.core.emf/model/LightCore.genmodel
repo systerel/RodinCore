@@ -89,9 +89,6 @@
       <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.5">
         <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.5/type"/>
       </genOperations>
-      <genOperations ecoreOperation="api.ecore#//ILElement/setAttribute">
-        <genParameters ecoreParameter="api.ecore#//ILElement/setAttribute/value"/>
-      </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getElement"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/delete"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/moveChild">
@@ -103,10 +100,6 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/getChildrenOfType/type"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getElementType"/>
-      <genOperations ecoreOperation="api.ecore#//ILElement/createChild">
-        <genParameters ecoreParameter="api.ecore#//ILElement/createChild/type"/>
-        <genParameters ecoreParameter="api.ecore#//ILElement/createChild/nextSibling"/>
-      </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getParent"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getRoot"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getChildPosition">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,15 +106,6 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t\t: null;\nif (new_value != null && !new_value.equals(old_value)) {\n\tif (attribute == null) {\n\t\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\t\tattribute.setEOwner(this);\n\t\tattribute.setType(type);\n\t}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);\n}\nattribute.getEOwner().eNotify(\n\t\tnew ENotificationImpl((InternalEObject) attribute,\n\t\t\t\tNotification.SET, LightcorePackage.ATTRIBUTE__ENTRY,\n\t\t\t\told_value, new_value));'"
-	 * @generated
-	 */
-	void setAttribute(IAttributeValue value);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.IInternalElement"
 	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return (IInternalElement) getERodinElement();'"
 	 * @generated
@@ -162,15 +153,6 @@ public interface ILElement {
 	 * @generated
 	 */
 	IInternalElementType<? extends IInternalElement> getElementType();
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model required="true" typeDataType="org.rodinp.core.emf.api.itf.IInternalElementType<?>" typeRequired="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\taddElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;'"
-	 * @generated
-	 */
-	ILElement createChild(IInternalElementType<?> type, ILElement nextSibling);
 
 	/**
 	 * <!-- begin-user-doc -->

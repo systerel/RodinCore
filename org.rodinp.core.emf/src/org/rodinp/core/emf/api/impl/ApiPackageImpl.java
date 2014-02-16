@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -444,11 +444,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEParameter(op, this.getIAttributeType_String(), "type", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
 
-		op = addEOperation(ilElementEClass, null, "setAttribute", 0, 1,
-				IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIAttributeValue(), "value", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
-
 		addEOperation(ilElementEClass, this.getIInternalElement(),
 				"getElement", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -484,15 +479,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		g3 = createEGenericType(this.getIInternalElement());
 		g2.setEUpperBound(g3);
 		initEOperation(op, g1);
-
-		op = addEOperation(ilElementEClass, this.getILElement(), "createChild",
-				1, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getIInternalElementType());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "type", 1, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getILElement(), "nextSibling", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
 
 		addEOperation(ilElementEClass, this.getILElement(), "getParent", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
@@ -608,44 +594,32 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] {
 						"body",
 						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (String) attribute.getValue();" });
-		addAnnotation(
-				ilElementEClass.getEOperations().get(8),
-				source,
-				new String[] {
-						"body",
-						"final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t\t: null;\nif (new_value != null && !new_value.equals(old_value)) {\n\tif (attribute == null) {\n\t\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\t\tattribute.setEOwner(this);\n\t\tattribute.setType(type);\n\t}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);\n}\nattribute.getEOwner().eNotify(\n\t\tnew ENotificationImpl((InternalEObject) attribute,\n\t\t\t\tNotification.SET, LightcorePackage.ATTRIBUTE__ENTRY,\n\t\t\t\told_value, new_value));" });
-		addAnnotation(ilElementEClass.getEOperations().get(9), source,
+		addAnnotation(ilElementEClass.getEOperations().get(8), source,
 				new String[] { "body",
 						"return (IInternalElement) getERodinElement();" });
-		addAnnotation(ilElementEClass.getEOperations().get(10), source,
+		addAnnotation(ilElementEClass.getEOperations().get(9), source,
 				new String[] { "body", "EcoreUtil.delete(this, true);" });
 		addAnnotation(
-				ilElementEClass.getEOperations().get(11),
+				ilElementEClass.getEOperations().get(10),
 				source,
 				new String[] {
 						"body",
 						"final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);" });
 		addAnnotation(
-				ilElementEClass.getEOperations().get(13),
+				ilElementEClass.getEOperations().get(12),
 				source,
 				new String[] {
 						"body",
 						"final List<ILElement> list = new <%java.util.ArrayList%><ILElement>();\nfor (ILElement child : getChildren()) {\n\tif (child.getElement().getElementType() == type) {\n\t\tlist.add(child);\n\t}\n}\nreturn list;" });
 		addAnnotation(
-				ilElementEClass.getEOperations().get(14),
+				ilElementEClass.getEOperations().get(13),
 				source,
 				new String[] { "body", "return getElement().getElementType();" });
-		addAnnotation(
-				ilElementEClass.getEOperations().get(15),
-				source,
-				new String[] {
-						"body",
-						"final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\taddElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;" });
-		addAnnotation(ilElementEClass.getEOperations().get(16), source,
+		addAnnotation(ilElementEClass.getEOperations().get(14), source,
 				new String[] { "body", "return getEParent();" });
-		addAnnotation(ilElementEClass.getEOperations().get(17), source,
+		addAnnotation(ilElementEClass.getEOperations().get(15), source,
 				new String[] { "body", "return getERoot();" });
-		addAnnotation(ilElementEClass.getEOperations().get(18), source,
+		addAnnotation(ilElementEClass.getEOperations().get(16), source,
 				new String[] { "body",
 						"return getEChildren().indexOf(element);\n" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,

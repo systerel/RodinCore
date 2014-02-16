@@ -58,12 +58,6 @@
       </eAnnotations>
       <eParameters name="type" eType="#//IAttributeType_String"/>
     </eOperations>
-    <eOperations name="setAttribute">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final IAttributeType type = value.getType();&#xA;Attribute attribute = getEAttributes().get(type.getId());&#xA;final Object new_value = value.getValue();&#xA;final Object old_value = (attribute != null) ? attribute.getValue()&#xA;&#x9;&#x9;: null;&#xA;if (new_value != null &amp;&amp; !new_value.equals(old_value)) {&#xA;&#x9;if (attribute == null) {&#xA;&#x9;&#x9;attribute = LightcoreFactory.eINSTANCE.createAttribute();&#xA;&#x9;&#x9;attribute.setEOwner(this);&#xA;&#x9;&#x9;attribute.setType(type);&#xA;&#x9;}&#xA;attribute.setValue(value.getValue());&#xA;getEAttributes().put(type.getId(), attribute);&#xA;}&#xA;attribute.getEOwner().eNotify(&#xA;&#x9;&#x9;new ENotificationImpl((InternalEObject) attribute,&#xA;&#x9;&#x9;&#x9;&#x9;Notification.SET, LightcorePackage.ATTRIBUTE__ENTRY,&#xA;&#x9;&#x9;&#x9;&#x9;old_value, new_value));"/>
-      </eAnnotations>
-      <eParameters name="value" eType="#//IAttributeValue"/>
-    </eOperations>
     <eOperations name="getElement" eType="#//IInternalElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="return (IInternalElement) getERodinElement();"/>
@@ -104,17 +98,6 @@
           <eUpperBound eClassifier="#//IInternalElement"/>
         </eTypeArguments>
       </eGenericType>
-    </eOperations>
-    <eOperations name="createChild" lowerBound="1" eType="#//ILElement">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final IInternalElement internalNextSibling = (nextSibling == null) ? null&#xA;&#x9;&#x9;: nextSibling.getElement();&#xA;try {&#xA;&#x9;final IInternalElement child = getElement().createChild(type,&#xA;&#x9;&#x9;&#x9;internalNextSibling, null);&#xA;&#x9;final InternalElement loaded = SynchroManager&#xA;&#x9;&#x9;&#x9;.loadInternalElementFor(child, eRoot);&#xA;&#x9;addElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));&#xA;&#x9;return loaded;&#xA;} catch (RodinDBException e) {&#xA;&#x9;e.printStackTrace();&#xA;}&#xA;return null;"/>
-      </eAnnotations>
-      <eParameters name="type" lowerBound="1">
-        <eGenericType eClassifier="#//IInternalElementType">
-          <eTypeArguments/>
-        </eGenericType>
-      </eParameters>
-      <eParameters name="nextSibling" eType="#//ILElement"/>
     </eOperations>
     <eOperations name="getParent" eType="#//ILElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

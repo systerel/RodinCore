@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,14 +32,10 @@ import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
-import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
-import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
@@ -464,32 +460,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setAttribute(IAttributeValue value) {
-		final IAttributeType type = value.getType();
-		Attribute attribute = getEAttributes().get(type.getId());
-		final Object new_value = value.getValue();
-		final Object old_value = (attribute != null) ? attribute.getValue()
-				: null;
-		if (new_value != null && !new_value.equals(old_value)) {
-			if (attribute == null) {
-				attribute = LightcoreFactory.eINSTANCE.createAttribute();
-				attribute.setEOwner(this);
-				attribute.setType(type);
-			}
-		attribute.setValue(value.getValue());
-		getEAttributes().put(type.getId(), attribute);
-		}
-		attribute.getEOwner().eNotify(
-				new ENotificationImpl((InternalEObject) attribute,
-						Notification.SET, LightcorePackage.ATTRIBUTE__ENTRY,
-						old_value, new_value));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public IInternalElement getElement() {
 		return (IInternalElement) getERodinElement();
 	}
@@ -546,28 +516,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 */
 	public IInternalElementType<? extends IInternalElement> getElementType() {
 		return getElement().getElementType();
-	}
-
-	
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ILElement createChild(IInternalElementType<?> type, ILElement nextSibling) {
-		final IInternalElement internalNextSibling = (nextSibling == null) ? null
-				: nextSibling.getElement();
-		try {
-			final IInternalElement child = getElement().createChild(type,
-					internalNextSibling, null);
-			final InternalElement loaded = SynchroManager
-					.loadInternalElementFor(child, eRoot);
-			addElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));
-			return loaded;
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
