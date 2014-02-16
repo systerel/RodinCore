@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -98,7 +97,7 @@ public class TestEventBVersion_005_M extends EventBVersionTest {
 		assertFalse("guards should not be theorems", guard.isTheorem());
 	}
 
-	private void runTest(String contents) throws CoreException,
+	private void runTest(String contents) throws Exception,
 			RodinDBException {
 		String name = "mch.bum";
 		createFile(name, contents);

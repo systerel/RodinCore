@@ -43,10 +43,11 @@ public abstract class EventBVersionTest extends BuilderTest {
 		return objs[0];
 	}
 
-	protected void createFile(String fileName, String contents) throws CoreException {
+	protected void createFile(String fileName, String contents) throws Exception {
 		IProject project = rodinProject.getProject();
 		IFile file = project.getFile(fileName);
-		InputStream ios = new ByteArrayInputStream(contents.getBytes());
+		final byte[] bytes = contents.getBytes("utf-8");
+		InputStream ios = new ByteArrayInputStream(bytes);
 		file.create(ios, true, null);
 	}
 

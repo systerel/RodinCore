@@ -12,7 +12,6 @@ package org.eventb.core.tests.versions;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.junit.Test;
@@ -65,7 +64,7 @@ public class TestEventBVersion_003_C extends EventBVersionTest {
 		
 	}
 
-	private void runTest(String contents) throws CoreException,
+	private void runTest(String contents) throws Exception,
 			RodinDBException {
 		String name = "ctx.buc";
 		createFile(name, contents);
