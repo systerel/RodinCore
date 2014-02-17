@@ -15,20 +15,48 @@
   
   <packaging>eclipse-test-plugin</packaging>
 
+  <properties>
+    <os-jvm-flags/> <!-- No specific flag by default -->
+  </properties>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
         <configuration>
+          <useUIHarness>true</useUIHarness>
+          <useUIThread>true</useUIThread>
+          <argLine>${os-jvm-flags}</argLine>
           <includes>
             <include>**/*.java</include>
           </includes>
-          <useUIHarness>true</useUIHarness>
-          <useUIThread>true</useUIThread>
+          <dependencies>
+            <dependency>
+              <!-- Add Eclipse feature for views and commands -->
+              <type>eclipse-feature</type>
+              <artifactId>org.eclipse.platform</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+          </dependencies>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>macosx</id>
+      <activation>
+        <os>
+          <name>Mac OS X</name>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>
