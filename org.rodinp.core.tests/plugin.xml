@@ -120,6 +120,11 @@
             class="org.rodinp.core.tests.builder.basis.Reference"
             id="reference"
             name="Reference to other machine"/>
+      <internalElementType
+            class="org.rodinp.core.tests.basis.UbiquitousElement"
+            id="ubiqElem"
+            name="Ubiquitous Element Type">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -190,6 +195,11 @@
             id="testAttributeType"
             kind="string"
             name="Test Attribute Type"/>
+      <attributeType
+            id="ubiqAttr"
+            kind="string"
+            name="Ubiquitous attribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -736,6 +746,23 @@
         <childType
               typeId="org.rodinp.core.tests.namedElement2">
         </childType>
+     </relationship>
+     <ubiquitous>
+        <childType
+              typeId="org.rodinp.core.tests.ubiqElem">
+        </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.ubiqAttr">
+        </attributeType>
+     </ubiquitous>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.ubiqElem">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement">
+        </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.versionStrAttr">
+        </attributeType>
      </relationship>
   </extension>
   <extension

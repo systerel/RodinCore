@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_SIBLING;
 import static org.rodinp.core.IRodinDBStatusConstants.READ_ONLY;
+import static org.rodinp.core.tests.version.db.VersionAttributes.StringAttr;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -30,6 +31,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IParent;
@@ -46,8 +48,12 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.basis.RodinTestRoot2;
+import org.rodinp.core.tests.basis.UbiquitousElement;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
+
+	private static final org.rodinp.core.IAttributeType.String UBIQUITOUS_ATTR_TYPE = RodinCore
+			.getStringAttrType(PLUGIN_ID + ".ubiqAttr");
 
 	public TestInternalManipulation() {
 		super(PLUGIN_ID + ".TestInternalManipulation");
@@ -559,6 +565,96 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 			assertEquals(Arrays.asList(elements), //
 					Arrays.asList(status.getElements()));
 		}
+	}
+
+	/**
+	 * Ensures that no exception is thrown when creating a ubiquitous child.
+	 */
+	@Test
+	public void testAddUbiquitousChild() throws Exception {
+		final NamedElement ne = createNEPositive(root, "ne", null);
+		final UbiquitousElement ubiqElem = ne.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		assertTrue(ubiqElem.getElementType().isUbiquitous());
+	}
+	
+	/**
+	 * Ensures that no exception is thrown when setting a ubiquitous attribute.
+	 */
+	@Test
+	public void testAddUbiquitousAttribute() throws Exception {
+		final NamedElement ne = createNEPositive(root, "ne", null);
+		// check no exception is thrown:
+		ne.setAttributeValue(UBIQUITOUS_ATTR_TYPE, "ubiq", null);
+		assertTrue(UBIQUITOUS_ATTR_TYPE.isUbiquitous());
+	}
+
+	/**
+	 * Ensures that element type API methods return expected values when
+	 * handling ubiquitous items.
+	 */
+	@Test
+	public void testAPIGettersForUbiquitous() throws Exception {
+		final NamedElement ne = createNEPositive(root, "ne", null);
+		final IInternalElementType<?> neElemType = ne.getElementType();
+		assertTrue(neElemType.canParent(UbiquitousElement.ELEMENT_TYPE));
+		assertEquals(0, UbiquitousElement.ELEMENT_TYPE.getParentTypes().length);
+		assertFalse(Arrays.asList(
+				UbiquitousElement.ELEMENT_TYPE.getChildTypes()).contains(
+				UbiquitousElement.ELEMENT_TYPE));
+		assertFalse(Arrays.asList(
+				UbiquitousElement.ELEMENT_TYPE.getAttributeTypes()).contains(
+				UBIQUITOUS_ATTR_TYPE));
+		assertTrue(neElemType.canCarry(UBIQUITOUS_ATTR_TYPE));
+		assertEquals(0, UBIQUITOUS_ATTR_TYPE.getElementTypes().length);
+		assertTrue(UBIQUITOUS_ATTR_TYPE.isAttributeOf(neElemType));
+	}
+
+	/**
+	 * Ensures that no exception is thrown when creating child of an ubiquitous
+	 * element (i.e. also checks that an ubiquitous element can parent a named
+	 * element).
+	 */
+	@Test
+	public void testAddChildToUbiquitous() throws Exception {
+		final UbiquitousElement ubiqElem = root.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		createNEPositive(ubiqElem, "ne", null);
+	}
+
+	/**
+	 * Ensures that no exception is thrown when creating child of an ubiquitous
+	 * element (i.e. also checks that an ubiquitous element can parent a named
+	 * element).
+	 */
+	@Test
+	public void testAddAttributeToUbiquitous() throws Exception {
+		final UbiquitousElement ubiqElem = root.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		ubiqElem.setAttributeValue(StringAttr, "V", null);
+		assertTrue(ubiqElem.hasAttribute(StringAttr));
+		assertEquals("V", ubiqElem.getAttributeValue(StringAttr));
+	}
+
+	@Test
+	public void testAddUbiquitousChildToUbiquitous() throws Exception {
+		final UbiquitousElement ubiqElem = root.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		final UbiquitousElement ubiqChild = ubiqElem.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		assertExists("Could not create ubiquitous child in ubiquitous parent",
+				ubiqChild);
+		assertEquals(ubiqElem, ubiqChild.getParent());
+	}
+	
+
+	@Test
+	public void testAddUbiquitousAttributeToUbiquitous() throws Exception {
+		final UbiquitousElement ubiqElem = root.createChild(
+				UbiquitousElement.ELEMENT_TYPE, null, null);
+		ubiqElem.setAttributeValue(UBIQUITOUS_ATTR_TYPE, "U", null);
+		assertTrue(ubiqElem.hasAttribute(UBIQUITOUS_ATTR_TYPE));
+		assertEquals("U", ubiqElem.getAttributeValue(UBIQUITOUS_ATTR_TYPE));
 	}
 	
 }
