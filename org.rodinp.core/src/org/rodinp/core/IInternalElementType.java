@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,5 +91,16 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 * @since 1.7
 	 */
 	boolean canCarry(IAttributeType attributeType);
+
+	/**
+	 * Returns whether this element type is ubiquitous.
+	 * <p>
+	 * Ubiquitous element types can have any parent type.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if ubiquitous, <code>false</code> otherwise
+	 * @since 1.7
+	 */
+	boolean isUbiquitous();
 
 }

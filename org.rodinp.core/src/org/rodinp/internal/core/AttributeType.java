@@ -353,11 +353,13 @@ public abstract class AttributeType<V> implements IAttributeType,
 	}
 
 	@Override
-	public InternalElementType<?>[] getElementTypes() {
+	public boolean isUbiquitous() {
 		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
-		if (typeManager.isUbiquitous(this)) {
-			return typeManager.getAllElementTypes();
-		}
+		return typeManager.isUbiquitous(this);
+	}
+	
+	@Override
+	public InternalElementType<?>[] getElementTypes() {
 		return elementTypes.toArray(new InternalElementType<?>[elementTypes
 				.size()]);
 	}

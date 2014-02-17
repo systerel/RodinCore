@@ -161,11 +161,13 @@ public class InternalElementType<T extends IInternalElement> extends
 	}
 
 	@Override
-	public InternalElementType<?>[] getParentTypes() {
+	public boolean isUbiquitous() {
 		final ElementTypeManager typeManager = ElementTypeManager.getInstance();
-		if (typeManager.isUbiquitous(this)) {
-			return typeManager.getAllElementTypes();
-		}
+		return typeManager.isUbiquitous(this);
+	}
+	
+	@Override
+	public InternalElementType<?>[] getParentTypes() {
 		return parentTypes.toArray(new InternalElementType<?>[parentTypes
 				.size()]);
 	}

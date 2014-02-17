@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,11 +62,20 @@ public class NullAttributeDesc extends AttributeDesc {
 			public boolean isAttributeOf(IInternalElementType<?> elementType) {
 				return false;
 			}
+
+			@Override
+			public boolean isUbiquitous() {
+				return false;
+			}
 		};
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof NullAttributeDesc);
+	}
+
+	public boolean isUbiquitous() {
+		return false;
 	}
 }
