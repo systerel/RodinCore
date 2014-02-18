@@ -78,7 +78,6 @@ public class OperationEnablementTests {
 	@After
 	public void tearDown() throws Exception {
 		helper.closeRodinEditor();
-		helper.clearClipboard();
 	}
 	
 	@AfterClass

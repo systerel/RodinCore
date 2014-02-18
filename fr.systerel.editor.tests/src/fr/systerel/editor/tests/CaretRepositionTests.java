@@ -73,7 +73,6 @@ public class CaretRepositionTests {
 	@After
 	public void tearDown() throws Exception {
 		helper.closeRodinEditor();
-		helper.clearClipboard();
 	}
 
 	@AfterClass

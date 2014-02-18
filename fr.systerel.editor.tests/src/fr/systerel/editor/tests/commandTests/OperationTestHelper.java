@@ -27,12 +27,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.part.FileEditorInput;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 
@@ -68,11 +65,9 @@ public class OperationTestHelper {
 	}
 	
 	public void clearClipboard() {
-		final String[][] data = new String[1][1];
-		data[0] = new String[] { ((FileEditorInput) rodinEditor
-				.getEditorInput()).getFile().getFullPath().toString() };
-		final Transfer[] transfer = new Transfer[] { FileTransfer.getInstance() };
-		new Clipboard(WORKBENCH.getDisplay()).setContents(data, transfer);
+		final Clipboard clipboard = new Clipboard(WORKBENCH.getDisplay());
+		clipboard.clearContents();
+		clipboard.dispose();
 	}
 
 	public void closeRodinEditor() {
