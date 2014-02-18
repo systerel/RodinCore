@@ -1505,4 +1505,19 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		noRewritePred("id⦂S↔S ∈ S ↔ B", "S=ℙ(S)");
 	}
 
+	/**
+	 * Ensures that rule SIMP_MAPSTO_PRJ1_PRJ2 is implemented correctly.
+	 */
+	public void testSIMP_MAPSTO_PRJ1_PRJ2() {
+		// Twice the same expression
+		rewriteExpr("prj1(E) ↦ prj2(E)", "E", "E=S×T", level4AndHigher);
+
+		// Decomposition on equality has higher priority
+		rewritePred("prj1(E) ↦ prj2(E) = a ↦ b", "prj1(E) = a ∧ prj2(E) = b",
+				"E=S×T");
+
+		// Don't rewrite if different expressions
+		noRewriteExpr("prj1(E) ↦ prj2(F)", "E=S×T; F=S×T");
+	}
+
 }

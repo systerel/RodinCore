@@ -2481,7 +2481,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_RANRES_DOMSUB_ID", "SIMP_DOMSUB_DOMSUB_ID",
 			"SIMP_RANSUB_DOMSUB_ID", "SIMP_RANRES_ID", "SIMP_RANSUB_ID",
 			"SIMP_MULTI_DOMSUB_RAN", "SIMP_MULTI_RANSUB_DOM",
-			"SIMP_RELIMAGE_DOMRES_ID", "SIMP_RELIMAGE_DOMSUB_ID" } )
+			"SIMP_RELIMAGE_DOMRES_ID", "SIMP_RELIMAGE_DOMSUB_ID",
+			"SIMP_MAPSTO_PRJ1_PRJ2", } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final FormulaFactory ff = expression.getFactory();
@@ -3562,6 +3563,18 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = makeBinaryExpression(SETMINUS, `T, `S);
 					trace(expression, result, "SIMP_RELIMAGE_DOMSUB_ID");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MAPSTO_PRJ1_PRJ2
+			 *    prj1(E) ↦ prj2(E) == E
+			 */
+			Mapsto(FunImage(Prj1Gen(), E), FunImage(Prj2Gen(), E)) -> {
+				if (level4) {
+					result = `E;
+					trace(expression, result, "SIMP_MAPSTO_PRJ1_PRJ2");
 					return result;
 				}
 			}
