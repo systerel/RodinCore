@@ -105,6 +105,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareNameAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.NAME;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) >0);
 		
@@ -114,6 +115,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareTotalAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.TOTAL;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) >0);
 	}
@@ -121,6 +123,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareAutoAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.AUTO;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) >0);
 	}
@@ -128,6 +131,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareManualAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.MANUAL;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) <0);
 	}
@@ -135,6 +139,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareReviewedAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.REVIEWED;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) >0);
 	}
@@ -142,6 +147,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareUndischargedRestAscend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.UNDISCHARGED;
+		comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) ==0);
 	}
