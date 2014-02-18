@@ -780,7 +780,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_MULTI_EQUAL_BINTER", "SIMP_MULTI_EQUAL_BUNION",
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
 			"SIMP_SPECIAL_EQUAL_COMPSET", "DEF_IN_MAPSTO", "DERIV_MULTI_IN_SETMINUS", 
-			"DERIV_MULTI_IN_BUNION", "DERIV_PRJ1_SURJ", "DERIV_PRJ2_SURJ" })
+			"DERIV_MULTI_IN_BUNION", "DERIV_PRJ1_SURJ", "DERIV_PRJ2_SURJ",
+			"DERIV_ID_BIJ", })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final FormulaFactory ff = predicate.getFactory();
@@ -1652,6 +1653,19 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				           && `Ty2.isATypeExpression()) {
 					result = DLib.True(ff);
 					trace(predicate, result, "DERIV_PRJ2_SURJ");
+					return result;
+				}
+			}
+
+			/**
+			 * DERIV_ID_BIJ
+			 *    id ∈ Ty1 op Ty2 for all arrows
+			 */
+			In(IdGen(), (Rel|Trel|Srel|Strel|Pfun|Tfun|Psur|Tsur|Pinj|Tinj|Tbij)(Ty1, Ty2)) -> {
+				if (level4 && `Ty1.isATypeExpression()
+				           && `Ty2.isATypeExpression()) {
+					result = DLib.True(ff);
+					trace(predicate, result, "DERIV_ID_BIJ");
 					return result;
 				}
 			}

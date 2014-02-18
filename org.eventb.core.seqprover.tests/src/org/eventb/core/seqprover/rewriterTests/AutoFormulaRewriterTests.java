@@ -1477,4 +1477,32 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		noRewritePred("prj2⦂(S×T)↔T ∈ S×T ↔ B", "S=ℙ(S); T=ℙ(T)");
 	}
 
+	/**
+	 * Ensures that rule DERIV_ID_BIJ is implemented correctly.
+	 */
+	@Test
+	public void testDERIV_ID_BIJ() {
+		// Relations
+		rewritePred("id ∈ S ↔ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S  S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S  S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S  S", "⊤", "S=ℙ(S)", level4AndHigher);
+
+		// Functions
+		rewritePred("id ∈ S ⇸ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S → S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S ⤀ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S ↠ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S ⤔ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S ↣ S", "⊤", "S=ℙ(S)", level4AndHigher);
+		rewritePred("id ∈ S ⤖ S", "⊤", "S=ℙ(S)", level4AndHigher);
+
+		// Same type but different expression
+		rewritePred("id ∈ ℙ(S×S) ⤖ (S ↔ S)", "⊤", "S=ℙ(S)", level4AndHigher);
+
+		// Don't rewrite if not a type
+		noRewritePred("id⦂S↔S ∈ A ↔ S", "S=ℙ(S)");
+		noRewritePred("id⦂S↔S ∈ S ↔ B", "S=ℙ(S)");
+	}
+
 }
