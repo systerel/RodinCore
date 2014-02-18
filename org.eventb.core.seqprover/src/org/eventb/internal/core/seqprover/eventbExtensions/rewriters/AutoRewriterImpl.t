@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *     Systerel - Added tracing mechanism
  *     Systerel - SIMP_EQUAL_CONSTR*, SIMP_DESTR_CONSTR
  *     Systerel - move to tom-2.8
- *     Systerel - SIMP_*_EQUAL_(EMPTY|TYPE|NATURAL|NATURAL1)
+ *     Systerel - Level 4
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -780,7 +780,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_MULTI_EQUAL_BINTER", "SIMP_MULTI_EQUAL_BUNION",
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
 			"SIMP_SPECIAL_EQUAL_COMPSET", "DEF_IN_MAPSTO", "DERIV_MULTI_IN_SETMINUS", 
-			"DERIV_MULTI_IN_BUNION" })
+			"DERIV_MULTI_IN_BUNION", "DERIV_PRJ1_SURJ", "DERIV_PRJ2_SURJ" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final FormulaFactory ff = predicate.getFactory();
@@ -1630,6 +1630,31 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				}
 			}
 
+			/**
+			 * DERIV_PRJ1_SURJ
+			 *    prj1 ∈ Ty1 op Ty2 where op is not injective
+			 */
+			In(Prj1Gen(), (Rel|Trel|Srel|Strel|Pfun|Tfun|Psur|Tsur)(Ty1, Ty2)) -> {
+				if (level4 && `Ty1.isATypeExpression()
+				           && `Ty2.isATypeExpression()) {
+					result = DLib.True(ff);
+					trace(predicate, result, "DERIV_PRJ1_SURJ");
+					return result;
+				}
+			}
+
+			/**
+			 * DERIV_PRJ2_SURJ
+			 *    prj2 ∈ Ty1 op Ty2 where op is not injective
+			 */
+			In(Prj2Gen(), (Rel|Trel|Srel|Strel|Pfun|Tfun|Psur|Tsur)(Ty1, Ty2)) -> {
+				if (level4 && `Ty1.isATypeExpression()
+				           && `Ty2.isATypeExpression()) {
+					result = DLib.True(ff);
+					trace(predicate, result, "DERIV_PRJ2_SURJ");
+					return result;
+				}
+			}
 	    }
 	    return predicate;
 	}

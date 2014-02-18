@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - SIMP_IN_COMPSET, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
  *     Systerel - added tests for SIMP_FUNIMAGE_LAMBDA
  *     Systerel - added tests for SIMP_FORALL and SIMP_EXISTS
+ *     Systerel - added tests for Level 4
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
@@ -1420,6 +1421,60 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage, ff);
 		final Expression expr = genExpr(typenv, exprImage);
 		return expr.getType().getBaseType();
+	}
+
+	/**
+	 * Ensures that rule DERIV_PRJ1_SURJ is implemented correctly.
+	 */
+	@Test
+	public void testDERIV_PRJ1_SURJ() {
+		// Relations
+		rewritePred("prj1 ∈ S×T ↔ S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T  S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T  S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T  S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+
+		// Functions
+		rewritePred("prj1 ∈ S×T ⇸ S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T → S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T ⤀ S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj1 ∈ S×T ↠ S", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+
+		// Don't rewrite if injective
+		noRewritePred("prj1 ∈ S×T ⤔ S", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj1 ∈ S×T ↣ S", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj1 ∈ S×T ⤖ S", "S=ℙ(S); T=ℙ(T)");
+
+		// Don't rewrite if not a type
+		noRewritePred("prj1⦂(S×T)↔S ∈  A  ↔ S", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj1⦂(S×T)↔S ∈ S×T ↔ B", "S=ℙ(S); T=ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule DERIV_PRJ2_SURJ is implemented correctly.
+	 */
+	@Test
+	public void testDERIV_PRJ2_SURJ() {
+		// Relations
+		rewritePred("prj2 ∈ S×T ↔ T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T  T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T  T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T  T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+
+		// Functions
+		rewritePred("prj2 ∈ S×T ⇸ T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T → T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T ⤀ T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+		rewritePred("prj2 ∈ S×T ↠ T", "⊤", "S=ℙ(S); T=ℙ(T)", level4AndHigher);
+
+		// Don't rewrite if injective
+		noRewritePred("prj2 ∈ S×T ⤔ T", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj2 ∈ S×T ↣ T", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj2 ∈ S×T ⤖ T", "S=ℙ(S); T=ℙ(T)");
+
+		// Don't rewrite if not a type
+		noRewritePred("prj2⦂(S×T)↔T ∈  A  ↔ T", "S=ℙ(S); T=ℙ(T)");
+		noRewritePred("prj2⦂(S×T)↔T ∈ S×T ↔ B", "S=ℙ(S); T=ℙ(T)");
 	}
 
 }
