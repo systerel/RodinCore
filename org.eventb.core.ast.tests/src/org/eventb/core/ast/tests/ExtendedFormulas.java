@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,11 +59,16 @@ public class ExtendedFormulas {
 
 		public CommonExtension(String symbol, boolean wdStrict,
 				FormulaType ftype) {
-			this.symbol = symbol;
-			this.wdStrict = wdStrict;
-			this.kind = makePrefixKind(ftype, CHILD_SIGNATURE);
+			this(symbol, wdStrict, ftype, makePrefixKind(ftype, CHILD_SIGNATURE));
 		}
 
+		public CommonExtension(String symbol, boolean wdStrict,
+				FormulaType ftype, IExtensionKind kind) {
+			this.symbol = symbol;
+			this.wdStrict = wdStrict;
+			this.kind = kind;
+		}
+		
 		@Override
 		public String getSyntaxSymbol() {
 			return symbol;
@@ -120,12 +125,26 @@ public class ExtendedFormulas {
 		public void addPriorities(IPriorityMediator mediator) {
 			// None to add
 		}
+		
+		protected boolean verifyChildTypes(Type proposedType,
+				Expression[] childExprs) {
+			if (proposedType == null) {
+				return false;
+			}
+			for (Expression child : childExprs) {
+				if (!proposedType.equals(child.getType())) {
+					return false;
+				}
+			}
+			return true;
+		}
 
 		protected Type typeCheckChildExprs(Expression[] childExprs,
 				ITypeCheckMediator tcMediator) {
 			final Type alpha = tcMediator.newTypeVariable();
-			tcMediator.sameType(alpha, childExprs[0].getType());
-			tcMediator.sameType(alpha, childExprs[1].getType());
+			for (Expression child : childExprs) {
+				tcMediator.sameType(alpha, child.getType());
+			}
 			return alpha;
 		}
 
@@ -144,6 +163,10 @@ public class ExtendedFormulas {
 
 		public PredicateExtension(String symbol, boolean wdStrict) {
 			super(symbol, wdStrict, PREDICATE);
+		}
+
+		public PredicateExtension(String symbol, boolean wdStrict, IExtensionKind kind) {
+			super(symbol, wdStrict, PREDICATE, kind);
 		}
 
 		@Override
@@ -165,9 +188,13 @@ public class ExtendedFormulas {
 	 */
 	public static class ExpressionExtension extends CommonExtension implements
 			IExpressionExtension {
-
+		
 		public ExpressionExtension(String symbol, boolean wdStrict) {
 			super(symbol, wdStrict, EXPRESSION);
+		}
+
+		public ExpressionExtension(String symbol, boolean wdStrict, IExtensionKind kind) {
+			super(symbol, wdStrict, EXPRESSION, kind);
 		}
 
 		@Override
@@ -179,10 +206,7 @@ public class ExtendedFormulas {
 		@Override
 		public boolean verifyType(Type proposedType, Expression[] childExprs,
 				Predicate[] childPreds) {
-			final Type left = childExprs[0].getType();
-			final Type right = childExprs[1].getType();
-			return proposedType != null && proposedType.equals(left)
-					&& proposedType.equals(right);
+			return verifyChildTypes(proposedType, childExprs);
 		}
 
 		@Override
@@ -199,6 +223,22 @@ public class ExtendedFormulas {
 
 	}
 
+	// associative infix expression in independent parse group
+	public static class AssociativeExpressionExtension extends ExpressionExtension implements
+	IExpressionExtension {
+
+		public AssociativeExpressionExtension(String symbol, boolean wdStrict) {
+			super(symbol, wdStrict, ASSOCIATIVE_INFIX_EXPRESSION);
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			super.addCompatibilities(mediator);
+			mediator.addAssociativity(getId());
+		}
+
+	}
+	
 	/**
 	 * WD strict predicate extension with four children.
 	 * <p>
@@ -235,9 +275,13 @@ public class ExtendedFormulas {
 	public static final IExpressionExtension barL = new ExpressionExtension(
 			"barL", false);
 
+	public static final IExpressionExtension asso = 
+			new AssociativeExpressionExtension("asso", true);
+
 	/**
-	 * Formula factory with the four extensions described above.
+	 * Formula factory with the extensions described above.
 	 */
-	public static final FormulaFactory EFF = getInstance(fooS, fooL, barS, barL);
+	public static final FormulaFactory EFF = getInstance(fooS, fooL, barS,
+			barL, asso);
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PRED
 import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
+import static org.eventb.core.ast.tests.ExtendedFormulas.asso;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.datatype.TestDatatypes.EXT_MOULT;
@@ -2876,5 +2877,30 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("0 = barS(⊤, 0, ⊤, 1)",
 				EFF.makeRelationalPredicate(EQUAL, ZERO_EFF, extended, null), EFF);
 	}
+	
+	private static void assertIncompatible(IParseResult result) {
+		final List<ASTProblem> problems = result.getProblems();
+		assertTrue(result.hasProblem());
+		assertEquals(1, problems.size());
+		final ASTProblem problem = problems.get(0);
+		assertEquals(ProblemKind.IncompatibleOperators, problem.getMessage());
+	}
+	
+	@Test
+	public void testExtensionCompatibilityCheck() throws Exception {
+		// the result must be that 'asso' is not compatible with '+' or '='
+		// when the bug is present, the parser succeeds
+		assertIncompatible(EFF.parsePredicate("1 asso 2 = 3", null));
+		assertIncompatible(EFF.parsePredicate("1 = 2 asso 3", null));
+		assertIncompatible(EFF.parseExpression("1 asso 2 + 3", null));
+		assertIncompatible(EFF.parseExpression("1 + 2 asso 3", null));
 
+		// when the bug is present, the parser stops parsing sub predicate after
+		// '2' with UnexpectedSubFormulaKind instead of IncompatibleOperators
+		assertIncompatible(EFF.parsePredicate("∀x·1 asso 2 = x", null));
+
+		// Note: would like to test infix predicate incompatible with '∧' but
+		// this kind is not supported for now
+	}
+	
 }
