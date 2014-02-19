@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1076,7 +1076,7 @@ public class SubParsers {
 			final List<BoundIdentDecl> boundIdentifiers = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
 			final int dot = pc.getGrammar().getKind(DOT);
 			pc.accept(dot);
-			final Predicate pred = pc.subParseNoCheck(PRED_PARSER, boundIdentifiers);
+			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					pred, pc.getSourceLocation());
@@ -1234,7 +1234,7 @@ public class SubParsers {
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdents);
 			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
-			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundIdents);
+			final Expression expr = pc.subParseNoParentNoCheck(EXPR_PARSER, boundIdents);
 			acceptClose(pc);
 
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
@@ -1358,7 +1358,7 @@ public class SubParsers {
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundDecls);
 			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
-			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundDecls);
+			final Expression expr = pc.subParseNoParentNoCheck(EXPR_PARSER, boundDecls);
 			
 			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
 					pattern.getPattern(), expr, null);
