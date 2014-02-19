@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,11 +414,6 @@ public class ParserContext {
 		return subParseNoCheckRes(parser).getParsed();
 	}
 
-	public <T> T subParseNoCheck(INudParser<T> parser,
-			List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
-		return subParse(parser, newBoundIdents, false, true);
-	}
-	
 	public <T> T subParse(INudParser<T> parser,
 			List<BoundIdentDecl> newBoundIdents, boolean isRightChild) throws SyntaxError {
 		return subParse(parser, newBoundIdents, isRightChild, false);
@@ -449,11 +444,7 @@ public class ParserContext {
 			List<BoundIdentDecl> newBoundIdents, boolean noCheck) throws SyntaxError {
 		pushParentKind(grammar.getKind(NOOP));
 		try {
-			if (noCheck) {
-				return subParseNoCheck(parser, newBoundIdents);
-			} else {
-				return subParse(parser, newBoundIdents, false); // TODO verify that false is always appropriate
-			}
+			return subParse(parser, newBoundIdents, false, noCheck);
 		} finally {
 			popParentKind();
 		}
