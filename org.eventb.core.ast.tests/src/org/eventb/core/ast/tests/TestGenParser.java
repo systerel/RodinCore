@@ -2903,4 +2903,41 @@ public class TestGenParser extends AbstractTests {
 		// this kind is not supported for now
 	}
 	
+	private static QuantifiedExpression mCSet(Form form) {
+		final Expression ZERO_EFF = EFF.makeIntegerLiteral(BigInteger.ZERO,
+				null);
+		final ExtendedExpression bd0_asso_1 = EFF.makeExtendedExpression(
+				asso,
+				mList(EFF.makeBoundIdentifier(0, null),
+						EFF.makeIntegerLiteral(BigInteger.ONE, null)),
+				NO_PREDS, null);
+		
+		final Expression right;
+		if (form == Form.Lambda) {
+			right = EFF.makeBinaryExpression(MAPSTO,
+					EFF.makeBoundIdentifier(0, null), bd0_asso_1, null);
+		} else {
+			right = bd0_asso_1;
+		}
+		return EFF.makeQuantifiedExpression(
+				CSET,
+				mList(EFF.makeBoundIdentDecl("x", null)),
+				EFF.makeRelationalPredicate(EQUAL,
+						EFF.makeBoundIdentifier(0, null), ZERO_EFF, null),
+				right, null, form);
+	}
+	
+	/**
+	 * Reproduce bug that makes lambda not parse its unparsed string.
+	 * When the bug is present, the test fails like:
+	 * expected:<λx·x=0 ∣ x asso 1> but was:<(λx·x=0 ∣ x) asso 1>
+	 * Lambda operator priority used to be considered when parsing.
+	 */
+	@Test
+	public void testExtensionInCset() throws Exception {
+		doExpressionTest("{x·x = 0 ∣x asso 1}", mCSet(Form.Explicit), EFF);
+		doExpressionTest("{x asso 1 ∣  x = 0}", mCSet(Form.Implicit), EFF);
+		doExpressionTest("λx·x=0 ∣ x asso 1", mCSet(Form.Lambda), EFF);
+	}
+	
 }
