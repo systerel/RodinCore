@@ -32,7 +32,7 @@
    <extension
          point="org.eventb.core.pogModuleTypes">
       <filterType
-            class="org.eventb.core.tests.pog.modules.Unloadable"
+            class="org.eventb.core.tests.tool.Unloadable"
             id="unloadableModule"
             name="Unloadable Module"
             parent="org.eventb.core.tests.inexistent">
@@ -79,7 +79,7 @@
    <extension
          point="org.eventb.core.scModuleTypes">
       <rootType
-            class="org.eventb.core.tests.sc.modules.Unloadable"
+            class="org.eventb.core.tests.tool.Unloadable"
             id="org.eventb.core.tests.unloadableSCRootModule"
             input="org.eventb.core.contextFile"
             name="Unloadable SC root module">
