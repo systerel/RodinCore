@@ -138,9 +138,6 @@ public class TestUnparse extends AbstractTests {
 	private static abstract class TestPair {
 		final String image;
 		final FormulaFactory factory;
-		TestPair(String image) {
-			this(image, ffV1);
-		}
 		TestPair(String image, FormulaFactory factory) {
 			this.image = image;
 			this.factory = factory;
@@ -166,7 +163,7 @@ public class TestUnparse extends AbstractTests {
 	private static class ExprTestPair extends TestPair {
 		Expression formula;
 		ExprTestPair(String image, Expression formula) {
-			super(image);
+			super(image, formula.getFactory());
 			this.formula = formula;
 		}
 		ExprTestPair(String image, FormulaFactory factory, Expression formula) {
@@ -188,7 +185,7 @@ public class TestUnparse extends AbstractTests {
 	private static class PredTestPair extends TestPair {
 		Predicate formula;
 		PredTestPair(String image, Predicate formula) {
-			super(image);
+			super(image, formula.getFactory());
 			this.formula = formula;
 		}
 		PredTestPair(String image, FormulaFactory factory, Predicate formula) {
@@ -210,7 +207,7 @@ public class TestUnparse extends AbstractTests {
 	private static class AssignTestPair extends TestPair {
 		Assignment formula;
 		AssignTestPair(String image, Assignment formula) {
-			super(image);
+			super(image, formula.getFactory());
 			this.formula = formula;
 		}
 		@Override 
