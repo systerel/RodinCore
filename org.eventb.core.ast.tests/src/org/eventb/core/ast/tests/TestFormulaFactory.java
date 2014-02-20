@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -458,6 +458,25 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void boundIdentDecl_InvalidName() {
 		ff.makeBoundIdentDecl(BAD_NAME, null);
+	}
+
+	/**
+	 * Ensures that a bound identifier declaration can be created with a name
+	 * which is valid in the default factory, although reserved in the used
+	 * factory.
+	 */
+	@Test
+	public void boundIdentDecl_ReservedName() {
+		LIST_FAC.makeBoundIdentDecl("head", null);
+	}
+
+	/**
+	 * Ensures that a bound identifier declaration can be created with a name
+	 * which is valid the used factory, although not in a V2 factory.
+	 */
+	@Test
+	public void boundIdentDecl_ReservedNameV1() {
+		ffV1.makeBoundIdentDecl("partition", null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

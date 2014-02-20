@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1171,6 +1171,13 @@ public class FormulaFactory {
 	/**
 	 * Creates a new node representing a declaration of a bound identifier. Its
 	 * tag will be {@link Formula#BOUND_IDENT_DECL}.
+	 * <p>
+	 * As the given name is just for convenience (it is not really part of the
+	 * formula), it is only required to be valid in the default factory. This
+	 * means that a reserved name introduced by a mathematical extension is
+	 * accepted and will be replaced by an arbitrary identifier name when
+	 * converting to String form.
+	 * </p>
 	 * 
 	 * @param name
 	 *            the name of the identifier
@@ -1178,7 +1185,8 @@ public class FormulaFactory {
 	 *            the source location or <code>null</code>
 	 * @return a bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the name is not a valid identifier name
+	 *             if the name is not a valid identifier name in the default
+	 *             factory
 	 * @see #isValidIdentifierName(String)
 	 * @see #makeFreeIdentifier(String, SourceLocation)
 	 * @see #makeBoundIdentifier(int, SourceLocation)
@@ -1191,6 +1199,13 @@ public class FormulaFactory {
 	/**
 	 * Creates a new node representing a declaration of a bound identifier. Its
 	 * tag will be {@link Formula#BOUND_IDENT_DECL}.
+	 * <p>
+	 * As the given name is just for convenience (it is not really part of the
+	 * formula), it is only required to be valid in the default factory. This
+	 * means that a reserved name introduced by a mathematical extension is
+	 * accepted and will be replaced by an arbitrary identifier name when
+	 * converting to String form.
+	 * </p>
 	 * 
 	 * @param name
 	 *            the name of the identifier
@@ -1200,7 +1215,8 @@ public class FormulaFactory {
 	 *            the type of the identifier or <code>null</code>
 	 * @return a bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the name is not a valid identifier name
+	 *             if the name is not a valid identifier name in the default
+	 *             factory
 	 * @throws IllegalArgumentException
 	 *             if the given type has been built with a different factory
 	 * @see #isValidIdentifierName(String)

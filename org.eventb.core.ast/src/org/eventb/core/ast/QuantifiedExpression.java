@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,8 +307,8 @@ public class QuantifiedExpression extends Expression {
 		final boolean exprIsClosed = usedNames.size() == 0;
 		pred.collectNamesAbove(usedNames, boundNames,
 				quantifiedIdentifiers.length);
-
-		final String[] localNames = QuantifiedUtil.resolveIdents(quantifiedIdentifiers, usedNames);
+		final String[] localNames = QuantifiedUtil.resolveIdents(
+				quantifiedIdentifiers, usedNames, getFactory());
 
 		final Operators operator;
 		switch (form) {

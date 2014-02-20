@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,29 +73,6 @@ public abstract class QuantifiedUtil {
 		System.arraycopy(bound1, 0, newBoundIdents, 0, bound1.length);
 		System.arraycopy(bound2, 0, newBoundIdents, bound1.length, bound2.length);
 		return newBoundIdents;
-	}
-
-	/**
-	 * Find new names for the given quantified identifiers so that they don't
-	 * conflict with the given names.
-	 * 
-	 * @param boundHere
-	 *            array of bound identifier declarations to make free.
-	 * @param usedNames
-	 *            set of names that are reserved (usually occurring already
-	 *            free in the formula)
-	 * @return a list of new names that are distinct from each other and do not
-	 *         occur in the list of used names
-	 */
-	public static String[] resolveIdents(BoundIdentDecl[] boundHere,
-			Set<String> usedNames) {
-		// Currently, there is no way to pass a type environment to this method,
-		// as it might be called from the classical toString() method. So, we
-		// use
-		// the default factory provided with the AST library. But, that prevents
-		// clients from adding new reserved identifier names!
-		// TODO how to add new reserved identifier names
-		return resolveIdents(boundHere, usedNames, FormulaFactory.getDefault());
 	}
 
 	/**

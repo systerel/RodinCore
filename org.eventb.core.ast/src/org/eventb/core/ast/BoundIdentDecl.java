@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	protected BoundIdentDecl(String name, SourceLocation location,
 			Type givenType, FormulaFactory ff) {
 		super(BOUND_IDENT_DECL, ff, location, name.hashCode());
-		ensureValidIdentifierName(name, ff);
+		ensureValidName(name, ff);
 		this.name = name;
 		ensureSameFactory(givenType);
 		setPredicateVariableCache();
@@ -79,6 +79,21 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		assert givenType == null || givenType == this.type;
 	}
 
+	// Ensure that the given name is valid.
+	// Use a default factory for the check so as to allow name collisions with
+	// mathematical extensions. These are taken care of when unparsing the
+	// surrounding quantified formula.
+	// Also take care about V1 language.
+	private static void ensureValidName(String name, FormulaFactory ff) {
+		final FormulaFactory checkFactory;
+		if (ff == FormulaFactory.getV1Default()) {
+			checkFactory = ff;
+		} else {
+			checkFactory = FormulaFactory.getDefault();
+		}
+		ensureValidIdentifierName(name, checkFactory);
+	}
+	
 	private void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,12 @@ import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.INTEGER;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LOR;
@@ -1580,6 +1583,10 @@ public class TestUnparse extends AbstractTests {
 		routineTestStringFormula(new ExprTestPair(image, expr));
 	}
 	
+	private void routineTestStringPredicate(String image, Predicate pred) {
+		routineTestStringFormula(new PredTestPair(image, pred));
+	}
+
 	/**
 	 * Test of hand-written formulae
 	 */
@@ -1904,6 +1911,33 @@ public class TestUnparse extends AbstractTests {
 						mMaplet(b0, b1)
 				)
 		);
+	}
+
+	/**
+	 * Ensures that bug 705 is fixed by allowing reserved names in bound
+	 * identifier declarations and that these names are rewritten when
+	 * converting to string.
+	 */
+	@Test
+	public void bug705() throws Exception {
+		routineTestStringPredicate("∃head0·head0∈ℤ",
+				LIST_FAC.makeQuantifiedPredicate(
+						//
+						EXISTS,
+						mList(LIST_FAC.makeBoundIdentDecl("head", null)),
+						LIST_FAC.makeRelationalPredicate(IN,
+								LIST_FAC.makeBoundIdentifier(0, null),
+								LIST_FAC.makeAtomicExpression(INTEGER, null),
+								null), null));
+		routineTestStringExpression("{head0 ∣ head0∈ℤ}",
+				LIST_FAC.makeQuantifiedExpression(
+						//
+						CSET, mList(LIST_FAC.makeBoundIdentDecl("head", null)),
+						LIST_FAC.makeRelationalPredicate(IN,
+								LIST_FAC.makeBoundIdentifier(0, null),
+								LIST_FAC.makeAtomicExpression(INTEGER, null),
+								null), LIST_FAC.makeBoundIdentifier(0, null),
+						null, Implicit));
 	}
 
 }
