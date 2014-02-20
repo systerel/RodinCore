@@ -1812,6 +1812,22 @@ public class TestUnparse extends AbstractTests {
 				)
 		);
 
+		// Lambda with incomplete pattern
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ x ↦ 2}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b1, two)
+				)
+		);
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ y ↦ 2}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b0, two)
+				)
+		);
+
 		// Implicit formulas with free identifier in expression
 		routineTestStringExpression(
 				"{x·⊤ ∣ t}",
@@ -1890,8 +1906,8 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that a quantified expression which cannot be parsed back as
-	 * Implicit is unparsed in Explicit form.
+	 * Several cases where the invariant is violated because the order of
+	 * declarations is different when parsing back.
 	 */
 	@Ignore("Known limitation of the pretty-print.")
 	@Test
@@ -1907,25 +1923,9 @@ public class TestUnparse extends AbstractTests {
 				)
 		);
 
-		// Lambda with incomplete pattern
-		routineTestStringExpression(
-				"{x,y·⊤ ∣ x ↦ 2}", 
-				mQuantifiedExpression(CSET, Lambda,
-						mList(bd_x, bd_y), btrue, 
-						mMaplet(b1, two)
-				)
-		);
-		routineTestStringExpression(
-				"{x,y·⊤ ∣ y ↦ 2}", 
-				mQuantifiedExpression(CSET, Lambda,
-						mList(bd_x, bd_y), btrue, 
-						mMaplet(b0, two)
-				)
-		);
-
 		// Inverted order of variable declarations
 		routineTestStringExpression(
-				"{y,x·x ↦ y ∣ ⊤}", 
+				"{x ↦ y ∣ ⊤}", 
 				mQuantifiedExpression(CSET, Implicit,
 						mList(bd_y, bd_x), btrue, 
 						mMaplet(b0, b1)
