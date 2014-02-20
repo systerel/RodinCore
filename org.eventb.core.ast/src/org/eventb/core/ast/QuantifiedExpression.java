@@ -132,10 +132,10 @@ public class QuantifiedExpression extends Expression {
 
 		private boolean traverse(Expression pattern) {
 			switch (pattern.getTag()) {
-			case QuantifiedExpression.MAPSTO:
+			case MAPSTO:
 				final BinaryExpression maplet = (BinaryExpression) pattern;
 				return traverse(maplet.getLeft()) && traverse(maplet.getRight());
-			case QuantifiedExpression.BOUND_IDENT:
+			case BOUND_IDENT:
 				final BoundIdentifier ident = (BoundIdentifier) pattern;
 				return ident.getBoundIndex() == expectedIndex--;
 			}
