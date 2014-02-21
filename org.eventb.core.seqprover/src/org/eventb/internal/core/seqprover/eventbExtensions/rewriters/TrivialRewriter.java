@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,9 +98,6 @@ public class TrivialRewriter implements Rewriter{
 			
 			Type type = nonEmptySet.getType().getBaseType();
 			assert type != null;
-			// TODO : find a nice way to generate a name for this variable
-			// Although it is bound freeing it may clutter the name space and
-			// maybe force refactoring.
 			String varName = "e";
 			BoundIdentDecl[] boundIdentDecls = {ff.makeBoundIdentDecl(varName,null,type)};
 			BoundIdentifier boundIdent = ff.makeBoundIdentifier(0,null,type);
