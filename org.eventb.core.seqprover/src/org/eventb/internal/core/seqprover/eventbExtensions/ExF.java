@@ -26,7 +26,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
-import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
 /**
  * Reasoner that returns a forward inference to free existentially bound
@@ -59,7 +59,7 @@ public class ExF extends ForwardInfReasoner {
 		}
 		final QuantifiedPredicate exQ = (QuantifiedPredicate) pred;
 		final ISealedTypeEnvironment typenv = sequent.typeEnvironment();
-		final FreshInstantiaton inst = new FreshInstantiaton(exQ, typenv);
+		final FreshInstantiation inst = new FreshInstantiation(exQ, typenv);
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
 		final Set<Predicate> inferredHyps = breakPossibleConjunct(inst
 				.getResult());

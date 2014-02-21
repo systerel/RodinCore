@@ -27,7 +27,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
-import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
 /**
  * Deprecated implementation of the existential elimination reasoner.
@@ -64,7 +64,7 @@ public class ExE extends HypothesisReasoner {
 		}
 		final QuantifiedPredicate exQ = (QuantifiedPredicate) pred;
 		final ISealedTypeEnvironment typenv = sequent.typeEnvironment();
-		final FreshInstantiaton inst = new FreshInstantiaton(exQ, typenv);
+		final FreshInstantiation inst = new FreshInstantiation(exQ, typenv);
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
 		final IHypAction action = makeDeselectHypAction(asList(pred));
 		return new IAntecedent[] { makeAntecedent(sequent.goal(),

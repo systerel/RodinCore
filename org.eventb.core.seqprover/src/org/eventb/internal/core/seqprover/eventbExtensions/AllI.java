@@ -28,7 +28,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
-import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
 /**
  * Generates the introduntion rule for universal quantification.
@@ -59,7 +59,7 @@ public class AllI extends EmptyInputReasoner {
 		}
 		final QuantifiedPredicate univQ = (QuantifiedPredicate) goal;
 		final ISealedTypeEnvironment typenv = seq.typeEnvironment();
-		final FreshInstantiaton inst = new FreshInstantiaton(univQ, typenv);
+		final FreshInstantiation inst = new FreshInstantiation(univQ, typenv);
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
 		final IAntecedent[] antecedents = new IAntecedent[] {//
 		makeAntecedent(inst.getResult(), null, freshIdents, null),//

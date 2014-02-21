@@ -25,7 +25,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class FreshInstantiaton {
+public class FreshInstantiation {
 
 	private final FreeIdentifier[] freeIdents;
 	private final Predicate result;
@@ -39,7 +39,7 @@ public class FreshInstantiaton {
 	 * @param initialTypenv
 	 *            the type environment to consider for freshness
 	 */
-	public FreshInstantiaton(QuantifiedPredicate predicate,
+	public FreshInstantiation(QuantifiedPredicate predicate,
 			ITypeEnvironment initialTypenv) {
 		final ITypeEnvironmentBuilder typenv = initialTypenv.makeBuilder();
 		final BoundIdentDecl[] boundIdentDecls = predicate.getBoundIdentDecls();

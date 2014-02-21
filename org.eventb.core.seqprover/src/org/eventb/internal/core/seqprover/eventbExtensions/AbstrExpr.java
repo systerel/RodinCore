@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton.genFreshFreeIdent;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation.genFreshFreeIdent;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

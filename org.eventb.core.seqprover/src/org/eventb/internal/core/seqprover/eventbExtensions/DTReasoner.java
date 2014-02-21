@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton.genFreshFreeIdent;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation.genFreshFreeIdent;
 
 import java.util.ArrayList;
 import java.util.List;
