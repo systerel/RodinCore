@@ -598,7 +598,11 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		final NamedElement ne = createNEPositive(root, "ne", null);
 		final IInternalElementType<?> neElemType = ne.getElementType();
 		assertTrue(neElemType.canParent(UbiquitousElement.ELEMENT_TYPE));
-		assertEquals(0, UbiquitousElement.ELEMENT_TYPE.getParentTypes().length);
+		assertFalse(Arrays.asList(neElemType.getChildTypes()).contains(
+				UbiquitousElement.ELEMENT_TYPE));
+		assertFalse(Arrays.asList(
+				UbiquitousElement.ELEMENT_TYPE.getParentTypes()).contains(
+				neElemType));
 		assertFalse(Arrays.asList(
 				UbiquitousElement.ELEMENT_TYPE.getChildTypes()).contains(
 				UbiquitousElement.ELEMENT_TYPE));
@@ -606,10 +610,45 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 				UbiquitousElement.ELEMENT_TYPE.getAttributeTypes()).contains(
 				UBIQUITOUS_ATTR_TYPE));
 		assertTrue(neElemType.canCarry(UBIQUITOUS_ATTR_TYPE));
-		assertEquals(0, UBIQUITOUS_ATTR_TYPE.getElementTypes().length);
+		assertFalse(Arrays.asList(UBIQUITOUS_ATTR_TYPE.getElementTypes())
+				.contains(neElemType));
 		assertTrue(UBIQUITOUS_ATTR_TYPE.isAttributeOf(neElemType));
 	}
 
+	/**
+	 * An explicit relationship extension is declared from NamedElement2 parent
+	 * to ubiquitous child element and attribute. Verify that the API also makes
+	 * it explicit.
+	 */
+	@Test
+	public void testAPIGettersForExplicitUbiquitousRelationship()
+			throws Exception {
+		final NamedElement2 ne2 = createNE2Positive(root, "ne2", null);
+		final IInternalElementType<?> ne2ElemType = ne2.getElementType();
+		assertTrue(ne2ElemType.canParent(UbiquitousElement.ELEMENT_TYPE));
+		assertTrue(Arrays.asList(ne2ElemType.getChildTypes()).contains(
+				UbiquitousElement.ELEMENT_TYPE));
+		assertTrue(Arrays.asList(
+				UbiquitousElement.ELEMENT_TYPE.getParentTypes()).contains(
+				ne2ElemType));
+		assertTrue(ne2ElemType.canCarry(UBIQUITOUS_ATTR_TYPE));
+		assertTrue(Arrays.asList(UBIQUITOUS_ATTR_TYPE.getElementTypes())
+				.contains(ne2ElemType));
+		assertTrue(UBIQUITOUS_ATTR_TYPE.isAttributeOf(ne2ElemType));
+	}
+
+	/**
+	 * An explicit relationship extension is declared from NamedElement2 parent
+	 * to ubiquitous child element and attribute. Verify that we can indeed
+	 * create child and attribute.
+	 */
+	@Test
+	public void testAddExplicitUbiquitous() throws Exception {
+		final NamedElement2 ne2 = createNE2Positive(root, "ne2", null);
+		ne2.createChild(UbiquitousElement.ELEMENT_TYPE, null, null);
+		ne2.setAttributeValue(UBIQUITOUS_ATTR_TYPE, "u", null);
+	}
+	
 	/**
 	 * Ensures that no exception is thrown when creating child of an ubiquitous
 	 * element (i.e. also checks that an ubiquitous element can parent a named

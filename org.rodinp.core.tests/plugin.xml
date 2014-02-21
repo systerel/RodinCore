@@ -764,6 +764,15 @@
               typeId="org.rodinp.core.tests.versionStrAttr">
         </attributeType>
      </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.namedElement2">
+        <attributeType
+              typeId="org.rodinp.core.tests.ubiqAttr">
+        </attributeType>
+        <childType
+              typeId="org.rodinp.core.tests.ubiqElem">
+        </childType>
+     </relationship>
   </extension>
   <extension
         point="org.rodinp.core.itemRelations">
