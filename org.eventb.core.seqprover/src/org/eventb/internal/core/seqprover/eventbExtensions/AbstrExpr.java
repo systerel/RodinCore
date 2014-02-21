@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton.genFreshFreeIdent;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -18,7 +20,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -72,9 +73,8 @@ public class AbstrExpr extends SingleExprInputReasoner implements
 		DLib.removeTrue(ff, exprWDs);
 		
 		// Generate a fresh free identifier
-		final FreeIdentifier freeIdent = ff.makeFreeIdentifier(
-				genFreshFreeIdentName(seq.typeEnvironment()),
-				null, expr.getType());
+		final FreeIdentifier freeIdent = genFreshFreeIdent(
+				seq.typeEnvironment(), "ae", expr.getType());
 		
 		// Generate the equality predicate
 		final Predicate aeEq = DLib.makeEq(freeIdent, expr);
@@ -97,27 +97,6 @@ public class AbstrExpr extends SingleExprInputReasoner implements
 		// Generate the proof rule
 		return ProverFactory.makeProofRule(this, input, null,
 				"ae (" + expr.toString() + ")", anticidents);
-	}
-	
-
-	/**
-	 * Generates a name for an identifier that does not occur in the
-	 * given type environment.
-	 * 
-	 * @param typeEnv
-	 * 			the given type environment.
-	 * @return a fresh identifier name.
-	 * 			
-	 */
-	private String genFreshFreeIdentName(ITypeEnvironment typeEnv){
-		String prefix = "ae";
-		String identName = prefix;
-		int i = 0;
-		while (typeEnv.contains(identName)){
-			identName = prefix + Integer.toString(i);
-			i++;
-		}
-		return identName;
 	}
 	
 	@Override

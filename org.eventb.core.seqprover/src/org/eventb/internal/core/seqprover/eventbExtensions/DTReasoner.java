@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
+
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton.genFreshFreeIdent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,15 +133,15 @@ public abstract class DTReasoner extends AbstractManualInference {
 		final FreeIdentifier[] idents = new FreeIdentifier[size];
 		for (int i = 0; i < size; i++) {
 			final IConstructorArgument arg = arguments[i];
-			final String argName = makeFreshName(arg, i, env);
+			final String argName = makeArgName(arg, i);
 			final Type argType = arguments[i].getType(inst);
-			idents[i] = ff.makeFreeIdentifier(argName, null, argType);
+			// proposed argName changes each time => no need to add to env
+			idents[i] = genFreshFreeIdent(env, argName, argType);
 		}
 		return idents;
 	}
 
-	private static String makeFreshName(IConstructorArgument arg, int i,
-			ITypeEnvironment env) {
+	private static String makeArgName(IConstructorArgument arg, int i) {
 		final String prefix = "p_";
 		final String suffix;
 		if (arg.isDestructor()) {
@@ -147,20 +149,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 		} else {
 			suffix = Integer.toString(i);
 		}
-		// proposed argName changes each time => no need to add to env
-		final String argName = genFreshParamName(env, prefix + suffix);
-		return argName;
-	}
-
-	private static String genFreshParamName(ITypeEnvironment typeEnv,
-			String baseName) {
-		int i = 0;
-		String identName = baseName;
-		while (typeEnv.contains(identName)) {
-			identName = baseName + i;
-			i++;
-		}
-		return identName;
+		return prefix + suffix;
 	}
 
 }
