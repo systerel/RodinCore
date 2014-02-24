@@ -36,3 +36,4 @@ SUFFIX="$RC$GIT_COMMIT$DIRTY"
 echo "Building Rodin $SUFFIX"
 
 mvn clean verify -Dversion-suffix="$SUFFIX" "$@" # -DskipTests -fae|-fn
+git checkout -- "$MAIN_DIR"/org.rodinp.platform/plugin.properties
