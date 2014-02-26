@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,6 +154,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	@Test
 	public final void testDecomposeBoundOutside1() {
 		dotest("∃x · x ∈ S×T", "∃x1,x2 · x1↦x2 ∈ S×T");
+		dotest("finite({x ∣ x ∈ S×T})", "finite({x1↦x2 ∣ x1↦x2 ∈ S×T})");
 	}
 
 	/**
@@ -164,6 +165,8 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	public final void testDecomposeBoundOutside2() {
 		dotest("∃x,y · x ∈ S×T ∧ y ∈ U×V", 
 				"∃x1,x2,y1,y2 · x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
+		dotest("finite({x↦y ∣ x ∈ S×T ∧ y ∈ U×V})", 
+				"finite({(x1↦x2) ↦ (y1↦y2) ∣ x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V})");
 	}
 
 	/**
@@ -175,6 +178,8 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	public final void testDecomposeBoundOutsideFirst() {
 		dotest("∃x,y,z · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
 				"∃x1,x2,y,z · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
+		dotest("finite({x↦y↦z ∣ x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL})",
+				"finite({(x1↦x2) ↦y↦z ∣ x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL})");
 	}
 
 	/**
@@ -186,6 +191,8 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	public final void testDecomposeBoundOutsideLast() {
 		dotest("∃y,z,x · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
 				"∃y,z,x1,x2 · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
+		dotest("finite({y↦z↦x ∣ x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL})",
+				"finite({y↦z↦(x1↦x2) ∣ x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL})");
 	}
 
 	/**
@@ -196,6 +203,8 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	public final void testDecomposeBoundInside1() {
 		dotest("∃a·a ∈ ℤ ∧ (∃x·x ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a",
 				"∃a·a ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a");
+		dotest("∃a·a ∈ ℤ ∧ finite({x ∣ x ∈ S×T ∧ 0 ≤ a}) ∧ 1 ≤ a",
+				"∃a·a ∈ ℤ ∧ finite({x1↦x2 ∣ x1↦x2 ∈ S×T ∧ 0 ≤ a}) ∧ 1 ≤ a");
 	}
 
 	/**
@@ -205,7 +214,15 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	@Test
 	public final void testDecomposeBoundInside2() {
 		dotest("∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x·x ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a",
-				"∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a");
+				"∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ a ≤ b) ∧ b ≤ a)"
+						+ " ∧ 1 ≤ a");
+		dotest("∃a·a ∈ ℤ"
+				+ " ∧ (∃b·b ∈ ℤ ∧ finite({x·x ∈ S×T ∧ a ≤ b ∣ a↦x↦b}) ∧ b ≤ a)"
+				+ " ∧ 1 ≤ a",
+				"∃a·a ∈ ℤ"
+				+ " ∧ (∃b·b ∈ ℤ ∧ finite({x1,x2 · x1↦x2 ∈ S×T ∧ a ≤ b"
+				+ "                             ∣ a↦(x1↦x2)↦b})"
+				+ " ∧ b ≤ a) ∧ 1 ≤ a");
 	}
 
 	/**
@@ -219,6 +236,12 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 				+ " ∧ (∃c,y,d·a↦x↦b↦c↦y↦d∈S×(S×T)×T×U×(U×V)×V)",
 				"∃a,x1,x2,b·a∈S ∧ b∈T ∧ x1↦x2=a↦b"
 				+ " ∧ (∃c,y1,y2,d·a↦(x1↦x2)↦b↦c↦(y1↦y2)↦d∈S×(S×T)×T×U×(U×V)×V)");
+		dotest("∃a,x,b·a∈S ∧ b∈T ∧ x=a↦b"
+				+ " ∧ finite({c,y,d · a↦x↦b↦c↦y↦d∈S×(S×T)×T×U×(U×V)×V"
+				+ "                 ∣ a↦x↦b↦c↦y↦d})",
+				"∃a,x1,x2,b·a∈S ∧ b∈T ∧ x1↦x2=a↦b"
+				+ " ∧ finite({c,y1,y2,d · a↦(x1↦x2)↦b↦c↦(y1↦y2)↦d∈S×(S×T)×T×U×(U×V)×V"
+				+ "                     ∣ a↦(x1↦x2)↦b↦c↦(y1↦y2)↦d})");
 	}
 
 	/**
