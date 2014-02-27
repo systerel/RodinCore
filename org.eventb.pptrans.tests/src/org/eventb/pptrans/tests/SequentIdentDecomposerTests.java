@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eventb.pptrans.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.pptrans.Translator;
@@ -71,17 +70,14 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	}
 
 	/**
-	 * Ensures that math extensions are not supported.
+	 * Ensures that math extensions are supported.
 	 */
 	@Test
 	public void testMathExtensions() throws Exception {
-		final ISimpleSequent sequent = make(DT_FF, "p = dt");
-		try {
-			Translator.decomposeIdentifiers(sequent);
-			fail("Should have raised an exception");
-		} catch (UnsupportedOperationException e) {
-			// success
-		}
+		final ISimpleSequent sequent = make(DT_FF, "x = dt↦dt ∧ (∃y·y=dt↦dt)");
+		final ISimpleSequent expected = make(DT_FF,
+				"x_1↦x_2 = dt↦dt ∧ (∃y1,y2·y1↦y2=dt↦dt)");
+		assertEquals(expected, Translator.decomposeIdentifiers(sequent));
 	}
 
 }

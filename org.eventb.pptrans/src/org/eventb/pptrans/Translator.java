@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,17 +70,11 @@ public class Translator {
 	 * the given sequent. These identifiers are replaced by a combination of
 	 * fresh identifiers in the returned sequent. This transformation thus
 	 * preserves validity, modulo some possible change to the type environment.
-	 * <p>
-	 * This transformation does not support mathematical extensions.
-	 * </p>
 	 * 
 	 * @param sequent
 	 *            sequent to process
 	 * @return an equivalent sequent that contains no identifier of Cartesian
 	 *         product type
-	 * @throws UnsupportedOperationException
-	 *             if some predicate of the given sequent contains a
-	 *             mathematical extension operator
 	 * @since 0.5
 	 */
 	public static ISimpleSequent decomposeIdentifiers(ISimpleSequent sequent) {
