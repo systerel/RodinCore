@@ -29,9 +29,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.prover.IUIDynTacticProvider;
 
@@ -196,6 +198,7 @@ public class ExtensionParser {
 	private static final String TACTIC_PROVIDER_TAG = "tacticProvider"; //$NON-NLS-1$
 	private static final String NAME_TAG = "name"; //$NON-NLS-1$
 	private static final String ICON_TAG = "icon"; //$NON-NLS-1$
+	private static final String DEFAULT_ICON_PATH = "platform:/plugin/org.eclipse.ui/icons/full/obj16/warn_tsk.gif"; //$NON-NLS-1$
 
 	private final List<TacticProviderInfo> goalTactics = new ArrayList<TacticProviderInfo>();
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
@@ -210,7 +213,18 @@ public class ExtensionParser {
 
 	public static ImageDescriptor fetchIcon(IConfigurationElement configuration) {
 		final IContributor contributor = configuration.getContributor();
-		final String iconPath = configuration.getAttribute(ICON_TAG);
+		String iconPath = configuration.getAttribute(ICON_TAG);
+		if (iconPath == null || iconPath.trim().isEmpty()) {
+			final IExtension ext = configuration.getDeclaringExtension();
+			UIUtils.log(
+					null,
+					String.format(
+							"Missing icon for extension %s in %s for extension point %s",
+							configuration.getName(), contributor.getName(),
+							ext.getExtensionPointUniqueIdentifier()));
+			
+			iconPath = DEFAULT_ICON_PATH;
+		}
 		return EventBImage.getImageDescriptor(contributor.getName(), iconPath);
 	}
 	
