@@ -25,14 +25,14 @@ git_is_dirty() {
 }
 
 case "$1" in
-    RC*) RC="$1"_; shift ;;
+    RC*) RC="-$1"; shift ;;
 esac
 
 GIT_COMMIT=$(git log -1 --format='%h')
 
 if git_is_dirty; then DIRTY="-dirty"; fi
 
-SUFFIX="$RC$GIT_COMMIT$DIRTY"
+SUFFIX="$RC-$GIT_COMMIT$DIRTY"
 echo "Building Rodin $SUFFIX"
 
 mvn clean verify -Dversion-suffix="$SUFFIX" "$@" # -DskipTests -fae|-fn
