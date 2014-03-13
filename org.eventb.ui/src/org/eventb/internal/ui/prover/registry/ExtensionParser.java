@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.prover.IUIDynTacticProvider;
 
@@ -131,6 +134,7 @@ public class ExtensionParser {
 		protected void parse(String id, IConfigurationElement element) {
 			try {
 				final String name = element.getAttribute(NAME_TAG);
+				final ImageDescriptor icon = fetchIcon(element);
 				final String toolbar = element.getAttribute(TOOLBAR_TAG);
 				final Object extn = element
 						.createExecutableExtension(TACTIC_PROVIDER_TAG);
@@ -139,7 +143,7 @@ public class ExtensionParser {
 				}
 				final IUIDynTacticProvider provider = (IUIDynTacticProvider) extn;
 				dynDropdownRegistry.put(id, new DynamicDropdownInfo(id, name,
-						toolbar, provider));
+						icon, toolbar, provider));
 				printDebugRegistration(id, DYNAMIC_DROPDOWN_tag);
 			} catch (CoreException e) {
 				log(e, "while loading dynamic dropdown " + id);
@@ -185,12 +189,13 @@ public class ExtensionParser {
 	}
 
 	// Possible tags of extensions
-	private static final String TACTIC_TAG = "tactic";
-	private static final String TOOLBAR_TAG = "toolbar";
-	private static final String DROPDOWN_TAG = "dropdown";
-	private static final String DYNAMIC_DROPDOWN_tag = "dynamic_dropdown";
-	private static final String TACTIC_PROVIDER_TAG = "tacticProvider";
-	private static final String NAME_TAG = "name";
+	private static final String TACTIC_TAG = "tactic"; //$NON-NLS-1$
+	private static final String TOOLBAR_TAG = "toolbar"; //$NON-NLS-1$
+	private static final String DROPDOWN_TAG = "dropdown"; //$NON-NLS-1$
+	private static final String DYNAMIC_DROPDOWN_tag = "dynamic_dropdown"; //$NON-NLS-1$
+	private static final String TACTIC_PROVIDER_TAG = "tacticProvider"; //$NON-NLS-1$
+	private static final String NAME_TAG = "name"; //$NON-NLS-1$
+	private static final String ICON_TAG = "icon"; //$NON-NLS-1$
 
 	private final List<TacticProviderInfo> goalTactics = new ArrayList<TacticProviderInfo>();
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
@@ -203,6 +208,12 @@ public class ExtensionParser {
 
 	private final List<IStatus> errors = new ArrayList<IStatus>();
 
+	public static ImageDescriptor fetchIcon(IConfigurationElement configuration) {
+		final IContributor contributor = configuration.getContributor();
+		final String iconPath = configuration.getAttribute(ICON_TAG);
+		return EventBImage.getImageDescriptor(contributor.getName(), iconPath);
+	}
+	
 	/*
 	 * Configuration elements are processed in two phases. In the first phase,
 	 * they are sorted by type. In the second phase, the final objects are built

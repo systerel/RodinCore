@@ -286,6 +286,16 @@ Most contributors need not use this option. You should have a strong reason to s
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an icon for this dynamic tactic dropdown tactic (recommended size is 16 x 16).
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="toolbar" type="string" use="required">
             <annotation>
                <documentation>
@@ -468,7 +478,7 @@ a fully qualified name of a class that implements &lt;code&gt;org.eventb.ui.prov
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2011 ETH Zurich and others.&lt;br/&gt;
+         Copyright (c) 2005, 2014 ETH Zurich and others.&lt;br/&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at

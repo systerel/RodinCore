@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,9 @@
 package org.eventb.internal.ui.prover.registry;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.prover.ProverUIUtils;
 
-public abstract class TacticUIInfo extends AbstractInfo {
+public abstract class TacticUIInfo extends AbstractUIInfo {
 
 	/**
 	 * Enumeration internalizing the target attribute of UI tactics.
@@ -26,16 +24,12 @@ public abstract class TacticUIInfo extends AbstractInfo {
 	}
 
 	protected final Target target;
-	protected final ImageDescriptor iconDesc;
 	protected final boolean interrupt;
 	protected final String tooltip;
 	protected final int priority;
-	protected final String name;
 	protected final String dropdown;
 	protected final String toolbar;
 	protected final boolean skipPostTactic;
-
-	private Image icon = null;
 
 	/**
 	 * @param id
@@ -66,13 +60,11 @@ public abstract class TacticUIInfo extends AbstractInfo {
 	public TacticUIInfo(String id, Target target, ImageDescriptor iconDesc,
 			boolean interrupt, String tooltip, int priority, String name,
 			String dropdown, String toolbar, boolean skipPostTactic) {
-		super(id);
+		super(id, name, iconDesc);
 		this.target = target;
-		this.iconDesc = iconDesc;
 		this.interrupt = interrupt;
 		this.tooltip = tooltip;
 		this.priority = priority;
-		this.name = name;
 		this.dropdown = dropdown;
 		this.toolbar = toolbar;
 		this.skipPostTactic = skipPostTactic;
@@ -85,26 +77,6 @@ public abstract class TacticUIInfo extends AbstractInfo {
 	 */
 	public Target getTarget() {
 		return target;
-	}
-
-	/**
-	 * Returns the icon associated to the tactic.
-	 * 
-	 * @return an image, or <code>null</code> if the image could not be created
-	 */
-	public Image getIcon() {
-		if (icon == null) {
-			icon = iconDesc.createImage();
-			if (ProverUIUtils.DEBUG) {
-				if (icon != null) {
-					ProverUIUtils.debug("Created icon for tactic " + id);
-				} else {
-					ProverUIUtils.debug("Cannot create icon for tactic " + id);
-
-				}
-			}
-		}
-		return icon;
 	}
 
 	/**

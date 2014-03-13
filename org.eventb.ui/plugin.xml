@@ -1253,6 +1253,7 @@
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
       <dynamic_dropdown
+            icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/lrun_obj.gif"
             id="org.eventb.ui.profile_dyn_dropdown"
             name="%proofDropdowns.profile.name"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ProfileUITacticProvider"
