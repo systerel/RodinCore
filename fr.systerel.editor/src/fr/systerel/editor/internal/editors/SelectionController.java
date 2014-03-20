@@ -318,8 +318,17 @@ public class SelectionController implements MouseListener, VerifyListener,
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
 	
+	/**
+	 * Selects the given elements in the text and scrolls to reveal the position
+	 * of the first one. The selection is done in a best effort manner (i.e., if
+	 * the elements are valid and explicit).
+	 * 
+	 * @param selected
+	 *            array of elements to select
+	 */
 	public void selectItems(ILElement[] selected) {
 		selection.clear();
+		EditPos first = null;
 		for (ILElement e : selected) {
 			final EditorElement editorElem = mapper.findEditorElement(e);
 			if (editorElem == null)
@@ -331,10 +340,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 			if (enclosingPos == null)
 				return;
 			selection.add(element, enclosingPos);
-			// styledText.setSelection(start);
+			if (first == null) {
+				first = enclosingPos;
+			}
 			if (DEBUG)
 				System.out.println("selected " + element.getElement() + " in "
 						+ enclosingPos);
+		}
+		if (first != null) {
+			styledText.setTopIndex(styledText.getLineAtOffset(first.getStart()));
 		}
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
