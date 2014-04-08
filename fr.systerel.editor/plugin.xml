@@ -699,6 +699,12 @@
                   label="Refresh"
                   style="push">
             </command>
+            <command
+                  commandId="fr.systerel.editor.toggleImplicit"
+                  icon="icons/toggleImplicit.png"
+                  label="Show/Hide inherited elements"
+                  style="toggle">
+            </command>
          </toolbar>
       </menuContribution>
    </extension>
@@ -852,6 +858,29 @@
                   name="fr.systerel.editor.sourceprovider.editionMode" priorityLevel="activeEditorId">
             </variable>
       </sourceProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="fr.systerel.editor.toggleImplicit"
+            name="Show/Hide implicit elements">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="fr.systerel.editor.internal.handlers.ToggleImplicitHandler"
+            commandId="fr.systerel.editor.toggleImplicit">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.editor.definition.editableStructuralMode">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
 
 </plugin>

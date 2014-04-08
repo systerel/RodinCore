@@ -111,7 +111,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
 			textGenerator = new RodinTextGenerator(documentMapper);
-			doc.set(textGenerator.createText(inputRoot));
+			doc.set(textGenerator.createText(inputRoot,
+					editor.isShowImplicitElements()));
 			documentMapper.setDocument(doc);
 			documentMapper.setDocumentProvider(this);
 
@@ -166,7 +167,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	@Override
 	public void doSynchronize(Object element, IProgressMonitor monitor) {
-		document.set(textGenerator.createText(inputRoot));
+		document.set(textGenerator.createText(inputRoot,
+				editor.isShowImplicitElements()));
 	}
 	
 	public void synchronizeRoot(IProgressMonitor monitor, boolean silent) {

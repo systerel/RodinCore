@@ -61,7 +61,7 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  * </ul>
  */
 public class DocumentMapper {
-
+	
 	public static boolean DEBUG;
 
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
