@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.documentModel.RodinTextStream.LINESEPARATOR;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 
 import org.eventb.ui.manipulation.IAttributeManipulation;
@@ -42,12 +43,21 @@ public class EditorRegion {
 		this.level = level;
 		this.elementText = RodinTextStream.processMulti(multiline,
 				alignmentStr, addWhitespace, text);
-		this.pos = newPosOffLen(startOffset, elementText.length());
+		this.pos = getRegionLength(startOffset);
 		this.element = element;
 		this.type = type;
 		this.manipulation = manipulation;
 		this.multiline = multiline;
 		this.alignmentStr = alignmentStr;
+	}
+
+	/**
+	 * Ignoring length of line separators
+	 */
+	private EditPos getRegionLength(int startOffset) {
+		final int length = (!elementText.equals(LINESEPARATOR)) ? elementText
+				.length() : 0;
+		return newPosOffLen(startOffset, length);
 	}
 	
 	public EditPos getPos() {

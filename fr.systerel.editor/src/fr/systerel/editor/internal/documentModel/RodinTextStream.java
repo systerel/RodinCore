@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,13 +34,13 @@ public class RodinTextStream {
 	
 	// \u26ac is the handle character "⚬"
 	public static final String ELEMENT_PREFIX = "\u26ac\t";
+	public static final Object LINESEPARATOR = System
+			.getProperty("line.separator");
 	
 	public static int MIN_LEVEL = 1;
 	private static final String COMMENT_HEADER_DELIMITER = "\u203A"; // the comment "›" character
 	public static final String TAB = "\t";
 	private static final String WHITESPACE = " ";
-	private static final Object LINESEPARATOR = System
-			.getProperty("line.separator");
 	
 	private final StringBuilder builder;
 	private int level = MIN_LEVEL;
