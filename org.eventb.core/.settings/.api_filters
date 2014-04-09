@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.core" version="2">
-    <resource path="src/org/eventb/core/pog/POGFilterModule.java" type="org.eventb.core.pog.POGFilterModule">
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getFilterModules()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getProcessorModules()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/pog/POGModule.java" type="org.eventb.core.pog.POGModule">
         <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
             <message_arguments>
@@ -20,59 +8,11 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eventb/core/pog/POGProcessorModule.java" type="org.eventb.core.pog.POGProcessorModule">
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getFilterModules()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getProcessorModules()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/sc/SCFilterModule.java" type="org.eventb.core.sc.SCFilterModule">
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getFilterModules()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getProcessorModules()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/sc/SCModule.java" type="org.eventb.core.sc.SCModule">
         <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
             <message_arguments>
                 <message_argument value="Module"/>
                 <message_argument value="SCModule"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/sc/SCProcessorModule.java" type="org.eventb.core.sc.SCProcessorModule">
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getFilterModules()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method always existed, interface has just been moved" id="1143996420">
-            <message_arguments>
-                <message_argument value="getProcessorModules()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/tool/IStateRepository.java" type="org.eventb.core.tool.IStateRepository">
-        <filter comment="Method always existed, interface has just been moved" id="1211105284">
-            <message_arguments>
-                <message_argument value="getState(IStateType&lt;? extends I&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Method always existed, interface has just been moved" id="1211105284">
-            <message_arguments>
-                <message_argument value="setState(I)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -85,11 +25,11 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/internal/core/preferences/TacticDescriptorRef.java" type="org.eventb.internal.core.preferences.TacticDescriptorRef">
-        <filter id="574660632">
+        <filter id="574668824">
             <message_arguments>
                 <message_argument value="ITacticDescriptorRef"/>
-                <message_argument value="ITacticDescriptor"/>
                 <message_argument value="TacticDescriptorRef"/>
+                <message_argument value="ITacticDescriptor"/>
             </message_arguments>
         </filter>
     </resource>

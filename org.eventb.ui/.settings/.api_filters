@@ -17,10 +17,10 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/internal/ui/eventbeditor/elementdesc/NullAttributeDesc.java" type="org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc">
-        <filter id="574619656">
+        <filter id="574664731">
             <message_arguments>
+                <message_argument value="org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc.getTypeInstance()"/>
                 <message_argument value="IAttributeType"/>
-                <message_argument value="NullAttributeDesc"/>
             </message_arguments>
         </filter>
     </resource>

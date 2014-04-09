@@ -8,12 +8,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/rodinp/internal/core/debug/DebugHelpers.java" type="org.rodinp.internal.core.debug.DebugHelpers">
-        <filter comment="Add restriction on internal package visibility. No need for major version upgrade." id="305365105">
-            <message_arguments>
-                <message_argument value="org.rodinp.internal.core.debug.DebugHelpers"/>
-                <message_argument value="org.rodinp.core_1.7.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
