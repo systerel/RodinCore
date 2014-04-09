@@ -88,22 +88,15 @@ public class PresentationUpdater extends EContentAdapter implements
 			final int eventType = notification.getEventType();
 			final RodinEditor editor = updater.getEditor();
 			switch (eventType) {
-			case Notification.REMOVE:
-				final Object oldValue = notification.getOldValue();
-				if (oldValue instanceof ILElement) {
-					return new AfterDeletionResynchronizer(editor, null,
-							(ILElement) oldValue);
-				}
 			case Notification.ADD:
-				final Object newValue = notification.getNewValue();
-				if (newValue instanceof ILElement) {
-					return new AfterAdditionResynchronizer(editor, null,
-							(ILElement) newValue);
+				if (notification.getNewValue() instanceof ILElement) {
+					return new EditorResynchronizer(editor, null,
+							(ILElement) notification.getNewValue());
 				}
-				//$FALL-THROUGH$
 			case Notification.MOVE:
+			case Notification.REMOVE:
 			case Notification.REMOVE_MANY:
-				return new BasicEditorResynchronizer(editor, null);
+				return new EditorResynchronizer(editor, null);
 			}
 			return null;
 		}
@@ -148,7 +141,7 @@ public class PresentationUpdater extends EContentAdapter implements
 	 * still valid.
 	 */
 	public void resync(final IProgressMonitor monitor) {
-		new BasicEditorResynchronizer(editor, monitor).resynchronize();
+		new EditorResynchronizer(editor, monitor).resynchronize();
 	}
 
 	@Override

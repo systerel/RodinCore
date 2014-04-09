@@ -129,6 +129,18 @@ public class DocumentMapper {
 		}
 		return null;
 	}
+	
+	public Interval[] findIntervalsBetween(int offset1, int offset2) {
+		final List<Interval> result = new ArrayList<Interval>();
+		final EditPos zone = EditPos.newPosStartEnd(offset1, offset2);
+		for (Interval inter : intervals) {
+			final EditPos pos = inter.getPos();
+			if (zone.includes(pos) && inter.getLength() > 0) {
+				result.add(inter);
+			}
+		}
+		return result.toArray(new Interval[result.size()]);
+	}
 
 	/**
 	 * Binary search to find an interval that contains an offset
@@ -752,6 +764,15 @@ public class DocumentMapper {
 
 	public EditorElement findEditorElement(ILElement el) {
 		return editorElements.get(el);
+	}
+
+	public EditorElement findEditorElement(IRodinElement rodinElement) {
+		for (EditorElement element : editorElements.getItems()) {
+			if (element.getRodinElement().equals(rodinElement)) {
+				return element;
+			}
+		}
+		return null;
 	}
 
 	/**
