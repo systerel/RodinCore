@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -563,15 +563,6 @@ public class DocumentMapper {
 	public void elementChanged(ILElement element) {
 		final EditorElement el = findEditorElement(element);
 		final IInternalElement ie = element.getElement();
-		if (el != null && !ie.exists()) {
-			final List<Interval> intervals = el.getIntervals();
-			if (intervals.size() > 0) {
-				final Interval interval = getLastInterval();
-				adaptAfter(interval, -el.getLength());
-			}
-			editorElements.remove(element);
-			return;
-		}
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {

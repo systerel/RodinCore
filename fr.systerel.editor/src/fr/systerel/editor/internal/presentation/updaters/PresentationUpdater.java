@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
-import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
@@ -83,14 +82,6 @@ public class PresentationUpdater extends EContentAdapter implements
 				}
 			}
 
-			/*
-			 * Other cases where the editor can be finely synchronized:
-			 * attribute update. THIS IS A SECURITY TO MAINTAIN CONSISTENCY, IF
-			 * OTHER THINGS THAN THE EDITOR MODIFY THE RODIN DB.
-			 */
-			for (Notification notification : currentNotifications) {
-				processNotification(notification);
-			}
 		}
 
 		private EditorResynchronizer getSynchronizer(Notification notification) {
@@ -115,26 +106,6 @@ public class PresentationUpdater extends EContentAdapter implements
 				return new BasicEditorResynchronizer(editor, null);
 			}
 			return null;
-		}
-
-		private void processNotification(Notification notification) {
-			final Object oldObject = notification.getOldValue();
-			final Object notifier = notification.getNotifier();
-			final RodinEditor editor = updater.getEditor();
-			final DocumentMapper mapper = editor.getDocumentMapper();
-			final boolean wasILElement = !(oldObject instanceof ILElement);
-			if (notifier instanceof ILElement && wasILElement) {
-				mapper.elementChanged((ILElement) notifier);
-			}
-			if (notifier instanceof ILAttribute) {
-				mapper.elementChanged(((ILAttribute) notifier).getOwner());
-			}
-			if (oldObject instanceof ILElement) {
-				mapper.elementChanged((ILElement) oldObject);
-			}
-			if (oldObject instanceof ILAttribute) {
-				mapper.elementChanged(((ILAttribute) oldObject).getOwner());
-			}
 		}
 
 	}
