@@ -497,11 +497,12 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public List<ILElement> getChildrenOfType(IInternalElementType<?> type) {
 		final List<ILElement> list = new ArrayList<ILElement>();
-		for (ILElement child : getChildren()) {
+		final List<? extends ILElement> children = getChildren();
+		for (ILElement child : children) {
 			if (child.getElement().getElementType() == type) {
 				list.add(child);
 			}
