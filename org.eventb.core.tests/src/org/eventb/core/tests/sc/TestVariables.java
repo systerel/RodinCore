@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.ContextOnlyInAbstractMachineWarning;
+import static org.eventb.core.sc.GraphProblem.VariableNameConflictError;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
@@ -201,6 +206,46 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		hasMarker(m2.getVariables()[0]);
 	}
 	
+	/**
+	 * name conflict of variable and seen carrier set (through abstraction):
+	 * variable removed!
+	 */
+	@Test
+	public void testVariables_05() throws Exception {
+		final IContextRoot con = createContext("ctx");
+		addCarrierSets(con, "x");
+		saveRodinFileOf(con);
+
+		final IMachineRoot abs = createMachine("abs");
+		addMachineSees(abs, "ctx");
+		addInitialisation(abs);
+		saveRodinFileOf(abs);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, makeSList("x"));
+		addInitialisation(mac);
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(con, 0);
+		containsMarkers(abs, 0);
+		containsMarkers(mac, 3);
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ContextOnlyInAbstractMachineWarning, "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				CarrierSetNameImportConflictWarning, "x", "ctx");
+		hasMarker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+				VariableNameConflictError, "x");
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		containsContexts(file, "ctx");
+		final ISCInternalContext[] contexts = getInternalContexts(file, 1);
+		containsCarrierSets(contexts[0], "x");
+		containsVariables(file);
+		containsNoInvariant(file);
+	}
+
 	@Override
 	protected IGenericSCTest<IMachineRoot, ISCMachineRoot> newGeneric() {
 		return new GenericMachineSCTest(this);

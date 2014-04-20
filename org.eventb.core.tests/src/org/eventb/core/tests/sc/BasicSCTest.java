@@ -285,6 +285,11 @@ public abstract class BasicSCTest extends EventBTest {
 		containsPredicates("axiom", environment, labels, strings, derived, axioms);
 	}
 
+	public void containsNoInvariant(ISCMachineRoot root) throws RodinDBException {
+		final ISCInvariant[] invariants = root.getSCInvariants();
+		assertEquals(0, invariants.length);
+	}
+
 	public void containsInvariants(ISCMachineRoot root, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		ISCInvariant[] invariants = root.getSCInvariants();
 		
