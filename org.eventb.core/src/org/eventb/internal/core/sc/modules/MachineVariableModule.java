@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eventb.core.IVariable;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IReservedNameTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.SymbolFactory;
 import org.eventb.core.tool.IModuleType;
@@ -40,9 +41,27 @@ public class MachineVariableModule extends IdentifierModule {
 	public static final IModuleType<MachineVariableModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariableModule"); //$NON-NLS-1$
 
+	private IReservedNameTable reservedNameTable;
+
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
+	}
+
+	@Override
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+		super.initModule(element, repository, monitor);
+		reservedNameTable = (IReservedNameTable) repository
+				.getState(IReservedNameTable.STATE_TYPE);
+	}
+
+	@Override
+	public void endModule(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		reservedNameTable = null;
+		super.endModule(element, repository, monitor);
 	}
 
 	@Override
@@ -67,8 +86,16 @@ public class MachineVariableModule extends IdentifierModule {
 	protected boolean insertIdentifierSymbol(IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 
+		final String name = newSymbolInfo.getSymbol();
+		
+		if (reservedNameTable.isInConflict(name)) {
+			reservedNameTable.issueWarningFor(name, this);
+			newSymbolInfo.createConflictMarker(this);
+			return false;
+		}
+		
 		IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
-				.getSymbolInfo(newSymbolInfo.getSymbol());
+				.getSymbolInfo(name);
 
 		if (symbolInfo != null) {
 			if (symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {

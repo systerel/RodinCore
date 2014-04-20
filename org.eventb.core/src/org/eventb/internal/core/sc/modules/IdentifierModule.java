@@ -161,8 +161,10 @@ public abstract class IdentifierModule extends SCProcessorModule {
 
 			boolean ok = insertIdentifierSymbol(element, newSymbolInfo);
 
-			if (!ok || !filterModules(element, repository, null))
+			if (!ok || !filterModules(element, repository, null)) {
+				newSymbolInfo.setError();
 				continue;
+			}
 
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
 

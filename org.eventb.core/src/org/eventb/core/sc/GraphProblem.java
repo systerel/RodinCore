@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public enum GraphProblem implements IRodinProblem {
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),
 	VariableHasDisappearedError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableHasDisappearedError),
 	DisappearedVariableRedeclaredError(IMarker.SEVERITY_ERROR, Messages.scuser_DisappearedVariableRedeclaredError),
-	VariableIsParameterInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsParameterInAbstractMachine),
+	@Deprecated VariableIsParameterInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsParameterInAbstractMachine),
 	AssignedIdentifierNotVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignedIdentifierNotVariable),
 	ParameterChangedTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterChangedTypeError),
 	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter),

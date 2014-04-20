@@ -14,11 +14,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
 import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
 import static org.eventb.core.sc.GraphProblem.ConstantNameImportConflictError;
 import static org.eventb.core.sc.GraphProblem.ParameterNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.VariableNameConflictError;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBAttributes;
@@ -1385,34 +1387,69 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testEvents_35_parameterRefByVariableConflict() throws Exception {
-		IMachineRoot abs = createMachine("abs");
-
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList(), makeSList());
-
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
-		IMachineRoot mac = createMachine("mac");
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
-		IEvent fvt = addEvent(mac, "evt", makeSList(), makeSList(),
-				makeSList(), makeSList(), makeSList());
+		final IEvent fvt = addEvent(mac, "evt");
 		addEventRefines(fvt, "evt");
-
 		saveRodinFileOf(mac);
 
 		runBuilder();
+		containsMarkers(abs, false);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, "evt");
 		containsWitnesses(events[0], emptyEnv, makeSList("x"), makeSList("⊤"));
 
-		hasMarker(mac.getVariables()[0]);
+		hasMarker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+				VariableNameConflictError, "x");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
 		hasMarker(fvt);
+	}
+
+	/*
+	 * A concrete machine must not declare a variable that has the same name as
+	 * a parameter in the abstract machine. This is the same test as
+	 * testEvents_35_parameterRefByVariableConflict, but with an extended event.
+	 */
+	@Test
+	public void testEvents_35bis_parameterRefByVariableConflict() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		final IEvent evt = addExtendedEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		ISCEvent[] events = getSCEvents(file, "evt");
+		containsWitnesses(events[0], emptyEnv, makeSList(), makeSList());
+
+		hasMarker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+				VariableNameConflictError, "x");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
+		hasNotMarker(evt);
 	}
 
 	/*
