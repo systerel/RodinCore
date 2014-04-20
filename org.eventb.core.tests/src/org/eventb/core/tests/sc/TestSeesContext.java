@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.ContextOnlyInAbstractMachineWarning;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBAttributes;
@@ -128,13 +130,14 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		seesContexts(file, "ctx");
 		containsContexts(file, "ctx");
 		
-		hasMarker(mac.getRefinesClauses()[0]);
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ContextOnlyInAbstractMachineWarning, "ctx");
 	}
 
 	/**
 	 * Ensures that a context seen through the abstraction (and where it's
 	 * indirectly seen by the abstraction) is repaired and occurs 
-	 * as an internal context and but not in a sees clause.
+	 * as an internal context but not in a sees clause.
 	 */
 	@Test
 	public void testSeesContext_03() throws Exception {
@@ -158,6 +161,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE);
 	}
 
 	/**
