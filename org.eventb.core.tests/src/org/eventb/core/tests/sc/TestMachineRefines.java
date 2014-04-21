@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.VariableNameImportConflictWarning;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBAttributes;
@@ -28,58 +31,94 @@ import org.junit.Test;
  *
  */
 public class TestMachineRefines extends BasicSCTestWithFwdConfig {
-	
-	/*
-	 * abstract machine identifiers have precedence over 
-	 * seen context identifiers
+
+	/**
+	 * Abstract machine identifiers have precedence over seen context
+	 * identifiers: In case of conflict, the seen context is completely ignored.
 	 */
 	@Test
 	public void testMachineRefines_0() throws Exception {
-		IContextRoot con =  createContext("ctx");
-		addCarrierSets(con, "V1");
-	
-		saveRodinFileOf(con);
-		
-		runBuilder();
-
-		IMachineRoot abs = createMachine("abs");
-		
+		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, makeSList("V1"));
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
-
+		addInitialisation(abs, makeSList("A1"), makeSList("V1 ≔ 0"));
 		saveRodinFileOf(abs);
-		
-		runBuilder();
 
-		IMachineRoot mac = createMachine("mac");
-		
-		addMachineSees(mac, "ctx");
+		final IContextRoot con = createContext("ctx");
+		addCarrierSets(con, "V1");
+		saveRodinFileOf(con);
+
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-
+		addMachineSees(mac, "ctx");
 		addVariables(mac, makeSList("V2"));
 		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"), false);
-
+		addInitialisation(mac, "V2");
 		saveRodinFileOf(mac);
-		
-		runBuilder();
-		
-		ISCMachineRoot file = mac.getSCMachineRoot();
-				
-		seesContexts(file);
-		
-		containsVariables(file, "V1", "V2");
-		
-		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V2=ℤ",
-				factory);
-	
-		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), false, false);
-		
-		getInternalContexts(file, 0);
 
-		hasMarker(mac.getSeesClauses()[0]);
-		
+		runBuilder();
+		containsMarkers(abs, 0);
+		containsMarkers(con, 0);
+		containsMarkers(mac, 2);
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				VariableNameImportConflictWarning, "V1", "abs");
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				CarrierSetNameImportConflictError, "V1", "ctx");
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		seesContexts(file);
+		getInternalContexts(file, 0);
+		containsVariables(file, "V1", "V2");
+		containsInvariants(file, mTypeEnvironment("V1=ℤ; V2=ℤ"),
+				makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), false, false);
 	}
-	
+
+	/**
+	 * Abstract machine identifiers have precedence over seen contexts
+	 * identifiers: The whole SEES clause is ignored, rather than just the
+	 * context containing the conflicting identifiers.
+	 */
+	@Test
+	public void testMachineRefines_0bis() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addVariables(abs, makeSList("V1"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(abs, makeSList("A1"), makeSList("V1 ≔ 0"));
+		saveRodinFileOf(abs);
+
+		final IContextRoot acon = createContext("acon");
+		addCarrierSets(acon, "V1");
+		saveRodinFileOf(acon);
+
+		final IContextRoot ccon = createContext("ccon");
+		addContextExtends(ccon, "acon");
+		saveRodinFileOf(ccon);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ccon");
+		addVariables(mac, makeSList("V2"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"), false);
+		addInitialisation(mac, "V2");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, 0);
+		containsMarkers(acon, 0);
+		containsMarkers(mac, 2);
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				VariableNameImportConflictWarning, "V1", "abs");
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				CarrierSetNameImportConflictError, "V1", "acon");
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		seesContexts(file);
+		getInternalContexts(file, 0);
+		containsVariables(file, "V1", "V2");
+		containsInvariants(file, mTypeEnvironment("V1=ℤ; V2=ℤ"),
+				makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), false, false);
+	}
+
 	/*
 	 * refined machine should see at least all contexts seen by
 	 * their abstract machine; carrier sets are propagated
