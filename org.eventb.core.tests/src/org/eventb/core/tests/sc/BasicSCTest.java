@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,7 +412,27 @@ public abstract class BasicSCTest extends EventBTest {
 			fail(sb.toString());
 		}
 	}
-	
+
+	public void containsMarkers(IInternalElement element, int expected)
+			throws CoreException {
+		final IFile file = element.getResource();
+		final IMarker[] markers = file.findMarkers(RODIN_PROBLEM_MARKER, true,
+				DEPTH_INFINITE);
+		if (expected != markers.length) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("Expected ");
+			sb.append(expected);
+			sb.append(" markers on element ");
+			sb.append(element);
+			sb.append(", but found:");
+			for (final IMarker marker : markers) {
+				sb.append("\n\t");
+				sb.append(marker.getAttribute(MESSAGE));
+			}
+			fail(sb.toString());
+		}
+	}
+
 	public void hasMarker(IRodinElement element, IAttributeType attrType) throws Exception {
 		hasMarker(element, attrType, null);
 	}

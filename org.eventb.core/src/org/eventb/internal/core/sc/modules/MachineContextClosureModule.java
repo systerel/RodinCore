@@ -80,13 +80,16 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			if (validContextNames.contains(name)) {
 				continue;
 			}
-			createProblemMarker(abstractMachineInfo.getRefinesClause(),
-					TARGET_ATTRIBUTE, ContextOnlyInAbstractMachineWarning, name);
-
 			// repair
-			copySeesClause(scMachRoot,
-					abstractMachineInfo.getAbstractMachine(), name, count++);
 			context.copy(scMachRoot, null, null, false, null);
+
+			final boolean added = copySeesClause(scMachRoot,
+					abstractMachineInfo.getAbstractMachine(), name, count++);
+			if (added) {
+				createProblemMarker(abstractMachineInfo.getRefinesClause(),
+						TARGET_ATTRIBUTE, ContextOnlyInAbstractMachineWarning,
+						name);
+			}
 		}
 	}
 
@@ -113,9 +116,9 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	/*
 	 * Copy the sees clause from the abstraction if it introduces directly the
 	 * context, otherwise don't add any sees clause: the context is seen
-	 * indirectly.
+	 * indirectly.  Returns whether a clause was added.
 	 */
-	private void copySeesClause(ISCMachineRoot scMachine,
+	private boolean copySeesClause(ISCMachineRoot scMachine,
 			ISCMachineRoot scAbsMachFile, String ctxName, int count)
 			throws CoreException {
 
@@ -123,8 +126,10 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			if (ctxName.equals(clause.getSeenSCContext().getComponentName())) {
 				final String name = CSEES_NAME_PREFIX + count;
 				clause.copy(scMachine, null, name, false, null);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override

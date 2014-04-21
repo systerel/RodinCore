@@ -113,25 +113,29 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testSeesContext_02() throws Exception {
-		IContextRoot con = createContext("ctx");
+		final IContextRoot con = createContext("ctx");
 		saveRodinFileOf(con);
 		
-		IMachineRoot abs = createMachine("abs");
+		final IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "ctx");
+		addInitialisation(abs);
 		saveRodinFileOf(abs);
 		
-		IMachineRoot mac = createMachine("mac");
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		saveRodinFileOf(mac);
 		
 		runBuilder();
-		
-		ISCMachineRoot file = mac.getSCMachineRoot();
-		seesContexts(file, "ctx");
-		containsContexts(file, "ctx");
-		
+		containsMarkers(con, 0);
+		containsMarkers(abs, 0);
+		containsMarkers(mac, 1);
 		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
 				ContextOnlyInAbstractMachineWarning, "ctx");
+		
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		seesContexts(file, "ctx");
+		containsContexts(file, "ctx");
 	}
 
 	/**
@@ -141,27 +145,34 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testSeesContext_03() throws Exception {
-		IContextRoot con1 = createContext("con1");
+		final IContextRoot con1 = createContext("con1");
 		saveRodinFileOf(con1);
-		
-		IContextRoot con2 = createContext("con2");
+
+		final IContextRoot con2 = createContext("con2");
 		addContextExtends(con2, "con1");
 		saveRodinFileOf(con2);
-		
-		IMachineRoot abs = createMachine("abs");
+
+		final IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "con2");
+		addInitialisation(abs);
 		saveRodinFileOf(abs);
-		
-		IMachineRoot mac = createMachine("mac");
+
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		saveRodinFileOf(mac);
-		
+
 		runBuilder();
-		
-		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsMarkers(con1, 0);
+		containsMarkers(con2, 0);
+		containsMarkers(abs, 0);
+		containsMarkers(mac, 1);
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ContextOnlyInAbstractMachineWarning, "con2");
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE);
 	}
 
 	/**
