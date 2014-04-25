@@ -10,19 +10,33 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
+import static org.eventb.internal.core.ast.extension.ExtensionSignature.getSignature;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IExtensionTranslation;
 import org.eventb.core.ast.ISealedTypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FreshNameSolver;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
+import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
+import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
+import org.eventb.internal.core.ast.extension.ExtensionTranslator.ExpressionExtTranslator;
+import org.eventb.internal.core.ast.extension.ExtensionTranslator.PredicateExtTranslator;
+import org.eventb.internal.core.ast.extension.TranslatorRegistry.ExprTranslatorRegistry;
+import org.eventb.internal.core.ast.extension.TranslatorRegistry.PredTranslatorRegistry;
 
 /**
  * Translation of operator extensions to function applications. We do not
@@ -30,21 +44,31 @@ import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
  * {@link DatatypeTranslation}), nor extensions that are not WD-strict (as these
  * cannot be translated to mere function application).
  * 
- * We maintain an associative table from operator signatures to dedicated
+ * We maintain associative tables from operator signatures to dedicated
  * translators.
  * 
  * @author Thomas Muller
  */
-public class ExtensionTranslation {
+public class ExtensionTranslation implements IExtensionTranslation {
 
+	private final ISealedTypeEnvironment srcTypenv;
 	private final FormulaFactory trgFactory;
 	private final ITypeEnvironmentBuilder trgTypenv;
 	private final FreshNameSolver nameSolver;
 
-	public ExtensionTranslation(ITypeEnvironment srcTypenv) {
+	private final ExprTranslatorRegistry exprTranslators //
+	= new ExprTranslatorRegistry(this);
+	private final PredTranslatorRegistry predTranslators //
+	= new PredTranslatorRegistry(this);
+
+	private ITypeCheckingRewriter rewriter;
+
+	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
+		this.srcTypenv = srcTypenv;
 		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
 		this.trgTypenv = srcTypenv.translate(trgFactory).makeBuilder();
 		this.nameSolver = new FreshNameSolver(trgTypenv);
+		this.rewriter = new ExtensionRewriter(trgFactory, this);
 	}
 
 	private static FormulaFactory computeTargetFactory(FormulaFactory fac) {
@@ -64,17 +88,92 @@ public class ExtensionTranslation {
 		return FormulaFactory.getInstance(keptExtensions);
 	}
 
+	public ISealedTypeEnvironment getSourceTypeEnvironment() {
+		return srcTypenv;
+	}
+
 	public FormulaFactory getTargetFactory() {
 		return trgFactory;
 	}
 
+	@Override
 	public ISealedTypeEnvironment getTargetTypeEnvironment() {
 		return trgTypenv.makeSnapshot();
 	}
 
-	public final FreeIdentifier solveIdentifier(String symbol, Type type) {
-		final String solvedIdentName = nameSolver.solveAndAdd(symbol);
-		return trgFactory.makeFreeIdentifier(solvedIdentName, null, type);
+	public Expression translate(ExtendedExpression src,
+			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		final ExpressionExtSignature signature = getSignature(src);
+		final ExpressionExtTranslator translator = exprTranslators
+				.get(signature);
+		return translator.translate(newChildExprs, newChildPreds);
+	}
+
+	public Predicate translate(ExtendedPredicate src,
+			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		final PredicateExtSignature signature = getSignature(src);
+		final PredicateExtTranslator translator = predTranslators
+				.get(signature);
+		return translator.translate(newChildExprs, newChildPreds);
+	}
+
+	public FreeIdentifier makeFunction(ExtensionSignature signature) {
+		final String baseName = makeBaseName(signature);
+		final String name = nameSolver.solve(baseName);
+		final Type type = signature.getFunctionalType().translate(trgFactory);
+		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
+				type);
+		trgTypenv.add(ident);
+		return ident;
+	}
+
+	/*
+	 * Ensures that we will be able to create a fresh identifier, that is that
+	 * we start with something that looks like an identifier, otherwise the
+	 * fresh name solver will loop forever.
+	 */
+	private String makeBaseName(ExtensionSignature signature) {
+		final IFormulaExtension extension = signature.getExtension();
+		final String id = extension.getId();
+		if (trgFactory.isValidIdentifierName(id)) {
+			return id;
+		}
+		// Use some arbitrary name which can be used for identifiers
+		return "ext";
+	}
+
+	public ITypeCheckingRewriter getRewriter() {
+		return rewriter;
+	}
+
+	private static class ExtensionRewriter extends DefaultTypeCheckingRewriter {
+
+		private ExtensionTranslation translation;
+
+		public ExtensionRewriter(FormulaFactory targetFactory,
+				ExtensionTranslation translation) {
+			super(targetFactory);
+			this.translation = translation;
+		}
+
+		@Override
+		public Expression rewrite(ExtendedExpression src, boolean changed,
+				Expression[] newChildExprs, Predicate[] newChildPreds) {
+			if (!changed && ff == src.getFactory()) {
+				return src;
+			}
+			return translation.translate(src, newChildExprs, newChildPreds);
+		}
+
+		@Override
+		public Predicate rewrite(ExtendedPredicate src, boolean changed,
+				Expression[] newChildExprs, Predicate[] newChildPreds) {
+			if (!changed && ff == src.getFactory()) {
+				return src;
+			}
+			return translation.translate(src, newChildExprs, newChildPreds);
+		}
+
 	}
 
 }

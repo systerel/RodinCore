@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IDatatypeTranslation;
+import org.eventb.core.ast.IExtensionTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -33,6 +34,7 @@ import org.eventb.internal.core.ast.GivenTypeHelper;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
+import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 
 /**
  * Common implementation of type environments used to type check event-B
@@ -167,6 +169,11 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	@Override
 	public IDatatypeTranslation makeDatatypeTranslation() {
 		return new DatatypeTranslation(this);
+	}
+	
+	@Override
+	public IExtensionTranslation makeExtensionTranslation() {
+		return new ExtensionTranslation(this.makeSnapshot());
 	}
 
 	@Override

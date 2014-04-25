@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
+import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.wd.WDComputer;
@@ -2439,6 +2440,40 @@ public abstract class Formula<T extends Formula<T>> {
 			}
 		}
 		return rewrite(real.getFormulaRewriter());
+	}
+
+	/**
+	 * Returns the type-checked formula obtained by translating this formula
+	 * using the given extension translation.
+	 * 
+	 * @param translation
+	 *            some extension translation
+	 * @return a type-checked formula where most extensions have been translated
+	 *         to function applications
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @throws IllegalArgumentException
+	 *             if this formula is not type-checked within the source type
+	 *             environment of the given translation
+	 * @see ITypeEnvironment#makeExtensionTranslation()
+	 * @since 3.1
+	 */
+	public T translateExtensions(IExtensionTranslation translation) {
+		ensureTypeChecked();
+		final ExtensionTranslation real = (ExtensionTranslation) translation;
+		final ISealedTypeEnvironment typenv = real.getSourceTypeEnvironment();
+		if (fac != typenv.getFormulaFactory()) {
+			throw new IllegalArgumentException("Formula factory " + fac
+					+ " incompatible with translation " + translation);
+		}
+		for (final FreeIdentifier ident : freeIdents) {
+			if (!typenv.contains(ident)) {
+				throw new IllegalArgumentException("Free identifier " + ident
+						+ " is not part of the source type environment of "
+						+ translation);
+			}
+		}
+		return rewrite(real.getRewriter());
 	}
 
 	/**
