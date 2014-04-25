@@ -871,5 +871,14 @@
          </with>
       </definition>
    </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <sourceProvider
+            provider="fr.systerel.editor.internal.sourceprovider.EditionModeProvider">
+            <variable
+                  name="fr.systerel.editor.sourceprovider.editionMode" priorityLevel="activeEditorId">
+            </variable>
+      </sourceProvider>
+   </extension>
 
 </plugin>
