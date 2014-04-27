@@ -9,12 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     University of Southampton - maintenance
  *     Systerel - added formula factory in constructor
+ *     Systerel - add tryPutSymbolInfo
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
@@ -83,15 +83,12 @@ public class StackedIdentifierSymbolTable extends IdentifierSymbolTable
 	}
 
 	@Override
-	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo)
-			throws CoreException {
-		String symbol = symbolInfo.getSymbol();
-
+	public boolean tryPutSymbolInfo(IIdentifierSymbolInfo symbolInfo) {
+		final String symbol = symbolInfo.getSymbol();
 		if (parentTable.containsKey(symbol)) {
-			throwSymbolConflict();
+			return false;
 		}
-
-		super.putSymbolInfo(symbolInfo);
+		return super.tryPutSymbolInfo(symbolInfo);
 	}
 
 }

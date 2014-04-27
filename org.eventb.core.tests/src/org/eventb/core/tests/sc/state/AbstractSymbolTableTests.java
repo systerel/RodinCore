@@ -102,6 +102,7 @@ S extends ISymbolTable<E, T, I>> {
 	}
 
 	protected final void assertPutFails(I info) {
+		assertFalse(table.tryPutSymbolInfo(info));
 		try {
 			table.putSymbolInfo(info);
 			fail("Should have raised an exception");

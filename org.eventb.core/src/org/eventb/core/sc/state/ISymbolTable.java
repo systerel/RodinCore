@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 University of Southampton and others.
+ * Copyright (c) 2008, 2014 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     University of Southampton - initial API and implementation
+ *     Systerel - add tryPutSymbolInfo
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
@@ -51,6 +52,11 @@ public interface ISymbolTable<E extends IInternalElement, T extends IInternalEle
 	 * allowed. The key of the corresponding symbol is
 	 * <code>symbolInfo.getSymbol()</code>. If the symbol table is stacked, the
 	 * symbol is inserted in the top level symbol table.
+	 * <p>
+	 * This method should be used only when no exception should be raised.
+	 * Otherwise, use the alternative method
+	 * {@link #tryPutSymbolInfo(ISymbolInfo)}.
+	 * </p>
 	 * 
 	 * @param symbolInfo
 	 *            the symbol info for the symbol
@@ -60,6 +66,26 @@ public interface ISymbolTable<E extends IInternalElement, T extends IInternalEle
 	 * @see ISymbolInfo#getSymbol()
 	 */
 	void putSymbolInfo(I symbolInfo) throws CoreException;
+
+	/**
+	 * Attempts to insert a symbol info into the symbol table and tells if it
+	 * succeeded. Multiple insertions are not allowed. The key of the
+	 * corresponding symbol is <code>symbolInfo.getSymbol()</code>. If the
+	 * symbol table is stacked, the symbol is inserted in the top level symbol
+	 * table.
+	 * <p>
+	 * This is similar to {@link #putSymbolInfo(ISymbolInfo)} but
+	 * returning a Boolean instead of throwing an exception.
+	 * </p>
+	 * 
+	 * @param symbolInfo
+	 *            the symbol info for the symbol
+	 * @return <code>true</code> if the symbol has been added to the table,
+	 *         <code>false</code> in case of collision
+	 * @see ISymbolInfo#getSymbol()
+	 * @since 3.1
+	 */
+	boolean tryPutSymbolInfo(I symbolInfo);
 
 	/**
 	 * Turns all symbols of the symbol table immutable
