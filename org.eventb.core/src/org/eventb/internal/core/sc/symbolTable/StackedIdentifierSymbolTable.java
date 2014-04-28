@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
@@ -29,8 +27,6 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 public class StackedIdentifierSymbolTable extends IdentifierSymbolTable
 		implements IIdentifierSymbolTable {
 
-	private final Set<FreeIdentifier> freeIdentifiers;
-
 	private final Collection<FreeIdentifier> allFreeIdentifiers;
 
 	protected final IIdentifierSymbolTable parentTable;
@@ -39,9 +35,8 @@ public class StackedIdentifierSymbolTable extends IdentifierSymbolTable
 			int size, FormulaFactory factory) {
 		super(size, factory);
 		this.parentTable = parentTable;
-		freeIdentifiers = new HashSet<FreeIdentifier>(size);
-		allFreeIdentifiers = new StackedCollection<FreeIdentifier>(parentTable
-				.getFreeIdentifiers(), freeIdentifiers);
+		allFreeIdentifiers = new StackedCollection<FreeIdentifier>(
+				parentTable.getFreeIdentifiers(), super.getFreeIdentifiers());
 	}
 
 	@Override
