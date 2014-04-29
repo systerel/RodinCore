@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,6 +129,12 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 			tests.add(makeSuccess(" ¬1∈P |- 1∈P ",
 					"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥ "));
 		}
+		// Bug #713: Apply in two hypotheses giving the same result
+		tests.add(makeSuccess(" 1∈P ;; 2∈P ;; 3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P][][1∈P ;; 2∈P ;; 3∈P ⇒ ⊤] |- ⊤"));
+		// Bug #713: Apply in a hypotheses giving an already existing hypothesis
+		tests.add(makeSuccess(" 1∈P ;; 2∈P ⇒ 1∈P ;; 2∈P ⇒ ⊤ |- ⊤ ", //
+				"{P=ℙ(ℤ)}[2∈P ⇒ 1∈P][][1∈P ;; 2∈P ⇒ ⊤] |- ⊤"));
 	}
 
 	private SuccessfullReasonerApplication makeSuccess(String sequentImage,

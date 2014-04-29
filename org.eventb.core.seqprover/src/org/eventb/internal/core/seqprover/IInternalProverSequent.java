@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,5 +204,42 @@ public interface IInternalProverSequent extends IProverSequent{
 	 *         of type-check error
 	 */
 	IInternalProverSequent performfwdInf(Collection<Predicate> hyps, FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps);
-	
+
+	/**
+	 * Returns a new sequent after performing the given rewrite on its
+	 * hypotheses.
+	 * <p>
+	 * The original sequent remains unmodified.
+	 * 
+	 * The rewrite is applicable if and only if the corresponding forward
+	 * inference is applicable (see
+	 * {@link #performfwdInf(Collection, FreeIdentifier[], Collection)}).
+	 * </p>
+	 * <p>
+	 * In case the rewrite is applicable, the corresponding forward inference
+	 * and hide are performed. Otherwise, <code>this</code> is returned.
+	 * <p>
+	 * In case the sequent is not modified, <code>this</code> is returned. The
+	 * case of non-modification can therefore be checked using <code>==</code>.
+	 * </p>
+	 * 
+	 * @param hyps
+	 *            Hypotheses needed to perform the rewrite, or <code>null</code>
+	 *            if none
+	 * @param addedIdents
+	 *            Free identifiers added by the rewrite, or <code>null</code> if
+	 *            none
+	 * @param inferredHyps
+	 *            Inferred hypotheses, or <code>null</code> if none.
+	 * @param toHide
+	 *            Hypotheses to hide, must be non empty and all contained in
+	 *            given hyps.
+	 * @return A sequent with the given rewrite performed on the hypotheses, or
+	 *         the sequent itself (i.e. <code>this</code>) in case not
+	 *         applicable or not modifying the sequent
+	 */
+	IInternalProverSequent performRewrite(Collection<Predicate> hyps,
+			FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps,
+			Collection<Predicate> toHide);
+
 }

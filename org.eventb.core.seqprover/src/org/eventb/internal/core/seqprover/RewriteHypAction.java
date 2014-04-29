@@ -25,6 +25,8 @@ import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 public class RewriteHypAction extends ForwardInfHypAction implements
 		IRewriteHypAction {
 
+	// TODO composition instead of inheritance
+
 	private final Collection<Predicate> disappearingHyps;
 
 	public RewriteHypAction(Collection<Predicate> hyps,
@@ -48,11 +50,10 @@ public class RewriteHypAction extends ForwardInfHypAction implements
 
 	@Override
 	public IInternalProverSequent perform(IInternalProverSequent sequent) {
-		final IInternalProverSequent rewritten = super.perform(sequent);
-		if (!skipped) {
-			return rewritten.hideHypotheses(disappearingHyps);
-		}
-		return sequent;
+		final IInternalProverSequent result = sequent.performRewrite(hyps,
+				addedIdents, inferredHyps, disappearingHyps);
+		skipped = (result == sequent);
+		return result;
 	}
 
 	@Override

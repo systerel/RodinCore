@@ -24,9 +24,9 @@ import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 
 public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAction {
 
-	private final Collection<Predicate> hyps;
-	private final FreeIdentifier[] addedIdents;
-	private final Collection<Predicate> inferredHyps;
+	protected final Collection<Predicate> hyps;
+	protected final FreeIdentifier[] addedIdents;
+	protected final Collection<Predicate> inferredHyps;
 
 	// Internal field to enforce that only forward inferences that were not skipped 
 	// while building a proof are used to process proof dependencies.

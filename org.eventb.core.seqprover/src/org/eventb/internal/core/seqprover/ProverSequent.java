@@ -327,65 +327,102 @@ public final class ProverSequent implements IInternalProverSequent{
 	public ProverSequent showHypotheses(Collection<Predicate> toShow){
 		if (toShow == null)
 			return this;
-		LinkedHashSet<Predicate> newHiddenHypotheses = new LinkedHashSet<Predicate>(this.hiddenHypotheses);
+		LinkedHashSet<Predicate> newHiddenHypotheses = new LinkedHashSet<Predicate>(
+				this.hiddenHypotheses);
 		boolean modified = newHiddenHypotheses.removeAll(toShow);
-		if (modified) return new ProverSequent(this,null,null,null,newHiddenHypotheses,null,null);
+		if (modified)
+			return new ProverSequent(this, null, null, null,
+					newHiddenHypotheses, null, null);
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#performfwdInf(java.util.Collection, org.eventb.core.ast.FreeIdentifier[], java.util.Collection)
-	 */
-	public IInternalProverSequent performfwdInf(Collection<Predicate> hyps, FreeIdentifier[] addedIdents, Collection<Predicate> infHyps) {
-		boolean modified = false;
-		
-		final TypeChecker checker = new TypeChecker(
-				typeEnvironment);
+	private boolean isFwdInfApplicable(TypeChecker checker,
+			Collection<Predicate> hyps, FreeIdentifier[] addedIdents,
+			Collection<Predicate> infHyps) {
 		checker.checkFormulas(hyps);
 		checker.addIdents(addedIdents);
 		checker.checkFormulas(infHyps);
 		if (checker.hasTypeCheckError())
-			return this;
+			return false;
 		if (!checker.areAddedIdentsFresh())
-			return this;
+			return false;
 		if (!ProverChecks.checkNoPredicateVariable(infHyps))
-			return this;
+			return false;
+
+		if (hyps != null && !this.containsHypotheses(hyps))
+			return false;
+
+		return true;
+	}
+
+	private IInternalProverSequent applyFwdInf(final TypeChecker checker,
+			Collection<Predicate> hyps, Collection<Predicate> infHyps) {
+		boolean modified = false;
 
 		final ITypeEnvironment newTypeEnv = checker.getTypeEnvironment();
 		modified |= checker.hasNewTypeEnvironment();
-		
-		if (hyps != null && ! this.containsHypotheses(hyps)) return this;
 
 		boolean selectInfHyps = true;
 		boolean hideInfHyps = false;
-		
+
 		if (hyps != null) {
-			selectInfHyps = ! Collections.disjoint(hyps, selectedHypotheses);
-			hideInfHyps = selectInfHyps ? false : hiddenHypotheses.containsAll(hyps);
+			selectInfHyps = !Collections.disjoint(hyps, selectedHypotheses);
+			hideInfHyps = selectInfHyps ? false : hiddenHypotheses
+					.containsAll(hyps);
 		}
-		
+
 		LinkedHashSet<Predicate> newLocalHypotheses = null;
 		LinkedHashSet<Predicate> newSelectedHypotheses = null;
 		LinkedHashSet<Predicate> newHiddenHypotheses = null;
-		
-		if (infHyps != null){
+
+		if (infHyps != null) {
 			newLocalHypotheses = new LinkedHashSet<Predicate>(localHypotheses);
-			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
+			newSelectedHypotheses = new LinkedHashSet<Predicate>(
+					selectedHypotheses);
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
 			for (Predicate infHyp : infHyps) {
 				// if (! typeCheckClosed(infHyp,newTypeEnv)) return this;
-				if (! this.containsHypothesis(infHyp)){
+				if (!this.containsHypothesis(infHyp)) {
 					newLocalHypotheses.add(infHyp);
-					if (selectInfHyps) newSelectedHypotheses.add(infHyp);
-					if (hideInfHyps) newHiddenHypotheses.add(infHyp);
+					if (selectInfHyps)
+						newSelectedHypotheses.add(infHyp);
+					if (hideInfHyps)
+						newHiddenHypotheses.add(infHyp);
 					modified = true;
 				}
 			}
-		}		
-		if (modified) return new ProverSequent(this,newTypeEnv,null,newLocalHypotheses,newHiddenHypotheses,newSelectedHypotheses,null);
+		}
+		if (modified)
+			return new ProverSequent(this, newTypeEnv, null,
+					newLocalHypotheses, newHiddenHypotheses,
+					newSelectedHypotheses, null);
 		return this;
 	}
-	
+
+	public IInternalProverSequent performfwdInf(Collection<Predicate> hyps,
+			FreeIdentifier[] addedIdents, Collection<Predicate> infHyps) {
+
+		final TypeChecker checker = new TypeChecker(typeEnvironment);
+		if (!isFwdInfApplicable(checker, hyps, addedIdents, infHyps)) {
+			return this;
+		}
+
+		return applyFwdInf(checker, hyps, infHyps);
+	}
+
+	@Override
+	public IInternalProverSequent performRewrite(Collection<Predicate> hyps,
+			FreeIdentifier[] addedIdents, Collection<Predicate> infHyps,
+			Collection<Predicate> toHide) {
+
+		final TypeChecker checker = new TypeChecker(typeEnvironment);
+		if (!isFwdInfApplicable(checker, hyps, addedIdents, infHyps)) {
+			return this;
+		}
+
+		return applyFwdInf(checker, hyps, infHyps).hideHypotheses(toHide);
+	}
+
 	@Override
 	public String toString(){
 		return (
