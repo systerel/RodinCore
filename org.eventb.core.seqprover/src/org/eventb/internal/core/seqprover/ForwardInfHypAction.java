@@ -24,13 +24,13 @@ import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 
 public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAction {
 
-	protected final Collection<Predicate> hyps;
-	protected final FreeIdentifier[] addedIdents;
-	protected final Collection<Predicate> inferredHyps;
+	private final Collection<Predicate> hyps;
+	private final FreeIdentifier[] addedIdents;
+	private final Collection<Predicate> inferredHyps;
 
 	// Internal field to enforce that only forward inferences that were not skipped 
 	// while building a proof are used to process proof dependencies.
-	protected boolean skipped = true;
+	private boolean skipped = true;
 	
 
 	public ForwardInfHypAction(final Collection<Predicate> hyps, final FreeIdentifier[] addedIdents, final Collection<Predicate> inferredHyps) {
