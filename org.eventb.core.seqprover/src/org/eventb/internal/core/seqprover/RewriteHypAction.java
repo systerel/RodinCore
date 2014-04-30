@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
-import java.util.ArrayList;
+import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE;
+
 import java.util.Collection;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -20,22 +21,51 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 
 /**
- * Default implementation of {@link IRewriteHypAction}.
+ * Default implementation of {@link IRewriteHypAction}. We compose a forward
+ * inference and a hide action into one, delegating to the appropriate action.
  */
-public class RewriteHypAction extends ForwardInfHypAction implements
-		IRewriteHypAction {
+public class RewriteHypAction implements IInternalHypAction, IRewriteHypAction {
 
-	// TODO composition instead of inheritance
+	private final ForwardInfHypAction fwdInf;
+	private final SelectionHypAction hide;
 
-	private final Collection<Predicate> disappearingHyps;
+	// Internal field to enforce that only rewrites that were not skipped
+	// while building a proof are used to process proof dependencies.
+	private boolean skipped = true;
 
 	public RewriteHypAction(Collection<Predicate> hyps,
 			FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps,
 			Collection<Predicate> disappearingHyps) {
-		super(hyps, addedIdents, inferredHyps);
-		assert !disappearingHyps.isEmpty();
-		assert hyps.containsAll(disappearingHyps);
-		this.disappearingHyps = new ArrayList<Predicate>(disappearingHyps);
+		this(new ForwardInfHypAction(hyps, addedIdents, inferredHyps),
+				new SelectionHypAction(HIDE_ACTION_TYPE, disappearingHyps));
+	}
+
+	private RewriteHypAction(ForwardInfHypAction fwdInf,
+			SelectionHypAction hide) {
+		assert !hide.getHyps().isEmpty();
+		assert fwdInf.getHyps().containsAll(hide.getHyps());
+		this.fwdInf = fwdInf;
+		this.hide = hide;
+	}
+
+	@Override
+	public FreeIdentifier[] getAddedFreeIdents() {
+		return fwdInf.getAddedFreeIdents();
+	}
+
+	@Override
+	public Collection<Predicate> getInferredHyps() {
+		return fwdInf.getInferredHyps();
+	}
+
+	@Override
+	public Collection<Predicate> getHyps() {
+		return fwdInf.getHyps();
+	}
+
+	@Override
+	public Collection<Predicate> getDisappearingHyps() {
+		return hide.getHyps();
 	}
 
 	@Override
@@ -44,30 +74,29 @@ public class RewriteHypAction extends ForwardInfHypAction implements
 	}
 
 	@Override
-	public Collection<Predicate> getDisappearingHyps() {
-		return disappearingHyps;
-	}
-
-	@Override
 	public IInternalProverSequent perform(IInternalProverSequent sequent) {
-		final IInternalProverSequent result = sequent.performRewrite(hyps,
-				addedIdents, inferredHyps, disappearingHyps);
+		final IInternalProverSequent result = sequent.performRewrite(getHyps(),
+				getAddedFreeIdents(), getInferredHyps(), getDisappearingHyps());
 		skipped = (result == sequent);
 		return result;
 	}
 
 	@Override
-	public IHypAction translate(FormulaFactory factory) {
-		final IForwardInfHypAction trSuper = (IForwardInfHypAction) super
-				.translate(factory);
-		final Collection<Predicate> trDisapHyps = new ArrayList<Predicate>(
-				disappearingHyps.size());
-		for (Predicate hyp : disappearingHyps) {
-			trDisapHyps.add(hyp.translate(factory));
+	public void processDependencies(ProofDependenciesBuilder proofDeps) {
+		if (skipped) {
+			return;
 		}
+		fwdInf.processDependencies(proofDeps);
+		hide.processDependencies(proofDeps);
+	}
 
-		return new RewriteHypAction(trSuper.getHyps(),
-				trSuper.getAddedFreeIdents(), trSuper.getInferredHyps(),
-				trDisapHyps);
+	@Override
+	public IHypAction translate(FormulaFactory factory) {
+		final ForwardInfHypAction trFwdInf = (ForwardInfHypAction) fwdInf
+				.translate(factory);
+		final SelectionHypAction trHide = (SelectionHypAction) hide
+				.translate(factory);
+
+		return new RewriteHypAction(trFwdInf, trHide);
 	}
 }
