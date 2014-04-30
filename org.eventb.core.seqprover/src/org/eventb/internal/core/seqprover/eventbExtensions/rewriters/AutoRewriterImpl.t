@@ -164,16 +164,6 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return ff.makeRelationalPredicate(tag, left, right, null);
 	}
 
-	protected AssociativePredicate makeAssociativePredicate(int tag, Predicate... children) {
-		final FormulaFactory ff = children[0].getFactory();
-		return ff.makeAssociativePredicate(tag, children, null);
-	}
-
-	protected QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
-		final FormulaFactory ff = child.getFactory();
-		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
-	}
-
 	protected SetExtension makeSetExtension(Collection<Expression> expressions) {
 		final FormulaFactory ff = expressions.iterator().next().getFactory();
 		return ff.makeSetExtension(expressions, null);
