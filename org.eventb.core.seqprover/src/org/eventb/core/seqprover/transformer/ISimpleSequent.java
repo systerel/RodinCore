@@ -29,7 +29,7 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
  * uniform way. The sequent is guaranteed to be reduced: It does not contain any
  * true hypothesis or false goal. Moreover, if it contains a false hypothesis or
  * true goal, then this is the only predicate that it contains (see
- * {@link #getTrivialPredicate()).
+ * {@link #getTrivialPredicate()}).
  * </p>
  * <p>
  * Instances of this interface are manipulated by methods of class

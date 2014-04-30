@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  * </ul>
  * iff there exists a hypothesis such as <code>f∈A<i>op2</i>B</code> from which
  * we can infer this : <code>f∈A<i>op1</i>B ⇒ f∈A<i>op2</i>B</code>. For more
- * information about those inference, check {@link FunAndRel}.<br>
+ * information about those inference, check {@link Operator}.<br>
  * With <i>op1</i> a relation among :
  * <ul>
  * <li>RELATION : ↔</li>

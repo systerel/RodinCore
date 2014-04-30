@@ -150,7 +150,7 @@ public class ContrHyps implements IVersionedReasoner {
 
 	/**
 	 * Return a list of contradictory hypotheses
-	 * @param sequent
+	 * @param seq
 	 *            the current sequent
 	 * @param contrHyps
 	 *            the map (predicate ↦ contradictory predicate)

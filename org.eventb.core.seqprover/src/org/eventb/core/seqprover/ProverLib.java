@@ -326,7 +326,6 @@ public class ProverLib {
 	 * still type-checks.
 	 * </p>
 	 * 
-	 * @param app
 	 * @param rule
 	 */
 	private static boolean isContextDependentRuleReusable(IProofRule rule) {

@@ -52,7 +52,7 @@ public interface IInternalProverSequent extends IProverSequent{
 	 *            The fresh identifiers appearing in the given hypotheses and
 	 *            not in the type environment of the sequent, or
 	 *            <code>null</code> in case none.
-	 * @param addedhyps
+	 * @param addedHyps
 	 *            The hypotheses to add and select, or <code>null</code> in case
 	 *            none.
 	 * @param unselAddedHyps
@@ -68,7 +68,7 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * 
 	 */
 	IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents,
-			Collection<Predicate> addhyps,
+			Collection<Predicate> addedHyps,
 			Collection<Predicate> unselAddedHyps, Predicate newGoal);
 
 	/**

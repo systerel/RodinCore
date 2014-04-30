@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.ma
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -286,7 +287,7 @@ public class SimpleSequents {
 	 *            sequent to translate
 	 * @return a sequent equivalent to the given one, where all datatypes have
 	 *         been translated to pure set theory
-	 * @see FormulaFactory#
+	 * @see Formula#translateDatatype(org.eventb.core.ast.IDatatypeTranslation)
 	 * @since 2.6
 	 */
 	public static ISimpleSequent translateDatatypes(ISimpleSequent sequent) {

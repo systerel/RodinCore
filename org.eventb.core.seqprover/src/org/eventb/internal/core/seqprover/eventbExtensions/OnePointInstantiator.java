@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public abstract class OnePointInstantiator<T extends Formula<T>> {
 	 * 
 	 * @param input
 	 *            the formula where the instantiation shall take place
-	 * @param replacement
+	 * @param replacements
 	 *            the expressions to instantiate the bound identifiers with
 	 * @param ff
 	 *            a formula factory for building the result

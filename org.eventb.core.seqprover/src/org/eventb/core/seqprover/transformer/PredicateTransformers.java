@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,6 @@ public class PredicateTransformers {
 	 * Options can be passed to also apply some additional simplification rules.
 	 * </p>
 	 * 
-	 * @param sequent
-	 *            sequent to simplify
 	 * @param options
 	 *            simplification options
 	 * @return a simplified sequent equivalent to the given one

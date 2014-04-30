@@ -58,9 +58,6 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * Prints the given message to the console in case the debug flag is
 	 * switched on. Optional given objects are appended to the message, calling
 	 * their <code>toString()</code> method only if debug mode is enabled.
-	 * 
-	 * @param message
-	 *            The message to print out to the console
 	 */
 	private void traceCreation() {
 		if (DEBUG) {
@@ -173,13 +170,11 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * the sequent prover is undefined if these checks are not done.
 	 * </p>
 	 * 
-	 * @param formulaFactory 
-	 * 				The formula factory to be used
 	 * @param typeEnv
 	 *            The type environment for the sequent. This parameter must
 	 *            not be <code>null</code>. It should be ensured that all 
 	 *            predicates can be type checked using this type environment
-	 * @param globalHypotheses
+	 * @param globalHypSet
 	 *            The set of hypotheses, or <code>null</code> iff this set is
 	 *            intended to be empty
 	 * @param hiddenHypSet

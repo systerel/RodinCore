@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.Replac
  * <li>for rewriting rules SIMP_IN_COMPSET and SIMP_IN_COMPSET_ONEPOINT, the
  * processing is done in {@link OnePointProcessorRewriting}</li>
  * <li>for rewriting rules SIMP_COMPSET_EQUAL, the processing is done in
- * {@link OnePointProcessorExpression}</li>
+ * {@link OnePointProcessor}</li>
  * </ul>
  * <p>
  * These operations are initiated in the method matchAndInstantiate, which is

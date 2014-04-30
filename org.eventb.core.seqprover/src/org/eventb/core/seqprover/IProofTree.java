@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public interface IProofTree {
 	
 	/**
 	 * Returns the dependency information for this proof tree.
-	 * (see {@see IProofDependencies})
+	 * (see {@link IProofDependencies})
 	 * <p>
 	 * Note that dependencies may change after proof tree modification.
 	 * To get accurate information this method needs to be re-called after 
@@ -141,7 +141,7 @@ public interface IProofTree {
 	 * A proof tree is considered unattempted if its root is open and is not 
 	 * commented. Otherwise, it is the confidence of the root proof tree node. 
 	 * </p>
-	 * @return the confidence of this proof tree (see {@see IConfidence})
+	 * @return the confidence of this proof tree (see {@link IConfidence})
 	 */
 	int getConfidence();
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -896,7 +896,7 @@ public final class Lib {
 	/**
 	 * Applies the equality rewriter to the given predicate.
 	 * 
-	 * @param predicate
+	 * @param pred
 	 *            a predicate to rewrite
 	 * @param from
 	 *            the expression that will be replaced
@@ -934,10 +934,10 @@ public final class Lib {
 	 * Tells if the formula at the given position in the given predicate is WD
 	 * strict.
 	 * 
-	 * @param positions
-	 *            a position in the given predicate
-	 * @param predicate
+	 * @param pred
 	 *            some predicate
+	 * @param pos
+	 *            a position in the given predicate
 	 * @since 2.0
 	 */
 	public static boolean isWDStrictPosition(Predicate pred, IPosition pos) {

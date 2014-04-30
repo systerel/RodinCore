@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class StreamPumper extends Thread {
 	 * 
 	 * @param threadName name of this thread
 	 * @param is input stream to read from
-	 * @param debug if <code>true</code>, data won't be discarded
+	 * @param os output stream to write to
 	 */
 	public StreamPumper(String threadName, InputStream is, OutputStream os) {
 		super(threadName);

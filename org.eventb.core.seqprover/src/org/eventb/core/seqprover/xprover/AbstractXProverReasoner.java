@@ -69,14 +69,8 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 	 * @param input
 	 *            the input to this reasoner (can contain additional parameters
 	 *            specific to the external prover)
-	 * @param hypotheses
-	 *            hypotheses of the sequent to prove
-	 * @param goal
-	 *            goal of the sequent to prove
-	 * @param factory
-	 *            factory of the sequent to prove
-	 * @param origin
-	 *            origin of the sequent to prove
+	 * @param sequent
+	 *            the sequent to prove
 	 * @param pm
 	 *            proof monitor (might be <code>null</code>)
 	 * @return a new call of the external prover

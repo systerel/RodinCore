@@ -835,13 +835,11 @@ public class Tactics {
 	}
 
 	/**
-	 * Tells if the tactic RemoveNegation can apply.
+	 * Tells if the tactic RemoveNegation can apply to the given predicate.
 	 * 
-	 * @param expr
-	 *            the expression
-	 * @param sequent
-	 *            the current sequent
-	 * @return <code>true</code> if the tactic is not applicable,
+	 * @param pred
+	 *            a predicate
+	 * @return <code>true</code> if the tactic is applicable,
 	 *         <code>false</code> otherwise
 	 * @since 3.0
 	 */
@@ -919,13 +917,11 @@ public class Tactics {
 	}
 	
 	/**
-	 * Tells if the tactic RemoveMembership can apply.
+	 * Tells if the tactic RemoveMembership can apply to the given predicate.
 	 * 
-	 * @param expr
-	 *            the expression
-	 * @param sequent
-	 *            the current sequent
-	 * @return <code>true</code> if the tactic is not applicable,
+	 * @param pred
+	 *            a predicate
+	 * @return <code>true</code> if the tactic is applicable,
 	 *         <code>false</code> otherwise
 	 * @since 3.0
 	 */
@@ -1993,7 +1989,7 @@ public class Tactics {
 
 	/**
 	 * Return the list of applicable positions of the tactic "remove inclusion
-	 * (universal) rewrites" {@link RemoveInclusionUniversalRewrites} to a predicate.
+	 * (universal) rewrites" {@link RemoveInclusionUniversal} to a predicate.
 	 * <p>
 	 * 
 	 * @param predicate
@@ -2018,7 +2014,7 @@ public class Tactics {
 
 	/**
 	 * Return the tactic "remove inclusion (universal) rewrites"
-	 * {@link RemoveInclusionUniversalRewrites} which is applicable to a
+	 * {@link RemoveInclusionUniversal} which is applicable to a
 	 * hypothesis at a given position.
 	 * <p>
 	 * 
@@ -2912,8 +2908,8 @@ public class Tactics {
 	 * {@link CardComparison} to a predicate.
 	 * <p>
 	 * 
-	 * @param predicate
-	 *            a predicate
+	 * @param goal
+	 *            a goal predicate
 	 * @return <code>true</code> if the tactic "cardinality arithmetic
 	 *         comparison" is applicable
 	 * @since 2.0

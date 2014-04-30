@@ -190,7 +190,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	 * 
 	 * @param seq
 	 *            seq the sequent to which this reasoner is applied
-	 * @param goal
+	 * @param pred
 	 *            the predicate to be rewriten
 	 * @param position
 	 *            the position of the predicate in the formula tree
