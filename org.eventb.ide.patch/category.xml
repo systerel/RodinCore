@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eventb.ide.patch_1.0.0.jar" id="org.eventb.ide.patch" version="1.0.0" patch="true">
+      <category name="rodin-patches"/>
+   </feature>
+   <category-def name="rodin-patches" label="Rodin Patches"/>
+</site>
