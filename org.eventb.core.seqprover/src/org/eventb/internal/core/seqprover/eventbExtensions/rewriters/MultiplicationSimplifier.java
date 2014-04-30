@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class MultiplicationSimplifier {
 	}
 
 	private boolean processIntegerLiteral(IntegerLiteral child) {
-		BigInteger val = ((IntegerLiteral) child).getValue();
+		BigInteger val = child.getValue();
 		if (val.signum() == 0) {
 			knownResult = child;
 			return true;

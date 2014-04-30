@@ -64,7 +64,7 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
 		final Expression ranF = getFiniteExpression(goal);
 		Expression f = ((UnaryExpression) ranF).getChild();
-		final PFunSetInput pFunInput = (PFunSetInput) input;
+		final PFunSetInput pFunInput = input;
 		final Expression expr = pFunInput.getExpression();
 		if (!f.getType().equals(expr.getType().getBaseType())) {
 			return reasonerFailure(this, input, "Type check failed for " + f

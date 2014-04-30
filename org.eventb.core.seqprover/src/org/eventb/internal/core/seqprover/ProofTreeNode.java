@@ -506,7 +506,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		for (int i = 0; i < children.length; i++) {
 			childProofDeps[i] = children[i].computeProofDeps();
 		}
-		return ((ProofRule)rule).processDeps(childProofDeps);
+		return rule.processDeps(childProofDeps);
 	}
 
 	@Override
@@ -527,7 +527,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if ((rule == null) && (children != null)) return false;
 		if (rule != null) {
 			if (children == null) return false;
-			IProverSequent[] anticidents = ((ProofRule) rule).apply(sequent);
+			IProverSequent[] anticidents = rule.apply(sequent);
 			if (anticidents == null) return false;
 			if (children.length != anticidents.length) return false;
 			for (int i=0;i<anticidents.length;i++)

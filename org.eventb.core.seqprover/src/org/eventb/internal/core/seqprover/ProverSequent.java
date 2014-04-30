@@ -608,7 +608,7 @@ public final class ProverSequent implements IInternalProverSequent{
 
 		private T nextNextLookup(){
 			while (iterator.hasNext()) {
-				T next = (T) iterator.next();
+				T next = iterator.next();
 				if (! removed.contains(next)) return next;
 			}
 			return null; 
