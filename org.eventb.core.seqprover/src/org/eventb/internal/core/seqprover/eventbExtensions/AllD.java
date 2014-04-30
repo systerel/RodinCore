@@ -96,16 +96,19 @@ public class AllD implements IReasoner {
 			exprsInput.serialize(writer, EXPRS_KEY);
 		}
 		
+		@Override
 		public void applyHints(ReplayHints hints) {
 			exprsInput.applyHints(hints);
 			pred = hints.applyHints(pred);
 		}
 
+		@Override
 		public String getError() {
 			if (error != null) return error;
 			return exprsInput.getError();
 		}
 
+		@Override
 		public boolean hasError() {
 			return (error != null || exprsInput.hasError());
 		}
@@ -135,6 +138,7 @@ public class AllD implements IReasoner {
 
 	}
 	
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -143,12 +147,14 @@ public class AllD implements IReasoner {
 		return display;
 	}
 
+	@Override
 	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer)
 			throws SerializeException {
 		((Input) rInput).serialize(writer);
 		// The predicate is accessible from the associated rule
 	}
 
+	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
@@ -164,6 +170,7 @@ public class AllD implements IReasoner {
 		return new Input(reader, pred);
 	}
 	
+	@Override
 	@ProverRule("FORALL_INST")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	

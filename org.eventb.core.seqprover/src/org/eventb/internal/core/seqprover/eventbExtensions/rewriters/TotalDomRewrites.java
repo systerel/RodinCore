@@ -66,6 +66,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 			this.substitute = substitute;
 		}	
 		
+		@Override
 		public Predicate getPred(){
 			return pred;
 		}
@@ -92,14 +93,17 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		}
 	}
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	public int getVersion() {
 		return VERSION;
 	}
 
+	@Override
 	@ProverRule("DERIV_DOM_TOTALREL")
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
@@ -192,6 +196,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 
 	}
 
+	@Override
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
@@ -239,6 +244,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		}
 	}
 
+	@Override
 	public final void serializeInput(IReasonerInput input,
 			IReasonerInputWriter writer) throws SerializeException {
 

@@ -50,10 +50,12 @@ public class AbstrExpr extends SingleExprInputReasoner implements
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".ae";
 	
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
+	@Override
 	public IReasonerOutput apply(IProverSequent seq,IReasonerInput reasonerInput, IProofMonitor pm){
 		
 		// Organize Input

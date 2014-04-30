@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,26 +70,32 @@ public final class ProverFactory {
 			this.usedReasoners = usedReasoners;
 		}
 
+		@Override
 		public Predicate getGoal() {
 			return goal;
 		}
 
+		@Override
 		public Set<String> getIntroducedFreeIdents() {
 			return introducedFreeIdents;
 		}
 
+		@Override
 		public ISealedTypeEnvironment getUsedFreeIdents() {
 			return usedFreeIdents;
 		}
 
+		@Override
 		public Set<Predicate> getUsedHypotheses() {
 			return usedHypotheses;
 		}
 
+		@Override
 		public boolean hasDeps() {
 			return hasDeps;
 		}
 		
+		@Override
 		public Set<IReasonerDesc> getUsedReasoners() {
 			return usedReasoners;
 		}

@@ -45,14 +45,17 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 @Deprecated
 public class TrivialRewriter implements Rewriter{
 
+	@Override
 	public String getRewriterID() {
 		return "trivialRewriter";
 	}
 	
+	@Override
 	public String getName() {
 		return "trivial";
 	}
 	
+	@Override
 	public boolean isApplicable(Predicate p) {
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 
 			return  true;
@@ -74,6 +77,7 @@ public class TrivialRewriter implements Rewriter{
 		return false;
 	}
 
+	@Override
 	public Predicate apply(Predicate p, FormulaFactory ff) {
 		// not not P == P
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 

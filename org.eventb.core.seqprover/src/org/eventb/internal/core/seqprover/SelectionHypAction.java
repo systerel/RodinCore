@@ -39,10 +39,12 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 		this.hyps = hyps == null ? NO_HYPS : new ArrayList<Predicate>(hyps);
 	}
 
+	@Override
 	public Collection<Predicate> getHyps() {
 		return hyps;
 	}
 
+	@Override
 	public IInternalProverSequent perform(IInternalProverSequent seq) {
 		if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE))
 			return seq.selectHypotheses(hyps);
@@ -55,10 +57,12 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 		return seq;
 	}
 
+	@Override
 	public String getActionType() {
 		return actionType;
 	}
 
+	@Override
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {
 		// Nothing to do
 	}

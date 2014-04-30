@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class BasicTactics {
 	 */
 	public static ITactic prune(){
 		return new ITactic(){
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm){
 				if (pt.isOpen()) return "Root is already open";
 				pt.pruneChildren();
@@ -84,6 +85,7 @@ public class BasicTactics {
 			final IReasonerInput reasonerInput) {
 		return new ITactic(){
 	
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm){
 				if (!pt.isOpen()) return "Root already has children";
 				IReasonerOutput reasonerOutput = 
@@ -108,6 +110,7 @@ public class BasicTactics {
 	public static ITactic ruleTac(final IProofRule rule){
 		return new ITactic(){
 			
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm){
 				if (!pt.isOpen()) return "Root already has children";
 				if (pt.applyRule(rule)) return null;
@@ -127,6 +130,7 @@ public class BasicTactics {
 	 */
 	public static ITactic failTac(final String message){
 		return new ITactic(){
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm){
 				return message;
 			}
@@ -150,6 +154,7 @@ public class BasicTactics {
 	public static ITactic onAllPending(final ITactic tactic){
 		return new ITactic(){
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				String applicable = "onAllPending unapplicable";
 				IProofTreeNode[] subgoals = pt.getOpenDescendants();
@@ -180,6 +185,7 @@ public class BasicTactics {
 	public static ITactic onPending(final int pendingIndex,final ITactic tactic){
 		return new ITactic(){
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				IProofTreeNode[] subgoals = pt.getOpenDescendants();
 				if (pendingIndex < 0 || pendingIndex >= subgoals.length) 
@@ -204,6 +210,7 @@ public class BasicTactics {
 	public static ITactic repeat(final ITactic tactic){
 		return new ITactic(){
 			
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				boolean applicable = false;
 				Object tacticApp = tactic.apply(pt, pm);
@@ -257,6 +264,7 @@ public class BasicTactics {
 	public static ITactic compose(final ITactic ... tactics){
 		return new ITactic(){
 	
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				boolean applicable = false;
 				Object lastFailure = "compose unapplicable: no tactics";
@@ -293,6 +301,7 @@ public class BasicTactics {
 	public static ITactic composeOnAllPending(final ITactic ... tactics){
 		return new ITactic(){
 	
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				boolean applicable = false;
 				Object lastFailure = "compose unapplicable: no tactics";
@@ -331,6 +340,7 @@ public class BasicTactics {
 		// return repeat(onAllPending(composeUntilSuccess(tactics)));
 		return new ITactic(){
 
+			@Override
 			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 				boolean modified = false;
 				
@@ -384,6 +394,7 @@ public class BasicTactics {
 	public static ITactic composeUntilFailure(final ITactic ... tactics){
 		return new ITactic(){
 	
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				for (ITactic tactic : tactics){
 					final IProofTreeNode open = pt.getFirstOpenDescendant();
@@ -414,6 +425,7 @@ public class BasicTactics {
 	public static ITactic composeUntilSuccess(final ITactic ... tactics){
 		return new ITactic(){
 	
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				for (ITactic tactic : tactics){
 					Object tacticApp = tactic.apply(pt, pm);
@@ -445,6 +457,7 @@ public class BasicTactics {
 	public static ITactic reuseTac(final IProofSkeleton proofSkeleton){
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
 				boolean success = ProofBuilder.reuse(pt,proofSkeleton, pm);
@@ -465,6 +478,7 @@ public class BasicTactics {
 	public static ITactic replayTac(final IProofSkeleton proofSkeleton){
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
 				boolean success = ProofBuilder.replay(pt,proofSkeleton, pm);
@@ -485,6 +499,7 @@ public class BasicTactics {
 	public static ITactic rebuildTac(final IProofSkeleton proofSkeleton){
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
 				boolean success = ProofBuilder.rebuild(pt,proofSkeleton, pm);

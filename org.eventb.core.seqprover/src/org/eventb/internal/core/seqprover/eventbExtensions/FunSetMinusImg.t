@@ -57,10 +57,12 @@ public class FunSetMinusImg extends AbstractManualInference
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".funSetMinusImg";
 	}
 
+	@Override
 	public int getVersion() {
 		return REASONER_VERSION;
 	}

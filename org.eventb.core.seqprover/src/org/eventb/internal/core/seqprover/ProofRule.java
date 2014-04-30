@@ -85,6 +85,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		/**
 		 * @return Returns the addedFreeIdentifiers.
 		 */
+		@Override
 		public final FreeIdentifier[] getAddedFreeIdents() {
 			return addedFreeIdentifiers;
 		}
@@ -92,6 +93,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		/**
 		 * @return Returns the hypAction.
 		 */
+		@Override
 		public final List<IHypAction> getHypActions() {
 			return hypActions;
 		}
@@ -99,6 +101,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		/**
 		 * @return Returns the addedHypotheses.
 		 */
+		@Override
 		public final Set<Predicate> getAddedHyps() {
 			return Collections.unmodifiableSet(addedHypotheses);
 		}
@@ -106,6 +109,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		/**
 		 * @return Returns the unselectedAddedHyps.
 		 */
+		@Override
 		public Set<Predicate> getUnselectedAddedHyps() {
 			return Collections.unmodifiableSet(unselectedAddedHyps);
 		}
@@ -113,6 +117,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		/**
 		 * @return Returns the goal.
 		 */
+		@Override
 		public final Predicate getGoal() {
 			return goal;
 		}
@@ -258,10 +263,12 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		this.display = display == null ? generatedBy.getId() : display;	
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return factory;
 	}
 	
+	@Override
 	public String getDisplayName() {
 		return display;
 	}
@@ -270,10 +277,12 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		return getReasonerDesc().getId();
 	}
 
+	@Override
 	public int getConfidence() {
 		return reasonerConfidence;
 	}
 
+	@Override
 	public IProverSequent[] apply(IProverSequent seq) {
 		// Check if all the needed hyps are there
 		if (! seq.containsHypotheses(neededHypotheses))
@@ -302,14 +311,17 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		return anticidents;
 	}
 
+	@Override
 	public Set<Predicate> getNeededHyps() {
 		return neededHypotheses;
 	}
 
+	@Override
 	public Predicate getGoal() {
 		return goal;
 	}
 
+	@Override
 	public IAntecedent[] getAntecedents() {
 		return antecedents;
 	}

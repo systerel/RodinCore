@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,14 +36,17 @@ public class SkeletonSimplifier extends Simplifier<IProofSkeleton> {
 			this.newRule = newRule;
 		}
 
+		@Override
 		public IProofSkeleton[] getChildNodes() {
 			return newChildren;
 		}
 
+		@Override
 		public String getComment() {
 			return comment;
 		}
 
+		@Override
 		public IProofRule getRule() {
 			return newRule;
 		}
@@ -69,6 +72,7 @@ public class SkeletonSimplifier extends Simplifier<IProofSkeleton> {
 
 	private final Set<Predicate> neededPreds = new LinkedHashSet<Predicate>();
 
+	@Override
 	public SimplifiedSkel simplify(IProofSkeleton skeleton,
 			IProofMonitor monitor) throws CancelException {
 		final IProofSkeleton[] childNodes = skeleton.getChildNodes();

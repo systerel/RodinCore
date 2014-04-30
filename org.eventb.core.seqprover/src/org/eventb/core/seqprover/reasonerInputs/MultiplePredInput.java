@@ -46,6 +46,7 @@ public class MultiplePredInput implements IReasonerInput, ITranslatableReasonerI
 		this(predicates.toArray(new Predicate[predicates.size()]));
 	}
 		
+	@Override
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -53,6 +54,7 @@ public class MultiplePredInput implements IReasonerInput, ITranslatableReasonerI
 	/**
 	 * @return Returns the error.
 	 */
+	@Override
 	public final String getError() {
 		return error;
 	}
@@ -75,6 +77,7 @@ public class MultiplePredInput implements IReasonerInput, ITranslatableReasonerI
 		error = null;
 	}
 
+	@Override
 	public void applyHints(ReplayHints hints) {
 		for (int i = 0; i < predicates.length; i++) {
 			predicates[i] = hints.applyHints(predicates[i]);

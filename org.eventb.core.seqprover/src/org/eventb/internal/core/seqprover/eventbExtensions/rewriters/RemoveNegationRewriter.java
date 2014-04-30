@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,14 +53,17 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 @Deprecated
 public class RemoveNegationRewriter implements Rewriter {
 
+	@Override
 	public String getRewriterID() {
 		return "removeNegation";
 	}
 	
+	@Override
 	public String getName() {
 		return "rewrite ¬";
 	}
 	
+	@Override
 	public boolean isApplicable(Predicate p) {
 		if (! (isNeg(p))) return false;
 		Predicate negP = negPred(p);
@@ -95,6 +98,7 @@ public class RemoveNegationRewriter implements Rewriter {
 		return false;
 	}
 
+	@Override
 	public Predicate apply(Predicate p, FormulaFactory ff) {
 		if (! (isNeg(p))) return null;
 		Predicate negP = negPred(p);

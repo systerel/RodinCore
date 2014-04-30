@@ -57,10 +57,12 @@ public class FunInterImg extends AbstractManualInference
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".funInterImg";
 	}
 
+	@Override
 	public int getVersion() {
 		return REASONER_VERSION;
 	}

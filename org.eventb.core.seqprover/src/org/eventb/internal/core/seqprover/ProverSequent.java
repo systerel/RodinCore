@@ -95,16 +95,12 @@ public final class ProverSequent implements IInternalProverSequent{
 	private static final LinkedHashSet<Predicate> NO_HYPS =
 		new LinkedHashSet<Predicate>();
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#typeEnvironment()
-	 */
+	@Override
 	public ISealedTypeEnvironment typeEnvironment() {
 		return this.typeEnvironment;
 	}
 		
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#goal()
-	 */
+	@Override
 	public Predicate goal() {
 		return this.goal;
 	}
@@ -207,9 +203,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		traceCreation();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#modify(org.eventb.core.ast.FreeIdentifier[], java.util.Collection, org.eventb.core.ast.Predicate)
-	 */
+	@Override
 	public IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents,
 			Collection<Predicate> addhyps,
 			Collection<Predicate> unselAddedHyps, Predicate newGoal) {
@@ -270,9 +264,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	}
 		
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#selectHypotheses(java.util.Collection)
-	 */
+	@Override
 	public ProverSequent selectHypotheses(Collection<Predicate> toSelect){
 		if (toSelect == null) return this;
 		boolean modified = false;
@@ -290,9 +282,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		return this;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#deselectHypotheses(java.util.Collection)
-	 */
+	@Override
 	public ProverSequent deselectHypotheses(Collection<Predicate> toDeselect){
 		if (toDeselect == null) return this;
 		LinkedHashSet<Predicate> newSelectedHypotheses = new LinkedHashSet<Predicate>(this.selectedHypotheses);
@@ -301,9 +291,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		return this;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#hideHypotheses(java.util.Collection)
-	 */
+	@Override
 	public ProverSequent hideHypotheses(Collection<Predicate> toHide){
 		if (toHide == null) return this;
 		boolean modified = false;
@@ -321,9 +309,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		return this;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#showHypotheses(java.util.Collection)
-	 */
+	@Override
 	public ProverSequent showHypotheses(Collection<Predicate> toShow){
 		if (toShow == null)
 			return this;
@@ -399,6 +385,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		return this;
 	}
 
+	@Override
 	public IInternalProverSequent performfwdInf(Collection<Predicate> hyps,
 			FreeIdentifier[] addedIdents, Collection<Predicate> infHyps) {
 
@@ -446,18 +433,14 @@ public final class ProverSequent implements IInternalProverSequent{
 		return str.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#containsHypothesis(org.eventb.core.ast.Predicate)
-	 */
+	@Override
 	public boolean containsHypothesis(Predicate pred) {
 		if (localHypotheses.contains(pred)) return true;
 		if (globalHypotheses.contains(pred)) return true;
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#containsHypotheses(java.util.Collection)
-	 */
+	@Override
 	public boolean containsHypotheses(Collection<Predicate> preds) {
 		for (Predicate pred : preds) {
 			if (! containsHypothesis(pred)) return false;
@@ -465,12 +448,11 @@ public final class ProverSequent implements IInternalProverSequent{
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#hypIterable()
-	 */
+	@Override
 	public Iterable<Predicate> hypIterable() {
 		return new Iterable<Predicate>(){
 
+			@Override
 			public Iterator<Predicate> iterator() {
 				return new CompositeIterator<Predicate>(
 						globalHypotheses.iterator(),
@@ -479,12 +461,11 @@ public final class ProverSequent implements IInternalProverSequent{
 		};
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#hiddenHypIterable()
-	 */
+	@Override
 	public Iterable<Predicate> hiddenHypIterable() {
 		return new Iterable<Predicate>(){
 
+			@Override
 			public Iterator<Predicate> iterator() {
 				return new ImmutableIterator<Predicate>(hiddenHypotheses);
 			}
@@ -492,38 +473,32 @@ public final class ProverSequent implements IInternalProverSequent{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#selectedHypIterable()
-	 */
+	@Override
 	public Iterable<Predicate> selectedHypIterable() {
 		return new Iterable<Predicate>(){
 
+			@Override
 			public Iterator<Predicate> iterator() {
 				return new ImmutableIterator<Predicate>(selectedHypotheses);
 			}
 		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#isHidden(org.eventb.core.ast.Predicate)
-	 */
+	@Override
 	public boolean isHidden(Predicate hyp) {
 		return hiddenHypotheses.contains(hyp);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#isSelected(org.eventb.core.ast.Predicate)
-	 */
+	@Override
 	public boolean isSelected(Predicate hyp) {
 		return selectedHypotheses.contains(hyp);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProverSequent#visibleHypIterable()
-	 */
+	@Override
 	public Iterable<Predicate> visibleHypIterable() {
 		return new Iterable<Predicate>(){
 
+			@Override
 			public Iterator<Predicate> iterator() {
 				return new DifferenceIterator<Predicate>(
 						new CompositeIterator<Predicate>(
@@ -536,6 +511,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
 		return new Iterable<Predicate>(){
 
+			@Override
 			public Iterator<Predicate> iterator() {
 				return new DifferenceIterator<Predicate>(
 						visibleHypIterable().iterator(),
@@ -544,6 +520,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		};
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return typeEnvironment.getFormulaFactory();
 	}
@@ -580,16 +557,19 @@ public final class ProverSequent implements IInternalProverSequent{
 			this.snd = snd;
 		}
 
+		@Override
 		public boolean hasNext() {
 			return fst.hasNext() || snd.hasNext();
 		}
 
+		@Override
 		public T next() {
 			if (fst.hasNext()) return fst.next();
 			if (snd.hasNext()) return snd.next();
 			throw new NoSuchElementException();
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}	
@@ -639,10 +619,12 @@ public final class ProverSequent implements IInternalProverSequent{
 			return null; 
 		}
 
+		@Override
 		public boolean hasNext() {
 			return (nextNext != null);
 		}
 
+		@Override
 		public T next() {
 			if (nextNext != null) {
 				T next = nextNext;
@@ -652,6 +634,7 @@ public final class ProverSequent implements IInternalProverSequent{
 			throw new NoSuchElementException();
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}	
@@ -681,14 +664,17 @@ public final class ProverSequent implements IInternalProverSequent{
 			this.iterator = iterable.iterator();
 		}
 
+		@Override
 		public boolean hasNext() {
 			return iterator.hasNext();
 		}
 
+		@Override
 		public T next() {
 			return iterator.next();
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}		

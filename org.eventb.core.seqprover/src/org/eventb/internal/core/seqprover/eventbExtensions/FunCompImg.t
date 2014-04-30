@@ -56,6 +56,7 @@ public class FunCompImg extends AbstractManualInference {
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".funCompImg";
 	}

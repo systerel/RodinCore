@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,6 +195,7 @@ public class Tactics {
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				final ITactic tactic = BasicTactics.reasonerTac(new Review(),
 						new Review.Input(pt.getSequent(), reviewerConfidence));
@@ -217,6 +218,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new Cut(),
 						new SinglePredInput(lemma, pt.getSequent()
@@ -241,6 +243,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
 				// Try to generate a proof rule.
@@ -290,6 +293,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new AbstrExpr(),
 						new SingleExprInput(expression, pt.getSequent()
@@ -304,6 +308,7 @@ public class Tactics {
 		
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
 				// Apply the abstract expression tactic
@@ -385,6 +390,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new DoCase(),
 						new SinglePredInput(trueCase, pt.getSequent()
@@ -407,6 +413,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				IProverSequent seq = pt.getSequent();
 				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
@@ -505,6 +512,7 @@ public class Tactics {
 	public static ITactic exI(final String... witnesses) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pt
@@ -528,6 +536,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				final AllD.Input input = new AllD.Input(pred, typeEnv, instantiations);
@@ -551,6 +560,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				final AllD.Input input = new AllD.Input(pred, typeEnv, instantiations);
@@ -574,6 +584,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				final ITypeEnvironment typeEnv = pt.getSequent()
 						.typeEnvironment();
@@ -717,6 +728,7 @@ public class Tactics {
 	public static ITactic afterLasoo(final ITactic tactic) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 
 				lasoo().apply(pt, pm);
@@ -2299,6 +2311,7 @@ public class Tactics {
 	 */
 	public static class FailureTactic implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return "Not applicable";
 		}

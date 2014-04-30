@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class SingleStringInput implements IReasonerInput{
 		this.error = null;
 	}
 	
+	@Override
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -37,6 +38,7 @@ public class SingleStringInput implements IReasonerInput{
 	/**
 	 * @return Returns the error.
 	 */
+	@Override
 	public final String getError() {
 		return error;
 	}
@@ -60,6 +62,7 @@ public class SingleStringInput implements IReasonerInput{
 		writer.putString("singleString",string);
 	}
 
+	@Override
 	public void applyHints(ReplayHints hints) {	
 	}
 

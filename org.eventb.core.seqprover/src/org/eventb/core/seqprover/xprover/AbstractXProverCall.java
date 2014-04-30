@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public abstract class AbstractXProverCall implements Runnable, Cancellable {
 	 * has been requested, this method shall return as soon as possible.
 	 * </p>
 	 */
+	@Override
 	public abstract void run();
 
 	/**
@@ -66,6 +67,7 @@ public abstract class AbstractXProverCall implements Runnable, Cancellable {
 	 * 
 	 * @return <code>true</code> iff the user has canceled this call
 	 */
+	@Override
 	public final boolean isCancelled() {
 		if (proofMonitor != null && proofMonitor.isCanceled()) {
 			if (AbstractXProverReasoner.DEBUG) {

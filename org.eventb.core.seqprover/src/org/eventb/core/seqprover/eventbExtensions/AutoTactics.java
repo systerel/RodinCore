@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,6 +210,7 @@ public class AutoTactics {
 	 */
 	public static class FindContrHypsTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			final ContradictionInSequentFinder finder;
 			finder = new ContradictionInSequentFinder(ptNode.getSequent());
@@ -236,6 +237,7 @@ public class AutoTactics {
 			return element != null && Lib.isDom(element);
 		}
 
+		@Override
 		public Object attemptProof(IProofTreeNode node, IProofMonitor pm) {
 			final Predicate goal = node.getSequent().goal();
 			final UnaryExpression domExpr = (UnaryExpression) Lib.getSet(goal);
@@ -535,6 +537,7 @@ public class AutoTactics {
 	 */
 	public static class ExistsHypTac implements ITactic{
 	
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				if (Tactics.exF_applicable(shyp)){
@@ -554,6 +557,7 @@ public class AutoTactics {
 	 */
 	public static class ConjHypTac implements ITactic{
 	
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				if (Tactics.conjF_applicable(shyp)){
@@ -575,6 +579,7 @@ public class AutoTactics {
 	 */
 	public static class EqHypTac implements ITactic{
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				if (Lib.isEq(shyp)){
@@ -620,6 +625,7 @@ public class AutoTactics {
 	 */
 	public static class ShrinkEnumHypTac implements ITactic  {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				// Search for E : {a, ... ,c}
@@ -663,6 +669,7 @@ public class AutoTactics {
 	 */
 	public static class SplitRightConjImpHypTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				// Search for (P => Q /\ ... /\ R)
@@ -688,6 +695,7 @@ public class AutoTactics {
 	 */
 	public static class SplitLeftDisjImpHypTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				// Search for (P \/ ... \/ Q => R)
@@ -713,6 +721,7 @@ public class AutoTactics {
 	 */
 	public static class PartitionRewriteTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			boolean success = false;
 			for (Predicate shyp : ptNode.getSequent().visibleHypIterable()) {
@@ -755,6 +764,7 @@ public class AutoTactics {
 	 */
 	public static class FunImgSimpTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().visibleHypIterable()) {
 				if (applyFunImgSimplifies(ptNode, shyp, pm)) {
@@ -1143,6 +1153,7 @@ public class AutoTactics {
 	 */
 	private static class FunOvrGoalOnceTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
@@ -1184,6 +1195,7 @@ public class AutoTactics {
 	 */
 	private static class FunOvrHypOnceTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
@@ -1226,6 +1238,7 @@ public class AutoTactics {
 	 */
 	public static class OnePointGoalTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
@@ -1252,6 +1265,7 @@ public class AutoTactics {
 	 */
 	public static class OnePointHypTac implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
@@ -1417,6 +1431,7 @@ public class AutoTactics {
 				
 		abstract protected ITactic getSingInstance();
 		
+		@Override
 		public final Object apply(IProofTreeNode ptNode, IProofMonitor pm){
 			if (instance == null) 
 			{

@@ -56,6 +56,7 @@ public class SinglePredInput implements IReasonerInput, ITranslatableReasonerInp
 		this.error = null;
 	}
 	
+	@Override
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -63,6 +64,7 @@ public class SinglePredInput implements IReasonerInput, ITranslatableReasonerInp
 	/**
 	 * @return Returns the error.
 	 */
+	@Override
 	public final String getError() {
 		return error;
 	}
@@ -90,6 +92,7 @@ public class SinglePredInput implements IReasonerInput, ITranslatableReasonerInp
 		predicate = preds[0];
 	}
 
+	@Override
 	public void applyHints(ReplayHints hints) {
 		predicate = hints.applyHints(predicate);
 		

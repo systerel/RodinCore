@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,20 +38,12 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		this.defaultDescriptor = getDefaultDescriptor();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#setEnabled(boolean)
-	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#isEnabled()
-	 */
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -62,11 +54,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		return BasicTactics.failTac(failTacMessage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#getSelectedComposedTactic()
-	 */
+	@Override
 	public ITactic getSelectedComposedTactic() {
 		if (selectedComposedTactic == null) {
 			try {
@@ -90,6 +78,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		selectedComposedTactic = null;
 	}
 	
+	@Override
 	public ITactic getDefaultComposedTactic() {
 		if (defaultComposedTactic == null) {
 			defaultComposedTactic = defaultDescriptor.getTacticInstance();

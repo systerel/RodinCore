@@ -71,15 +71,18 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			this.position = position;
 		}
 
+		@Override
 		public void applyHints(ReplayHints renaming) {
 			if (pred != null)
 				pred = renaming.applyHints(pred);
 		}
 
+		@Override
 		public String getError() {
 			return null;
 		}
 
+		@Override
 		public boolean hasError() {
 			return false;
 		}
@@ -112,6 +115,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 
 	}
 
+	@Override
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 		final Input input = (Input) reasonerInput;
@@ -249,6 +253,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		return actions;
 	}
 
+	@Override
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
@@ -297,6 +302,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		}
 	}
 
+	@Override
 	public final void serializeInput(IReasonerInput input,
 			IReasonerInputWriter writer) throws SerializeException {
 

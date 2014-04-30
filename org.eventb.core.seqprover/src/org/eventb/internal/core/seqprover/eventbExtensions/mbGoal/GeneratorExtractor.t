@@ -48,6 +48,7 @@ public class GeneratorExtractor extends AbstractExtractor {
 		return result;
 	}
 
+	@Override
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
 		%match (Expression left, Expression right) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,13 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 
 	public static boolean DEBUG = false;
 
+	@Override
 	public void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
 		((XProverInput) rInput).serialize(writer);
 	}
 
+	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		return new XProverInput(reader);
@@ -84,6 +86,7 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 	abstract AbstractXProverCall makeCall(IReasonerInput input,
 			ISimpleSequent sequent, IProofMonitor pm);
 
+	@Override
 	public final IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 

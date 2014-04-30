@@ -59,6 +59,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".finiteHypBoundedGoal";
 	}
@@ -150,6 +151,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 		return "Existence of minimum or maximum in goal with finite hypothesis";
 	}
 
+	@Override
     @ProverRule( { "FIN_L_LOWER_BOUND_L", "FIN_L_LOWER_BOUND_R",
             "FIN_L_UPPER_BOUND_L", "FIN_L_UPPER_BOUND_R" })
     public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,

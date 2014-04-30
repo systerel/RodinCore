@@ -102,6 +102,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return SINGLETON_INSTANCE;
 	}
 	
+	@Override
 	public synchronized boolean isRegistered(String id) {
 		if (registry == null) {
 			loadRegistry();
@@ -109,6 +110,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return registry.containsKey(id);
 	}
 	
+	@Override
 	public synchronized String[] getRegisteredIDs(){
 		if (registry == null) {
 			loadRegistry();
@@ -116,6 +118,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return registry.keySet().toArray(NO_STRING);
 	}
 	
+	@Override
 	public  synchronized ITacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();

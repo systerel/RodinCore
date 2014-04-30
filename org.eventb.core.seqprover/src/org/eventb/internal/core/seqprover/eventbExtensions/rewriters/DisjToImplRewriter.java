@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,20 +30,24 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 @Deprecated
 public class DisjToImplRewriter implements Rewriter{
 	
+	@Override
 	public String getRewriterID() {
 		return "disjToImpl";
 	}
 	
+	@Override
 	public String getName() {
 		return "∨ to ⇒";
 	}
 	
+	@Override
 	public boolean isApplicable(Predicate p) {
 		if (isDisj(p)) return true;
 		
 		return false;
 	}
 
+	@Override
 	public Predicate apply(Predicate p, FormulaFactory ff) {
 		// (P or Q or ...) == (-P => (Q or ..))
 		if (isDisj(p))

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,19 +56,23 @@ public class ContrHyps implements IVersionedReasoner {
 
 	private static final IAntecedent[] NO_ANTECEDENT = new IAntecedent[0];
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	public int getVersion() {
 		return 1;
 	}
 
+	@Override
 	public final void serializeInput(IReasonerInput input,
 			IReasonerInputWriter writer) throws SerializeException {
 		// Do nothing
 	}
 
+	@Override
 	public final Input deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		final Set<Predicate> neededHyps = reader.getNeededHyps();
@@ -87,6 +91,7 @@ public class ContrHyps implements IVersionedReasoner {
 				"Unexpected set of needed hypothesis: " + neededHyps));
 	}
 
+	@Override
 	@ProverRule("CNTR")
 	public final IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput input, IProofMonitor pm) {

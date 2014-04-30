@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,10 +43,12 @@ public class FiniteRelation extends SingleExprInputReasoner implements
 
 	private static final int VERSION = 0;
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	@ProverRule("FIN_REL_R")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
@@ -91,6 +93,7 @@ public class FiniteRelation extends SingleExprInputReasoner implements
 				antecedents);
 	}
 
+	@Override
 	public int getVersion() {
 		return VERSION;
 	}

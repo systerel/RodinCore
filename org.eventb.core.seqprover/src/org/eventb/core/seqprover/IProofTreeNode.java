@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return an array of the children of this node
 	 * @see #hasChildren()
 	 */
+	@Override
 	IProofTreeNode[] getChildNodes();
 
 	/**
@@ -145,6 +146,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return the rule applied to this node or <code>null</code> is this node
 	 *         is a leaf node
 	 */
+	@Override
 	IProofRule getRule();
 
 	/**
@@ -203,6 +205,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return The comment field of the current proof tree node.
 	 * @see #setComment()
 	 */
+	@Override
 	String getComment();
 
 	/**

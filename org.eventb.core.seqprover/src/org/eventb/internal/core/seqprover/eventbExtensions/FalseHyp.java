@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,12 @@ public class FalseHyp extends EmptyInputReasoner{
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".falseHyp";
 	
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
+	@Override
 	@ProverRule("FALSE_HYP")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm){
 		final Predicate False = DLib.False(seq.getFormulaFactory());

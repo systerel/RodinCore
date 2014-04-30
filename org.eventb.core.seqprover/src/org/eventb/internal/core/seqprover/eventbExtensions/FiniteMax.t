@@ -56,6 +56,7 @@ public class FiniteMax extends AbstractEmptyInputReasoner {
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".finiteMax";
 	}
