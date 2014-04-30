@@ -36,7 +36,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembe
 /**
  * Basic manual rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	
 	private static Level[] RM_TO_AUTO_LEVEL = {Level.L0, Level.L1};

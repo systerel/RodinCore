@@ -49,7 +49,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 /**
  * Basic implementation for Function Converse inference rule f~(f(E))
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class FunInterImg extends AbstractManualInference
 		implements IVersionedReasoner {
 

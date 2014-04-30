@@ -54,7 +54,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 /**
  * Implementation for "min or max goal with finite hyp"
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 
 	%include {FormulaV2.tom}

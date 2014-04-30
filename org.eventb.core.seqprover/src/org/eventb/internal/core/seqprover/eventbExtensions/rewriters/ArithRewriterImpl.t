@@ -51,7 +51,7 @@ import org.eventb.core.seqprover.ProverRule;
 /**
  * Basic automated arithmetic rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class ArithRewriterImpl extends DefaultRewriter {
 	
     private static final IPosition LEFT_CHILD = ROOT.getFirstChild();

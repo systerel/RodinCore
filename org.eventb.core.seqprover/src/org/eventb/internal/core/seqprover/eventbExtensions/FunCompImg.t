@@ -51,7 +51,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 /**
  * Basic implementation for "function apply to singleton set image" f[{E}]
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class FunCompImg extends AbstractManualInference {
 
 	%include {FormulaV2.tom}

@@ -46,7 +46,7 @@ import org.eventb.core.seqprover.ProverRule;
 /**
  * Basic automated rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class DomDistLeftRewriterImpl extends DefaultRewriter {
 
 	public DomDistLeftRewriterImpl() {

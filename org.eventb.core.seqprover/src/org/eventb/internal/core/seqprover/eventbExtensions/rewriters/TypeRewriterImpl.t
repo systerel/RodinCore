@@ -47,7 +47,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 /**
  * Basic automated rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class TypeRewriterImpl extends DefaultRewriter {
 
 	public TypeRewriterImpl() {

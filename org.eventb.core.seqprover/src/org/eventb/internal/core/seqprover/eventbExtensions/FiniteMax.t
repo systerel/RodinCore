@@ -51,7 +51,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 /**
  * Basic implementation for "finite maximum"
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class FiniteMax extends AbstractEmptyInputReasoner {
 
 	%include {FormulaV2.tom}

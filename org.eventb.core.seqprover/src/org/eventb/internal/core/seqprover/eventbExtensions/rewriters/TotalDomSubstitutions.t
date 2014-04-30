@@ -46,7 +46,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class TotalDomSubstitutions {
 	
 	// substitution map: function |-> ( substitute |-> hypothesis )

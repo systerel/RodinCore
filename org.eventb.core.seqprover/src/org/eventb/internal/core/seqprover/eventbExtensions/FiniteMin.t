@@ -51,7 +51,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 /**
  * Basic implementation for "finite minimum"
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class FiniteMin extends AbstractEmptyInputReasoner {
 
 	%include {FormulaV2.tom}

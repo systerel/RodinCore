@@ -113,7 +113,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 /**
  * Basic automated rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class AutoRewriterImpl extends PredicateSimplifier {
 
 	private static final BigInteger TWO = BigInteger.valueOf(2L);

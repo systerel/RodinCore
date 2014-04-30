@@ -36,7 +36,7 @@ import org.eventb.core.seqprover.IProverSequent;
  * 
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class MapOvrGoalImpl {
 
 	private final IProverSequent sequent;

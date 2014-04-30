@@ -34,7 +34,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRew
  * 
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class TotalDomToCprodTacImpl {
 
 	private final IProverSequent sequent;

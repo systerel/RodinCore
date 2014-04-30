@@ -37,7 +37,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.SetE
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class MembershipExtractor extends AbstractExtractor {
 
 	private final Expression member;
