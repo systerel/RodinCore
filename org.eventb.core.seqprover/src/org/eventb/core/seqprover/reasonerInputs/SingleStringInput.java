@@ -64,6 +64,7 @@ public class SingleStringInput implements IReasonerInput{
 
 	@Override
 	public void applyHints(ReplayHints hints) {	
+		// Nothing to do
 	}
 
 }
