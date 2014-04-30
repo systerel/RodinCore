@@ -218,7 +218,7 @@ public class AutoTactics {
 			if (hyp != null)
 				return Tactics.contrHyps(hyp).apply(ptNode, pm);
 			return "No selected hypothesis is contradicted";
-		};
+		}
 	}
 	
 	/**

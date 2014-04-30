@@ -191,7 +191,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.typeEnvironment = typeEnv.makeSnapshot();
 		this.globalHypotheses = globalHypSet == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypSet);
 		this.localHypotheses = NO_HYPS;
-		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
+		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);
 		this.selectedHypotheses = selectedHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypSet);
 		this.goal = goal;
 		this.origin = origin;

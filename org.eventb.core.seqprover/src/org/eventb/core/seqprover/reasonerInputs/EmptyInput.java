@@ -20,7 +20,7 @@ public class EmptyInput implements IReasonerInput {
 
 	public EmptyInput() {
 		// Nothing to initialize
-	};
+	}
 	
 	@Override
 	public boolean hasError() {

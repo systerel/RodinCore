@@ -332,7 +332,7 @@ public class ProverLib {
 		final IProverSequent sequent = ((ProofRule) rule).makeSequent();
 		final IReasoner reasoner = rule.generatedBy();
 		final IReasonerInput input = rule.generatedUsing();
-		final IReasonerOutput output = reasoner.apply(sequent, input, Util.getNullProofMonitor());;
+		final IReasonerOutput output = reasoner.apply(sequent, input, Util.getNullProofMonitor());
 		return output instanceof IProofRule
 				&& ProverLib.deepEquals(rule, (IProofRule) output);
 	}

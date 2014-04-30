@@ -223,7 +223,7 @@ public class BasicTactics {
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
-				};
+				}
 				return applicable ? null : tacticApp;
 			}
 		};
