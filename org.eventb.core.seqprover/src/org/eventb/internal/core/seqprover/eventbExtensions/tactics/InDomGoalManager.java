@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,14 +72,14 @@ public class InDomGoalManager {
 				substitutes);
 		final List<Predicate> autoGoals = new ArrayList<Predicate>();
 
-		for (Expression substitute : substitutesList) {
+		for (Expression candidate : substitutesList) {
 			final Predicate rewrittenGoal = Lib.equalityRewrite(sequent.goal(),
-					domExpression, substitute);
+					domExpression, candidate);
 			final Predicate typerewrittenGoal = rewrittenGoal
 					.rewrite(new TypeRewriterImpl());
 			if (typerewrittenGoal.getTag() == Formula.BTRUE) {
 				truegoalTac = true;
-				this.substitute = substitute;
+				this.substitute = candidate;
 				return true;
 			}
 			final Predicate autorewrittenGoal = rewrittenGoal

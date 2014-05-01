@@ -84,10 +84,10 @@ public class MapOvrGoalImpl {
 	}
 
 	/**
-	 * Returns, if it exists among hypotheses of the given sequent, the predicate
-	 * that allow to infer a part of the goal, else returns <code>null</code>.
+	 * Returns, if it exists among hypotheses of the sequent, the predicate
+	 * that allows to infer a part of the goal, else returns <code>null</code>.
 	 */
-	public Predicate findNeededHyp(IProverSequent sequent) {
+	public Predicate findNeededHyp() {
 		for (Operator higherOp : this.goalOp.getHigherRel()) {
 			final Predicate hyp = in(this.f, relation(higherOp.getTag(), this.A, this.B));
 			if (sequent.containsHypothesis(hyp)) {

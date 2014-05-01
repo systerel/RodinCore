@@ -317,7 +317,7 @@ public final class Lib {
 		// given expression is considered associative and has same type as from
 		private Expression associativeRewrite(Expression expr,
 				Expression[] exprChildren, Expression[] fromChildren) {
-			final FormulaFactory ff = expr.getFactory();
+			final FormulaFactory fac = expr.getFactory();
 			final Expression[] newChildren = associativeRewrite(exprChildren,
 					fromChildren, to);
 			if (newChildren == exprChildren) {
@@ -328,11 +328,11 @@ public final class Lib {
 			}
 			final Expression result;
 			if (expr instanceof ExtendedExpression) {
-				result = ff.makeExtendedExpression(
+				result = fac.makeExtendedExpression(
 						((ExtendedExpression) expr).getExtension(),
 						newChildren, NO_PREDICATE, null, expr.getType());
 			} else {
-				result = ff.makeAssociativeExpression(expr.getTag(),
+				result = fac.makeAssociativeExpression(expr.getTag(),
 						newChildren, null);
 			}
 			return result.flatten();

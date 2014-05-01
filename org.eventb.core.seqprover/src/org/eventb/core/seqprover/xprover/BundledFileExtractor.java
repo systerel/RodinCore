@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,18 +110,18 @@ public class BundledFileExtractor {
 		/**
 		 * Makes the given local file executable.
 		 * 
-		 * @param path
-		 *     path to the file
+		 * @param fsPath
+		 *     path to the file in the local file-system
 		 */
-		private void makeExecutable(IPath path) {
+		private void makeExecutable(IPath fsPath) {
 			try {
 				final IFileSystem fs = EFS.getLocalFileSystem();
-				final IFileStore store = fs.getStore(path);
+				final IFileStore store = fs.getStore(fsPath);
 				final IFileInfo info = store.fetchInfo();
 				info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
 				store.putInfo(info, EFS.SET_ATTRIBUTES, null);
 			} catch (Exception e) {
-				log("Problem making file " + path + " executable", e);
+				log("Problem making file " + fsPath + " executable", e);
 			}
 		}
 

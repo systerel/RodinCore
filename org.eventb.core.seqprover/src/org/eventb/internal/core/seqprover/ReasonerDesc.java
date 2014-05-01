@@ -227,14 +227,14 @@ public class ReasonerDesc implements IReasonerDesc {
 	 * Returns a copy of this ReasonerDesc with the version modified according
 	 * to the given parameter.
 	 * 
-	 * @param version
+	 * @param copyVersion
 	 *            the desired version of the copy
 	 * @return a new ReasonerDesc with the given version
 	 */
-	public ReasonerDesc copyWithVersion(int version) {
+	public ReasonerDesc copyWithVersion(int copyVersion) {
 		final String baseId = decodeId(id);
 		return new ReasonerDesc(configurationElement, instance,
-				baseId, name, version, contextDependent);
+				baseId, name, copyVersion, contextDependent);
 	}
 
 	@Override

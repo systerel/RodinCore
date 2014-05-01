@@ -135,8 +135,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(AssociativePredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(AssociativePredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -145,8 +145,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(BinaryPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(BinaryPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -175,8 +175,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(LiteralPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(LiteralPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -185,13 +185,13 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(QuantifiedPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(QuantifiedPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(RelationalPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -200,8 +200,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(SimplePredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(SimplePredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -210,8 +210,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(UnaryPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(UnaryPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override

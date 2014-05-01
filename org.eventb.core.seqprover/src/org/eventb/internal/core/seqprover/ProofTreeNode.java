@@ -118,19 +118,19 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/**
 	 * Proof tree to which this node belongs. This field is only set for a root node,
 	 * so that it's easy to remove a whole subtree from the tree. Always use
-	 * #getProofTree() to access this information.
+	 * {@link #getProofTree()} to access this information.
 	 */
-	private ProofTree tree;
+	private ProofTree proofTree;
 
 	/**
 	 * Creates a root node of a proof tree.
 	 * 
-	 * @param tree The proof tree to associate to 
+	 * @param proofTree The proof tree to associate to 
 	 * @param sequent The sequent used to construct the proof tree node
 	 */
-	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
-		assert tree != null;
-		this.tree = tree;
+	public ProofTreeNode(ProofTree proofTree, IProverSequent sequent) {
+		assert proofTree != null;
+		this.proofTree = proofTree;
 		this.parent = null;
 		this.sequent = sequent;
 		this.rule = null;
@@ -149,7 +149,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 */
 	private ProofTreeNode(ProofTreeNode parent, IProverSequent sequent) {
 		assert parent != null;
-		this.tree = null;
+		this.proofTree = null;
 		this.parent = parent;
 		this.sequent = sequent;
 		this.rule = null;
@@ -167,7 +167,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * 				node to copy
 	 */
 	private ProofTreeNode(ProofTreeNode node) {
-		this.tree = node.tree;
+		this.proofTree = node.proofTree;
 		this.parent = node.parent;
 		this.sequent = node.sequent;
 		this.rule = node.rule;
@@ -192,15 +192,14 @@ public final class ProofTreeNode implements IProofTreeNode {
 		ProofTreeNode root = new ProofTreeNode(this);
 		// Disconnect the copy from the tree
 		root.parent = null;
-		root.tree = null;
-		ProofTree proofTree = new ProofTree(root);
-		assert proofTree.getRoot().classInvariant();
-		return proofTree;
+		root.proofTree = null;
+		ProofTree tree = new ProofTree(root);
+		assert tree.getRoot().classInvariant();
+		return tree;
 	}
 	
 	@Override
 	public IProofSkeleton copyProofSkeleton() {
-		final String comment = getComment();
 		final IProofRule proofRule = getRule();
 		final IProofTreeNode[] childNodes = getChildNodes();
 		final IProofSkeleton[] childSkelNodes = new IProofSkeleton[childNodes.length];
@@ -230,18 +229,18 @@ public final class ProofTreeNode implements IProofTreeNode {
 
 	@Override
 	public boolean applyRule(IProofRule proofRule) {
-		ProofRule rule = (ProofRule) proofRule;
+		ProofRule newRule = (ProofRule) proofRule;
 		// force pruning to avoid losing child proofs
 		if (this.children != null) return false;
 		if (this.rule != null) return false;
-		IProverSequent[] antecedents = rule.apply(this.sequent);
+		IProverSequent[] antecedents = newRule.apply(this.sequent);
 		if (antecedents == null) return false;
 		final int length = antecedents.length;
 		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
 			newChildren[i] = new ProofTreeNode(this, antecedents[i]);
 		}
-		setRule(rule);
+		setRule(newRule);
 		setChildren(newChildren);
 		if (length == 0)
 			this.setClosed();
@@ -354,7 +353,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		while (node.parent != null) {
 			node = node.parent;
 		}
-		return node.tree;
+		return node.proofTree;
 	}
 	
 	@Override
@@ -425,7 +424,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 
 	protected void setProofTree(ProofTree tree) {
-		this.tree = tree;	
+		this.proofTree = tree;	
 	}
 	
 	/**
@@ -538,7 +537,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 			}
 		}
 		if (isClosed() != (getOpenDescendants().length == 0)) return false;
-		if ((parent == null) == (tree == null)) return false;
+		if ((parent == null) == (proofTree == null)) return false;
 		if (confidence != computedConfidence()) return false;
 		return true;
 	}

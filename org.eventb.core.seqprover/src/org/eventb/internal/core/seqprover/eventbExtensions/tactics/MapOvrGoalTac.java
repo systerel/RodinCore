@@ -47,9 +47,9 @@ public class MapOvrGoalTac implements ITactic {
 		final IProverSequent sequent = ptNode.getSequent();
 		final MapOvrGoalImpl mapOvrGoalImpl = new MapOvrGoalImpl(sequent);
 		if (!mapOvrGoalImpl.checkGoal()) {
-			return "Goal does not possessed the correct form.";
+			return "Goal of the wrong form";
 		}
-		final Predicate neededHyp = mapOvrGoalImpl.findNeededHyp(sequent);
+		final Predicate neededHyp = mapOvrGoalImpl.findNeededHyp();
 		if (neededHyp == null) {
 			return "There is no hypothesis which allow to infer the goal.";
 		}

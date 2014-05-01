@@ -406,24 +406,24 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	}
 
 	@Override
-	public IProofRule translate(FormulaFactory factory)
+	public IProofRule translate(FormulaFactory trFactory)
 			throws UntranslatableException {
 		try {
 			final Predicate trGoal = goal == null ? null : goal
-					.translate(factory);
+					.translate(trFactory);
 			final Set<Predicate> trNeededHyps = new LinkedHashSet<Predicate>();
 			for (Predicate neededHyp : neededHypotheses) {
-				trNeededHyps.add(neededHyp.translate(factory));
+				trNeededHyps.add(neededHyp.translate(trFactory));
 			}
 			final IAntecedent[] trAntecedents = new IAntecedent[antecedents.length];
 			for (int i = 0; i < antecedents.length; i++) {
-				trAntecedents[i] = antecedents[i].translate(factory);
+				trAntecedents[i] = antecedents[i].translate(trFactory);
 			}
 
 			final IReasonerInput trGeneratedUsing;
 			if (generatedUsing instanceof ITranslatableReasonerInput) {
 				trGeneratedUsing = ((ITranslatableReasonerInput) generatedUsing)
-						.translate(factory);
+						.translate(trFactory);
 			} else {
 				trGeneratedUsing = generatedUsing;
 			}
@@ -473,11 +473,11 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 	
 	public IProverSequent makeSequent() {
 		final ITypeEnvironment typenv = getTypeEnvironment();
-		final Predicate goal = makeGoal();
+		final Predicate newGoal = makeGoal();
 		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
 		hyps.addAll(getNeededHyps());
 		hyps.addAll(actedHyps());
-		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
+		return ProverFactory.makeSequent(typenv, hyps, null, hyps, newGoal);
 
 	}
 }

@@ -1141,13 +1141,13 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.EQUAL) {
-					Expression left = predicate.getLeft();
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.EQUAL) {
+					Expression left = pred.getLeft();
 					Type type = left.getType();
 					return type instanceof PowerSetType;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -1186,11 +1186,11 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LEQV) {
+			public boolean select(BinaryPredicate pred) {
+				if (pred.getTag() == Predicate.LEQV) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -1710,12 +1710,12 @@ public class Tactics {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(AssociativePredicate predicate) {
-				if (predicate.getTag() == Predicate.LAND
-						|| predicate.getTag() == Predicate.LOR) {
+			public boolean select(AssociativePredicate pred) {
+				if (pred.getTag() == Predicate.LAND
+						|| pred.getTag() == Predicate.LOR) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -2001,11 +2001,11 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -2989,12 +2989,12 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(predicate.getLeft()))
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(pred.getLeft()))
 						return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -3016,12 +3016,12 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(predicate.getRight()))
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(pred.getRight()))
 						return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -3083,8 +3083,8 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(MultiplePredicate predicate) {
-				return predicate.getTag() == Predicate.KPARTITION;
+			public boolean select(MultiplePredicate pred) {
+				return pred.getTag() == Predicate.KPARTITION;
 			}
 
 		});
