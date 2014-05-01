@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,12 +32,12 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * a modus tollens on it in one step.
  * 
  * <p>
- * This reasoner reuses the input from {@link AllD.Input}.
+ * This reasoner reuses the input from {@link AbstractAllD.Input}.
  * </p>
  * 
  * @author "Thomas Muller"
  */
-public class AllmtD extends AllD implements IVersionedReasoner {
+public class AllmtD extends AbstractAllD implements IVersionedReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allmtD";
 	private static int VERSION = 0;
