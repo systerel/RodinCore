@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,17 +29,15 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 public class TotalDomFacade {
 
 	private static class SubstitutionCache {
-		// TODO memory problem ? need to empty cache
 
-		private IProverSequent sequent;
+		private IProverSequent key;
 		private TotalDomSubstitutions substitutions;
 
-		// TODO synchronize method ?
-		public TotalDomSubstitutions get(IProverSequent sequent) {
-			if (sequent != this.sequent) {
-				this.substitutions = new TotalDomSubstitutions(sequent);
-				this.substitutions.computeSubstitutions();
-				this.sequent = sequent;
+		public synchronized TotalDomSubstitutions get(IProverSequent sequent) {
+			if (sequent != key) {
+				substitutions = new TotalDomSubstitutions(sequent);
+				substitutions.computeSubstitutions();
+				key = sequent;
 			}
 			return substitutions;
 		}
