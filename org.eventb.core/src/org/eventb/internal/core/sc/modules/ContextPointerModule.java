@@ -228,8 +228,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
 					.getSymbolInfo(name);
 
-			symbolList.add(symbolInfo);
-
 			if (symbolInfo.hasError())
 				return; // the element in the symbol table has already an
 						// associated error message
