@@ -622,6 +622,10 @@
             class="org.eventb.core.sc.state.IMachineAccuracyInfo"
             id="machineAccuracyInfo"
             name="%machineAccuracyInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IReservedNameTable"
+            id="reservedNameTable"
+            name="%reservedNameTable"/>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">
