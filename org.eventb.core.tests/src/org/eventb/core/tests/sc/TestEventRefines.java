@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,19 @@
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added tests about abstract event not refined
+ *     Systerel - added tests about abstract parameter collisions
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.ConstantNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.ParameterNameImportConflictWarning;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
@@ -2044,6 +2049,190 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 		containsMarkers(mac, false);
+	}
+
+	/*
+	 * Ensures that a collision between an abstract event parameter and a
+	 * carrier set is properly reported (bug #712).
+	 */
+	@Test
+	public void testEvents_52_abstractParameterCollidesWithSet() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IContextRoot ctx = createContext("ctx");
+		addCarrierSets(ctx, "x");
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		addEventWitness(fvt, "p", "p = 0");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+		containsMarkers(ctx, false);
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				CarrierSetNameImportConflictError, "x", "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
+	}
+
+	/*
+	 * Ensures that a collision between an abstract event parameter and a
+	 * constant is properly reported (bug #712).
+	 */
+	@Test
+	public void testEvents_53_abstractParameterCollidesWithConstant() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IContextRoot ctx = createContext("ctx");
+		addConstants(ctx, "x");
+		addAxiom(ctx, "A1", "x ∈ BOOL", true);
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		addEventWitness(fvt, "p", "p = 0");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+		containsMarkers(ctx, false);
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				ConstantNameImportConflictError, "x", "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
+	}
+
+	/*
+	 * Ensures that a collision between an abstract event parameter which comes
+	 * from an extended event and a constant is properly reported (bug #712).
+	 */
+	@Test
+	public void testEvents_54_abstractExtendedParameterCollidesWithConstant() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addInitialisation(ref);
+		final IEvent ref_evt = addExtendedEvent(ref, "evt");
+		addEventRefines(ref_evt, "evt");
+		saveRodinFileOf(ref);
+
+		final IContextRoot ctx = createContext("ctx");
+		addConstants(ctx, "x");
+		addAxiom(ctx, "A1", "x∈ℕ", true);
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "ref");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "evt");
+		addEventWitness(fvt, "x", "x = 0");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		containsMarkers(ctx, false);
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				ConstantNameImportConflictError, "x", "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
+	}
+	
+	/*
+	 * Ensures that a collision between an extended parameter and a carrier set
+	 * is properly reported (bug #712).
+	 */
+	@Test
+	public void testEvents_55_extendedParameterCollidesWithSet() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IContextRoot ctx = createContext("ctx");
+		addCarrierSets(ctx, "x");
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent evt = addExtendedEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+		containsMarkers(ctx, false);
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				CarrierSetNameImportConflictError, "x", "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
+	}
+
+	/*
+	 * Ensures that a collision between an extended parameter and a constant
+	 * is properly reported (bug #712).
+	 */
+	@Test
+	public void testEvents_56_extendedParameterCollidesWithConstant() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IContextRoot ctx = createContext("ctx");
+		addConstants(ctx, "x");
+		addAxiom(ctx, "A1", "x ∈ BOOL", true);
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent evt = addExtendedEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(abs, false);
+		containsMarkers(ctx, false);
+		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				ConstantNameImportConflictError, "x", "ctx");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ParameterNameImportConflictWarning, "x", "evt");
 	}
 
 }

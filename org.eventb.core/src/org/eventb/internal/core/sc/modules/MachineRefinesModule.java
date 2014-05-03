@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - got factory from repository
+ *     Systerel - add reserved name table
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -46,6 +47,7 @@ import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IMachineAccuracyInfo;
+import org.eventb.core.sc.state.IReservedNameTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.SymbolFactory;
 import org.eventb.core.tool.IModuleType;
@@ -53,6 +55,8 @@ import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.AbstractMachineInfo;
 import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.sc.symbolTable.AbstractParameterWarning;
+import org.eventb.internal.core.sc.symbolTable.ReservedNameTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -80,6 +84,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	private AbstractEventTable abstractEventTable;
 	private ITypeEnvironmentBuilder typeEnvironment;
 	private IMachineAccuracyInfo accuracyInfo;
+	private IReservedNameTable reservedNameTable;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
@@ -90,6 +95,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		if (scAbstractMachineFile == null) {
 			abstractEventTable.makeImmutable();
+			reservedNameTable.makeImmutable();
 			return;
 		}
 
@@ -110,6 +116,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 				repository.getFormulaFactory(), null);
 
 		abstractEventTable.makeImmutable();
+		reservedNameTable.makeImmutable();
 
 		monitor.worked(1);
 
@@ -303,8 +310,13 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		FreeIdentifier[] identifiers = new FreeIdentifier[parameters.length];
 
 		for (int i = 0; i < parameters.length; i++) {
-			identifiers[i] = parameters[i].getIdentifier(factory);
-			eventTypeEnvironment.add(identifiers[i]);
+			final FreeIdentifier ident = parameters[i].getIdentifier(factory);
+			identifiers[i] = ident;
+			eventTypeEnvironment.add(ident);
+
+			final String name = ident.getName();
+			reservedNameTable.add(name, new AbstractParameterWarning(
+					refinesMachine, name, event.getLabel()));
 		}
 
 		return identifiers;
@@ -405,6 +417,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		accuracyInfo = (IMachineAccuracyInfo) repository
 				.getState(IMachineAccuracyInfo.STATE_TYPE);
 
+		reservedNameTable = new ReservedNameTable();
+		repository.setState(reservedNameTable);
 	}
 
 	/*
@@ -422,6 +436,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		scAbstractMachineFile = null;
 		abstractEventTable = null;
 		accuracyInfo = null;
+		reservedNameTable = null;
 	}
 
 }

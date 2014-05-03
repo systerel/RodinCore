@@ -31,6 +31,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IReservedNameTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
@@ -49,6 +50,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	protected IIdentifierSymbolTable identifierSymbolTable;
 	protected ITypeEnvironmentBuilder typeEnvironment;
 	protected FormulaFactory factory;
+	protected IReservedNameTable reservedNameTable;
 
 	/*
 	 * (non-Javadoc)
@@ -69,6 +71,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				.getState(IIdentifierSymbolTable.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 		factory = repository.getFormulaFactory();
+		// reservedNameTable must be initialized by sub-classes
 	}
 
 	/*
@@ -87,6 +90,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		identifierSymbolTable = null;
 		typeEnvironment = null;
 		factory = null;
+		reservedNameTable = null;
 	}
 
 	protected boolean fetchSCContexts(ContextPointerArray contextPointerArray,
@@ -216,6 +220,13 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		IIdentifierSymbolInfo newSymbolInfo = creator
 				.createIdentifierSymbolInfo(name, element, contextPointerArray
 						.getContextPointer(index));
+
+		if (reservedNameTable.isInConflict(name)) {
+			reservedNameTable.issueWarningFor(name, this);
+			newSymbolInfo.createConflictMarker(this);
+			contextPointerArray.setError(index);
+			return;
+		}
 
 		if (!identifierSymbolTable.tryPutSymbolInfo(newSymbolInfo)) {
 

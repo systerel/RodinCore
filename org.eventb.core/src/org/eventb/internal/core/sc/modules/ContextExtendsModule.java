@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - add reserved name table
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -28,6 +29,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.sc.symbolTable.ReservedNameTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -99,6 +101,9 @@ public class ContextExtendsModule extends ContextPointerModule {
 
 		accuracyInfo = (IContextAccuracyInfo) repository
 				.getState(IContextAccuracyInfo.STATE_TYPE);
+
+		reservedNameTable = new ReservedNameTable();
+		repository.setState(reservedNameTable);
 	}
 
 	@Override
@@ -107,6 +112,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
 		accuracyInfo = null;
+		reservedNameTable = null;
 	}
 
 	@Override
@@ -116,6 +122,9 @@ public class ContextExtendsModule extends ContextPointerModule {
 
 		// we need to do everything up to this point
 		// produce a define repository state
+
+		// We will not add anything to this table
+		reservedNameTable.makeImmutable();
 
 		if (contextPointerArray.size() == 0) {
 			contextPointerArray.makeImmutable();
