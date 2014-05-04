@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,13 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IRepairableInputReasoner;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 
 public class ContImplHypRewrites extends AbstractManualRewrites implements IRepairableInputReasoner {
 
@@ -63,7 +63,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 		final IAntecedent[] antecedents = reader.getAntecedents();
 		if (antecedents.length != 1) return null;
 
-		final ForwardInfHypAction fwd = getFwd(antecedents[0]);
+		final IForwardInfHypAction fwd = getFwd(antecedents[0]);
 		if(fwd == null) return null;
 		
 		final Predicate hyp = getUniqueElement(fwd.getHyps());
@@ -85,10 +85,10 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 
 	}
 
-	private static ForwardInfHypAction getFwd(IAntecedent antecedent) {
+	private static IForwardInfHypAction getFwd(IAntecedent antecedent) {
 		for (IHypAction hypAction : antecedent.getHypActions()) {
-			if (hypAction instanceof ForwardInfHypAction) {
-				return (ForwardInfHypAction) hypAction;
+			if (hypAction instanceof IForwardInfHypAction) {
+				return (IForwardInfHypAction) hypAction;
 			}
 		}
 		return null;
