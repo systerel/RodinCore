@@ -30,6 +30,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -44,8 +46,6 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
-import org.eventb.internal.core.seqprover.RewriteHypAction;
-import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 public abstract class AbstractManualRewrites implements IReasoner {
 
@@ -273,8 +273,8 @@ public abstract class AbstractManualRewrites implements IReasoner {
 					"Expected at least one hyp action!"));
 		}
 		final IHypAction hypAction = hypActions.get(0);
-		if (hypAction instanceof RewriteHypAction) {
-			final RewriteHypAction rwHypAction = (RewriteHypAction) hypAction;
+		if (hypAction instanceof IRewriteHypAction) {
+			final IRewriteHypAction rwHypAction = (IRewriteHypAction) hypAction;
 			final Collection<Predicate> hyps = rwHypAction.getHyps();
 			if (hyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
@@ -282,7 +282,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			}
 			return new Input(hyps.iterator().next(), position);
 		} else if (hypAction.getActionType().equals(HIDE_ACTION_TYPE)) {
-			final SelectionHypAction selHypAction = (SelectionHypAction) hypAction;
+			final ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
 			final Collection<Predicate> hyps = selHypAction.getHyps();
 			if (hyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
