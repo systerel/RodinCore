@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests.extension;
 
+import static org.eventb.core.ast.Formula.BOOL;
 import static org.eventb.core.ast.FormulaFactory.getCond;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +25,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IExtensionTranslation;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
@@ -205,6 +208,36 @@ public class TestExtensionTranslation extends AbstractTests {
 		final ITypeCheckResult typeCheck = expected.typeCheck(trgTypeEnv);
 		assertFalse(typeCheck.hasProblem());
 		assertTrue(typeCheck.getInferredEnvironment().isEmpty());
+	}
+
+	public static class ExtensionTranslationErrors {
+
+		final ISealedTypeEnvironment srcTypenv = mTypeEnvironment().makeSnapshot();
+		final ExtensionTranslation trans = new ExtensionTranslation(srcTypenv);
+
+		final Expression untyped = mEmptySet(null);
+		final Expression badFactory = LIST_FAC.makeAtomicExpression(BOOL, null);
+		final Expression empty_S = mEmptySet(POW(ff.makeGivenType("S")));
+
+		@Test(expected = IllegalStateException.class)
+		public void notTyped() throws Exception {
+			assertFalse(untyped.isTypeChecked());
+			untyped.translateExtensions(trans);
+		}
+
+		@Test(expected = IllegalArgumentException.class)
+		public void invalidFactory() throws Exception {
+			assertTrue(badFactory.isTypeChecked());
+			badFactory.translateExtensions(trans);
+		}
+
+		// The given set S is not in the source type environment
+		@Test(expected = IllegalArgumentException.class)
+		public void notInSourceTypenv() throws Exception {
+			assertTrue(empty_S.isTypeChecked());
+			empty_S.translateExtensions(trans);
+		}
+
 	}
 
 }
