@@ -146,6 +146,13 @@ public class ExtensionTranslation implements IExtensionTranslation {
 		return rewriter;
 	}
 
+	@Override
+	public String toString() {
+		return "Extension Translation for factory: "
+				+ srcTypenv.getFormulaFactory() + " in type environment: "
+				+ srcTypenv;
+	}
+	
 	private static class ExtensionRewriter extends DefaultTypeCheckingRewriter {
 
 		private ExtensionTranslation translation;
