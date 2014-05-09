@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,15 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.ConstantNameConflictError;
+import static org.eventb.core.sc.GraphProblem.ConstantNameImportConflictWarning;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
@@ -39,7 +45,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ITypeEnvironmentBuilder environment = mTypeEnvironment("S1=ℙ(S1); C1=S1", factory);
 
@@ -50,8 +56,6 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		containsConstants(file, "C1");
 		
 		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"), false);
-		
-		containsMarkers(con, false);
 	}
 	
 	/**
@@ -65,8 +69,6 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(abs1);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 
@@ -75,7 +77,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -84,8 +86,6 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsConstants(contexts[0], "C1");
-
-		containsMarkers(con, false);
 	}
 	
 	/**
@@ -99,8 +99,6 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(abs1);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 
 		addContextExtends(con, "abs1");
@@ -110,7 +108,11 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(con.getConstants()[0], IDENTIFIER_ATTRIBUTE,
+						ConstantNameConflictError, "C1"),
+				marker(con.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictWarning, "C1", "abs1"));
 
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -119,9 +121,6 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsConstants(contexts[0], "C1");
-
-		hasMarker(con.getConstants()[0]);
-		hasMarker(con.getExtendsClauses()[0]);
 	}
 
 	/**
@@ -138,14 +137,12 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsConstants(file, "d");
 		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"), false, false);
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -157,26 +154,27 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(root1, makeSList("C1"));
 		addAxioms(root1, makeSList("A1"), makeSList("C1∈ℕ"), false);
 		saveRodinFileOf(root1);
-		runBuilder();
 		
 		final IContextRoot root2 = createContext("c2");
 		addContextExtends(root2, root1.getComponentName());
 		saveRodinFileOf(root2);
-		runBuilder();
 
 		final IContextRoot root3 = createContext("c3");
 		addContextExtends(root3, root2.getComponentName());
 		addConstants(root3, makeSList("C1"));
 		addAxioms(root3, makeSList("A1"), makeSList("C1∈ℕ"), false);
 		saveRodinFileOf(root3);
-		runBuilder();
+
+		runBuilderCheck(
+				marker(root3.getConstants()[0], IDENTIFIER_ATTRIBUTE,
+						ConstantNameConflictError, "C1"),
+				marker(root3.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictWarning, "C1", "c1"));
 
 		final ISCContextRoot file = root3.getSCContextRoot();
 		containsConstants(file);
 		final ISCInternalContext[] contexts = getInternalContexts(file, 2);
 		containsConstants(contexts[0], "C1");
-		hasMarker(root3.getConstants()[0]);
-		hasMarker(root3.getExtendsClauses()[0]);
 	}
 
 	@Override

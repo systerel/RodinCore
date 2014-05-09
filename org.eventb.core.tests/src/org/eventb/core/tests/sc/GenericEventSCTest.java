@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.sc.GraphProblem.ParameterNameConflictError;
+import static org.eventb.core.sc.GraphProblem.UntypedParameterError;
 import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +24,8 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericEventTest;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -65,15 +69,23 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	@Override
-	public IRodinElement[] getIdents(IEvent element) throws RodinDBException {
+	public IInternalElement[] getIdents(IEvent element) throws RodinDBException {
 		return element.getParameters();
 	}
 
 	@Override
-	public IRodinElement[] getPredicates(IEvent element) throws RodinDBException {
+	public IInternalElement[] getPredicates(IEvent element) throws RodinDBException {
 		return element.getGuards();
 	}
 
+	@Override
+	public IRodinProblem getUntypedProblem() {
+		return UntypedParameterError;
+	}
 
+	@Override
+	public IRodinProblem getIdentConflictProblem() {
+		return ParameterNameConflictError;
+	}
 
 }

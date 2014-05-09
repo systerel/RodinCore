@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -30,6 +31,11 @@ implements IGenericElementTest<IMachineRoot> {
 	@Override
 	public void addIdents(IMachineRoot element, String... names) throws RodinDBException {
 		test.addVariables(element, names);
+		addInitialisationActions(element, names);
+	}
+
+	protected void addInitialisationActions(IMachineRoot element,
+			String... names) throws RodinDBException {
 		IEvent init = findInitialisation(element);
 		IAction action = init.createChild(IAction.ELEMENT_TYPE, null, null);
 		for (String name : names) {
@@ -51,6 +57,12 @@ implements IGenericElementTest<IMachineRoot> {
 	@Override
 	public void addPredicates(IMachineRoot element, String[] names, String[] nonTheorems, boolean...derived) throws RodinDBException {
 		test.addInvariants(element, names, nonTheorems, derived);
+	}
+
+	@Override
+	public void addInitialisation(IMachineRoot element, String... names)
+			throws RodinDBException {
+		// Already done when adding the identifiers
 	}
 
 	@Override

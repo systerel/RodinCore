@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.sc.GraphProblem.ConstantNameConflictError;
+import static org.eventb.core.sc.GraphProblem.UntypedConstantError;
 import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +22,8 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericContextTest;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -59,13 +63,23 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 	}
 
 	@Override
-	public IRodinElement[] getIdents(IContextRoot element) throws RodinDBException {
+	public IInternalElement[] getIdents(IContextRoot element) throws RodinDBException {
 		return element.getConstants();
 	}
 
 	@Override
-	public IRodinElement[] getPredicates(IContextRoot element) throws RodinDBException {
+	public IInternalElement[] getPredicates(IContextRoot element) throws RodinDBException {
 		return element.getAxioms();
+	}
+
+	@Override
+	public IRodinProblem getUntypedProblem() {
+		return UntypedConstantError;
+	}
+
+	@Override
+	public IRodinProblem getIdentConflictProblem() {
+		return ConstantNameConflictError;
 	}
 
 }

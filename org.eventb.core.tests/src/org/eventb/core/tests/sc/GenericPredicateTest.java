@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -95,6 +96,7 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().addIdents(con, "x");
 		getGeneric().addPredicates(con, makeSList("P"), makeSList("x∈1‥0"), false);
+		getGeneric().addInitialisation(con, "x");
 	
 		getGeneric().save(con);
 		
@@ -270,6 +272,7 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().addIdents(con, "C1");
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("C1 ∈ ℤ"), true);
+		getGeneric().addInitialisation(con, "C1");
 	
 		getGeneric().save(con);
 		
