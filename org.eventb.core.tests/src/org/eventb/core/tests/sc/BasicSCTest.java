@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - add marker matchers
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -21,8 +22,11 @@ import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +64,9 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.EventBTest;
+import org.eventb.core.tests.MarkerMatcher;
+import org.eventb.core.tests.SelfDescribingMarker;
+import org.hamcrest.StringDescription;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -81,6 +88,52 @@ public abstract class BasicSCTest extends EventBTest {
 		super.runBuilder();
 		for (IEventBRoot root : sourceRoots)
 			assertTrue("ill-formed markers", GraphProblemTest.check(root));
+	}
+
+	protected void runBuilderCheck(MarkerMatcher... matchers)
+			throws CoreException {
+		runBuilder();
+		final IMarker[] markers = rodinProject.getResource().findMarkers(
+				RODIN_PROBLEM_MARKER, true, DEPTH_INFINITE);
+		assertMarkers(markers, matchers);
+	}
+
+	private void assertMarkers(IMarker[] markers, MarkerMatcher[] matchers) {
+		final List<MarkerMatcher> unmatched;
+		unmatched = new LinkedList<MarkerMatcher>(Arrays.asList(matchers));
+		final List<SelfDescribingMarker> unexpected;
+		unexpected = new ArrayList<SelfDescribingMarker>();
+		for (final IMarker marker : markers) {
+			if (!matchAndRemove(marker, unmatched)) {
+				unexpected.add(new SelfDescribingMarker(marker));
+			}
+		}
+		if (unmatched.isEmpty() && unexpected.isEmpty()) {
+			// success
+			return;
+		}
+		final StringDescription desc = new StringDescription();
+		if (!unmatched.isEmpty()) {
+			desc.appendList("Some expected markers were not present:\n", ", ",
+					"\n", unmatched);
+		}
+		if (!unexpected.isEmpty()) {
+			desc.appendList("Some unexpected markers were present:\n", ", ",
+					"\n", unexpected);
+		}
+		fail(desc.toString());
+	}
+
+	private boolean matchAndRemove(IMarker marker, List<MarkerMatcher> matchers) {
+		final Iterator<MarkerMatcher> iter = matchers.iterator();
+		while (iter.hasNext()) {
+			final MarkerMatcher matcher = iter.next();
+			if (matcher.matches(marker)) {
+				iter.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private final List<IEventBRoot> sourceRoots = new ArrayList<IEventBRoot>();
