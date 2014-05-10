@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,26 @@
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.InvalidVariantTypeError;
+import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
+import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
+import static org.eventb.core.sc.ParseProblem.LexerError;
+import static org.eventb.core.sc.ParseProblem.SyntaxError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ParseProblem;
 import org.junit.Test;
 
 /**
@@ -44,13 +51,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariant(file, emptyEnv, "1");
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -66,13 +71,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariant(file, emptyEnv, "{TRUE}");
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -98,8 +101,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				factory);
 
 		containsVariant(file, typeEnvironment, "V1");
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -108,18 +109,18 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testVariant_03() throws Exception {
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 
 		addVariant(mac, "TRUE");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+				InvalidVariantTypeError, "BOOL"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariant(file, emptyEnv);
-
-		hasMarker(mac.getVariants()[0]);
 	}
 
 	/**
@@ -132,8 +133,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), false);
 
 		saveRodinFileOf(con);
-		
-		runBuilder();
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineSees(mac, "ctx");
@@ -145,7 +144,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -153,8 +152,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				factory);
 
 		containsVariant(file, typeEnvironment, "V1+C1");
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -165,30 +162,32 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
 		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"), false);
+		addInitialisation(abs, makeSList("A1"), makeSList("V0 ≔ 0"));
 
 		saveRodinFileOf(abs);
-		
-		runBuilder();
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
-		setConvergent(addEvent(mac, "evt", makeSList(), makeSList(),
-				makeSList(), makeSList(), makeSList()));
+		addInitialisation(mac, "V1");
+		final IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
+				makeSList(), makeSList(), makeSList());
+		setConvergent(evt);
 		addVariant(mac, "V1+V0");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 3, 5,
+						VariantFreeIdentifierError, "V0"),
+				marker(evt, CONVERGENCE_ATTRIBUTE,
+						ConvergentEventNoVariantWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariables(file, "V0", "V1");
 		containsVariant(file, emptyEnv);
-
-		hasMarker(mac.getVariants()[0]);
-
 	}
 
 	/**
@@ -200,15 +199,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
 		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"), false);
-		addInitialisation(abs, "V0");
+		addInitialisation(abs, makeSList("A1"), makeSList("V0 ≔ 0"));
 		addVariant(abs, "V0");
 		setConvergent(addEvent(abs, "evt"));
 
 		saveRodinFileOf(abs);
-
-		runBuilder();
-
-		containsMarkers(abs, false);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -222,7 +217,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -230,9 +226,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
 				factory);
 		containsVariant(file, typeEnv, "V1");
-
-		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE);
-
 	}
 
 	/**
@@ -249,14 +242,12 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsEvents(file, IEvent.INITIALISATION, "evt");
-
-		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
-				GraphProblem.NoConvergentEventButVariantWarning);
 	}
 	
 	/**
@@ -273,10 +264,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V0", "V1");
@@ -292,7 +279,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -300,9 +287,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
 				factory);
 		containsVariant(file, typeEnv, "V1");
-
-		containsMarkers(mac, false);
-
 	}
 
 	/**
@@ -312,20 +296,22 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_09_bug2689872() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		setConvergent(addEvent(mac, "evt"));
+		final IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
 		addInitialisation(mac);
 		addVariant(mac, "{x ∣ x /= 0}");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 7, 8,
+						LexerError, "/"),
+				marker(evt, CONVERGENCE_ATTRIBUTE,
+						ConvergentEventNoVariantWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariant(file, emptyEnv);
-
-		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
-				ParseProblem.LexerError, "/");
 	}
 	
 	/**
@@ -334,14 +320,13 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testVariant_10() throws Exception {
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 		addVariant(mac, "");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
-
-		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
-				ParseProblem.SyntaxError, "Premature End Of Formula");
+		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 0,
+				1, SyntaxError, "Premature End Of Formula"));
 	}
 
 }
