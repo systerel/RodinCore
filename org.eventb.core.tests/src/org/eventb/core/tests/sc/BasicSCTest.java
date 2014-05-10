@@ -90,6 +90,13 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("ill-formed markers", GraphProblemTest.check(root));
 	}
 
+	protected void runBuilderIssuesSomeMarkers() throws CoreException {
+		super.runBuilder();
+		final IMarker[] markers = rodinProject.getResource().findMarkers(
+				RODIN_PROBLEM_MARKER, true, DEPTH_INFINITE);
+		assertTrue("Expected some markers, but none found", markers.length != 0);
+	}
+
 	protected void runBuilderCheck(MarkerMatcher... matchers)
 			throws CoreException {
 		runBuilder();
