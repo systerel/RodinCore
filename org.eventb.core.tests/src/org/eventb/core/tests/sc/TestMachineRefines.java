@@ -9,15 +9,18 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.AbstractMachineWithoutConfigurationError;
 import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.ConfigurationMissingError;
 import static org.eventb.core.sc.GraphProblem.VariableNameImportConflictWarning;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -56,14 +59,11 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac, "V2");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, 0);
-		containsMarkers(con, 0);
-		containsMarkers(mac, 2);
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				VariableNameImportConflictWarning, "V1", "abs");
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				CarrierSetNameImportConflictError, "V1", "ctx");
+		runBuilderCheck(
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						VariableNameImportConflictWarning, "V1", "abs"),
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "V1", "ctx"));
 
 		final ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file);
@@ -102,14 +102,11 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac, "V2");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, 0);
-		containsMarkers(acon, 0);
-		containsMarkers(mac, 2);
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				VariableNameImportConflictWarning, "V1", "abs");
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				CarrierSetNameImportConflictError, "V1", "acon");
+		runBuilderCheck(
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						VariableNameImportConflictWarning, "V1", "abs"),
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "V1", "acon"));
 
 		final ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file);
@@ -130,8 +127,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	
 		saveRodinFileOf(con);
 		
-		runBuilder();
-
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
 		
@@ -139,8 +134,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addInitialisation(mac);
 	
@@ -149,15 +142,13 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1");
-
-		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -172,8 +163,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	
 		saveRodinFileOf(con);
 		
-		runBuilder();
-
 		IMachineRoot abs = createMachine("abs");
 		
 		addMachineSees(abs, "ctx");
@@ -182,8 +171,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
@@ -192,15 +179,13 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsConstants(contexts[0], "C1");
-
-		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -216,8 +201,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	
 		saveRodinFileOf(con);
 		
-		runBuilder();
-
 		IMachineRoot abs = createMachine("abs");
 		
 		addMachineSees(abs, "ctx");
@@ -227,8 +210,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
@@ -239,15 +220,13 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsConstants(contexts[0], "C1");
-
-		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -263,8 +242,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineRefines(mac, "abs");
@@ -275,7 +252,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V2=ℤ",
 				factory);
@@ -284,8 +261,6 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 				
 		containsVariables(file, "V1", "V2");
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"), true, true);
-
-		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -304,10 +279,15 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(mac, makeSList("V2"));
 		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"), false);
+		addInitialisation(mac, "V2");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(abs, ConfigurationMissingError, "abs"),
+				marker(abs.getSCMachineRoot(), ConfigurationMissingError, "abs"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						AbstractMachineWithoutConfigurationError, "abs"));
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
@@ -316,14 +296,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V2=ℤ",
 				factory);
 		
-		containsMarkers(abs, true);
-		containsMarkers(mac, true);
-	
 		containsInvariants(file, typeEnvironment, 
 				makeSList("I2"), makeSList("V2∈ℕ"), false);
-		
-		hasMarker(mac.getRefinesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
-		
 	}
 
 }
