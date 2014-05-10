@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.sc.GraphProblem.AxiomLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.AxiomLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.ConstantNameConflictError;
 import static org.eventb.core.sc.GraphProblem.UntypedConstantError;
 import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
@@ -82,4 +84,13 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 		return ConstantNameConflictError;
 	}
 
+	@Override
+	public IRodinProblem getLabelConflictError() {
+		return AxiomLabelConflictError;
+	}
+
+	@Override
+	public IRodinProblem getLabelConflictWarning() {
+		return AxiomLabelConflictWarning;
+	}
 }

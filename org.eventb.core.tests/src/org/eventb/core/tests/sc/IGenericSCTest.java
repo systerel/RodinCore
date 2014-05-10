@@ -44,5 +44,9 @@ extends IGenericElementTest <E> {
 	public IRodinProblem getUntypedProblem();
 
 	public IRodinProblem getIdentConflictProblem();
+
+	public IRodinProblem getLabelConflictError();
+
+	public IRodinProblem getLabelConflictWarning();
 	
 }

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.sc.GraphProblem.InvariantLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.InvariantLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.UntypedVariableError;
 import static org.eventb.core.sc.GraphProblem.VariableNameConflictError;
 import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
@@ -91,6 +93,16 @@ public class GenericMachineSCTest extends GenericMachineTest<BasicSCTest> implem
 	@Override
 	public IRodinProblem getIdentConflictProblem() {
 		return VariableNameConflictError;
+	}
+
+	@Override
+	public IRodinProblem getLabelConflictError() {
+		return InvariantLabelConflictError;
+	}
+
+	@Override
+	public IRodinProblem getLabelConflictWarning() {
+		return InvariantLabelConflictWarning;
 	}
 
 }

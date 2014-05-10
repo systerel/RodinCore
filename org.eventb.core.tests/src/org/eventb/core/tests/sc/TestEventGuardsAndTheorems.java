@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -36,13 +37,11 @@ public class TestEventGuardsAndTheorems extends
 	 */
 	@Test
 	public void test_13() throws Exception {
-		final IMachineRoot abs = createAbstractMachine();
+		createAbstractMachine();
 		final IEvent evt = createConcreteEvent(false);
-		runBuilder();
-
-		hasNotMarker(abs);
 		final IGuard grd = evt.getGuards()[0];
-		hasMarker(grd, PREDICATE_ATTRIBUTE, VariableHasDisappearedError, "V1");
+		runBuilderCheck(marker(grd, PREDICATE_ATTRIBUTE, 0, 2,
+				VariableHasDisappearedError, "V1"));
 	}
 
 	/**
@@ -50,12 +49,9 @@ public class TestEventGuardsAndTheorems extends
 	 */
 	@Test
 	public void test_14() throws Exception {
-		final IMachineRoot abs = createAbstractMachine();
-		final IEvent evt = createConcreteEvent(true);
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(evt.getRoot(), false);
+		createAbstractMachine();
+		createConcreteEvent(true);
+		runBuilderCheck();
 	}
 
 	private IMachineRoot createAbstractMachine() throws RodinDBException {

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.sc.GraphProblem.GuardLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.GuardLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.ParameterNameConflictError;
 import static org.eventb.core.sc.GraphProblem.UntypedParameterError;
 import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
@@ -86,6 +88,16 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	@Override
 	public IRodinProblem getIdentConflictProblem() {
 		return ParameterNameConflictError;
+	}
+
+	@Override
+	public IRodinProblem getLabelConflictError() {
+		return GuardLabelConflictError;
+	}
+
+	@Override
+	public IRodinProblem getLabelConflictWarning() {
+		return GuardLabelConflictWarning;
 	}
 
 }
