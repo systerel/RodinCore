@@ -11,26 +11,51 @@
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added tests about abstract event not refined
  *     Systerel - added tests about abstract parameter collisions
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXTENDED_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.IEvent.INITIALISATION;
 import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
+import static org.eventb.core.sc.GraphProblem.ActionLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.AssignedIdentifierNotVariableError;
 import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
 import static org.eventb.core.sc.GraphProblem.ConstantNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.EventExtendedMergeError;
+import static org.eventb.core.sc.GraphProblem.EventExtendedUnrefinedError;
+import static org.eventb.core.sc.GraphProblem.EventMergeActionError;
+import static org.eventb.core.sc.GraphProblem.EventMergeLabelError;
+import static org.eventb.core.sc.GraphProblem.EventMergeVariableTypeError;
+import static org.eventb.core.sc.GraphProblem.EventRefinementError;
+import static org.eventb.core.sc.GraphProblem.GuardLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.InconsistentEventLabelWarning;
+import static org.eventb.core.sc.GraphProblem.InitialisationRefinedError;
+import static org.eventb.core.sc.GraphProblem.InitialisationRefinesEventWarning;
+import static org.eventb.core.sc.GraphProblem.ParameterChangedTypeError;
+import static org.eventb.core.sc.GraphProblem.ParameterNameConflictError;
 import static org.eventb.core.sc.GraphProblem.ParameterNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.UndeclaredFreeIdentifierError;
+import static org.eventb.core.sc.GraphProblem.UntypedParameterError;
+import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
 import static org.eventb.core.sc.GraphProblem.VariableNameConflictError;
+import static org.eventb.core.sc.GraphProblem.WitnessFreeIdentifierError;
+import static org.eventb.core.sc.GraphProblem.WitnessLabelMissingWarning;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.sc.GraphProblem;
 import org.junit.Test;
 
 /**
@@ -51,8 +76,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -61,14 +84,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -83,8 +104,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -95,16 +114,14 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt1",
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt1",
 				"evt2");
 		refinesEvents(events[1], "evt");
 		refinesEvents(events[2], "evt");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -121,8 +138,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -132,15 +147,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 		containsParameters(events[1], "L1");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -150,35 +163,34 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_03_parameterTypeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"),
 				makeSList("L1∈ℕ"), makeSList(), makeSList());
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt", makeSList("L1"), makeSList("G1"),
 				makeSList("L1⊆ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(evt.getGuards()[0], PREDICATE_ATTRIBUTE,
+						ParameterChangedTypeError, "L1", "ℙ(ℤ)", "ℤ"),
+				marker(evt.getParameters()[0], IDENTIFIER_ATTRIBUTE,
+						UntypedParameterError, "L1"),
+				marker(evt, WitnessLabelMissingWarning, "L1"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
-		containsParameters(events[0]);
-
-		hasMarker(evt.getGuards()[0], null,
-				GraphProblem.ParameterChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
-		hasMarker(evt.getParameters()[0], null,
-				GraphProblem.UntypedParameterError, "L1");
-
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
+		containsParameters(events[1]);
 	}
 
 	/*
@@ -187,38 +199,35 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_04_parameterDefaultWitness() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt", makeSList("L1", "L3"), makeSList("G1", "G3"),
 				makeSList("L1∈ℕ", "L3∈ℕ"), makeSList(), makeSList());
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt", makeSList("L2"), makeSList("G1"),
 				makeSList("L2⊆ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("L1"), makeSList("L1∈L2"));
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, WitnessLabelMissingWarning, "L3"));
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"L1=ℤ; L2=ℙ(ℤ)", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 
-		containsParameters(events[0], "L2");
-		containsWitnesses(events[0], typeEnvironment, makeSList("L1", "L3"),
+		containsParameters(events[1], "L2");
+		containsWitnesses(events[1], typeEnvironment, makeSList("L1", "L3"),
 				makeSList("L1∈L2", "⊤"));
-
-		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
-
 	}
 
 	/*
@@ -237,8 +246,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		IEvent init = addInitialisation(mac);
@@ -249,21 +256,19 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=L2"));
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"V1=ℤ; V1'=ℤ; L2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 
 		containsParameters(events[1], "L2");
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"),
 				makeSList("V1'=L2"));
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -282,8 +287,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
@@ -296,21 +299,19 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'∈V2'"));
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"V1=ℤ; V1'=ℤ; V2=ℙ(ℤ); V2'=ℙ(ℤ)", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 
 		containsParameters(events[1]);
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"),
 				makeSList("V1'∈V2'"));
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -319,38 +320,35 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_07_parameterTypesAndWitnesses() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt", makeSList("L1", "L3"), makeSList("G1", "G3"),
 				makeSList("L1∈ℕ", "L3∈ℕ"), makeSList(), makeSList());
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt", makeSList("L1", "L2"), makeSList(
 				"G1", "G2"), makeSList("L1=1", "L2⊆ℕ"), makeSList(),
 				makeSList());
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, WitnessLabelMissingWarning, "L3"));
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"L1=ℤ; L2=ℙ(ℤ); L3=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 
-		containsParameters(events[0], "L1", "L2");
-		containsWitnesses(events[0], typeEnvironment, makeSList("L3"),
+		containsParameters(events[1], "L1", "L2");
+		containsWitnesses(events[1], typeEnvironment, makeSList("L3"),
 				makeSList("⊤"));
-
-		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
-
 	}
 
 	/*
@@ -366,8 +364,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -379,17 +375,15 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(gvt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
-				"fvt", "gvt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"gvt");
 		refinesEvents(events[1], "evt");
 		refinesEvents(events[2], "evt");
 		refinesEvents(events[3], "evt");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -405,8 +399,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -415,14 +407,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "fvt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt", "fvt");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -437,8 +427,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -446,14 +434,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(event, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -462,30 +448,29 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_11_extendedWithoutRefine() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt");
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addExtendedEvent(mac, "evt");
 		IEvent fvt = addExtendedEvent(mac, "fvt");
 		addEventRefines(fvt, "evt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(evt, InconsistentEventLabelWarning, "evt"),
+				marker(evt, EXTENDED_ATTRIBUTE, EventExtendedUnrefinedError,
+						"evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt);
-		hasNotMarker(fvt);
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -494,16 +479,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_12_extendedMergeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addExtendedEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "fvt");
@@ -512,15 +497,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, EXTENDED_ATTRIBUTE,
+				EventExtendedMergeError, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt);
-		hasNotMarker(fvt);
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -529,6 +511,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_13_mergeMergeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
@@ -536,10 +519,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
@@ -549,15 +531,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "evt", "fvt");
-
-		hasNotMarker(evt);
-		hasNotMarker(fvt);
-
+		getSCEvents(file, INITIALISATION, "evt", "fvt");
 	}
 
 	/*
@@ -575,8 +553,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -591,18 +567,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
-				"fvt", "hvt", "ivt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"hvt", "ivt");
 		refinesEvents(events[1], "evt");
 		refinesEvents(events[2], "fvt", "gvt");
 		refinesEvents(events[3], "hvt");
 		refinesEvents(events[4]);
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -611,6 +585,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_15_splitAndMerge() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
@@ -619,10 +594,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "hvt");
 		IEvent fvt = addEvent(mac, "fvt");
@@ -630,23 +604,23 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "fvt");
 		IEvent hvt = addExtendedEvent(mac, "hvt");
 		addEventRefines(hvt, "hvt");
-		IEvent ivt = addEvent(mac, "ivt");
+		addEvent(mac, "ivt");
 		IEvent jvt = addEvent(mac, "jvt");
 		addEventRefines(jvt, "hvt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		final IRefinesMachine refines = mac.getRefinesClauses()[0];
+		runBuilderCheck(
+				marker(refines, TARGET_ATTRIBUTE,
+						AbstractEventNotRefinedWarning, "evt"),
+				marker(refines, TARGET_ATTRIBUTE,
+						AbstractEventNotRefinedWarning, "gvt"),
+				marker(evt, InconsistentEventLabelWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "evt", "fvt", "hvt", "ivt", "jvt");
-
-		hasMarker(evt, null, GraphProblem.InconsistentEventLabelWarning, "evt");
-		hasNotMarker(fvt);
-		hasNotMarker(hvt);
-		hasNotMarker(ivt);
-		hasNotMarker(jvt);
+		getSCEvents(file, INITIALISATION, "evt", "fvt", "hvt", "ivt", "jvt");
 	}
 
 	/*
@@ -656,27 +630,22 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_16_initialisationDefaultRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		addEvent(mac, IEvent.INITIALISATION);
+		addEvent(mac, INITIALISATION);
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
-		refinesEvents(events[0], IEvent.INITIALISATION);
-
-		containsMarkers(mac, false);
-
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
+		refinesEvents(events[0], INITIALISATION);
 	}
 
 	/*
@@ -686,27 +655,23 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_17_initialisationRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent init = addEvent(mac, IEvent.INITIALISATION);
-		addEventRefines(init, IEvent.INITIALISATION);
+		IEvent init = addEvent(mac, INITIALISATION);
+		addEventRefines(init, INITIALISATION);
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(init.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				InitialisationRefinesEventWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, IEvent.INITIALISATION);
-
-		hasMarker(init.getRefinesClauses()[0]);
-
+		getSCEvents(file, INITIALISATION);
 	}
 
 	/*
@@ -716,26 +681,22 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_18_initialisationExtended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		addExtendedEvent(mac, IEvent.INITIALISATION);
+		addExtendedEvent(mac, INITIALISATION);
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
-		refinesEvents(events[0], IEvent.INITIALISATION);
-
-		containsMarkers(mac, false);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
+		refinesEvents(events[0], INITIALISATION);
 	}
 
 	/*
@@ -745,28 +706,27 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_19_initialisationNotRefined() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
-		addEventRefines(evt, IEvent.INITIALISATION);
+		addEventRefines(evt, INITIALISATION);
 		addEvent(mac, "fvt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(evt.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						InitialisationRefinedError),
+				marker(evt, EventRefinementError));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt);
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -777,42 +737,39 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addEvent(abs, "evt");
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 		addEvent(abs, "gvt");
 		addEvent(abs, "hvt");
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent ini = addEvent(mac, IEvent.INITIALISATION);
-		addEventRefines(ini, IEvent.INITIALISATION);
+		IEvent ini = addEvent(mac, INITIALISATION);
+		addEventRefines(ini, INITIALISATION);
 		IEvent hvt = addEvent(mac, "hvt");
 		addEventRefines(hvt, "hvt");
-		addEventRefines(hvt, IEvent.INITIALISATION);
+		addEventRefines(hvt, INITIALISATION);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		IEvent gvt = addExtendedEvent(mac, "gvt");
 		addEventRefines(gvt, "gvt");
 		addEventRefines(gvt, "evt");
-		IEvent fvt = addEvent(mac, "fvt");
+		addEvent(mac, "fvt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(ini.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						InitialisationRefinesEventWarning),
+				marker(hvt, EventRefinementError),
+				marker(hvt.getRefinesClauses()[1], TARGET_ATTRIBUTE,
+						InitialisationRefinedError),
+				marker(gvt, EXTENDED_ATTRIBUTE, EventExtendedMergeError, "gvt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
-
-		hasMarker(ini.getRefinesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
-		hasMarker(hvt);
-		hasNotMarker(evt);
-		hasMarker(gvt);
-		hasNotMarker(fvt);
-
+		getSCEvents(file, INITIALISATION, "evt", "fvt");
 	}
 
 	/*
@@ -834,8 +791,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -848,13 +803,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
-
-		containsMarkers(mac, false);
+		getSCEvents(file, INITIALISATION, "evt", "fvt");
 	}
 
 	/*
@@ -865,6 +818,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_22_mergeParameterAbstractTypesConflict()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList(), makeSList());
@@ -875,10 +829,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
@@ -887,14 +840,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, EventMergeVariableTypeError, "x"),
+				marker(evt, WitnessLabelMissingWarning, "x"),
+				marker(evt, WitnessLabelMissingWarning, "y"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt, null, GraphProblem.EventMergeVariableTypeError, "x");
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -919,8 +871,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "p", "q");
@@ -934,13 +884,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
-
-		containsMarkers(mac, false);
+		getSCEvents(file, INITIALISATION, "evt", "fvt");
 	}
 
 	/*
@@ -952,6 +900,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "p", "q");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
+		addInitialisation(abs, "p", "q");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈{x}"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -963,11 +912,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addEvent(mac, "evt");
+		addVariables(mac, "p", "q");
+		addInitialisation(mac, "p", "q");
+		IEvent evt = addEvent(mac, "evt", makeSList("x", "y"),
+				makeSList("G1", "G2"), makeSList("x∈ℕ", "y∈BOOL"),
+				makeSList("A1", "A2"), makeSList("p≔y", "q:∈{x}"));
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
 		addEventRefines(evt, "hvt");
@@ -975,14 +926,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, EventMergeActionError));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt);
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -1000,8 +948,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "p");
@@ -1013,18 +959,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"x=ℤ; y=ℤ", factory);
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "fvt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "fvt");
 		containsWitnesses(events[1], typeEnvironment, makeSList("x"),
 				makeSList("x=p"));
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -1042,8 +986,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "p");
@@ -1058,23 +1000,20 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"x=ℤ; y=ℤ", factory);
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
-				"fvt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt");
 		containsWitnesses(events[2], typeEnvironment, makeSList("x"),
 				makeSList("x=p"));
-
-		containsMarkers(mac, false);
 	}
 
 	/*
-	 * post-values of abstract disappearing variables must be be referenced in
+	 * post-values of abstract disappearing variables must not be referenced in
 	 * witnesses
 	 */
 	@Test
@@ -1083,39 +1022,40 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "V1", "V2");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), true, true);
+		addEvent(abs, INITIALISATION, makeSList(), makeSList(), makeSList(),
+				makeSList("A1", "A2"), makeSList("V1≔0", "V2≔0"));
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(
 				"A1", "A2"), makeSList("V1:∈ℕ", "V2:∈ℕ"));
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V3");
 		addInvariants(mac, makeSList("I1"), makeSList("V3∈ℕ"), false);
+		addInitialisation(mac, "V3");
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=V2'+V3"));
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(evt.getWitnesses()[0], PREDICATE_ATTRIBUTE, 4, 7,
+						WitnessFreeIdentifierError, "V2'"),
+				marker(evt, WitnessLabelMissingWarning, "V1'"),
+				marker(evt, WitnessLabelMissingWarning, "V2'"));
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 
-		containsWitnesses(events[0], typeEnvironment, makeSList("V1'", "V2'"),
+		containsWitnesses(events[1], typeEnvironment, makeSList("V1'", "V2'"),
 				makeSList("⊤", "⊤"));
-
-		hasMarker(evt);
-		hasMarker(evt.getWitnesses()[0]);
-
 	}
 
 	/*
@@ -1135,15 +1075,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(ref);
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsWitnesses(events[1], emptyEnv, makeSList(), makeSList());
-
-		containsMarkers(ref, false);
 	}
 
 	/*
@@ -1164,16 +1102,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "B");
 		addInvariants(ref, makeSList("J"), makeSList("A=B"), false);
-		addInitialisation(ref, "B");
+		final IEvent init = addInitialisation(ref, "B");
+		// TODO why need a local witness
+		addEventWitness(init, "A'", "A' = B'");
 		IEvent evt = addExtendedEvent(ref, "evt");
+		addEventRefines(evt, "evt");
 		saveRodinFileOf(ref);
-		runBuilder();
+		runBuilderCheck(marker(evt, UndeclaredFreeIdentifierError, "A"));
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 
-		getSCEvents(file, IEvent.INITIALISATION);
-
-		hasMarker(evt);
+		getSCEvents(file, INITIALISATION);
 	}
 
 	/*
@@ -1197,21 +1136,19 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(ref);
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"A=ℤ; B=ℤ; x=ℤ; y=ℤ", factory);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		containsParameters(events[1], "x", "y");
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList(
 				"x∈ℕ", "y∈ℕ"));
 		containsActions(events[1], environment, makeSList("S", "T"), makeSList(
 				"A≔A+1", "B≔B+1"));
-
-		containsMarkers(ref, false);
 	}
 
 	/*
@@ -1226,6 +1163,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "p", "q");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
+		addInitialisation(abs, "p", "q");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A3"), makeSList("p≔TRUE", "q:∈ℕ"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -1234,25 +1172,24 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addEvent(mac, "evt");
+		addVariables(mac, "p", "q");
+		addInitialisation(mac, "p", "q");
+		IEvent evt = addEvent(mac, "evt", makeSList("x", "y"),
+				makeSList("G1", "G2"), makeSList("x∈ℕ", "y∈BOOL"),
+				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
 		addEvent(mac, "fvt");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, EventMergeLabelError));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "fvt");
-
-		hasMarker(evt);
-
+		getSCEvents(file, INITIALISATION, "fvt");
 	}
 
 	/*
@@ -1265,6 +1202,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "p", "q");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
+		addEvent(abs, INITIALISATION, makeSList(), makeSList(), makeSList(),
+				makeSList("A1", "A2"), makeSList("p≔TRUE", "q≔0"));
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -1273,13 +1212,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"p=BOOL; q=ℤ; x=ℤ; y=BOOL", factory);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "gvt");
@@ -1287,15 +1225,15 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt, WitnessLabelMissingWarning, "q'"),
+				marker(evt, WitnessLabelMissingWarning, "x"),
+				marker(evt, WitnessLabelMissingWarning, "y"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt");
-		containsWitnesses(events[0], environment, makeSList("q'", "x", "y"),
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt");
+		containsWitnesses(events[1], environment, makeSList("q'", "x", "y"),
 				makeSList("⊤", "⊤", "⊤"));
-
-		hasMarker(evt);
 	}
 
 	/**
@@ -1313,8 +1251,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"p=BOOL", factory);
 
@@ -1327,15 +1263,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		containsActions(events[1], environment, makeSList("A"),
 				makeSList("p≔TRUE"));
-
-		containsMarkers(mac, false);
 	}
 
 	/*
@@ -1348,17 +1282,18 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"), false);
+		addEvent(abs, INITIALISATION, makeSList(), makeSList(), makeSList(),
+				makeSList("A1"), makeSList("p≔0"));
 		addEvent(abs, "evt", makeSList("x", "y"), makeSList("G1", "G2"),
 				makeSList("x∈ℕ", "y∈ℕ"), makeSList("A1"), makeSList("p:∈{x}"));
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "q");
 		addInvariants(mac, makeSList("I1"), makeSList("q≠p"), false);
+		addInitialisation(mac, "q");
 		IEvent fvt = addEvent(mac, "fvt", makeSList(), makeSList(),
 				makeSList(), makeSList("A1"), makeSList("q:∈{q}"));
 		addEventRefines(fvt, "evt");
@@ -1367,18 +1302,19 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(fvt.getWitnesses()[0], PREDICATE_ATTRIBUTE, 2, 4,
+						WitnessFreeIdentifierError, "p'"),
+				marker(fvt, WitnessLabelMissingWarning, "x"));
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"p'=ℤ; q'=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "fvt");
-		containsWitnesses(events[0], environment, makeSList("x", "y", "p'"),
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "fvt");
+		containsWitnesses(events[1], environment, makeSList("x", "y", "p'"),
 				makeSList("⊤", "y=q'", "q'≠p'"));
-
-		hasMarker(fvt.getWitnesses()[0]);
 	}
 
 	/*
@@ -1397,23 +1333,26 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		final IEvent ini = addInitialisation(mac, "x");
 		final IEvent fvt = addEvent(mac, "evt");
 		addEventRefines(fvt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
+		runBuilderCheck(
+				marker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						VariableNameConflictError, "x"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"),
+				marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 0, 1,
+						UndeclaredFreeIdentifierError, "x"),
+				marker(ini.getActions()[0], ASSIGNMENT_ATTRIBUTE,
+						AssignedIdentifierNotVariableError, "x"),
+				marker(fvt, WitnessLabelMissingWarning, "x"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		containsWitnesses(events[0], emptyEnv, makeSList("x"), makeSList("⊤"));
-
-		hasMarker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
-				VariableNameConflictError, "x");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
-		hasMarker(fvt);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		containsWitnesses(events[1], emptyEnv, makeSList("x"), makeSList("⊤"));
 	}
 
 	/*
@@ -1433,23 +1372,25 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		final IEvent ini = addInitialisation(mac, "x");
 		final IEvent evt = addExtendedEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
+		runBuilderCheck(
+				marker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						VariableNameConflictError, "x"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"),
+				marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 0, 1,
+						UndeclaredFreeIdentifierError, "x"),
+				marker(ini.getActions()[0], ASSIGNMENT_ATTRIBUTE,
+						AssignedIdentifierNotVariableError, "x"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		containsWitnesses(events[0], emptyEnv, makeSList(), makeSList());
-
-		hasMarker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
-				VariableNameConflictError, "x");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
-		hasNotMarker(evt);
 	}
 
 	/*
@@ -1462,38 +1403,39 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"), false);
+		final IEvent ini = addInitialisation(mac, "V2");
+		addEventWitness(ini, "V1'", "V1' = V2'");
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList("A2", "A3"), makeSList("V1:∈ℕ", "V2≔V1"));
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("⊤"));
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(evt.getActions()[0], ASSIGNMENT_ATTRIBUTE,
+						VariableHasDisappearedError, "V1"),
+				marker(evt.getActions()[1], ASSIGNMENT_ATTRIBUTE,
+						VariableHasDisappearedError, "V1"));
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 
-		containsActions(events[0], typeEnvironment, makeSList(), makeSList());
-
-		hasMarker(evt.getActions()[0]);
-		hasMarker(evt.getActions()[1]);
-
+		containsActions(events[1], typeEnvironment, makeSList(), makeSList());
 	}
 
 	/*
@@ -1505,37 +1447,36 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), makeSList("G1"), makeSList("V1>0"),
 				makeSList(), makeSList());
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"), false);
+		final IEvent ini = addInitialisation(mac, "V2");
+		addEventWitness(ini, "V1'", "V1' = V2'");
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList("G2", "G3"),
 				makeSList("V1>0", "V2>0"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(evt.getGuards()[0], PREDICATE_ATTRIBUTE, 0, 2,
+				VariableHasDisappearedError, "V1"));
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
 				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		refinesEvents(events[0], "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		refinesEvents(events[1], "evt");
 
-		containsGuards(events[0], typeEnvironment, makeSList("G3"),
+		containsGuards(events[1], typeEnvironment, makeSList("G3"),
 				makeSList("V2>0"));
-
-		hasMarker(evt.getGuards()[0]);
-
 	}
 
 	/*
@@ -1570,20 +1511,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 
-		addExtendedEvent(con, IEvent.INITIALISATION);
+		addExtendedEvent(con, INITIALISATION);
 		IEvent evt1 = addExtendedEvent(con, "evt");
 		addEventRefines(evt1, "evt");
 
 		saveRodinFileOf(con);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
-		containsMarkers(con, false);
+		runBuilderCheck();
 
 		ISCMachineRoot file = con.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsWitnesses(events[1], emptyEnv, makeSList(), makeSList());
 
@@ -1613,18 +1550,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(ref, true);
+		runBuilderCheck(
+				marker(evt, EXTENDED_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "a", "abs"),
+				marker(evt.getParameters()[0], IDENTIFIER_ATTRIBUTE,
+						ParameterNameConflictError, "a"));
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsParameters(events[1], "a", "b");
-
-		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
-		hasMarker(evt.getParameters()[0]);
 	}
 
 	/*
@@ -1654,26 +1589,25 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(ref, true);
+		runBuilderCheck(
+				// TODO should be warning for extended attribute
+				marker(evt, EXTENDED_ATTRIBUTE, GuardLabelConflictError, "G"),
+				marker(evt.getGuards()[0], LABEL_ATTRIBUTE,
+						GuardLabelConflictError, "G"),
+				marker(evt.getActions()[0], LABEL_ATTRIBUTE,
+						ActionLabelConflictError, "G"));
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"x=ℤ; y=ℤ", factory);
 
-		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList(
 				"1 ∈ ℕ", "5=1"));
-		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
 
 		containsActions(events[1], environment, makeSList("A"),
 				makeSList("y≔y−1"));
-		hasMarker(evt.getActions()[0], EventBAttributes.LABEL_ATTRIBUTE);
-
 	}
 
 	/*
@@ -1704,25 +1638,24 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(ref, true);
+		runBuilderCheck(
+				// TODO should be warning for extended attribute
+				marker(evt, EXTENDED_ATTRIBUTE, ActionLabelConflictError, "A"),
+				marker(evt.getGuards()[0], LABEL_ATTRIBUTE,
+						GuardLabelConflictError, "A"),
+				marker(evt.getActions()[0], LABEL_ATTRIBUTE,
+						ActionLabelConflictError, "A"));
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"x=ℤ; y=ℤ", factory);
 
-		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("H"), makeSList("5=1"));
-		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
 
 		containsActions(events[1], environment, makeSList("A", "B"), makeSList(
 				"x:∈ℕ", "y≔y−1"));
-		hasMarker(evt.getActions()[0], EventBAttributes.LABEL_ATTRIBUTE);
-
 	}
 
 	/*
@@ -1749,13 +1682,10 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
-
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
+		runBuilderCheck();
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsParameters(events[1], "a", "b");
 
@@ -1784,16 +1714,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"a=ℤ; b=ℤ", factory);
 
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
-
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList(
 				"a ∈ ℕ", "b=1"));
@@ -1827,16 +1754,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"x=ℤ; y=ℤ", factory);
 
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
-
 		ISCMachineRoot file = ref.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsActions(events[1], environment, makeSList("A", "B"), makeSList(
 				"x≔x+1", "y≔y+1"));
@@ -1883,17 +1807,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(con);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"x=ℤ; y=ℤ; z=ℤ; a=ℤ; b=ℤ; c=ℤ", factory);
 
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
-		containsMarkers(con, false);
-
 		ISCMachineRoot file = con.getSCMachineRoot();
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 
 		containsParameters(events[1], "a", "b", "c");
 		containsGuards(events[1], environment, makeSList("G", "H", "D"),
@@ -1910,27 +1830,23 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_46_initialisationExtendedRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
-		addEvent(abs, IEvent.INITIALISATION);
+		addEvent(abs, INITIALISATION);
 
 		saveRodinFileOf(abs);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent ini = addEvent(mac, IEvent.INITIALISATION);
+		IEvent ini = addEvent(mac, INITIALISATION);
 		setExtended(ini);
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
-		refinesEvents(events[0], IEvent.INITIALISATION);
-
-		containsMarkers(abs, false);
-		containsMarkers(mac, false);
-
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
+		refinesEvents(events[0], INITIALISATION);
 	}
 
 	/*
@@ -1941,8 +1857,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℕ", "y∈ℕ"), false, false);
-		addEvent(abs, IEvent.INITIALISATION, makeSList(), makeSList(),
-				makeSList(), makeSList("A", "B"), makeSList("x:∈ℕ", "y:∈ℕ"));
+		addEvent(abs, INITIALISATION, makeSList(), makeSList(), makeSList(),
+				makeSList("A", "B"), makeSList("x:∈ℕ", "y:∈ℕ"));
 
 		saveRodinFileOf(abs);
 
@@ -1950,27 +1866,27 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addVariables(mac, "x", "y", "z");
 		addInvariant(mac, "K", "z∈ℕ", false);
 		addMachineRefines(mac, "abs");
-		IEvent ini = addEvent(mac, IEvent.INITIALISATION, makeSList(), makeSList(),
+		IEvent ini = addEvent(mac, INITIALISATION, makeSList(), makeSList(),
 				makeSList(), makeSList("B", "C"), makeSList("y:∈{0,1}", "z:∈ℕ"));
 		setExtended(ini);
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				// TODO should be warning for extended attribute
+				marker(ini, EXTENDED_ATTRIBUTE, ActionLabelConflictError, "B"),
+				marker(ini.getActions()[0], LABEL_ATTRIBUTE,
+						ActionLabelConflictError, "B"));
 		
 		ITypeEnvironmentBuilder environment = mTypeEnvironment(
 				"x=ℤ; y=ℤ; z=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
-		refinesEvents(events[0], IEvent.INITIALISATION);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
+		refinesEvents(events[0], INITIALISATION);
 		containsActions(events[0], environment, 
 				makeSList("A", "B", "C"), makeSList("x:∈ℕ", "y:∈ℕ", "z:∈ℕ"));
-
-		containsMarkers(abs, false);
-
-		hasMarker(ini, EventBAttributes.EXTENDED_ATTRIBUTE);
 	}
 
 	/*
@@ -1986,18 +1902,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		IEvent evt = addEvent(mac, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-
-		hasMarker(evt, null, GraphProblem.InconsistentEventLabelWarning,
-				"evt");
+		runBuilderCheck(
+				// TODO should rather be missing refines event clause
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						AbstractEventNotRefinedWarning, "evt"),
+				marker(evt, InconsistentEventLabelWarning, "evt"));
 	}
 	
 	/*
@@ -2013,17 +1928,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt");
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		saveRodinFileOf(mac);
 
-		runBuilder();
-
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				AbstractEventNotRefinedWarning, "evt");
+		runBuilderCheck(marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				AbstractEventNotRefinedWarning, "evt"));
 	}
 
 	/*
@@ -2039,16 +1950,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("⊥"), makeSList(), makeSList());
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		saveRodinFileOf(mac);
 
-		runBuilder();
-
-		hasNotMarker(mac.getRefinesClauses()[0], AbstractEventNotRefinedWarning);
+		runBuilderCheck();
 	}
 
 	/*
@@ -2069,9 +1976,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("A1"), makeSList("v≔v+1"));
 		saveRodinFileOf(abs);
 
-		runBuilder();
-		containsMarkers(abs, false);
-
 		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "v");
@@ -2084,8 +1988,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(fvt, "x", "x = 1", "y", "y = TRUE");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(mac, false);
+		runBuilderCheck();
 	}
 
 	/*
@@ -2111,16 +2014,14 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		final IEvent fvt = addEvent(mac, "fvt");
 		addEventRefines(fvt, "evt");
-		addEventWitness(fvt, "p", "p = 0");
+		addEventWitness(fvt, "x", "x = 0");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
-		containsMarkers(ctx, false);
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				CarrierSetNameImportConflictError, "x", "ctx");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 
 	/*
@@ -2147,16 +2048,14 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		final IEvent fvt = addEvent(mac, "fvt");
 		addEventRefines(fvt, "evt");
-		addEventWitness(fvt, "p", "p = 0");
+		addEventWitness(fvt, "x", "x = 0");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
-		containsMarkers(ctx, false);
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				ConstantNameImportConflictError, "x", "ctx");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 
 	/*
@@ -2193,14 +2092,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventWitness(fvt, "x", "x = 0");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
-		containsMarkers(ref, false);
-		containsMarkers(ctx, false);
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				ConstantNameImportConflictError, "x", "ctx");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 	
 	/*
@@ -2228,13 +2124,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
-		containsMarkers(ctx, false);
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				CarrierSetNameImportConflictError, "x", "ctx");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 
 	/*
@@ -2263,13 +2157,11 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(mac);
 
-		runBuilder();
-		containsMarkers(abs, false);
-		containsMarkers(ctx, false);
-		hasMarker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
-				ConstantNameImportConflictError, "x", "ctx");
-		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
-				ParameterNameImportConflictWarning, "x", "evt");
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 
 }
