@@ -579,13 +579,10 @@
                   label="Customize prefixes..."
                   style="push">
                <visibleWhen
-                     checkEnabled="true">
-                  <with
-                        variable="activeEditorId">
-                     <equals
-                           value="fr.systerel.editor.editors.RodinEditor">
-                     </equals>
-                  </with>
+                     checkEnabled="false">
+                     <reference
+                           definitionId="fr.systerel.editor.definition.inRodinEditor">
+                     </reference>
                </visibleWhen>
             </command>
          </menu>
