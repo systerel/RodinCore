@@ -532,15 +532,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -549,15 +543,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -566,15 +554,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -583,15 +565,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableContext">
+                  </reference>
                </visibleWhen>
             </command>
             <separator
@@ -628,15 +604,9 @@
                   tooltip="Open the new variable wizard">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -646,15 +616,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -664,15 +628,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -682,15 +640,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableContext">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -700,15 +652,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableContext">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -718,15 +664,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -736,15 +676,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableContext">
+                  </reference>
                </visibleWhen>
             </command>
             <command
@@ -754,15 +688,9 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeContexts">
-                     <iterate
-                           operator="or">
-                        <equals
-                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
-                        </equals>
-                     </iterate>
-                  </with>
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableContext">
+                  </reference>
                </visibleWhen>
             </command>
          </toolbar>
@@ -883,6 +811,40 @@
                   </equals>
             </with>
          </and>
+      </definition>
+      <definition
+            id="fr.systerel.editor.definition.isEditableMachine">
+            <and>
+                <with
+                     variable="activeContexts">
+                     <iterate
+                          operator="or">
+                          <equals
+                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
+                         </equals>
+                     </iterate>
+                </with>
+                <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+                </reference>
+            </and>
+      </definition>
+      <definition
+            id="fr.systerel.editor.definition.isEditableContext">
+            <and>
+                <with
+                     variable="activeContexts">
+                     <iterate
+                          operator="or">
+                          <equals
+                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
+                         </equals>
+                     </iterate>
+                </with>
+                <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+                </reference>
+            </and>
       </definition>
    </extension>
    <extension
