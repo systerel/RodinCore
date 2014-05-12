@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class TestFIS extends AbstractTests {
 	private ITypeEnvironment defaultTEnv = mTypeEnvironment(
 			"x=ℤ; y=ℤ; A=ℙ(ℤ); B=ℙ(ℤ); f=ℤ↔ℤ; Y=ℙ(BOOL)", ff);
 	
-	private class TestItem {
+	private static class TestItem {
 		String input;
 		String expected;
 		ITypeEnvironment tenv;
@@ -37,7 +37,6 @@ public class TestFIS extends AbstractTests {
 			this.tenv = tenv;
 		}
 		
-		@Test 
 		public void test() throws Exception {
 			Assignment inA = parseAssignment(input);
 			ITypeEnvironment newEnv = typeCheck(inA, tenv);
