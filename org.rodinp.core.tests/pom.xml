@@ -23,8 +23,11 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>**/AllTests.java</include>
+						<include>**/*.java</include>
 					</includes>
+                    <excludes>
+                      <exclude>**/*$__CLR*</exclude>
+                    </excludes>
 					<dependencies>
 						<dependency>
 							<!-- Add Eclipse feature for platform-specific fragments -->
