@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,28 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 import static org.eventb.core.IEvent.INITIALISATION;
+import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceAnticipatedWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceOrdinaryWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceUnchangedWarning;
+import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
+import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
+import static org.eventb.core.sc.GraphProblem.OrdinaryFaultyConvergenceWarning;
+import static org.eventb.core.tests.MarkerMatcher.marker;
+import static org.junit.Assert.assertEquals;
 
-import org.eventb.core.EventBAttributes;
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -24,7 +37,9 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.tests.MarkerMatcher;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -49,7 +64,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setConvergent(gvt);
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -58,8 +73,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		isOrdinary(events[1]);
 		isAnticipated(events[2]);
 		isConvergent(events[3]);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -69,6 +82,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testCvg_01_NoVariantConvergentSetToOrdinary() throws Exception {
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 
 		IEvent evt = addEvent(mac, "evt");
 		setOrdinary(evt);
@@ -78,16 +92,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setConvergent(gvt);
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(gvt, CONVERGENCE_ATTRIBUTE,
+				ConvergentEventNoVariantWarning, "gvt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		isOrdinary(events[0]);
-		isAnticipated(events[1]);
-		isOrdinary(events[2]);
-
-		hasMarker(gvt);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"gvt");
+		isOrdinary(events[1]);
+		isAnticipated(events[2]);
+		isOrdinary(events[3]);
 	}
 
 	/**
@@ -108,8 +122,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -125,17 +137,15 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
-				"fvt", "gvt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"gvt");
 		isOrdinary(events[1]);
 		isOrdinary(events[2]);
 		isOrdinary(events[3]);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -145,6 +155,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -155,11 +166,9 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 		addMachineRefines(mac, "abs");
-		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
 		addEventRefines(mevt, "evt");
 		setAnticipated(mevt);
@@ -172,16 +181,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(mevt, CONVERGENCE_ATTRIBUTE,
+				OrdinaryFaultyConvergenceWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		isOrdinary(events[0]);
-		isAnticipated(events[1]);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"gvt");
+		isOrdinary(events[1]);
 		isAnticipated(events[2]);
-
-		hasMarker(mevt);
+		isAnticipated(events[3]);
 	}
 
 	/**
@@ -191,6 +200,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testCvg_04_AllRefinedByConvergent() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -201,9 +211,8 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 		addMachineRefines(mac, "abs");
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
@@ -218,16 +227,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(mevt, CONVERGENCE_ATTRIBUTE,
+				OrdinaryFaultyConvergenceWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
-		isOrdinary(events[0]);
-		isConvergent(events[1]);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt",
+				"gvt");
+		isOrdinary(events[1]);
 		isConvergent(events[2]);
-
-		hasMarker(mevt);
+		isConvergent(events[3]);
 	}
 
 	/**
@@ -237,6 +246,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testCvg_05_mergeFaultySetToOrdinary() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -247,9 +257,8 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 		addMachineRefines(mac, "abs");
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
@@ -260,14 +269,22 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(
+				marker(mevt.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						FaultyAbstractConvergenceUnchangedWarning, "evt"),
+				marker(mevt.getRefinesClauses()[1], TARGET_ATTRIBUTE,
+						FaultyAbstractConvergenceOrdinaryWarning, "fvt"),
+				marker(mevt.getRefinesClauses()[2], TARGET_ATTRIBUTE,
+						FaultyAbstractConvergenceOrdinaryWarning, "gvt"),
+				marker(mevt, CONVERGENCE_ATTRIBUTE,
+						OrdinaryFaultyConvergenceWarning, "evt"),
+				marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+						NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, "evt");
-		isOrdinary(events[0]);
-
-		hasMarker(mevt);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
+		isOrdinary(events[1]);
 	}
 
 	/**
@@ -282,14 +299,12 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
 		isOrdinary(events[0]);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -301,18 +316,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setAnticipated(init);
-		addVariant(mac, "1");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(init, CONVERGENCE_ATTRIBUTE,
+				InitialisationNotOrdinaryWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
 		isOrdinary(events[0]);
-
-		hasMarker(init);
 	}
 
 	/**
@@ -324,18 +337,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setConvergent(init);
-		addVariant(mac, "1");
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(init, CONVERGENCE_ATTRIBUTE,
+				InitialisationNotOrdinaryWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
+		ISCEvent[] events = getSCEvents(file, INITIALISATION);
 		isOrdinary(events[0]);
-
-		hasMarker(init);
 	}
 
 	/**
@@ -353,8 +364,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
@@ -364,14 +373,12 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
 		isConvergent(events[1]);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -388,8 +395,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(abs);
 
-		runBuilder();
-
 		containsMarkers(abs, false);
 
 		IMachineRoot mac = createMachine("mac");
@@ -403,89 +408,112 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 
-		runBuilder();
+		runBuilderCheck(marker(mfvt, CONVERGENCE_ATTRIBUTE,
+				ConvergentEventNoVariantWarning, "fvt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
-				"fvt");
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt");
 		isConvergent(events[1]);
 		isOrdinary(events[2]);
-		hasMarker(mfvt, EventBAttributes.CONVERGENCE_ATTRIBUTE);
 	}
 
-	private static final Convergence[] cvg(Convergence... cvgs) {
-		return cvgs;
-	}
+	private class MergeTestCase {
+		final Convergence absCvg1;
+		final Convergence absCvg2;
+		final Convergence conCvg;
+		final GraphProblem[] expectedProblems;
 
-	/**
-	 * If a convergent event is refined by a convergent there is no need for a
-	 * variant in the refined machine what concerns the convergent event.
-	 */
-	@Test
-	public void testCvg_11_convergentMerge() throws Exception {
+		public MergeTestCase(Convergence absCvg1, Convergence absCvg2,
+				Convergence conCvg, GraphProblem... expectedProblems) {
+			this.absCvg1 = absCvg1;
+			this.absCvg2 = absCvg2;
+			this.conCvg = conCvg;
+			this.expectedProblems = expectedProblems;
+		}
 
-		final Convergence[][] cvgMatrix = {
-				cvg(ORDINARY, ORDINARY, ORDINARY),
-				cvg(ORDINARY, ANTICIPATED, ORDINARY),
-				cvg(ORDINARY, CONVERGENT, ORDINARY),
-				cvg(ANTICIPATED, ORDINARY, ORDINARY),
-				cvg(ANTICIPATED, ANTICIPATED, ANTICIPATED),
-				cvg(ANTICIPATED, CONVERGENT, ANTICIPATED),
-				cvg(CONVERGENT, ORDINARY, ORDINARY),
-				cvg(CONVERGENT, ANTICIPATED, ANTICIPATED),
-				cvg(CONVERGENT, CONVERGENT, CONVERGENT) };
-
-		for (Convergence[] cvgs : cvgMatrix) {
+		public void run() throws CoreException {
 			IMachineRoot abs = createMachine("abs");
 			addInitialisation(abs);
-			if (cvgs[0] == CONVERGENT || cvgs[1] == CONVERGENT)
+			if (absCvg1 == CONVERGENT || absCvg2 == CONVERGENT)
 				addVariant(abs, "1");
 			IEvent evt = addEvent(abs, "evt");
-			evt.setConvergence(cvgs[0], null);
+			evt.setConvergence(absCvg1, null);
 			IEvent fvt = addEvent(abs, "fvt");
-			fvt.setConvergence(cvgs[1], null);
+			fvt.setConvergence(absCvg2, null);
 
 			saveRodinFileOf(abs);
-
-			runBuilder();
-
-			containsMarkers(abs, false);
 
 			IMachineRoot mac = createMachine("mac");
 			addMachineRefines(mac, "abs");
 			addInitialisation(mac);
 			IEvent mevt = addEvent(mac, "evt");
 			addEventRefines(mevt, "evt", "fvt");
-			mevt.setConvergence(cvgs[2], null);
+			mevt.setConvergence(conCvg, null);
 
 			saveRodinFileOf(mac);
 
-			runBuilder();
+			IRefinesEvent[] refinesClauses = mevt.getRefinesClauses();
+			runBuilderCheck(makeExpectedMarkers(refinesClauses));
 
 			ISCMachineRoot file = mac.getSCMachineRoot();
 
 			ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt");
-			if (cvgs[2] == CONVERGENT) {
-				isConvergent(events[1]);
-			} else if (cvgs[2] == ANTICIPATED) {
-				isAnticipated(events[1]);
-			} else if (cvgs[2] == ORDINARY) {
-				isOrdinary(events[1]);
+			assertEquals(conCvg, events[1].getConvergence());
+		}
+
+		private MarkerMatcher[] makeExpectedMarkers(
+				IRefinesEvent[] refinesClauses) throws RodinDBException {
+			final int length = expectedProblems.length;
+			final MarkerMatcher[] result = new MarkerMatcher[length];
+			for (int i = 0; i < length; i++) {
+				result[i] = marker(refinesClauses[i], TARGET_ATTRIBUTE,
+						expectedProblems[i],
+						refinesClauses[i].getAbstractEventLabel());
 			}
-			if (cvgs[0] == cvgs[2] && cvgs[1] == cvgs[2]) {
-				containsMarkers(mac, false);			
-			} else {
-				IRefinesEvent[] refinesClauses = mevt.getRefinesClauses();
-				hasMarker(refinesClauses[0], EventBAttributes.TARGET_ATTRIBUTE);
-				hasMarker(refinesClauses[1], EventBAttributes.TARGET_ATTRIBUTE);
-				hasNotMarker(mevt,
-						GraphProblem.ConvergentFaultyConvergenceWarning);
-				hasNotMarker(mevt,
-						GraphProblem.AnticipatedFaultyConvergenceWarning);
-				hasNotMarker(mevt,
-						GraphProblem.OrdinaryFaultyConvergenceWarning);
-			}
+			return result;
+		}
+
+	}
+
+	public MergeTestCase test(Convergence absCvg1, Convergence absCvg2,
+			Convergence conCvg, GraphProblem... expectedProblems) {
+		return new MergeTestCase(absCvg1, absCvg2, conCvg, expectedProblems);
+	}
+
+	/**
+	 * If a convergent event is refined by a convergent event there is no need
+	 * for a variant in the refined machine that concerns the convergent event.
+	 */
+	@Test
+	public void testCvg_11_convergentMerge() throws Exception {
+
+		final MergeTestCase[] tests = {
+				test(ORDINARY, ORDINARY, ORDINARY),
+				test(ORDINARY, ANTICIPATED, ORDINARY,
+						FaultyAbstractConvergenceUnchangedWarning,
+						FaultyAbstractConvergenceOrdinaryWarning),
+				test(ORDINARY, CONVERGENT, ORDINARY,
+						FaultyAbstractConvergenceUnchangedWarning,
+						FaultyAbstractConvergenceOrdinaryWarning),
+				test(ANTICIPATED, ORDINARY, ORDINARY,
+						FaultyAbstractConvergenceOrdinaryWarning,
+						FaultyAbstractConvergenceUnchangedWarning),
+				test(ANTICIPATED, ANTICIPATED, ANTICIPATED),
+				test(ANTICIPATED, CONVERGENT, ANTICIPATED,
+						FaultyAbstractConvergenceUnchangedWarning,
+						FaultyAbstractConvergenceAnticipatedWarning),
+				test(CONVERGENT, ORDINARY, ORDINARY,
+						FaultyAbstractConvergenceOrdinaryWarning,
+						FaultyAbstractConvergenceUnchangedWarning),
+				test(CONVERGENT, ANTICIPATED, ANTICIPATED,
+						FaultyAbstractConvergenceAnticipatedWarning,
+						FaultyAbstractConvergenceUnchangedWarning),
+				test(CONVERGENT, CONVERGENT, CONVERGENT), };
+
+		for (final MergeTestCase test : tests) {
+			test.run();
 		}
 	}
+
 }
