@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -113,11 +114,9 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testMachine() throws Exception {
-		IMachineRoot m = createMachine();
+		createMachine();
 
-		runBuilder();
-		
-		containsMarkers(m, false);
+		runBuilderCheck();
 	}
 	
 	/**
@@ -126,11 +125,9 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testContext() throws Exception {
-		IContextRoot c = createContext();
+		createContext();
 		
-		runBuilder();
-		
-		containsMarkers(c, false);
+		runBuilderCheck();
 	}
 	
 	private OptAttrTest<?>[] tests = new OptAttrTest[] {
