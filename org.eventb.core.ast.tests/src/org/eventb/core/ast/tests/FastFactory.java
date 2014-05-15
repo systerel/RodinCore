@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,7 +155,8 @@ public class FastFactory {
 	}
 
 	public static AtomicExpression mEmptySet(Type type) {
-		return type.getFactory().makeEmptySet(type, null);
+		final FormulaFactory fac = type == null ? ff : type.getFactory();
+		return fac.makeEmptySet(type, null);
 	}
 
 	public static AtomicExpression mPrj1(Type type) {

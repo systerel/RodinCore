@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 		final Type ty_S = ff.makeGivenType("S");
 		final Expression empty_S = mEmptySet(POW(ty_S));
 
-		@Test(expected = IllegalArgumentException.class)
+		@Test(expected = IllegalStateException.class)
 		public void notTyped() throws Exception {
 			assertFalse(untyped.isTypeChecked());
 			untyped.translateDatatype(trans);
