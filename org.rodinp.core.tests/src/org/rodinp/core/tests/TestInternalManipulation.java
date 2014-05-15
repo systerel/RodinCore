@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_SIBLING;
@@ -31,6 +35,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -55,17 +61,13 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	private static final org.rodinp.core.IAttributeType.String UBIQUITOUS_ATTR_TYPE = RodinCore
 			.getStringAttrType(PLUGIN_ID + ".ubiqAttr");
 
-	public TestInternalManipulation() {
-		super(PLUGIN_ID + ".TestInternalManipulation");
-	}
-
 	private IRodinProject rodinProject;
 	private IRodinFile rodinFile;
 	private RodinTestRoot root;
 	private RodinTestRoot2 root2;
 	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		rodinFile = createRodinFile("P/x.test");
@@ -73,13 +75,13 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		root2 = (RodinTestRoot2) createRodinFile("P/y.test2").getRoot();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		root2.getResource().delete(true, null);
 		rodinFile.getResource().delete(true, null);
 		rodinProject.getProject().delete(true, true, null);
 		rodinProject.getRodinDB().close();
+		super.tearDown();
 	}
 
 	private void checkChildren(IParent parent,
@@ -107,6 +109,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	// Test creation of handle that would violate parent-child relationships
+	@Test
 	public void testGetInternalElementError() {
 		final NamedElement e1 = getNamedElement(root, "e1");
 		try {
@@ -118,6 +121,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	// Test creation of some top-level internal elements
+	@Test
 	public void testCreateInternalElement() throws Exception {
 		// File exists and is empty
 		assertExists("File should exist", rodinFile);
@@ -190,6 +194,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that attempting to create a new internal element with
 	 * the same type and name as an existing one fails.
 	 */
+	@Test
 	public void testCreateDuplicate() throws Exception {
 		final NamedElement e1 = createNEPositive(root, "foo", null);
 		checkEmptyChildren(root, e1);
@@ -203,6 +208,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a Rodin file and an internal element as an atomic action
+	@Test
 	public void testCreateInternalElementAtomic() throws Exception {
 		
 		// Start with a fresh file
@@ -235,6 +241,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 
 	// Test modification of the in-memory copy of a Rodin file and then
 	// reverting the changes
+	@Test
 	public void testCreateInternalElementRevert() throws Exception {
 		
 		// Start with a fresh file
@@ -260,6 +267,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	// Test deletion of an internal element bypassing the Rodin database
+	@Test
 	public void testDeleteInternalElementBypass() throws Exception {
 
 		// First create an internal element
@@ -312,6 +320,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	/*
 	 * Ensures that creating again an existing file empties it.
 	 */
+	@Test
 	public void testRecreateFile() throws Exception {
 		checkEmptyChildren(root);
 		IInternalElement ne = createNEPositive(root, "foo", null);
@@ -329,6 +338,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that creating again an existing file empties it, even when done
 	 * inside a runnable.
 	 */
+	@Test
 	public void testRecreateFileInRunnable() throws Exception {
 		checkEmptyChildren(root);
 		final IInternalElement ne = createNEPositive(root, "foo", null);
@@ -348,6 +358,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkEmptyChildren(root, ne);
 	}
 	
+	@Test
 	public void testGetChildrenOfType() throws Exception {
 		IRodinElement[] children;
 		
@@ -367,6 +378,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that a similar element for a root element is constructed
 	 * correctly.
 	 */
+	@Test
 	public void testSimilarRoot() {
 		final IRodinFile rf1 = getRodinFile("P/X.test");
 		final RodinTestRoot r1 = (RodinTestRoot) rf1.getRoot();
@@ -380,6 +392,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that a similar element for an internal element is constructed
 	 * correctly.
 	 */
+	@Test
 	public void testSimilarInt() {
 		final IRodinFile rf1 = getRodinFile("P/X.test");
 		final RodinTestRoot r1 = (RodinTestRoot) rf1.getRoot();
@@ -396,6 +409,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that a similar element for an internal element can fail if
 	 * violating parent-child relationships.
 	 */
+	@Test
 	public void testSimilarIntError() {
 		final IRodinFile rf1 = getRodinFile("P/X.test");
 		final RodinTestRoot r1 = (RodinTestRoot) rf1.getRoot();
@@ -414,6 +428,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that trying to access to the next sibling of an inexistent
 	 * element throws the appropriate exception.
 	 */
+	@Test
 	public void testNextSiblingInexistent() throws Exception {
 		final NamedElement ne = getNamedElement(root, "foo");
 		try {
@@ -430,6 +445,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that the next sibling of an internal element is computed
 	 * appropriately, when there is no other sibling.
 	 */
+	@Test
 	public void testNextSibling_1() throws Exception {
 		final NamedElement ne = createNEPositive(root, "ne", null);
 		assertEquals(null, ne.getNextSibling());
@@ -439,6 +455,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that the next sibling of an internal element is computed
 	 * appropriately, when there is one other sibling.
 	 */
+	@Test
 	public void testNextSibling_2() throws Exception {
 		final NamedElement ne1 = createNEPositive(root, "ne1", null);
 		final NamedElement ne2 = createNEPositive(root, "ne2", null);
@@ -450,6 +467,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that the next sibling of an internal element is computed
 	 * appropriately, when there are two other siblings.
 	 */
+	@Test
 	public void testNextSibling_3() throws Exception {
 		final NamedElement ne1 = createNEPositive(root, "ne1", null);
 		final NamedElement ne2 = createNEPositive(root, "ne2", null);
@@ -463,6 +481,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that creating a new child of a root element works as advertised
 	 * in nominal cases.
 	 */
+	@Test
 	public void testCreateNewChildRoot() throws Exception {
 		checkEmpty(root);
 		final NamedElement e1 = createNewNEPositive(root, null);
@@ -479,6 +498,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that creating a new child of a non root element works as advertised
 	 * in nominal cases.
 	 */
+	@Test
 	public void testCreateNewChildNonRoot() throws Exception {
 		checkEmpty(root);
 		final NamedElement e1 = createNewNEPositive(root, null);
@@ -490,6 +510,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that creating a new child of a root element works as advertised
 	 * in nominal cases.
 	 */
+	@Test
 	public void testCreateNewChildDelta() throws Exception {
 		startDeltas();
 		final NamedElement e1 = createNewNEPositive(root, null);
@@ -515,6 +536,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		);
 	}
 
+	@Test
 	public void testCreateNewChildErrors() throws Exception {
 		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 
@@ -537,6 +559,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that an element which type is invalid for a child of a root
 	 * element cannot be created.
 	 */
+	@Test
 	public void testCreateNewChildRootInvalidType() throws RodinDBException {
 		assertCreateNewChildError(root2, NamedElement.ELEMENT_TYPE, null,
 				INVALID_CHILD_TYPE, root2);
@@ -546,6 +569,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * Ensures that an element which type is invalid for a child of a non-root
 	 * parent element cannot be created.
 	 */
+	@Test
 	public void testCreateNewChildNonRootInvalidType() throws RodinDBException {
 		final NamedElement named = createNEPositive(root, "elem1", null);
 		assertCreateNewChildError(named, NamedElement2.ELEMENT_TYPE, null,

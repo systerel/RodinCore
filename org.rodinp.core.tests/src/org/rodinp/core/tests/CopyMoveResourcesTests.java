@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -26,13 +32,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 
 	// TODO add tests with two operations done at the same time
 	
-	/**
-	 */
-	public CopyMoveResourcesTests(String name) {
-		super(name);
-	}
-
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		
@@ -40,7 +40,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 		createRodinProject("P2");
 	}
 	
-	@Override
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		deleteProject("P2");
@@ -51,6 +51,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file can be copied to a different project.
 	 */
+	@Test
 	public void testCopyRF() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -61,6 +62,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * This operation should fail as copying a Rodin file and an internal element at the
 	 * same time is not supported.
 	 */
+	@Test
 	public void testCopyRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -79,6 +81,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file can be copied to a different project, replacing an existing Rodin file.
 	 */
+	@Test
 	public void testCopyRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -102,6 +105,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file can be copied to a different project,
 	 * and be renamed.
 	 */
+	@Test
 	public void testCopyRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -114,6 +118,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that copying a file onto itself is a no-op.
 	 */
+	@Test
 	public void testCopyRFNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -123,6 +128,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a read-only Rodin file can be copied to a different project.
 	 */
+	@Test
 	public void testCopyRFReadOnly() throws CoreException {
 		IFile file = null;
 		try {
@@ -159,6 +165,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file can be copied to a different project,
 	 * and be renamed, overwriting an existing Rodin file.
 	 */
+	@Test
 	public void testCopyRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -182,6 +189,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file cannot be copied to a different project,
 	 * over an existing Rodin file when no force.
 	 */
+	@Test
 	public void testCopyRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -204,6 +212,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be copied to an invalid destination
 	 */
+	@Test
 	public void testCopyRFWithInvalidDestination() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		copyNegative(rfSource, rfSource, null, null, false, IRodinDBStatusConstants.INVALID_DESTINATION);
@@ -212,6 +221,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be copied to a null container
 	 */
+	@Test
 	public void testCopyRFWithNullContainer() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		try {
@@ -226,6 +236,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file can be copied to along with its server properties.
 	 * (Regression test for PR #1G56QT9)
 	 */
+	@Test
 	public void testCopyRFWithServerProperties() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -409,6 +420,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a RF can be moved to a different project.
 	 */
+	@Test
 	public void testMoveRF() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		IRodinProject prjDest = getRodinProject("P2");
@@ -420,6 +432,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * This operation should fail as moving a Rodin file and an internal element at the
 	 * same time is not supported.
 	 */
+	@Test
 	public void testMoveRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -438,6 +451,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file can be moved to a different project, replacing an existing Rodin file.
 	 */
+	@Test
 	public void testMoveRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -460,6 +474,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that moving a file onto itself is a no-op.
 	 */
+	@Test
 	public void testMoveRFNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -470,6 +485,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file can be moved to a different project,
 	 * and be renamed.
 	 */
+	@Test
 	public void testMoveRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -483,6 +499,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file can be moved to a different project,
 	 * and be renamed, overwriting an existing Rodin file.
 	 */
+	@Test
 	public void testMoveRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -506,6 +523,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file cannot be moved to a different project,
 	 * over an existing Rodin file when no force.
 	 */
+	@Test
 	public void testMoveRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -528,6 +546,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be moved to an invalid destination
 	 */
+	@Test
 	public void testMoveRFWithInvalidDestination() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		moveNegative(rfSource, rfSource, null, null, false, IRodinDBStatusConstants.INVALID_DESTINATION);
@@ -536,6 +555,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be moved to a null container
 	 */
+	@Test
 	public void testMoveRFWithNullContainer() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		try {
@@ -602,6 +622,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a RF can be renamed.
 	 */
+	@Test
 	public void testRenameRF() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -612,6 +633,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * This operation should fail as renaming a Rodin file and an internal element at the
 	 * same time is not supported.
 	 */
+	@Test
 	public void testRenameRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -628,6 +650,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file can be renamed, replacing an existing Rodin file.
 	 */
+	@Test
 	public void testRenameRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -650,6 +673,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that renaming a file onto itself is a no-op.
 	 */
+	@Test
 	public void testRenameRFNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		
@@ -660,6 +684,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 * Ensures that a Rodin file cannot be renamed
 	 * over an existing Rodin file when no force.
 	 */
+	@Test
 	public void testRenameRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
@@ -682,6 +707,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be renamed to an invalid name
 	 */
+	@Test
 	public void testRenameRFWithInvalidName() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 
@@ -691,6 +717,7 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	/**
 	 * Ensures that a Rodin file cannot be renamed to a null name
 	 */
+	@Test
 	public void testRenameRFWithNullName() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
 		renameNegative(rfSource, "foo", false, IRodinDBStatusConstants.INVALID_NAME);

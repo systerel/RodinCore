@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,18 @@
 package org.rodinp.core.tests;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRefinementManager;
 import org.rodinp.core.IRefinementParticipant;
@@ -36,10 +42,6 @@ import org.rodinp.internal.core.RefinementRegistry.RefinementException;
  * @author Nicolas Beauger
  */
 public class RefinementTests extends AbstractRodinDBTests {
-
-	public RefinementTests() {
-		super("Refinement Tests");
-	}
 
 	private static class RefPartCallLogger {
 
@@ -112,8 +114,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	private IRodinProject project;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		clearDB();
 		
@@ -130,8 +132,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		clearDB();
 		super.tearDown();
 	}
@@ -188,6 +190,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	// // functional cases ////
 	// no refinement & no participant & no order => empty list
+	@Test
 	public void testAllEmpty() throws Exception {
 		// use root type 2 to avoid contributions
 		final IInternalElement root = makeRoot2("f");
@@ -195,6 +198,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// 1 refinement & no participant & no order => empty list
+	@Test
 	public void test1Ref0Part() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final IInternalElement root = makeRoot1("f");
@@ -202,6 +206,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// 1 refinement & 1 participant & no order => singleton participant
+	@Test
 	public void test1Ref1Part() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(new RefPart1(), "refPart1Id",
@@ -211,6 +216,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// 1 refinement & 2 participants & no order => 2 participants in any order
+	@Test
 	public void test1Ref2PartNoOrder() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(new RefPart1(), "part1", RodinTestRoot.ELEMENT_TYPE);
@@ -221,6 +227,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	// 1 refinement & 2 participants & 1 order => 2 participants in expected
 	// order
+	@Test
 	public void test1Ref2Part1Order() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(new RefPart1(), "part1", RodinTestRoot.ELEMENT_TYPE);
@@ -231,6 +238,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// 2 refinements with 1 participant each => the good participant is called
+	@Test
 	public void test2Ref1PartEach() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addRefinement(RodinTestRoot2.ELEMENT_TYPE, "refTest2");
@@ -245,6 +253,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	// 2 refinements with same 2 participants each, in a different order =>
 	// order respected for each
+	@Test
 	public void test2Ref2PartEachDiffOrder() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addRefinement(RodinTestRoot2.ELEMENT_TYPE, "refTest2");
@@ -268,6 +277,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// test contribution loading
+	@Test
 	public void testLoad() throws Exception {
 		final IInternalElement root = makeRoot1("f");
 		assertRefinementCalls(root, 1, 2);
@@ -276,6 +286,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	// failure cases => error logged + fail to refine ////
 
 	// refinement added twice with same id
+	@Test
 	public void testDuplicateRefinementId() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		try {
@@ -287,6 +298,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// refinement added twice with different id
+	@Test
 	public void testDuplicateRefinementRoot() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		try {
@@ -298,6 +310,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// test participant id uinicity
+	@Test
 	public void testIdUnicity() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final String partId = "partId";
@@ -312,6 +325,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// participant to unknown refinement
+	@Test
 	public void testAddPartUnknownRefinement() throws Exception {
 		try {
 			REG.addParticipant(new RefPart1(), "part1",
@@ -323,6 +337,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// order with unknown first
+	@Test
 	public void testAddOrderUnknownPart1() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final String part2 = "part2";
@@ -336,6 +351,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// order with unknown second
+	@Test
 	public void testAddOrderUnknownPart2() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final String part1 = "part1";
@@ -349,6 +365,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// order with known second but not registered for given root
+	@Test
 	public void testParticipantsRegisteredForDifferentRoots() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addRefinement(RodinTestRoot2.ELEMENT_TYPE, "refTest2");
@@ -367,6 +384,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// cycle in order (with resp. 1,2,3 participants)
+	@Test
 	public void testCycle1() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final RefPart1 refPart1 = new RefPart1();
@@ -380,6 +398,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 		}
 	}
 
+	@Test
 	public void testCycle2() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final RefPart1 refPart1 = new RefPart1();
@@ -397,6 +416,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 		}
 	}
 
+	@Test
 	public void testCycle3() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		final RefPart1 refPart1 = new RefPart1();
@@ -420,6 +440,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	// 1 refinement & 1 participant that throws an exception
+	@Test
 	public void testExceptionInParticipantCall() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(EXCEPTION_PARTICIPANT, "exceptionParticipant",

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -32,10 +36,7 @@ public class AncestryTests extends AbstractRodinDBTests {
 		assertEquals(expected, left.isAncestorOf(right));
 	}
 
-	public AncestryTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testIsAncestorOf() throws Exception {
 		assertIsAncestorOf(true, db, p1);
 		assertIsAncestorOf(true, db, f1);
@@ -45,6 +46,7 @@ public class AncestryTests extends AbstractRodinDBTests {
 		assertIsAncestorOf(false, p2, p1);
 	}
 
+	@Test
 	public void testgetAncestor() throws Exception {
 		assertEquals(db, p1.getAncestor(IRodinDB.ELEMENT_TYPE));
 		assertEquals(db, f1.getAncestor(IRodinDB.ELEMENT_TYPE));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,29 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.persistence;
 
-import static org.rodinp.core.tests.indexer.persistence.Resources.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.rodinp.core.tests.indexer.persistence.Resources.EMPTY_RESOURCE;
+import static org.rodinp.core.tests.indexer.persistence.Resources.getNewFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.make2PIMs;
+import static org.rodinp.core.tests.indexer.persistence.Resources.make2PIMsFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeBadElementHandleFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeBasic;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeBasicFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeDelta;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeDeltaFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeIterating;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeIteratingFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeMissingAttributeFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeNoExportNodeFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeNoPIM;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeNoPIMFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeSortedFiles;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeSortedFilesFile;
+import static org.rodinp.core.tests.indexer.persistence.Resources.makeTwoRodinIndexesFile;
 import static org.rodinp.core.tests.indexer.persistence.XMLAssert.assertFile;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertIndex;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.basis.RodinTestRoot;
@@ -142,18 +165,14 @@ public class XMLPersistorTests extends IndexTests {
 		assertSameElements(expDeltas, actDeltas, "saved deltas");
 	}
 
-	public XMLPersistorTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		IndexManager.getDefault().clear();
 		super.tearDown();
@@ -192,6 +211,7 @@ public class XMLPersistorTests extends IndexTests {
 		file.delete();
 	}
 
+	@Test
 	public void testRestoreNoPIM() throws Exception {
 
 		IPersistResource pr = makeNoPIM(project);
@@ -201,6 +221,7 @@ public class XMLPersistorTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testSaveNoPIM() throws Exception {
 
 		IPersistResource pr = Resources.makeNoPIM(project);
@@ -211,6 +232,7 @@ public class XMLPersistorTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testSaveBasic() throws Exception {
 
 		IPersistResource pr = Resources.makeBasic(project);
@@ -220,6 +242,7 @@ public class XMLPersistorTests extends IndexTests {
 		saveTest(pr, prFile, getName());
 	}
 
+	@Test
 	public void testRestoreBasic() throws Exception {
 
 		IPersistResource pr = makeBasic(project);
@@ -228,6 +251,7 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, pr);
 	}
 
+	@Test
 	public void testSave2PIMs() throws Exception {
 		// FIXME P1 & P2 might appear reversed between actual and expected order
 		final IRodinProject p1 = createRodinProject("P1");
@@ -244,6 +268,7 @@ public class XMLPersistorTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testRestore2PIMs() throws Exception {
 		final IRodinProject p1 = createRodinProject("P1");
 		final IRodinProject p2 = createRodinProject("P2");
@@ -258,6 +283,7 @@ public class XMLPersistorTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testSaveSortedFiles() throws Exception {
 		IPersistResource pr = Resources.makeSortedFiles(project);
 
@@ -266,6 +292,7 @@ public class XMLPersistorTests extends IndexTests {
 		saveTest(pr, prFile, getName());
 	}
 
+	@Test
 	public void testRestoreSortedFiles() throws Exception {
 		IPersistResource pr = makeSortedFiles(project);
 		final File prFile = makeSortedFilesFile();
@@ -273,6 +300,7 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, pr);
 	}
 
+	@Test
 	public void testSaveIterating() throws Exception {
 		IPersistResource pr = Resources.makeIterating(project);
 
@@ -281,6 +309,7 @@ public class XMLPersistorTests extends IndexTests {
 		saveTest(pr, prFile, getName());
 	}
 
+	@Test
 	public void testRestoreIterating() throws Exception {
 		IPersistResource pr = makeIterating(project);
 		final File prFile = makeIteratingFile();
@@ -288,6 +317,7 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, pr);
 	}
 
+	@Test
 	public void testRestoreIncorrectFileNoExportNode() throws Exception {
 		final File prFile = makeNoExportNodeFile();
 
@@ -295,6 +325,7 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, EMPTY_RESOURCE);
 	}
 
+	@Test
 	public void testRestoreIncorrectFileTwoRodinIndexes() throws Exception {
 		final File prFile = makeTwoRodinIndexesFile();
 
@@ -302,12 +333,14 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, EMPTY_RESOURCE);
 	}
 
+	@Test
 	public void testRestoreIncorrectFileMissingttribute() throws Exception {
 		final File prFile = makeMissingAttributeFile();
 		// should make a brand new PPPIM without throwing any exception
 		restoreTest(prFile, EMPTY_RESOURCE);
 	}
 
+	@Test
 	public void testRestoreIncorrectElementHandle() throws Exception {
 		final File prFile = makeBadElementHandleFile();
 
@@ -315,6 +348,7 @@ public class XMLPersistorTests extends IndexTests {
 		restoreTest(prFile, EMPTY_RESOURCE);
 	}
 
+	@Test
 	public void testSaveDelta() throws Exception {
 		IPersistResource pr = Resources.makeDelta(project);
 
@@ -323,6 +357,7 @@ public class XMLPersistorTests extends IndexTests {
 		saveTest(pr, prFile, getName());
 	}
 	
+	@Test
 	public void testRestoreDelta() throws Exception {
 		IPersistResource pr = makeDelta(project);
 		final File prFile = makeDeltaFile();

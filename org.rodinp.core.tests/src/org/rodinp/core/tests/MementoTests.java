@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,13 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.runtime.IPath;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -27,9 +33,6 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.util.Util;
 
 public class MementoTests extends ModifyingResourceTests {
-	public MementoTests(String name) {
-		super(name);
-	}
 
 	protected static void assertMemento(String expected, IRodinElement element) {
 		String actual = element.getHandleIdentifier();
@@ -50,11 +53,13 @@ public class MementoTests extends ModifyingResourceTests {
 		return filePath + "|" + root.getElementType().getId() + "#" + rootName;
 	}
 
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 	}
 
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -65,6 +70,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a Rodin file can be persisted and restored using its
 	 * memento.
 	 */
+	@Test
 	public void testRodinFileMemento() {
 		IRodinFile rf = getRodinFile("/P/X.test");
 		assertMemento("/P/X.test", rf);
@@ -78,6 +84,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Ensures that a Rodin element is returned for an invalid memento.
 	 * (regression test for JDT bug 81762 [model] AIOOB in breakpoints view)
 	 */
+	@Test
 	public void testInvalidMemento() {
 		IRodinElement element = RodinCore.valueOf("/P/");
 		assertElementEquals("Unexpected element", "P", element);
@@ -87,6 +94,7 @@ public class MementoTests extends ModifyingResourceTests {
 	/**
 	 * Tests that a project can be persisted and restored using its memento.
 	 */
+	@Test
 	public void testProjectMemento() {
 		IRodinProject project = getRodinProject("P");
 		assertMemento("/P", project);
@@ -97,6 +105,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * persisted and restored using its memento. (regression test for JDT bug
 	 * 47815 Refactoring doesn't work with some project names [refactoring])
 	 */
+	@Test
 	public void testProjectMemento2() {
 		IRodinProject project = getRodinProject("P |#");
 		assertMemento("/P \\|\\#", project);
@@ -105,6 +114,7 @@ public class MementoTests extends ModifyingResourceTests {
 	/**
 	 * Tests that a bogus memento cannot be restored.
 	 */
+	@Test
 	public void testRestoreBogusMemento() {
 		IRodinElement restored = RodinCore.valueOf("bogus");
 		assertNull("should not be able to restore a bogus memento", restored);
@@ -114,6 +124,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a memento containing an unknown internal type doesn't raise a
 	 * NullPointerException.  Regression test for bug 1529854.
 	 */
+	@Test
 	public void testRestoreWrongInternalType() {
 		String bogusType = PLUGIN_ID + ".bogus";
 		IRodinElement restored = RodinCore.valueOf(
@@ -128,6 +139,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a memento containing an unknown Rodin file type doesn't raise a
 	 * NullPointerException.  Regression test for bug 1529854.
 	 */
+	@Test
 	public void testRestoreWrongFileType() {
 		IRodinElement restored = RodinCore.valueOf(
 				"/P/X.bogus"
@@ -139,6 +151,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
+	@Test
 	public void testRootMemento() {
 		IRodinFile rf = getRodinFile("/P/X.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -149,6 +162,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
+	@Test
 	public void testTopMemento() {
 		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
@@ -166,6 +180,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * restored using its memento.
 	 * Refers to bug #2961115
 	 */
+	@Test
 	public void testTopMementoPipe() {
 		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
@@ -193,6 +208,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a top-level internal element named "#" can be persisted and
 	 * restored using its memento.
 	 */
+	@Test
 	public void testMementoHash() {
 		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
@@ -210,6 +226,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a non top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
+	@Test
 	public void testNonTopMemento() {
 		final IInternalElementType<NamedElement> nType = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
@@ -241,6 +258,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * and restored using its memento.
 	 * Refers to bug #2961115
 	 */
+	@Test
 	public void testNonTopMementoPipe() {
 		final IInternalElementType<NamedElement> nType = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
@@ -262,10 +280,12 @@ public class MementoTests extends ModifyingResourceTests {
 		assertMemento(prefix + "|" + nType.getId() + "#\\\\\\#\\|", ne);
 	}
 
+	@Test
 	public void testNullMemento() {
 		assertNull(RodinCore.valueOf((String) null));
 	}
 	
+	@Test
 	public void testPartialMemento() {
 		final String typeId = NamedElement.ELEMENT_TYPE.getId();
 		final IRodinFile rf = getRodinFile("/P/X.test");
@@ -281,6 +301,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Ensure that reading a memento that would return a handle violating
 	 * parent-child relationships returns <code>null</code>.
 	 */
+	@Test
 	public void testMementoError() {
 		final IRodinFile rf = getRodinFile("/P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();

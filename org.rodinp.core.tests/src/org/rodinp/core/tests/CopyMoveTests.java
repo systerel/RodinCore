@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,12 @@
  *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,10 +33,6 @@ import org.rodinp.core.RodinDBException;
 
 abstract public class CopyMoveTests extends ModifyingResourceTests {
 
-	public CopyMoveTests(String name) {
-		super(name);
-	}
-	
 	/**
 	 * Attempts to copy the element with optional 
 	 * forcing. The operation should fail with the failure code.

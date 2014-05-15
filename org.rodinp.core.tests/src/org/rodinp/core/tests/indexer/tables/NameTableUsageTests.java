@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_FILE_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -31,20 +36,16 @@ public class NameTableUsageTests extends IndexTests {
 			name2);
 	private static final IndexManager manager = IndexManager.getDefault();
 
-	public NameTableUsageTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "nameInd.test");
 		manager.addIndexer(indexer, TEST_FILE_TYPE);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		manager.clear();
 		super.tearDown();
@@ -62,6 +63,7 @@ public class NameTableUsageTests extends IndexTests {
 		assertSameElements(expectedElements, actualElements, "declarations");
 	}
 
+	@Test
 	public void testNameTableFilling() throws Exception {
 		manager.scheduleIndexing(file);
 		Set<IDeclaration> expectedName1 = indexer.getIndexedElements(name1);
@@ -71,6 +73,7 @@ public class NameTableUsageTests extends IndexTests {
 		assertNameTable(file, name2, expectedName2, null);
 	}
 
+	@Test
 	public void testNameTableUpdating() throws Exception {
 
 		// first indexing with 2 elements for both name1 and name2

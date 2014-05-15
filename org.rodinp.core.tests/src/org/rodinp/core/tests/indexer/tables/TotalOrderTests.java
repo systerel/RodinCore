@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,12 @@
 package org.rodinp.core.tests.indexer.tables;
 
 import static java.util.Arrays.asList;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertPredecessors;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,14 +25,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Test;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.internal.core.indexer.sort.TotalOrder;
 
 public class TotalOrderTests extends IndexTests {
-
-	public TotalOrderTests(String name) {
-		super(name);
-	}
 
 	private static final TotalOrder<Integer> order = new TotalOrder<Integer>();
 
@@ -116,29 +119,27 @@ public class TotalOrderTests extends IndexTests {
 		return (i % mod) + 1;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		order.clear();
 		super.tearDown();
 	}
 
+	@Test
 	public void testSetPredecessors() {
 		setPreds(order, 2, 1);
 
 		assertOrderedIteration(order, 1, 2);
 	}
 
+	@Test
 	public void testSetSeveralPreds() throws Exception {
 		setPreds(order, 3, 1, 2);
 
 		assertPartitionOrder(order, makeArray(1, 2), makeArray(3));
 	}
 
+	@Test
 	public void testGetPredecessors() throws Exception {
 		setPreds(order, 3, 1, 2);
 
@@ -147,6 +148,7 @@ public class TotalOrderTests extends IndexTests {
 		assertPredecessors(predecessors, 1, 2);
 	}
 
+	@Test
 	public void testClear() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 4, 3);
@@ -156,6 +158,7 @@ public class TotalOrderTests extends IndexTests {
 		assertNoNext(order);
 	}
 
+	@Test
 	public void testHasNext() throws Exception {
 		setPreds(order, 2, 1);
 
@@ -165,12 +168,14 @@ public class TotalOrderTests extends IndexTests {
 		assertNoNext(order);
 	}
 
+	@Test
 	public void testIterNext() {
 		setPreds(order, 2, 1);
 
 		assertNext(order, 1);
 	}
 
+	@Test
 	public void testIterNoMoreNext() throws Exception {
 		setPreds(order, 2, 1);
 		order.next();
@@ -185,6 +190,7 @@ public class TotalOrderTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testIterNoMoreMarked() throws Exception {
 		setPreds(order, false, 2, 1);
 
@@ -197,6 +203,7 @@ public class TotalOrderTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testSetToIter() throws Exception {
 		setPreds(order, false, 2, 1);
 
@@ -205,12 +212,14 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 2);
 	}
 
+	@Test
 	public void testSetToIterCreateNode() throws Exception {
 		order.setToIter(314);
 
 		assertOrderedIteration(order, 314);
 	}
 
+	@Test
 	public void testSetToIterSeveralTimesTheSame() throws Exception {
 		setPreds(order, false, 2, 1);
 
@@ -220,6 +229,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 2);
 	}
 
+	@Test
 	public void testSetToIterSuccessors() throws Exception {
 		setPreds(order, false, 2, 1);
 		setPreds(order, false, 3, 1);
@@ -232,6 +242,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 2, 3);
 	}
 
+	@Test
 	public void testSTISuccCycle() throws Exception {
 		setPreds(order, false, 2, 1);
 		setPreds(order, false, 3, 2);
@@ -247,6 +258,7 @@ public class TotalOrderTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testEnd() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -259,6 +271,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 1, 2, 3);
 	}
 
+	@Test
 	public void testSeveralEnd() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -271,6 +284,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 1, 2, 3);
 	}
 
+	@Test
 	public void testCycle1() throws Exception {
 		try {
 			setPreds(order, 1, 1);
@@ -280,6 +294,7 @@ public class TotalOrderTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testCycle2() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 1, 2);
@@ -287,6 +302,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2);
 	}
 
+	@Test
 	public void testCycle3() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -295,6 +311,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3);
 	}
 
+	@Test
 	public void testCycle4() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -304,6 +321,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4);
 	}
 
+	@Test
 	public void testCycle4Iter24() throws Exception {
 		setPreds(order, false, 2, 1);
 		setPreds(order, false, 3, 2);
@@ -314,6 +332,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 2, 4);
 	}
 
+	@Test
 	public void testTwoSeparateCycles() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -328,6 +347,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4, 11, 12, 13, 14);
 	}
 
+	@Test
 	public void testTwoLinkedCycles() throws Exception {
 		// linked by node 4 -> 11
 		setPreds(order, 2, 1);
@@ -343,6 +363,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4, 11, 12, 13, 14);
 	}
 
+	@Test
 	public void testTwoCyclesCommonNode() throws Exception {
 		// 14 is the common node
 		setPreds(order, 2, 1);
@@ -357,6 +378,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 11, 12, 13, 14);
 	}
 
+	@Test
 	public void testJoinedCycles() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -366,6 +388,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4);
 	}
 
+	@Test
 	public void testModifyBeforeIter() throws Exception {
 		setPreds(order, 2, 1);
 
@@ -378,6 +401,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 0, 1, 2);
 	}
 
+	@Test
 	public void testModifyAtIterPred() throws Exception {
 		setPreds(order, 3, 1);
 		setPreds(order, 4, 3);
@@ -392,6 +416,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 2, 3, 4);
 	}
 
+	@Test
 	public void testModifyAtIterSucc() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -406,6 +431,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 3, 4);
 	}
 
+	@Test
 	public void testModifyAfterIter() throws Exception {
 		setPreds(order, 2, 1);
 
@@ -415,6 +441,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 2, 3);
 	}
 
+	@Test
 	public void testIterRemove() {
 		setPreds(order, 2, 1);
 
@@ -424,6 +451,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 2);
 	}
 
+	@Test
 	public void testIterSetToIterBefore() throws Exception {
 		setPreds(order, false, 2, 1);
 		setPreds(order, 3, 2);
@@ -435,6 +463,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 1, 2, 3);
 	}
 
+	@Test
 	public void testIterSetToIterAtIter() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -447,6 +476,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 3);
 	}
 
+	@Test
 	public void testIterSetToIterAfter() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, false, 3, 2);
@@ -459,6 +489,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, 3);
 	}
 
+	@Test
 	public void testIterSetToIterCreateNode() throws Exception {
 		setPreds(order, 2, 1);
 
@@ -474,6 +505,7 @@ public class TotalOrderTests extends IndexTests {
 				.contains(3));
 	}
 
+	@Test
 	public void testIterSTISucc() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, false, 3, 2);
@@ -487,6 +519,7 @@ public class TotalOrderTests extends IndexTests {
 		assertAllIteratedOnceToEnd(order, 3, 4);
 	}
 
+	@Test
 	public void testIterEnd() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -499,6 +532,7 @@ public class TotalOrderTests extends IndexTests {
 		assertNoNext(order);
 	}
 
+	@Test
 	public void testIterBreakCycle() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -522,6 +556,7 @@ public class TotalOrderTests extends IndexTests {
 		assertOrderedIteration(order, new1, new2, new3, new4);
 	}
 
+	@Test
 	public void testIterSeveralModifs() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, false, 3, 2);

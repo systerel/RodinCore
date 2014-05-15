@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,26 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_FILE_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertLength;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertNotIndexed;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeArray;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeDescAndDefaultOcc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -44,10 +58,6 @@ public class TotalOrderUsageTests extends IndexTests {
 	private static final IndexManager manager = IndexManager.getDefault();
 	private static final String eltF2Name = "eltF2Name";
 
-	public TotalOrderUsageTests(String name) {
-		super(name);
-	}
-
 	private void assertSameOrder(IRodinFile[] expectedOrder,
 			IRodinFile[] actualOrder) {
 
@@ -73,8 +83,8 @@ public class TotalOrderUsageTests extends IndexTests {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "DepTable1.test");
@@ -89,8 +99,8 @@ public class TotalOrderUsageTests extends IndexTests {
 
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		manager.clear();
 		rodinIndex.clear();
@@ -98,6 +108,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		super.tearDown();
 	}
 
+	@Test
 	public void testIndexingOrder() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
@@ -116,6 +127,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertSameOrder(expectedOrder, actualOrder);
 	}
 
+	@Test
 	public void testCycle() throws Exception {
 		DependenceTable cycle = new DependenceTable();
 		// cycle: file1 -> file2 -> file1
@@ -135,6 +147,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertAnyOrder(expectedFiles, actualOrder);
 	}
 
+	@Test
 	public void testReindexDependents() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
@@ -158,6 +171,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertSameOrder(expectedOrder, actualOrder);
 	}
 
+	@Test
 	public void testNoExports() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
@@ -180,6 +194,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertSameOrder(expectedOrder, actualOrder);
 	}
 
+	@Test
 	public void testExportsUnchanged() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
@@ -204,6 +219,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testNameChangesOnly() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
@@ -237,6 +253,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertSameOrder(expectedOrder, actualOrder);
 	}
 
+	@Test
 	public void testFileRemoved() throws Exception {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
@@ -259,6 +276,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		assertNotIndexed(manager, eltF2);
 	}
 
+	@Test
 	public void testSerialExports() throws Exception {
 		final DependenceTable f1dF2dF3 = new DependenceTable();
 		f1dF2dF3.put(file1, makeArray(file2));
@@ -290,6 +308,7 @@ public class TotalOrderUsageTests extends IndexTests {
 				exportsStr);
 	}
 
+	@Test
 	public void testSeveralIndexing() throws Exception {
 		final int indexingCount = 4;
 

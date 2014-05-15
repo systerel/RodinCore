@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,14 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -32,17 +37,13 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 
 	// TODO add tests with two operations done at the same time
 	
-	public CopyMoveElementsTests(String name) {
-		super(name);
-	}
-
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 	}
 
-	@Override
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -51,6 +52,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be copied to a different file.
 	 */
+	@Test
 	public void testCopyInt() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -68,6 +70,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be copied to a different
 	 * file replacing an existing element.
 	 */
+	@Test
 	public void testCopyIntForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -86,6 +89,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element snapshot can be copied to a
 	 * different file.
 	 */
+	@Test
 	public void testCopyIntFromSnapshotToOtherFile() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -103,6 +107,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element snapshot can be copied to the
 	 * mutable copy of its file with a different name.
 	 */
+	@Test
 	public void testCopyIntFromSnapshotToSameFile() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -116,6 +121,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that copying an internal element to itself is a no-op.
 	 */
+	@Test
 	public void testCopyIntNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -130,6 +136,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be copied to a different file,
 	 * and renamed.
 	 */
+	@Test
 	public void testCopyIntRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -148,6 +155,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be copied to a different file,
 	 * and renamed, overwriting an existing element.
 	 */
+	@Test
 	public void testCopyIntRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -165,6 +173,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be duplicated in the same file.
 	 */
+	@Test
 	public void testCopyIntSameParent() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -178,6 +187,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
      * Ensures that an internal element can be copied to a different file, and
      * that all its children are copied.
      */
+	@Test
     public void testCopyIntTree() throws CoreException {
             IRodinFile rfSource = createRodinFile("P/X.test");
     		IInternalElement rSource = rfSource.getRoot();
@@ -200,6 +210,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element cannot be copied to a different
 	 * file replacing an existing element if no force.
 	 */
+	@Test
 	public void testCopyIntWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -218,6 +229,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be copied to a different
 	 * file with positioning.
 	 */
+	@Test
 	public void testCopyIntWithPositioning() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -236,6 +248,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be copied to a different file across projects 
 	 * replacing an existing element.
 	 */
+	@Test
 	public void testCopyIntForceInDifferentProject() throws CoreException {
 		try {
 			IRodinFile rfSource = createRodinFile("P/X.test");
@@ -256,6 +269,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that one cannot copy to a snapshot.
 	 */
+	@Test
 	public void testCopyIntToSnapshot() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -271,6 +285,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a top-level internal element can be copied to a different file in a different project.
 	 */
+	@Test
 	public void testCopyIntInDifferentProject() throws CoreException {
 		try {
 			IRodinFile rfSource = createRodinFile("P/X.test");
@@ -290,6 +305,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a multi status exception is generated when copying internal elements.
 	 */
+	@Test
 	public void testCopyIntMultiStatus() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -343,6 +359,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can not be copied to an invalid
 	 * top-level destination.
 	 */
+	@Test
 	public void testCopyIntToTopInvalidChildType() throws CoreException {
 		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
 		final NamedElement ne = createNEPositive(rSource, "foo", null);
@@ -355,6 +372,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can not be copied to an invalid non
 	 * top-level destination.
 	 */
+	@Test
 	public void testCopyIntToIntInvalidChildType() throws CoreException {
 		final IRodinFile rfSource = createRodinFile("P/X.test");
 		final IInternalElement rSource = rfSource.getRoot();
@@ -371,6 +389,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can not be copied to an invalid non
 	 * top-level destination from a multiple element copy operation.
 	 */
+	@Test
 	public void testCopyManyIntInvalidChildType() throws CoreException {
 		final IInternalElement rSrc = createRodinFile("P/X.test").getRoot();
 		final NamedElement ne = createNEPositive(rSrc, "foo", null);
@@ -389,6 +408,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a top-level internal element cannot be copied to an invalid destination.
 	 */
+	@Test
 	public void testCopyTopWithInvalidDestination() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -403,6 +423,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that a top-level internal element cannot be copied to a different
 	 * file with an invalid sibling used for positioning.
 	 */
+	@Test
 	public void testCopyTopWithInvalidPositioning() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -423,6 +444,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that attempting to rename with an incorrect number of renamings fails
 	 */
+	@Test
 	public void testCopyTopWithInvalidRenamings() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -440,6 +462,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be moved to a different file.
 	 */
+	@Test
 	public void testMoveInt() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -457,6 +480,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be moved to a different
 	 * file replacing an existing element.
 	 */
+	@Test
 	public void testMoveIntForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -474,6 +498,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that moving an internal element to itself is a no-op.
 	 */
+	@Test
 	public void testMoveIntNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -488,6 +513,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be moved to a different file,
 	 * and renamed.
 	 */
+	@Test
 	public void testMoveIntRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -506,6 +532,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be moved to a different file,
 	 * and renamed, overwriting an existing element.
 	 */
+	@Test
 	public void testMoveIntRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -523,6 +550,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be moved in the same file.
 	 */
+	@Test
 	public void testMoveIntSameParent() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -535,6 +563,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element snapshot cannot be moved.
 	 */
+	@Test
 	public void testMoveIntFromSnapshot() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -549,6 +578,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element cannot be moved to a snapshot.
 	 */
+	@Test
 	public void testMoveIntToSnapshot() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -564,6 +594,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element cannot be moved to a different
 	 * file replacing an existing element if no force.
 	 */
+	@Test
 	public void testMoveIntWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -582,6 +613,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can be moved to a different
 	 * file with positioning.
 	 */
+	@Test
 	public void testMoveIntWithPositioning() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -599,6 +631,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a top-level internal element can be moved to a different file in a different project.
 	 */
+	@Test
 	public void testMoveIntInDifferentProject() throws CoreException {
 		try {
 			IRodinFile rfSource = createRodinFile("P/X.test");
@@ -618,6 +651,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a multi status exception is generated when moveing top-level internal elements.
 	 */
+	@Test
 	public void testMoveIntMultiStatus() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -676,6 +710,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an element which type is not allowed by a top-level
 	 * destination parent, can not be moved to this parent.
 	 */
+	@Test
 	public void testMoveToTopInvalidChildType() throws CoreException {
 		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
 		final NamedElement ne = createNEPositive(rSource, "foo", null);
@@ -688,6 +723,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an element which type is not allowed by a non top-level
 	 * destination parent, can not be moved to this parent.
 	 */
+	@Test
 	public void testMoveToIntInvalidChildType() throws CoreException {
 		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
 		final NamedElement ne = createNEPositive(rSource, "foo", null);
@@ -701,6 +737,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element can not be moved to an invalid non
 	 * top-level destination from a multiple element move operation.
 	 */
+	@Test
 	public void testMoveManyInvalidChildType() throws CoreException {
 		final IRodinFile rfSrc = createRodinFile("P/X.test");
 		final IInternalElement rSrc = rfSrc.getRoot();
@@ -723,6 +760,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that a top-level internal element cannot be moved to an invalid destination.
 	 */
+	@Test
 	public void testMoveTopWithInvalidDestination() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -737,6 +775,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that a top-level internal element cannot be moved to a different
 	 * file with an invalid sibling used for positioning.
 	 */
+	@Test
 	public void testMoveTopWithInvalidPositioning() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -757,6 +796,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that attempting to rename with an incorrect number of renamings fails
 	 */
+	@Test
 	public void testMoveTopWithInvalidRenamings() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -774,6 +814,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be renamed.
 	 */
+	@Test
 	public void testRenameInt() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -786,6 +827,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be renamed, replacing an existing element.
 	 */
+	@Test
 	public void testRenameIntForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -799,6 +841,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that renaming an internal element to itself is a no-op.
 	 */
+	@Test
 	public void testRenameIntNoop() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -812,6 +855,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element snapshot cannot be renamed.
 	 */
+	@Test
 	public void testRenameIntSnapshot() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -827,6 +871,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	 * Ensures that an internal element cannot be renamed,
 	 * replacing an existing element if no force.
 	 */
+	@Test
 	public void testRenameIntWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -840,6 +885,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that attempting to rename with an incorrect number of renamings fails
 	 */
+	@Test
 	public void testRenameIntWithInvalidNames() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -855,6 +901,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element snapshot cannot be reordered.
 	 */
+	@Test
 	public void testReorderIntSnapshot() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();
@@ -870,6 +917,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	/**
 	 * Ensures that an internal element can be reordered.
 	 */
+	@Test
 	public void testReorderInt() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		IInternalElement rSource = rfSource.getRoot();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertNoSuchDescriptor;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -25,10 +33,6 @@ import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class RodinIndexTests extends IndexTests {
-
-	public RodinIndexTests(String name) {
-		super(name);
-	}
 
 	private static IRodinProject project;
 	private static IRodinFile file;
@@ -42,8 +46,8 @@ public class RodinIndexTests extends IndexTests {
 	private static IDeclaration declElt1;
 	private static IDeclaration declElt2;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "rodinIndex.test");
@@ -55,19 +59,21 @@ public class RodinIndexTests extends IndexTests {
 		declElt2 = new Declaration(elt2, name2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		index.clear();
 		super.tearDown();
 	}
 
+	@Test
 	public void testMakeDescriptor() throws Exception {
 		final Descriptor descriptor = index.makeDescriptor(declElt1);
 
 		assertDescriptor(descriptor, declElt1, 0);
 	}
 
+	@Test
 	public void testGetDescriptor() throws Exception {
 		final Descriptor descriptorMake = index.makeDescriptor(declElt1);
 
@@ -77,6 +83,7 @@ public class RodinIndexTests extends IndexTests {
 				descriptorMake, descriptorGet);
 	}
 
+	@Test
 	public void testMakeDoubleDescriptor() throws Exception {
 		index.makeDescriptor(declElt1);
 
@@ -88,6 +95,7 @@ public class RodinIndexTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testMakeDoubleDescriptorDiffName() throws Exception {
 		index.makeDescriptor(declElt1);
 
@@ -99,6 +107,7 @@ public class RodinIndexTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testRemoveDescriptor() throws Exception {
 		index.makeDescriptor(declElt1);
 		index.removeDescriptor(elt1);
@@ -106,6 +115,7 @@ public class RodinIndexTests extends IndexTests {
 		assertNoSuchDescriptor(index, elt1);
 	}
 
+	@Test
 	public void testGetDescriptors() throws Exception {
 		index.makeDescriptor(declElt1);
 		index.makeDescriptor(declElt2);
@@ -127,6 +137,7 @@ public class RodinIndexTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testClear() throws Exception {
 		index.makeDescriptor(declElt1);
 		index.makeDescriptor(declElt2);

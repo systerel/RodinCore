@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,21 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertTrue;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_FILE_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertNotIndexed;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeArray;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeDescAndDefaultOcc;
 
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -41,12 +52,8 @@ public class IndexManagerTests extends IndexTests {
 	private static IDeclaration declElt3;
 	private static final IndexManager manager = IndexManager.getDefault();
 
-	public IndexManagerTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "indMan.test");
@@ -65,13 +72,14 @@ public class IndexManagerTests extends IndexTests {
 		manager.addIndexer(indexer, TEST_FILE_TYPE);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		manager.clear();
 		super.tearDown();
 	}
 
+	@Test
 	public void testScheduleIndexing() throws Exception {
 
 		manager.scheduleIndexing(file);
@@ -80,6 +88,7 @@ public class IndexManagerTests extends IndexTests {
 		assertDescriptor(manager, declElt2, 1);
 	}
 
+	@Test
 	public void testSeveralIndexing() throws Exception {
 
 		rodinIndex.removeDescriptor(elt2);
@@ -101,6 +110,7 @@ public class IndexManagerTests extends IndexTests {
 		assertDescriptor(manager, declElt2, 1);
 	}
 
+	@Test
 	public void testSeveralIndexers() throws Exception {
 
 		final IRodinIndex rodinIndex2 = new RodinIndex();
@@ -120,6 +130,7 @@ public class IndexManagerTests extends IndexTests {
 		assertDescriptor(manager, declElt3, 1);
 	}
 
+	@Test
 	public void testSeveralIndexersFail() throws Exception {
 
 		manager.clearIndexers();
@@ -136,6 +147,7 @@ public class IndexManagerTests extends IndexTests {
 		assertNotIndexed(manager, elt3);
 	}
 	
+	@Test
 	public void testGetDeclarationsSecondIndexer() throws Exception {
 
 		manager.clearIndexers();
@@ -155,17 +167,20 @@ public class IndexManagerTests extends IndexTests {
 				"declarations obtained by a second indexer");
 	}
 
+	@Test
 	public void testIndexFileDoesNotExist() throws Exception {
 		final IRodinFile inexistentFile =
 				project.getRodinFile("inexistentFile.test");
 		manager.scheduleIndexing(inexistentFile);
 	}
 
+	@Test
 	public void testIndexNoIndexer() throws Exception {
 		manager.clearIndexers();
 		manager.scheduleIndexing(file);
 	}
 
+	@Test
 	public void testIndexSeveralProjects() throws Exception {
 		final String eltF2Name = "eltF2Name";
 
@@ -186,6 +201,7 @@ public class IndexManagerTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testIndexerException() throws Exception {
 		final IIndexer exceptIndexer = new FakeExceptionIndexer();
 
@@ -200,6 +216,7 @@ public class IndexManagerTests extends IndexTests {
 		assertTrue("no element expected", declarations.isEmpty());
 	}
 
+	@Test
 	public void testIndexerFailed() throws Exception {
 		final IIndexer failIndexer = new FakeFailIndexer();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -28,10 +34,6 @@ public class NameTableTests extends IndexTests {
 
 	private static final String BAD_DECLARATIONS = "bad declarations";
 
-	public NameTableTests(String name) {
-		super(name);
-	}
-
 	private static final NameTable table = new NameTable();
 	private static IRodinProject project;
 	private static IRodinFile file;
@@ -43,8 +45,8 @@ public class NameTableTests extends IndexTests {
 	private static IDeclaration declN1E2;
 	private static IDeclaration declN2E2;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "nameTable.test");
@@ -55,13 +57,14 @@ public class NameTableTests extends IndexTests {
 		declN2E2 = new Declaration(element2, name2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		table.clear();
 		super.tearDown();
 	}
 
+	@Test
 	public void testPutGetOneElement() throws Exception {
 		table.add(declN1E1);
 
@@ -71,6 +74,7 @@ public class NameTableTests extends IndexTests {
 		assertEquals(BAD_DECLARATIONS, expectedResult, elements);
 	}
 
+	@Test
 	public void testPutGetSeveralSameName() throws Exception {
 		table.add(declN1E1);
 		table.add(declN1E2);
@@ -82,6 +86,7 @@ public class NameTableTests extends IndexTests {
 		assertEquals(BAD_DECLARATIONS, expectedResult, elements);
 	}
 
+	@Test
 	public void testPutGetVariousNames() throws Exception {
 		table.add(declN1E1);
 		table.add(declN2E2);
@@ -95,6 +100,7 @@ public class NameTableTests extends IndexTests {
 		assertEquals(BAD_DECLARATIONS, expectedResult2, elements2);
 	}
 
+	@Test
 	public void testRemove() throws Exception {
 		table.add(declN1E1);
 		table.add(declN1E2);
@@ -106,6 +112,7 @@ public class NameTableTests extends IndexTests {
 		assertEquals(BAD_DECLARATIONS, expectedResult, elements);
 	}
 
+	@Test
 	public void testClear() throws Exception {
 		table.add(declN1E1);
 		table.add(declN1E2);

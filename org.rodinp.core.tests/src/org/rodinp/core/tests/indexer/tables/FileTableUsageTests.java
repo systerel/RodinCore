@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_FILE_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeDescAndDefaultOcc;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -28,10 +35,6 @@ import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class FileTableUsageTests extends IndexTests {
-
-	public FileTableUsageTests(String name) {
-		super(name);
-	}
 
 	private static final boolean DEBUG = false;
 
@@ -49,8 +52,8 @@ public class FileTableUsageTests extends IndexTests {
 
 	private static RodinIndex rodinIndex;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "fileTable.test");
@@ -68,8 +71,8 @@ public class FileTableUsageTests extends IndexTests {
 		manager.addIndexer(indexer, TEST_FILE_TYPE);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		manager.clear();
 		super.tearDown();
@@ -86,11 +89,13 @@ public class FileTableUsageTests extends IndexTests {
 		assertSameElements(expectedElements, actualElements, "elements in file table");
 	}
 
+	@Test
 	public void testFileTableFilling() throws Exception {
 		manager.scheduleIndexing(file);
 		assertFileTable(file, fileDecls, "");
 	}
 
+	@Test
 	public void testDeleteElement() throws Exception {
 
 		// first indexing with elt1 and elt2

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -41,16 +46,14 @@ public class SameContentsTests extends ModifyingResourceTests {
 		assertEquals(sameChildren, right.hasSameChildren(left));
 	}
 
-	public SameContentsTests(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 		createRodinProject("P2");
 	}
 
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		deleteProject("P2");
@@ -61,6 +64,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that element name and types are taken into account when comparing
 	 * files.
 	 */
+	@Test
 	public void testFileNameType() throws Exception {
 		IRodinFile rf1, rf2;
 		IInternalElement root1, root2;
@@ -88,6 +92,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that element existence is taken into account when comparing
 	 * files.
 	 */
+	@Test
 	public void testFileExistence() throws Exception {
 		final IRodinFile rf1 = getRodinFile("P/x.test");
 		final IRodinFile rf2 = getRodinFile("P2/x.test");
@@ -105,6 +110,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that file attributes are taken into account when comparing files.
 	 */
+	@Test
 	public void testFileAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
@@ -128,6 +134,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that file children are taken into account when comparing files.
 	 */
+	@Test
 	public void testFileChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
@@ -152,6 +159,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that element name and types are taken into account when comparing
 	 * internal elements.
 	 */
+	@Test
 	public void testIntNameType() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
@@ -176,6 +184,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that element existence is taken into account when comparing
 	 * internal elements.
 	 */
+	@Test
 	public void testIntExistence() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
@@ -197,6 +206,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that file attributes are taken into account when comparing
 	 * internal elements.
 	 */
+	@Test
 	public void testIntAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
@@ -223,6 +233,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that file children are taken into account when comparing internal
 	 * elements.
 	 */
+	@Test
 	public void testIntChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
@@ -249,6 +260,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that children attributes are taken into account when comparing
 	 * elements.
 	 */
+	@Test
 	public void testChildrenAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
@@ -269,6 +281,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 * Ensures that grand-children are taken into account when comparing
 	 * elements.
 	 */
+	@Test
 	public void testGrandChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");

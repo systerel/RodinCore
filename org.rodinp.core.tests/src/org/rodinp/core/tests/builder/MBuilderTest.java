@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ package org.rodinp.core.tests.builder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -25,17 +28,15 @@ public class MBuilderTest extends AbstractBuilderTest {
 
 	private IRodinProject project;
 	
-	public MBuilderTest(String name) {
-		super(name);
-	}
-	
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		ToolTrace.flush();
 	}
-	
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		for (IProject project: getWorkspaceRoot().getProjects()) {
 			project.delete(true, true, null);
 		}
@@ -53,6 +54,7 @@ public class MBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures that extractors and tools are run when a file is created.
 	 */
+	@Test
 	public void testOneBuild() throws Exception {
 		IRodinFile mch = createRodinFile("P/x.mch");
 		createData(mch, "one");
@@ -85,6 +87,7 @@ public class MBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures that extractors and tools are run when a file is created.
 	 */
+	@Test
 	public void testGraphBuild() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "cone");
@@ -170,6 +173,7 @@ public class MBuilderTest extends AbstractBuilderTest {
 	/**
 	 * same as <code>testGraphBuild()</code> but with subsequent cleaning
 	 */
+	@Test
 	public void testGraphBuildClean() throws Exception {
 		testGraphBuild();
 		cleanBuilder();
@@ -196,6 +200,7 @@ public class MBuilderTest extends AbstractBuilderTest {
 	 * check that when importing a project it is subsequently built, i.e.
 	 * the graph is properly created on import
 	 */
+	@Test
 	public void testProjectImport() throws Exception {
 		importProject("Q");
 		

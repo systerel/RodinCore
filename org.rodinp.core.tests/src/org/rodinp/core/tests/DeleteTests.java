@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -20,6 +21,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -33,17 +37,15 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
  */
 public class DeleteTests extends ModifyingResourceTests {
 	
-	public DeleteTests(String name) {
-		super(name);
-	}
-	
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 		// ensure that indexing is not going to interfer with deletion
 //		waitUntilIndexesReady();
 	}
-	
+
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -52,6 +54,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	/**
 	 * Should be able to delete a Rodin file.
 	 */
+	@Test
 	public void testDeleteRodinFile() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -73,6 +76,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	/**
 	 * After deleting a Rodin file in an IWorkspaceRunnable, it should not exist.
 	 */
+	@Test
 	public void testDeleteRodinFileInRunnable() throws CoreException {
 		try {
 			final IRodinFile file = createRodinFile("P/X.test");
@@ -106,6 +110,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	 * Ensures that a top internal element is deleted, all its descendants are also deleted. 
 	 * Verify that the correct change deltas are generated.
 	 */
+	@Test
 	public void testDeleteInternal() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -135,6 +140,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that deletion can be canceled.
 	 */
+	@Test
 	public void testDeleteInternalCancelled() throws CoreException {
 		try {
 			final IRodinFile file = createRodinFile("P/X.test");
@@ -158,6 +164,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	 * Ensures that an internal element can be deleted inside a scheduling rule
 	 * that includes the resource only.
 	 */
+	@Test
 	public void testDeleteElementSchedulingRule() throws CoreException {
 		try {
 			IRodinFile rf = createRodinFile("P/X.test");
@@ -192,6 +199,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	 * compilation units can be deleted.
 	 * Verifies that the correct changed deltas are generated.
 	 */
+	@Test
 	public void testDeleteMultipleMembersFromVariousRFs() throws CoreException {
 		try {
 			IRodinFile rfX = createRodinFile("P/X.test");
@@ -236,6 +244,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	/**
 	 * Ensure that the correct exception is thrown for invalid input to the <code>DeleteOperation</code>
 	 */
+	@Test
 	public void testDeleteWithInvalidInput() throws CoreException {
 		try {
 			getRodinDB().delete(null, false, null);
@@ -261,6 +270,7 @@ public class DeleteTests extends ModifyingResourceTests {
 	 * Ensures that creating a file, some internal element, then deleting the
 	 * file in the same runnable is properly reported as a noop in the deltas.
 	 */
+	@Test
 	public void testBug702() throws Exception {
 		final IRodinFile file = getRodinFile("P/X.test");
 		try {

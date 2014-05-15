@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,12 @@ package org.rodinp.core.tests;
 
 import static java.util.Arrays.asList;
 import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_ATTRIBUTE_TYPE;
 
 import java.util.Arrays;
@@ -23,6 +29,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -48,15 +57,12 @@ import org.rodinp.internal.core.AttributeType;
 
 public class AttributeTests extends ModifyingResourceTests {
 	
-	public AttributeTests(String name) {
-		super(name);
-	}
-	
 	private IRodinFile rodinFile;
 	private RodinTestRoot root;
 	private NamedElement ne;
 
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 		rodinFile = createRodinFile("P/X.test");
@@ -64,7 +70,8 @@ public class AttributeTests extends ModifyingResourceTests {
 		ne = createNEPositive(root, "foo", null);
 	}
 	
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
 	}
@@ -421,6 +428,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that the getAttributeTypes() and hasAttribute() methods works
 	 * properly on Rodin files.
 	 */
+	@Test
 	public void testGetAttributeNamesFile() throws CoreException {
 		assertGetAttributeNames(root);
 	}
@@ -429,6 +437,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that the getAttributeTypes() and hasAttribute() methods works
 	 * properly on internal elements.
 	 */
+	@Test
 	public void testGetAttributeNamesInternal() throws CoreException {
 		assertGetAttributeNames(ne);
 	}
@@ -446,6 +455,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that the removeAttribute() method works properly on Rodin files.
 	 */
+	@Test
 	public void testRemoveAttributeFile() throws CoreException {
 		assertRemoveAttribute(root);
 	}
@@ -454,6 +464,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that the removeAttribute() method works properly on internal
 	 * elements.
 	 */
+	@Test
 	public void testRemoveAttributeInternal() throws CoreException {
 		assertRemoveAttribute(ne);
 	}
@@ -472,6 +483,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that attempting to remove an attribute on an inexistent Rodin
 	 * file raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
+	@Test
 	public void testRemoveAttributeNoElementFile() throws CoreException {
 		rodinFile.delete(false, null);
 		assertRemoveAttributeNoElement(root);
@@ -481,6 +493,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that attempting to remove an attribute on an inexistent internal
 	 * element raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
+	@Test
 	public void testRemoveAttributeNoElementInternal() throws CoreException {
 		ne.delete(false, null);
 		assertRemoveAttributeNoElement(ne);
@@ -503,6 +516,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that attempting to set an attribute on an inexistent Rodin file
 	 * raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
+	@Test
 	public void testSetAttributeNoElementRoot() throws CoreException {
 		rodinFile.delete(false, null);
 		assertSetAttributeNoElement(root);
@@ -512,6 +526,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that attempting to set an attribute on an inexistent internal
 	 * element raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
+	@Test
 	public void testSetAttributeNoElementInternal() throws CoreException {
 		ne.delete(false, null);
 		assertSetAttributeNoElement(ne);
@@ -532,10 +547,12 @@ public class AttributeTests extends ModifyingResourceTests {
 		setStringAttrNegative(snapshot, fString, "bar", code);
 	}
 
+	@Test
 	public void testSnapshotAttributeReadOnlyRoot() throws CoreException {
 		assertSnapshotAttributeReadOnly(root);
 	}
 
+	@Test
 	public void testSnapshotAttributeReadOnlyInternal() throws CoreException {
 		assertSnapshotAttributeReadOnly(ne);
 	}
@@ -566,10 +583,12 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertStringValue(ie, fString, "bar");
 	}
 	
+	@Test
 	public void testAttributePersistentFile() throws CoreException {
 		assertAttributePersistent(root);
 	}
 
+	@Test
 	public void testAttributePersistentInternal() throws CoreException {
 		assertAttributePersistent(ne);
 	}
@@ -583,6 +602,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
+	@Test
 	public void testInvalidAttrType() {
 		assertIllegalArgument(new Runnable() {
 			public void run() {
@@ -591,6 +611,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		});
 	}
 	
+	@Test
 	public void testWrongAttrType() {
 		assertIllegalArgument(new Runnable() {
 			public void run() {
@@ -619,6 +640,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		});
 	}
 
+	@Test
 	public void testIdWithDotInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"id", "foo.bar", //
@@ -627,6 +649,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		)));
 	}
 
+	@Test
 	public void testIdWithSpaceInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"id", "foo bar", //
@@ -635,6 +658,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		)));
 	}
 
+	@Test
 	public void testInvalidKindInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"id", "foo", //
@@ -643,6 +667,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		)));
 	}
 
+	@Test
 	public void testMissingIdInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"name", "Foo", //
@@ -650,6 +675,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		)));
 	}
 
+	@Test
 	public void testMissingNameInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"id", "foo", //
@@ -657,6 +683,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		)));
 	}
 
+	@Test
 	public void testMissingKindInAttributeTypeDeclaration() throws Exception {
 		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
 				"id", "foo", //
@@ -668,6 +695,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that generic attribute values can be set (tested only for
 	 * boolean).
 	 */
+	@Test
 	public void testGenericSetAttribute() throws RodinDBException {
 		final IAttributeValue v1 = fBool.makeValue(true);
 		final IAttributeValue v2 = fBool.makeValue(true);
@@ -685,6 +713,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that an attribute of invalid type for a given root element cannot
 	 * be set.
 	 */
+	@Test
 	public void testSetInvalidAttributeRoot() throws CoreException {
 		final IInternalElement r = createRodinFile("P/X.test2").getRoot();
 		final IAttributeValue v = fBool.makeValue(true);
@@ -695,6 +724,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * Ensures that an attribute of invalid type for a given non-root element
 	 * cannot be set.
 	 */
+	@Test
 	public void testSetInvalidAttributeInternal() throws CoreException {
 		final IInternalElement r = createRodinFile("P/X.test2").getRoot();
 		final NamedElement2 ne2 = createNE2Positive(r, "foo", null);

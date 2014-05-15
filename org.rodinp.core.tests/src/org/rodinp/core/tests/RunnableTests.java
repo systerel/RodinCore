@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -18,6 +22,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.junit.Test;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -75,14 +80,11 @@ public class RunnableTests extends AbstractRodinDBTests {
 
 	private static final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	public RunnableTests(String name) {
-		super(name);
-	}
-
 	/**
 	 * Ensures that a Rodin runnable can be run while processing a resource
 	 * change event.
 	 */
+	@Test
 	public void testRunnableInResourceDelta() throws Exception {
 		final CheckingRunnable inner = new CheckingRunnable();
 		final IResourceChangeListener listener = new IResourceChangeListener() {
@@ -109,6 +111,7 @@ public class RunnableTests extends AbstractRodinDBTests {
 	 * Ensures that a RodinDBException thrown by a Rodin runnable is properly
 	 * propagated.
 	 */
+	@Test
 	public void testThrowRodinDBException() {
 		final RodinDBExceptionThrower action = new RodinDBExceptionThrower();
 		try {
@@ -123,6 +126,7 @@ public class RunnableTests extends AbstractRodinDBTests {
 	 * Ensures that a CoreException thrown by a Rodin runnable is properly
 	 * encapsulated in a Rodin DB exception.
 	 */
+	@Test
 	public void testThrowCoreException() {
 		final CoreExceptionThrower action = new CoreExceptionThrower();
 		try {
@@ -138,6 +142,7 @@ public class RunnableTests extends AbstractRodinDBTests {
 	 * Ensures that a RuntimeException thrown by a Rodin runnable is properly
 	 * encapsulated in a Rodin DB exception.
 	 */
+	@Test
 	public void testThrowRuntimeException() throws RodinDBException {
 		final RuntimeExceptionThrower action = new RuntimeExceptionThrower();
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,8 +27,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Comparator;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -43,6 +46,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
@@ -65,7 +72,7 @@ import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.util.Util;
 import org.rodinp.internal.core.debug.DebugHelpers;
 
-public abstract class AbstractRodinDBTests extends TestCase {
+public abstract class AbstractRodinDBTests {
 
 	public static final String PLUGIN_ID = "org.rodinp.core.tests";
 
@@ -84,6 +91,14 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	protected static final int tabs = 2;
 	protected boolean displayName = false;
 	protected static final String endChar = ",";
+
+	@Rule
+	public final TestName testName = new TestName();
+
+	public String getName() {
+		return testName.getMethodName();
+	}
+	
 	
 //	public static class ProblemRequestor implements IProblemRequestor {
 //		public StringBuffer problems;
@@ -248,11 +263,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	}
 
 	protected DeltaListener deltaListener = new DeltaListener();
-	 
-	
-	public AbstractRodinDBTests(String name) {
-		super(name);
-	}
 
 //	public static Test buildTestSuite(Class evaluationTestClass) {
 //		return buildTestSuite(evaluationTestClass, null); //$NON-NLS-1$
@@ -952,8 +962,8 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/* ************
 	 * Suite set-ups *
 	 *************/
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		
 		// ensure autobuilding is turned off
 		IWorkspaceDescription description = getWorkspace().getDescription();
@@ -1110,8 +1120,9 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		);
 	}
 	
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
+		// Do nothing
 	}
 
 //	public static void waitUntilIndexesReady() {

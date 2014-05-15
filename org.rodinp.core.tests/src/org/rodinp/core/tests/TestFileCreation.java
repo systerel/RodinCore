@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,21 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -29,23 +38,19 @@ import org.xml.sax.SAXParseException;
 
 public class TestFileCreation extends ModifyingResourceTests {
 
-	public TestFileCreation() {
-		super(PLUGIN_ID + ".TestFileCreation");
-	}
-
 	private IRodinProject rodinProject;
 	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("foo");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		rodinProject.getProject().delete(true, true, null);
 		rodinProject.getRodinDB().close();
+		super.tearDown();
 	}
 	
 	private void assertNotOpenable(IRodinFile rodinFile) {
@@ -58,6 +63,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a Rodin file through the IResource API
+	@Test
 	public void testCreateRodinFile1() throws Exception {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -93,6 +99,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 
 	// Test creation of a Rodin file through the IResource API, with unnecessary
 	// whitespace in the XML contents
+	@Test
 	public void testCreateRodinFile2() throws Exception {
 		assertExists("Project should exist", rodinProject);
 		
@@ -125,6 +132,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of an empty Rodin file through the IResource API
+	@Test
 	public void testCreateEmptyRodinFile() throws Exception {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -152,6 +160,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a Rodin file through the Rodin API
+	@Test
 	public void testCreateRodinFile3() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -178,6 +187,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a Rodin file through the Rodin API, when the file exists already
+	@Test
 	public void testCreateExistingRodinFile() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -202,6 +212,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 
 	// Test creation of a Rodin file through the Rodin API, when the file exists
 	// already and has unsaved changes
+	@Test
 	public void testCreateUnsavedRodinFile() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -222,6 +233,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a non-Rodin file
+	@Test
 	public void testCreateNonRodinFile() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -251,6 +263,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a folder
+	@Test
 	public void testCreateFolder() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
@@ -277,6 +290,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	}
 
 	// Test creation of a malformed Rodin file through the IResource API
+	@Test
 	public void testCreateMalformedRodinFile() throws Exception {
 		// Create one Rodin file handle
 		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
@@ -302,6 +316,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 	 * Ensures that a file which content type is unknown to Eclipse is
 	 * considered as a non-Rodin resource (bug fix).
 	 */
+	@Test
 	public void testCreateFileOfUnknownType() throws CoreException, RodinDBException, UnsupportedEncodingException{
 		// Create one non-Rodin file with unknown content-type
 		IFile file = rodinProject.getProject().getFile("toto.xyzt");
@@ -319,6 +334,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Project with one non-Rodin file", 0, rodinProject.getRodinFiles().length);
 	}
 
+	@Test
 	public void testGetChildrenOfType() throws Exception {
 		IRodinElement[] children;
 		
@@ -339,6 +355,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Wrong element", rf, rootChildren[0].getRodinFile());
 	}
 	
+	@Test
 	public void testRootElementType() throws Exception {
 		IRodinFile rodinFile = rodinProject.getRodinFile("X.test");
 		assertEquals(RodinTestRoot.ELEMENT_TYPE, rodinFile.getRootElementType());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.ISnapshotable;
@@ -25,15 +33,13 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
  */
 public class SnapshotTests extends ModifyingResourceTests {
 	
-	public SnapshotTests(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 	}
 	
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -42,6 +48,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that the isSnapshot() method works properly on Rodin files.
 	 */
+	@Test
 	public void testFileIsSnapshot() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		testIsSnapshot(rf);
@@ -50,6 +57,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot exists iff its underlying file exists.
 	 */
+	@Test
 	public void testFileSnapshotExists() throws CoreException {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		testSnapshotNotExists(rf);
@@ -62,6 +70,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * vice-versa. Also, ensures that a snapshot is different from a mutable
 	 * copy.
 	 */
+	@Test
 	public void testFileSnapshotInvolutive() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		testSnapshotInvolutive(rf);
@@ -70,6 +79,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that the mutable copy and a snapshot of a file have the same parent.
 	 */
+	@Test
 	public void testFileSnapshotParent() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		assertSame("Parents of mutable and snapshot file should be the same",
@@ -81,6 +91,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot is readonly and a mutable copy is not.
 	 */
+	@Test
 	public void testFileSnapshotReadonly() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		testSnapshotReadonly(rf);
@@ -149,6 +160,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * Ensures that the isSnapshot() method works properly on non-top internal
 	 * elements.
 	 */
+	@Test
 	public void testIntIsSnapshot() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -160,6 +172,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot exists iff its mutable copy exists.
 	 */
+	@Test
 	public void testIntSnapshotExists() throws CoreException {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -178,6 +191,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * vice-versa. Also, ensures that a snapshot is different from a mutable
 	 * copy.
 	 */
+	@Test
 	public void testIntSnapshotInvolutive() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -190,6 +204,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * Ensures that the mutable copy and a snapshot of a top-level internal
 	 * element have the same parent.
 	 */
+	@Test
 	public void testIntSnapshotParent() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -203,6 +218,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot is readonly and a mutable copy is not.
 	 */
+	@Test
 	public void testIntSnapshotReadonly() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -215,6 +231,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * Ensures that the isSnapshot() method works properly on top internal
 	 * elements.
 	 */
+	@Test
 	public void testTopIsSnapshot() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -224,6 +241,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot exists iff its underlying file exists.
 	 */
+	@Test
 	public void testTopSnapshotExists() throws CoreException {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -240,6 +258,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * vice-versa. Also, ensures that a snapshot is different from a mutable
 	 * copy.
 	 */
+	@Test
 	public void testTopSnapshotInvolutive() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -251,6 +270,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * Ensures that the mutable copy and a snapshot of a top-level internal
 	 * element have the same parent.
 	 */
+	@Test
 	public void testTopSnapshotParent() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -263,6 +283,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot is readonly and a mutable copy is not.
 	 */
+	@Test
 	public void testTopSnapshotReadonly() {
 		final IRodinFile rf = getRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -273,6 +294,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot is decorrelated from unsaved changes in a file
 	 */
+	@Test
 	public void testSnapshotDecorrelated() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -322,6 +344,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot internal element cannot be created.
 	 */
+	@Test
 	public void testSnapshotCreateInternalElement() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -337,6 +360,7 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot internal element cannot have its contents changed.
 	 */
+	@Test
 	public void testSnapshotChangeInternalElementContents() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
 		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();

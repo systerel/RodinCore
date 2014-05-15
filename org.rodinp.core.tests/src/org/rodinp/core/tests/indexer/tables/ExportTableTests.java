@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertExports;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -24,11 +29,6 @@ import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.tables.ExportTable;
 
 public class ExportTableTests extends IndexTests {
-
-
-	public ExportTableTests(String name) {
-		super(name);
-	}
 
 	private static final ExportTable table = new ExportTable();
 	private static final Set<IDeclaration> emptyExport = new HashSet<IDeclaration>();
@@ -48,8 +48,8 @@ public class ExportTableTests extends IndexTests {
 		assertExports(emptyExport, map);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file1 = createRodinFile(rodinProject, "exp1.test");
@@ -62,13 +62,14 @@ public class ExportTableTests extends IndexTests {
 		declElt1F2Name1F2 = new Declaration(elt1F2, name1F2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		table.clear();
 		super.tearDown();
 	}
 
+	@Test
 	public void testAddGet() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
 		expected.add(new Declaration(elt1F1, name1F1));
@@ -79,6 +80,7 @@ public class ExportTableTests extends IndexTests {
 		assertExports(expected, actual);
 	}
 
+	@Test
 	public void testAddGetSeveral() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
 		expected.add(new Declaration(elt1F1, name1F1));
@@ -91,6 +93,7 @@ public class ExportTableTests extends IndexTests {
 		assertExports(expected, actual);
 	}
 
+	@Test
 	public void testAddGetVariousFiles() throws Exception {
 		Set<IDeclaration> expected1 = new HashSet<IDeclaration>();
 		expected1.add(new Declaration(elt1F1, name1F1));
@@ -107,12 +110,14 @@ public class ExportTableTests extends IndexTests {
 		assertExports(expected2, actual2);
 	}
 
+	@Test
 	public void testGetUnknownFile() throws Exception {
 		final Set<IDeclaration> map = table.get(file1);
 
 		assertEmptyExports(map);
 	}
 
+	@Test
 	public void testRemove() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
 		expected.add(new Declaration(elt1F1, name1F1));
@@ -129,6 +134,7 @@ public class ExportTableTests extends IndexTests {
 		assertEmptyExports(actual2);
 	}
 
+	@Test
 	public void testClear() throws Exception {
 
 		table.add(file1, declElt1F1Name1F1);

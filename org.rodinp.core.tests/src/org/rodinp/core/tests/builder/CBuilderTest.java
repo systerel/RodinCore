@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -29,11 +35,8 @@ public class CBuilderTest extends AbstractBuilderTest {
 	
 	private IRodinProject project;
 	
-	public CBuilderTest(String name) {
-		super(name);
-	}
-	
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		SCTool.RUN_SC = true;
 		SCTool.SHOW_CLEAN = true;
@@ -42,8 +45,9 @@ public class CBuilderTest extends AbstractBuilderTest {
 		project = createRodinProject("P");
 		ToolTrace.flush();
 	}
-	
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		project.getProject().delete(true, true, null);
 		super.tearDown();
 	}
@@ -55,6 +59,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures that extractors and tools are run when a file is created.
 	 */
+	@Test
 	public void testOneBuild() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
@@ -74,6 +79,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures that generated files are cleaned up when their source is deleted.
 	 */
+	@Test
 	public void testOneDelete() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
@@ -90,6 +96,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures dependency is followed if source of dependency is created before target 
 	 */
+	@Test
 	public void testOneTwoCreate() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 //		ToolTrace.flush();
@@ -112,6 +119,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures dependency is followed if target of dependency is created before source 
 	 */
+	@Test
 	public void testTwoOneCreate() throws Exception {
 		IRodinFile cty = createRodinFile("P/y.ctx");
 		createDependency(cty, "x");
@@ -135,6 +143,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures dependency is followed transitively
 	 */
+	@Test
 	public void testOneTwoThreeCreateChange() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
@@ -164,6 +173,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures cycles are ignored
 	 */
+	@Test
 	public void testOneTwoThreeCreateCycle() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createDependency(ctx, "y");
@@ -191,6 +201,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Test that the test case for database problems can work correctly
 	 */
+	@Test
 	public void testRodinDBProblem() throws Exception {
 		
 		try {
@@ -220,6 +231,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Proper treatment of database errors while tools are run
 	 */
+	@Test
 	public void testRodinDBProblemInTool() throws Exception {
 		final IRodinFile ctx;
 		try {
@@ -260,6 +272,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Testing Bug #2417502: Tool problem reported for inexistent file
 	 */
+	@Test
 	public void testRodinDBProblemInToolBeforeTargetCreation() throws Exception {
 		try {
 			CSCTool.FAULTY_BEFORE_TARGET_CREATION = true;
@@ -303,6 +316,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	 * 
 	 * See Bug #1605247.
 	 */
+	@Test
 	public void testDeleteDerivedRebuild() throws Exception {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
@@ -323,6 +337,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	/**
 	 * Ensures dependency is followed if source of dependency is deleted, and recreated
 	 */
+	@Test
 	public void testOneTwoDelete() throws Exception {
 		
 		IRodinFile ctx = createRodinFile("P/x.ctx");
@@ -365,6 +380,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	 * Ensures that clean removes a generated file, even if it has been modified
 	 * since the last build.
 	 */
+	@Test
 	public void testClean() throws Exception {
 		final IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");

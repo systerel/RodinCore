@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests.location;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -26,10 +31,6 @@ public class RodinLocationTests extends AbstractRodinDBTests {
 	public static final IAttributeType.String TEST_ATTR_TYPE = RodinCore
 			.getStringAttrType(PLUGIN_ID + ".testAttributeType");
 
-
-	public RodinLocationTests(String name) {
-		super(name);
-	}
 
 	private static final int defaultStart = 1;
 	private static final int defaultEnd = 3;
@@ -65,91 +66,77 @@ public class RodinLocationTests extends AbstractRodinDBTests {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		project = getRodinProject("P");
 		file = project.getRodinFile("rodLoc.test");
 		locElement = file.getRoot().getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 	}
 
+	@Test
 	public void testConstructor() throws Exception {
 		IInternalLocation loc = RodinCore.getInternalLocation(locElement,
 				TEST_ATTR_TYPE, defaultStart, defaultEnd);
 		assertLocation(loc, locElement, TEST_ATTR_TYPE, defaultStart, defaultEnd);
 	}
 
+	@Test(expected=NullPointerException.class)
 	public void testNullElement() throws Exception {
-		try {
-			RodinCore.getInternalLocation(null);
-			fail("expected NullPointerException");
-		} catch (NullPointerException e) {
-			// Pass
-		}
+		RodinCore.getInternalLocation(null);
 	}
 
+	@Test
 	public void testFileElement() throws Exception {
 		final IInternalElement root = file.getRoot();
 		IInternalLocation loc = RodinCore.getInternalLocation(root);
 		assertLocation(loc, root);
 	}
 
+	@Test
 	public void testInternalElement() throws Exception {
 		IInternalLocation loc = RodinCore.getInternalLocation(locElement);
 		assertLocation(loc, locElement);
 	}
 
+	@Test
 	public void testAttribute() throws Exception {
 		IInternalLocation loc = RodinCore
 				.getInternalLocation(locElement, TEST_ATTR_TYPE);
 		assertLocation(loc, locElement, TEST_ATTR_TYPE);
 	}
 
+	@Test
 	public void testAttributeSubstring() throws Exception {
 		IInternalLocation loc = RodinCore.getInternalLocation(locElement,
 				TEST_ATTR_TYPE, defaultStart, defaultEnd);
 		assertLocation(loc, locElement, TEST_ATTR_TYPE, defaultStart, defaultEnd);
 	}
 
+	@Test(expected=NullPointerException.class)
 	public void testNullAttribute() throws Exception {
-		try {
-			RodinCore.getInternalLocation(locElement, null, defaultStart,
-					defaultEnd);
-			fail("expected NullPointerException");
-		} catch (NullPointerException e) {
-			// Pass
-		}
+		RodinCore.getInternalLocation(locElement, null, defaultStart,
+				defaultEnd);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidStart() throws Exception {
-		try {
-			RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, -1, 0);
-			fail("expected NullPointerException");
-		} catch (IllegalArgumentException e) {
-			// Pass
-		}
+		RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, -1, 0);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidEnd() throws Exception {
-		try {
-			RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, 0, -1);
-			fail("expected NullPointerException");
-		} catch (IllegalArgumentException e) {
-			// Pass
-		}
+		RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, 0, -1);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testEmptySubstring() throws Exception {
-		try {
-			RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, 0, 0);
-			fail("expected NullPointerException");
-		} catch (IllegalArgumentException e) {
-			// Pass
-		}
+		RodinCore.getInternalLocation(locElement, TEST_ATTR_TYPE, 0, 0);
 	}
 
 	/**
 	 * Ensures that locations of different nature are never equal.
 	 */
+	@Test
 	public void testDiffers() throws Exception {
 		final IInternalLocation eLoc = RodinCore.getInternalLocation(locElement);
 		final IInternalLocation aLoc = RodinCore.getInternalLocation(locElement,
@@ -165,12 +152,14 @@ public class RodinLocationTests extends AbstractRodinDBTests {
 		assertFalse(sLoc.equals(aLoc));
 	}
 
+	@Test
 	public void testEqualsElement() throws Exception {
 		final IInternalLocation loc1 = RodinCore.getInternalLocation(locElement);
 		final IInternalLocation loc2 = RodinCore.getInternalLocation(locElement);
 		assertEquals(loc1, loc2);
 	}
 
+	@Test
 	public void testEqualsAttribute() throws Exception {
 		final IInternalLocation loc1 = RodinCore.getInternalLocation(locElement,
 				TEST_ATTR_TYPE);
@@ -179,6 +168,7 @@ public class RodinLocationTests extends AbstractRodinDBTests {
 		assertEquals(loc1, loc2);
 	}
 
+	@Test
 	public void testEqualsSubstring() throws Exception {
 		final IInternalLocation loc1 = RodinCore.getInternalLocation(locElement,
 				TEST_ATTR_TYPE, defaultStart, defaultEnd);

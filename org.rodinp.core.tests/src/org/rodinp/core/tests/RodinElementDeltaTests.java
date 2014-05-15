@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@
 package org.rodinp.core.tests;
 
 import static org.eclipse.core.resources.IContainer.INCLUDE_HIDDEN;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.ElementChangedEvent.POST_CHANGE;
 
 import org.eclipse.core.resources.IFile;
@@ -25,6 +27,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.junit.After;
+import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinFile;
@@ -39,12 +43,8 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
  */
 public class RodinElementDeltaTests extends ModifyingResourceTests {
 	
-	public RodinElementDeltaTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		stopDeltas();
 		clearWorkspace();
 		super.tearDown();
@@ -61,6 +61,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add file in project.
 	 */
+	@Test
 	public void testAddFile() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -75,6 +76,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add file after opening its project
 	 */
+	@Test
 	public void testAddFileAfterProjectOpen() throws CoreException {
 		createRodinProject("P1");
 		IRodinProject p2 = createRodinProject("P2");
@@ -97,6 +99,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Ensure that a resource delta is fired when a file is added to a non-Rodin project.
 	 */
+	@Test
 	public void testAddFileToNonRodinProject() throws CoreException {
 		createProject("P");
 		startDeltas();
@@ -110,6 +113,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add the Rodin nature to an existing project.
 	 */
+	@Test
 	public void testAddRodinNature() throws CoreException {
 		createProject("P");
 		startDeltas();
@@ -124,6 +128,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add a Rodin project.
 	 */
+	@Test
 	public void testAddRodinProject() throws CoreException {
 		startDeltas();
 		createRodinProject("P");
@@ -136,6 +141,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add a non-Rodin project.
 	 */
+	@Test
 	public void testAddNonRodinProject() throws CoreException {
 		startDeltas();
 		createProject("P");
@@ -148,6 +154,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add a (non-Rodin) folder.
 	 */
+	@Test
 	public void testAddFolder() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -162,6 +169,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add a (non-Rodin) folder inside another folder.
 	 */
+	@Test
 	public void testAddFolder2() throws CoreException {
 		createRodinProject("P");
 		createFolder("P/x");
@@ -178,6 +186,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Add two Rodin projects in an IWorkspaceRunnable.
 	 */
+	@Test
 	public void testAddTwoRodinProjects() throws CoreException {
 		startDeltas();
 		ResourcesPlugin.getWorkspace().run(
@@ -198,6 +207,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Batch operation test.
 	 */
+	@Test
 	public void testBatchOperation() throws CoreException {
 		createRodinProject("P");
 		createRodinFile("P/A.test");
@@ -226,6 +236,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Close a Rodin project.
 	 */
+	@Test
 	public void testCloseRodinProject() throws CoreException {
 		createRodinProject("P");
 		IProject project = getProject("P");
@@ -241,6 +252,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Close a non-Rodin project.
 	 */
+	@Test
 	public void testCloseNonRodinProject() throws CoreException {
 		createProject("P");
 		IProject project = getProject("P");
@@ -256,6 +268,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	 * Test that deltas are generated when a file is added
 	 * and removed from a project via core API.
 	 */
+	@Test
 	public void testRodinFileRemoveAndAdd() throws CoreException {
 		createRodinProject("P");
 		IFile file = createRodinFile("/P/X.test").getResource();
@@ -284,6 +297,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	 * results in a Rodin delta with the resource delta.
 	 * (regression test for 11210 ResourceDeltas are lost when merging deltas)
 	 */
+	@Test
 	public void testMergeResourceDeltas() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -307,6 +321,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		);
 	}
 
+	@Test
 	public void testModifyContents() throws CoreException {
 		createRodinProject("P");
 		IRodinFile rodinFile = createRodinFile("P/A.test");
@@ -324,6 +339,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		);
 	}
 
+	@Test
 	public void testModifyContentsAndSave() throws CoreException {
 		createRodinProject("P");
 		IRodinFile rodinFile = createRodinFile("P/A.test");
@@ -346,6 +362,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		// TODO should produce only the first delta, not the second.
 	}
 
+	@Test
 	public void testModifyContentsNoSave() throws CoreException {
 		createRodinProject("P");
 		IRodinFile rodinFile = createRodinFile("P/A.test");
@@ -367,6 +384,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * bug 18953
 	 */
+	@Test
 	public void testModifyProjectDescriptionAndRemoveFolder() throws CoreException {
 		IRodinProject project = createRodinProject("P");
 		final IProject projectFolder = project.getProject();
@@ -395,6 +413,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Move a non-Rodin file that is under a folder.
 	 */
+	@Test
 	public void testMoveResInFolder() throws CoreException {
 		createRodinProject("P");
 		IProject project = getProject("P");
@@ -425,6 +444,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	 * Test that deltas are generated when a non-Rodin file is
 	 * removed and added
 	 */
+	@Test
 	public void testNonRodinResourceRemoveAndAdd() throws CoreException {
 		createRodinProject("P");
 		IFile file = createFile("/P/read.txt", "");
@@ -450,6 +470,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Open a Rodin project.
 	 */
+	@Test
 	public void testOpenRodinProject() throws CoreException {
 		createRodinProject("P");
 		IProject project = getProject("P");
@@ -466,6 +487,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Open a non-Rodin project.
 	 */
+	@Test
 	public void testOpenNonRodinProject() throws CoreException {
 		createProject("P");
 		IProject project = getProject("P");
@@ -481,6 +503,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Remove then add a Rodin project (in a workspace runnable).
 	 */
+	@Test
 	public void testRemoveAddRodinProject() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -502,6 +525,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Remove the Rodin nature of an existing Rodin project.
 	 */
+	@Test
 	public void testRemoveRodinNature() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -516,6 +540,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Remove a Rodin project.
 	 */
+	@Test
 	public void testRemoveRodinProject() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -529,6 +554,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Remove a non-Rodin project.
 	 */
+	@Test
 	public void testRemoveNonRodinProject() throws CoreException {
 		createProject("P");
 		startDeltas();
@@ -542,6 +568,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Rename a Rodin project.
 	 */
+	@Test
 	public void testRenameRodinProject() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -556,6 +583,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Rename a non-Rodin project.
 	 */
+	@Test
 	public void testRenameNonRodinProject() throws CoreException {
 		createProject("P");
 		startDeltas();
@@ -570,6 +598,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 	/**
 	 * Create a Rodin file in a batch operation.
 	 */
+	@Test
 	public void testCreateInBatchOperation() throws CoreException {
 		createRodinProject("P");
 		startDeltas();
@@ -585,6 +614,7 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 				"	X.test[+]: {}");
 	}
 
+	@Test
 	public void testEventType() throws Exception {
 		final EventTypeListener listener = new EventTypeListener();
 		try {

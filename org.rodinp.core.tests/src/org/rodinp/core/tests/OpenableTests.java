@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,13 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -28,17 +35,15 @@ public class OpenableTests extends ModifyingResourceTests {
 	private IRodinProject rodinProject2;
 	private IRodinFile rodinFile2;
 
-	public OpenableTests(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		rodinProject2 = createRodinProject("P2");
 		rodinFile2 = createRodinFile("P/immutable.test");
 	}
 	
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		deleteProject("P2");
@@ -63,6 +68,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that a call to isConsistent() doesn't open a Rodin project. 
 	 */
+	@Test
 	public void testIsConsistentProjectNoOpen() throws Exception {
 		rodinProject.close();
 		assertTrue("closed project should be consistent", 
@@ -73,6 +79,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that a call to isConsistent() doesn't open a Rodin file. 
 	 */
+	@Test
 	public void testIsConsistentFileNoOpen() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		rodinFile.close();
@@ -84,6 +91,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that isConsistent() returns false for a modified file. 
 	 */
+	@Test
 	public void testIsConsistentModifiedFile() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -100,6 +108,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that isConsistent() returns true after saving a modified file. 
 	 */
+	@Test
 	public void testIsConsistentModifiedFileSave() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -112,6 +121,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that isConsistent() returns true after reverting a modified file. 
 	 */
+	@Test
 	public void testIsConsistentModifiedFileRevert() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -124,6 +134,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that a call to hasUnsavedChanges() doesn't open a Rodin file. 
 	 */
+	@Test
 	public void testHasUnsavedChangesFileNoOpen() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		rodinFile.close();
@@ -134,6 +145,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that hasUnsavedChanges() returns true for a modified file. 
 	 */
+	@Test
 	public void testHasUnsavedChangesModifiedFile() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -148,6 +160,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that hasUnsavedChanges() returns false after saving a modified file. 
 	 */
+	@Test
 	public void testHasUnsavedChangesModifiedFileSave() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -160,6 +173,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	 * Ensures that hasUnsavedChanges() returns false after reverting a modified
 	 * file.
 	 */
+	@Test
 	public void testHasUnsavedChangesModifiedFileRevert() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -171,6 +185,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that the Rodin Database always exists.
 	 */
+	@Test
 	public void testExistsDB() throws Exception {
 		assertExists("The Rodin database should exist", rodinDB);
 	}
@@ -178,6 +193,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that an opened Rodin project exists.
 	 */
+	@Test
 	public void testExistsProjectOpen() throws Exception {
 		assertExists("The Rodin project should exist", rodinProject);
 
@@ -191,6 +207,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that a closed Rodin project doesn't exist.
 	 */
+	@Test
 	public void testExistsProjectClosed() throws Exception {
 		rodinProject.getProject().close(null);
 		assertFalse("The project should not be open", rodinProject.isOpen());
@@ -202,6 +219,7 @@ public class OpenableTests extends ModifyingResourceTests {
 	/*
 	 * Ensures that an inexistent Rodin project doesn't exist.
 	 */
+	@Test
 	public void testExistsProjectInexistent() throws Exception {
 		IRodinProject other = getRodinProject("Inexistent");
 		assertFalse("An existent project should not be open",

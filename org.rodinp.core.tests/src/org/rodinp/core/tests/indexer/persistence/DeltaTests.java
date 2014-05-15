@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IOpenable;
@@ -45,12 +48,8 @@ public class DeltaTests extends IndexTests {
 
 	private static IRodinProject project;
 
-	public DeltaTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 	}
@@ -71,8 +70,8 @@ public class DeltaTests extends IndexTests {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		IndexManager.getDefault().clear();
 		super.tearDown();
@@ -101,6 +100,7 @@ public class DeltaTests extends IndexTests {
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testModifOutsideWhenProjectClosed() throws Exception {
 
 		final IRodinFile file = createRodinFile(project, "delta2.test");
@@ -151,6 +151,7 @@ public class DeltaTests extends IndexTests {
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testDeepDeltaEnqueued() throws Exception {
 		final IRodinFile file = createRodinFile(project, "deltaDeep.test");
 		NamedElement elt = file.getRoot().createChild(

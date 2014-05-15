@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@
  *     Systerel - imported sub directory
  *******************************************************************************/
 package org.rodinp.core.tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -62,10 +65,6 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		+ "<org.rodinp.core.tests.test/>\n";
 	static byte[] emptyBytes = emptyContents.getBytes();
 
-	public ModifyingResourceTests(String name) {
-		super(name);
-	}
-	
 	protected static void assertElementDescendants(String message,  String expected, IRodinElement element) throws CoreException {
 		String actual = expandAll(element);
 		if (!expected.equals(actual)){

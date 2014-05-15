@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.ModifyingResourceTests;
@@ -48,10 +51,6 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	private static final String ATTRS_TYPE = PLUGIN_ID + ".versionStrAttr";
 	private static final String OTHER_PLUGIN_ID = "org.other.plugin";
 
-	public FaultyVersionTest(String name) {
-		super(name);
-	}
-	
 	private List<String> composeAttrs(String attr, String[] p) {
 		List<String> r = new ArrayList<String>(p.length * p.length - 1);
 		for (String x : p)
@@ -113,6 +112,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * File versions must be unique
 	 */
+	@Test
 	public void testConv_00_uniqueFileVersion() throws Exception {
 		
 		IConfigurationElement[] elements =
@@ -128,6 +128,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * if any client declares a version for some file, 
 	 * then the contributor of the file must declare one too
 	 */
+	@Test
 	public void testConv_01_clientOnlyFileVersionForbidden() throws Exception {
 		
 		IConfigurationElement[] elements =
@@ -141,6 +142,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * if any client and contributor declare a file version, then they must coincide
 	 */
+	@Test
 	public void testConv_02_clientAndContributorFileVersion() throws Exception {
 		
 		IConfigurationElement[] elements =
@@ -155,6 +157,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * if any client declares a version for some file, then contributor must declare one too
 	 */
+	@Test
 	public void testConv_03_correctFileVersion() throws Exception {
 		
 		IConfigurationElement[] elements =
@@ -168,6 +171,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * if any client and contributor declare a file version, then they must coincide
 	 */
+	@Test
 	public void testConv_04_uniqueConversion() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -188,6 +192,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * paths in in each conversion must be unique
 	 */
+	@Test
 	public void testConv_05_uniqueElementPath() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -208,6 +213,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * paths must be absolute and not end with a "/"
 	 */
+	@Test
 	public void testConv_06_absoluteElementPath() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -238,6 +244,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * paths must not refer to attributes
 	 */
+	@Test
 	public void testConv_07_noAttributePath() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -266,6 +273,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * element ids must not contain "/" or "@" in rename element ops
 	 */
+	@Test
 	public void testConv_08_bareRenameElementIds() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -297,6 +305,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * attribute ids must not contain "/" or "@" in rename attribute ops
 	 */
+	@Test
 	public void testConv_09_bareRenameAttributeIds() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -324,6 +333,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	/**
 	 * attribute ids must not contain "/" or "@" in add attribute ops
 	 */
+	@Test
 	public void testConv_10_bareAddAttributeIds() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -353,6 +363,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * an element rename op must not be attached to a path only
 	 * consisting of the file element type id
 	 */
+	@Test
 	public void testConv_11_mustNotRenameFileElementTypeId() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -377,6 +388,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * that element type. Both the old id and the new id must belong to
 	 * the same plugin.
 	 */
+	@Test
 	public void testConv_12_onlyContributorCanRenameElement() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -408,6 +420,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * that attribute type. Both the old id and the new id must belong to
 	 * the same plugin.
 	 */
+	@Test
 	public void testConv_13_onlyContributorCanRenameAttribute() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -438,6 +451,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * an attribute type can be added by the plugin that is contributing 
 	 * that attribute type
 	 */
+	@Test
 	public void testConv_14_onlyContributorCanAddAttribute() throws Exception {
 		
 		IConfigurationElement[] vElements =
@@ -462,6 +476,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 	 * conversion is only possible when a file version number has been contributed;
 	 * this holds for contributing and non-contributing plugins
 	 */
+	@Test
 	public void testConv_15_canConvertOnlyWithDeclaredVersionNumber() throws Exception {
 		
 		IConfigurationElement[] vElements =

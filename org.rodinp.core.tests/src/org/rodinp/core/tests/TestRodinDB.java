@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -24,13 +31,10 @@ import org.rodinp.core.RodinDBException;
 
 public class TestRodinDB extends AbstractRodinDBTests {
 
-	public TestRodinDB(String name) {
-		super(name);
-	}
-
 	/*
 	 * Test an empty database.
 	 */
+	@Test
 	public final void testRodinDBEmpty() throws CoreException, RodinDBException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot workspaceRoot = workspace.getRoot();
@@ -60,6 +64,7 @@ public class TestRodinDB extends AbstractRodinDBTests {
 	/*
 	 * Test project creation and deletion.
 	 */
+	@Test
 	public final void testRodinProject() throws CoreException, RodinDBException {
 		IRodinDB db = getRodinDB();
 

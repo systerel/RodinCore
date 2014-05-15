@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +26,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -34,10 +40,6 @@ import org.rodinp.core.RodinCore;
  * @author Laurent Voisin
  */
 public class AdapterFactoryTests extends AbstractRodinDBTests {
-
-	public AdapterFactoryTests(String name) {
-		super(name);
-	}
 
 	private static void assertAdapterPositive(Object adaptable,
 			Class<?> adapterType, Object expected) {
@@ -77,6 +79,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	/**
 	 * Checks all possible adaptations from Eclipse resources to Rodin elements. 
 	 */
+	@Test
 	public void testResourceAdapterFactory() throws Exception {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		
@@ -107,6 +110,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	/**
 	 * Checks all possible adaptations from Rodin elements to Eclipse resources. 
 	 */
+	@Test
 	public void testRodinElementAdapterFactory() throws Exception {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		
@@ -133,6 +137,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	/**
 	 * Checks adaptation from Rodin projects to Eclipse projects. 
 	 */
+	@Test
 	public void testRodinProjectAdapterFactory() throws Exception {
 		IRodinProject rodinProject = getRodinProject("P");
 		IProject project = rodinProject.getProject();
@@ -142,6 +147,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	/**
 	 * Checks cases where no adaptation is possible. 
 	 */
+	@Test
 	public void testNoAdaptation() throws Exception {
 		final Integer i = 0;
 		assertAdapterNegative(i, IRodinFile.class);

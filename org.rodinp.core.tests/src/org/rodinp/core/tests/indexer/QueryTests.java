@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,26 @@
 package org.rodinp.core.tests.indexer;
 
 import static java.util.Arrays.asList;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_FILE_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_KIND;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_KIND_2;
+import static org.rodinp.core.tests.util.IndexTestsUtil.addInternalOccurrence;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement2;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeArray;
+import static org.rodinp.core.tests.util.IndexTestsUtil.makeDescAndDefaultOcc;
 
 import java.util.List;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -69,10 +84,6 @@ public class QueryTests extends IndexTests {
 	private static IOccurrence occElt4InF1Root;
 	private static IOccurrence occElt4InElt1;
 
-	public QueryTests(String name) {
-		super(name);
-	}
-
 	private void init() throws Exception {
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "query.test");
@@ -110,8 +121,8 @@ public class QueryTests extends IndexTests {
 		f.getResource().touch(null);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		IndexManager.getDefault().clear();
 		init();
@@ -119,8 +130,8 @@ public class QueryTests extends IndexTests {
 		forceIndexing(file2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		rodinIndex.clear();
 		deleteProject("P");
 		DebugHelpers.disableIndexing();
@@ -128,6 +139,7 @@ public class QueryTests extends IndexTests {
 		super.tearDown();
 	}
 
+	@Test
 	public void testGetDecl() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -135,6 +147,7 @@ public class QueryTests extends IndexTests {
 		assertEquals("expected a declaration", declElt1, actualDeclElt1);
 	}
 
+	@Test
 	public void testGetDeclUnknown() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -142,6 +155,7 @@ public class QueryTests extends IndexTests {
 		assertNull(actualDeclElt2);
 	}
 
+	@Test
 	public void testGetOccs() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -154,6 +168,7 @@ public class QueryTests extends IndexTests {
 				OCCURRENCES);
 	}
 
+	@Test
 	public void testGetOccsUnknown() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -163,6 +178,7 @@ public class QueryTests extends IndexTests {
 		assertIsEmpty(actualOccsElt2);
 	}
 
+	@Test
 	public void testGetDeclsPrjName() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -172,6 +188,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(declElt1), declsName1, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetDeclsPrjNameNoneExpected() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -181,6 +198,7 @@ public class QueryTests extends IndexTests {
 		assertIsEmpty(declsName2);
 	}
 
+	@Test
 	public void testGetDeclsFile() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -189,6 +207,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(declElt1, declElt3), declsFile2, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetVisibleDecls() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -199,6 +218,7 @@ public class QueryTests extends IndexTests {
 				visibleDeclsFile2, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetDeclsFileName() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -208,6 +228,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(declElt1), declsName1F1, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetDeclsFileNameOtherThanDecl() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -217,6 +238,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(declElt1), declsName1F2, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetDeclsFileType() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -229,6 +251,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(declElt3), declsF2NE2, DECLARATIONS);
 	}
 
+	@Test
 	public void testGetOccsKind() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -238,6 +261,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(occElt1K2F2), occsElt1K2, OCCURRENCES);
 	}
 
+	@Test
 	public void testGetOccsFile() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -247,6 +271,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(occElt1K2F2), occsElt1F2, OCCURRENCES);
 	}
 
+	@Test
 	public void testGetOccsLocation() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -258,6 +283,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(asList(occElt4InElt1), occsElt4, OCCURRENCES);
 	}
 
+	@Test
 	public void testGetOccsKindFile() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -279,6 +305,7 @@ public class QueryTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testPropagator() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -292,6 +319,7 @@ public class QueryTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testGetOccsSeveralDecls() throws Exception {
 		final List<IDeclaration> declarations = asList(declElt1, declElt4);
 		final List<IOccurrence> expected = asList(occElt1F1, occElt1K2F2, occElt4InElt1, occElt4InF1Root);
@@ -304,6 +332,7 @@ public class QueryTests extends IndexTests {
 		assertSameElements(expected, actual, "occurrences");
 	}
 	
+	@Test
 	public void testGetDeclsSeveralOccs() throws Exception {
 		final List<IOccurrence> occurrences = asList(occElt1F1, occElt1K2F2, occElt4InElt1, occElt4InF1Root);
 		final List<IDeclaration> expected = asList(declElt1, declElt4);
@@ -317,6 +346,7 @@ public class QueryTests extends IndexTests {
 	
 	}
 	
+	@Test
 	public void testGetVisibleDeclsFileUnknown() throws Exception {
 		// no indexer is registered for this file type
 		final IRodinFile unknown = createRodinFile(project, "unknown.test2");

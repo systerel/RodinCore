@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_KIND;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -52,12 +63,8 @@ public class IndexingBridgeTests extends IndexTests {
 		assertTrue("indexing failed", result.isSuccess());
 	}
 
-	public IndexingBridgeTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "indFac1.test");
@@ -68,12 +75,13 @@ public class IndexingBridgeTests extends IndexTests {
 		f1ImportsElt2.put(elt2, declElt2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
 	}
 
+	@Test
 	public void testDeclare() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -95,6 +103,7 @@ public class IndexingBridgeTests extends IndexTests {
 				.contains(expected));
 	}
 
+	@Test
 	public void testDeclareNoOccurrence() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -112,6 +121,7 @@ public class IndexingBridgeTests extends IndexTests {
 				.contains(unexpected));
 	}
 
+	@Test
 	public void testDeclareNullElem() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports,
@@ -125,6 +135,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testDeclareNullName() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -137,6 +148,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testDeclareNotLocal() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, f1ImportsElt2, null);
@@ -149,6 +161,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testDeclareTwice() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -163,6 +176,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testDeclareEmptyName() throws Exception {
 		IndexingBridge bridge = new IndexingBridge(file1, emptyImports, null);
 
@@ -174,6 +188,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 	
+	@Test
 	public void testAddLocalOccurrence() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -199,6 +214,7 @@ public class IndexingBridgeTests extends IndexTests {
 		assertEquals("Bad occurrences", expected, actual);
 	}
 
+	@Test
 	public void testAddImportOccurrence() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, f1ImportsElt2, null);
@@ -223,6 +239,7 @@ public class IndexingBridgeTests extends IndexTests {
 		assertEquals("Bad occurrences", expected, actual);
 	}
 
+	@Test
 	public void testAddOccurrenceLocationInOtherFile() throws Exception {
 		IndexingBridge bridge =
 			new IndexingBridge(file2, emptyImports, null);
@@ -238,6 +255,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 	
+	@Test
 	public void testAddOccurrenceNotLocalNotImported() throws Exception {
 		IndexingBridge bridge =
 			new IndexingBridge(file1, emptyImports, null);
@@ -253,6 +271,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 	
+	@Test
 	public void testLocalExport() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -276,6 +295,7 @@ public class IndexingBridgeTests extends IndexTests {
 		assertEquals("Bad exports", expected, actual);
 	}
 
+	@Test
 	public void testImportExport() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, f1ImportsElt2, null);
@@ -296,6 +316,7 @@ public class IndexingBridgeTests extends IndexTests {
 
 	}
 
+	@Test
 	public void testIllegalExport() throws Exception {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
@@ -308,6 +329,7 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testGetImports() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, f1ImportsElt2, null);
@@ -318,6 +340,7 @@ public class IndexingBridgeTests extends IndexTests {
 		assertSameElements(expected, actual, "imports");
 	}
 
+	@Test
 	public void testGetDeclarationsEmpty() throws Exception {
 		IndexingBridge bridge =
 			new IndexingBridge(file1, emptyImports, null);
@@ -327,6 +350,7 @@ public class IndexingBridgeTests extends IndexTests {
 		assertEquals("expected empty declarations", 0, declarations.length);
 	}
 
+	@Test
 	public void testGetDeclarationsNotEmpty() throws Exception {
 		IndexingBridge bridge =
 			new IndexingBridge(file1, emptyImports, null);

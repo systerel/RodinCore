@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_DESTINATION;
 import static org.rodinp.core.IRodinDBStatusConstants.NAME_COLLISION;
@@ -18,6 +21,9 @@ import static org.rodinp.core.IRodinDBStatusConstants.ROOT_ELEMENT;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -47,11 +53,7 @@ public class RootElementTests extends CopyMoveTests {
 	// Destination root element
 	IInternalElement rDest;
 
-	public RootElementTests(String name) {
-		super(name);
-	}
-	
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
@@ -63,7 +65,7 @@ public class RootElementTests extends CopyMoveTests {
 		rDest = rfDest.getRoot();
 	}
 
-	@Override
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -72,6 +74,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensure that isRoot() works properly on handles only.
 	 */
+	@Test
 	public void testIsRoot() throws Exception {
 		final IRodinDB db = getRodinDB();
 		final IRodinProject prj = getRodinProject("INEXISTENT");
@@ -89,6 +92,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensure that getRoot() works properly on handles only.
 	 */
+	@Test
 	public void testGetRoot() throws Exception {
 		final IRodinFile rf = getRodinFile("P/inexistent.test");
 		final IInternalElement root = rf.getRoot();
@@ -104,6 +108,7 @@ public class RootElementTests extends CopyMoveTests {
 	 * Ensures that copying to a root element is invalid, whatever the
 	 * parameters.
 	 */
+	@Test
 	public void testCopyToRoot() throws CoreException {
 		final String name = rDest.getElementName();
 
@@ -119,6 +124,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that copying from a root element works as expected.
 	 */
+	@Test
 	public void testCopyFromRoot() throws CoreException {
 		copyPositive(rSource, rDest, null, null, false);
 	}
@@ -126,6 +132,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that a root element cannot be deleted.
 	 */
+	@Test
 	public void testDeleteRoot() throws Exception {
 		deleteNegative(rSource, false, ROOT_ELEMENT, rSource);
 		deleteNegative(rSource, true, ROOT_ELEMENT, rSource);
@@ -134,6 +141,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that a root element cannot be moved from.
 	 */
+	@Test
 	public void testMoveFromRoot() throws CoreException {
 		moveNegative(rSource, rDest, null, null, false, ROOT_ELEMENT);
 		moveNegative(rSource, rDest, null, null, true, ROOT_ELEMENT);
@@ -144,6 +152,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that one cannot move to a root element.
 	 */
+	@Test
 	public void testMoveToRoot() throws CoreException {
 		final String name = rDest.getElementName();
 
@@ -156,6 +165,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that a root element cannot be renamed.
 	 */
+	@Test
 	public void testRenameRoot() throws CoreException {
 		renameNegative(rSource, "Y", false, ROOT_ELEMENT);
 		renameNegative(rSource, "Y", true, ROOT_ELEMENT);
@@ -164,6 +174,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures that an existing root element cannot be created again.
 	 */
+	@Test
 	public void testCreateRootExists() throws Exception {
 		createNegative(rSource, null, NAME_COLLISION, rSource);
 		createNegative(rSource, rSource, NAME_COLLISION, rSource);
@@ -172,6 +183,7 @@ public class RootElementTests extends CopyMoveTests {
 	/**
 	 * Ensures a root element cannot be created when its file doesn't exist.
 	 */
+	@Test
 	public void testCreateRootNoFile() throws Exception {
 		final IRodinFile rf = getRodinFile("P/Z.test");
 		final IInternalElement root = rf.getRoot();

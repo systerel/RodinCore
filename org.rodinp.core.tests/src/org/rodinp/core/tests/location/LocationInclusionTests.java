@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests.location;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.tests.location.RodinLocationTests.TEST_ATTR_TYPE;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.location.IRodinLocation;
@@ -36,12 +42,8 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 	private static NamedElement elt2F1;
 	private static NamedElement elt1F2;
 
-	public LocationInclusionTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "inclusion1.test");
@@ -52,12 +54,13 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
 	}
 
+	@Test
 	public void testRLsameElement() throws Exception {
 		final IRodinLocation loc1 = new RodinLocation(project);
 		final IRodinLocation loc2 = new RodinLocation(project);
@@ -67,6 +70,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertTrue("an element should be included in itself", included);
 	}
 
+	@Test
 	public void testRLFileInProject() throws Exception {
 		final IRodinLocation loc1 = new RodinLocation(file1);
 		final IRodinLocation loc2 = new RodinLocation(project);
@@ -76,6 +80,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertTrue("a file should be included in its project", included);
 	}
 
+	@Test
 	public void testRLProjectInFile() throws Exception {
 		final IRodinLocation loc1 = new RodinLocation(project);
 		final IRodinLocation loc2 = new RodinLocation(file1);
@@ -85,6 +90,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertFalse("a project should not be included in a file", included);
 	}
 
+	@Test
 	public void testRLeltNotInFile() throws Exception {
 		final IRodinLocation loc1 = new RodinLocation(file1);
 		final IRodinLocation loc2 = new RodinLocation(elt1F2);
@@ -94,6 +100,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertFalse("element is not in file", included);
 	}
 
+	@Test
 	public void testILDiffElt() throws Exception {
 		final IRodinLocation loc1 = new InternalLocation(elt1F1);
 		final IRodinLocation loc2 = new InternalLocation(elt2F1);
@@ -103,6 +110,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertFalse("elements are different", included);
 	}
 
+	@Test
 	public void testAttLocInIntLoc() throws Exception {
 		final IRodinLocation loc1 = new AttributeLocation(elt1F1, TEST_ATTR_TYPE);
 		final IRodinLocation loc2 = new InternalLocation(elt1F1);
@@ -112,6 +120,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 		assertTrue("an attribute should be included in its element", included);
 	}
 
+	@Test
 	public void testSubsLocInAttLoc() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 1, 5);
@@ -124,6 +133,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				included);
 	}
 
+	@Test
 	public void testSubsLocInProject() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 0, 5);
@@ -135,6 +145,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				included);
 	}
 
+	@Test
 	public void testSameSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 1, 5);
@@ -147,6 +158,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				included);
 	}
 
+	@Test
 	public void testSubsLocInSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 3, 5);
@@ -159,6 +171,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				included);
 	}
 
+	@Test
 	public void testSubsLocNotInSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 3, 15);
@@ -172,6 +185,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				included);
 	}
 
+	@Test
 	public void testSubsLocApart() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 3, 5);
@@ -184,6 +198,7 @@ public class LocationInclusionTests extends AbstractRodinDBTests {
 				"an attribute substring should not be included in a separate one",
 				included);
 	}
+	@Test
 	public void testSubsLocOverlap() throws Exception {
 		final IRodinLocation loc1 =
 				new AttributeSubstringLocation(elt1F1, TEST_ATTR_TYPE, 3, 9);

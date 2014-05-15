@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -24,20 +27,16 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 
 	private static final String PROJECT_NAME = "P";
 
-	public TestElementRelationLoading(String name) {
-		super(name);
-	}
-
 	private IRodinProject rodinProject;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject(PROJECT_NAME);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(PROJECT_NAME);
 		super.tearDown();
 	}
@@ -46,6 +45,7 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 	 * Ensures that a Rodin file with a correct hierarchy of elements is well
 	 * constructed.
 	 */
+	@Test
 	public void testCreateNormalHierarchy() throws Exception {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test>\n"
@@ -65,6 +65,7 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 	/**
 	 * Ensures that an invalid child for a root element is ignored.
 	 */
+	@Test
 	public void testCreateAbnormalRootChild() throws Exception {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test2>\n"
@@ -77,6 +78,7 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 	/**
 	 * Ensures that an invalid child for a non root element is ignored.
 	 */
+	@Test
 	public void testCreateAbnormalElementChild() throws Exception {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test2>\n"

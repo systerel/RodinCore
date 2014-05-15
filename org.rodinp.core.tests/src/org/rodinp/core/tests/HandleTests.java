@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.junit.Test;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -27,10 +31,6 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
  * 
  */
 public class HandleTests extends AbstractRodinDBTests {
-
-	public HandleTests(String name) {
-		super(name);
-	}
 
 	public static void assertNameParent(IRodinElement element,
 			String expectedName, IRodinElement expectedParent) {
@@ -56,12 +56,14 @@ public class HandleTests extends AbstractRodinDBTests {
 		assertEquals(expectedType, file.getRootElementType());
 	}
 
+	@Test
 	public void testDBHandle() throws Exception {
 		final IRodinDB rodinDB = getRodinDB();
 		assertNameTypeParent(rodinDB, "", IRodinDB.ELEMENT_TYPE, null);
 		assertNull(RodinCore.valueOf((IWorkspaceRoot) null));
 	}
 
+	@Test
 	public void testProjectHandle() throws Exception {
 		final String projectName = "P";
 		final IRodinDB rodinDB = getRodinDB();
@@ -71,6 +73,7 @@ public class HandleTests extends AbstractRodinDBTests {
 		assertNull(RodinCore.valueOf((IProject) null));
 	}
 
+	@Test
 	public void testFileHandle() throws Exception {
 		final String fileName = "foo.test";
 		final IRodinProject rodinProject = getRodinProject("P");
@@ -80,10 +83,12 @@ public class HandleTests extends AbstractRodinDBTests {
 		assertNull(RodinCore.valueOf((IFile) null));
 	}
 
+	@Test
 	public void testResourceHandle() throws Exception {
 		assertNull(RodinCore.valueOf((IResource) null));		
 	}
 
+	@Test
 	public void testRootHandle() throws Exception {
 		final String filePath = "/P/foo.test";
 		final String rootName = "foo";

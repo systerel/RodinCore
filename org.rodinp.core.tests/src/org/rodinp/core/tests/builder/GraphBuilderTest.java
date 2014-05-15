@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 package org.rodinp.core.tests.builder;
 
 import org.eclipse.core.resources.IProject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.builder.basis.Data;
@@ -21,16 +24,14 @@ import org.rodinp.core.tests.builder.basis.Data;
  */
 public class GraphBuilderTest extends AbstractBuilderTest {
 	
-	public GraphBuilderTest(String name) {
-		super(name);
-	}
-	
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		ToolTrace.flush();
 	}
-	
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		for (IProject project: getWorkspaceRoot().getProjects()) {
 			project.delete(true, true, null);
 		}
@@ -40,6 +41,7 @@ public class GraphBuilderTest extends AbstractBuilderTest {
 	/**
 	 * check that the graph doesn't contain sub directory
 	 */
+	@Test
 	public void testGraphFullBuild() throws Exception {
 		importProject("Q2");
 		
@@ -63,6 +65,7 @@ public class GraphBuilderTest extends AbstractBuilderTest {
 	/**
 	 * check that the graph doesn't contain sub directory
 	 */
+	@Test
 	public void testGraphIncrementalBuild() throws Exception {		
 		importProject("Q2");
 

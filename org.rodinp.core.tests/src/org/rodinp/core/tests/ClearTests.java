@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,19 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
@@ -30,19 +37,15 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
  */
 public class ClearTests extends ModifyingResourceTests {
 
-	public ClearTests(String name) {
-		super(name);
-	}
-	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
 		// ensure that indexing is not going to interfere with deletion
 //		waitUntilIndexesReady();
 	}
 	
-	@Override
+	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -51,6 +54,7 @@ public class ClearTests extends ModifyingResourceTests {
 	/**
 	 * Should be able to clear the root element of a Rodin file.
 	 */
+	@Test
 	public void testClearRoot() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -78,6 +82,7 @@ public class ClearTests extends ModifyingResourceTests {
 	 * After clearing the root of a Rodin file in an IWorkspaceRunnable, it
 	 * should be cleared.
 	 */
+	@Test
 	public void testClearRootInRunnable() throws CoreException {
 		try {
 			final IRodinFile file = createRodinFile("P/X.test");
@@ -114,6 +119,7 @@ public class ClearTests extends ModifyingResourceTests {
 	 * Ensures that an internal element can be cleared. Verifies that the
 	 * correct change deltas are generated.
 	 */
+	@Test
 	public void testClearInternal() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -140,6 +146,7 @@ public class ClearTests extends ModifyingResourceTests {
 	 * Ensures that when an internal element is cleared, all its descendants are
 	 * deleted. Verifies that the correct change deltas are generated.
 	 */
+	@Test
 	public void testClearInternalWithChildren() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -170,6 +177,7 @@ public class ClearTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that clearing can be canceled.
 	 */
+	@Test
 	public void testClearInternalCancelled() throws CoreException {
 		try {
 			IRodinFile file = createRodinFile("P/X.test");
@@ -194,6 +202,7 @@ public class ClearTests extends ModifyingResourceTests {
 	 * Ensures that an internal element can be cleared inside a scheduling rule
 	 * that includes the resource only.
 	 */
+	@Test
 	public void testClearElementSchedulingRule() throws CoreException {
 		try {
 			IRodinFile rf = createRodinFile("P/X.test");
@@ -227,6 +236,7 @@ public class ClearTests extends ModifyingResourceTests {
 	/**
 	 * Ensure that the correct exception is thrown for invalid input to the <code>ClearOperation</code>
 	 */
+	@Test
 	public void testClearWithInvalidInput() throws CoreException {
 		try {
 			final IRodinFile rf = getRodinFile("P/X.test");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,32 +11,28 @@
 package org.rodinp.core.tests.indexer.tables;
 
 import static java.util.Arrays.asList;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertPredecessors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Test;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.internal.core.indexer.sort.Graph;
 import org.rodinp.internal.core.indexer.sort.Node;
 
 public class GraphTests extends IndexTests {
 
-	public GraphTests(String name) {
-		super(name);
-	}
-
 	private static Graph<Integer> graph = new Graph<Integer>();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		graph.clear();
 		super.tearDown();
 	}
@@ -75,6 +71,7 @@ public class GraphTests extends IndexTests {
 		assertTrue("should be empty", preds.isEmpty());
 	}
 
+	@Test
 	public void testRemoveFirst() throws Exception {
 		setPreds(graph, 2, 1);
 		remove(graph, 1);
@@ -83,6 +80,7 @@ public class GraphTests extends IndexTests {
 		assertEmptyPreds(graph, 2);
 	}
 
+	@Test
 	public void testRemoveLast() throws Exception {
 		setPreds(graph, 2, 1);
 		remove(graph, 2);
@@ -90,6 +88,7 @@ public class GraphTests extends IndexTests {
 		assertLabels(graph, 1);
 	}
 
+	@Test
 	public void testRemoveInner() throws Exception {
 		setPreds(graph, 2, 1);
 		setPreds(graph, 3, 2);
@@ -100,6 +99,7 @@ public class GraphTests extends IndexTests {
 		assertEmptyPreds(graph, 3);
 	}
 
+	@Test
 	public void testSetGetPredecessors() {
 		graph.setPredecessors(2, asList(1));
 		final List<Integer> predecessors = graph.getPredecessors(2);
@@ -107,6 +107,7 @@ public class GraphTests extends IndexTests {
 		assertPredecessors(predecessors, 1);
 	}
 
+	@Test
 	public void testSetGetSeveralPredecessors() {
 		graph.setPredecessors(3, asList(1, 2));
 		final List<Integer> predecessors = graph.getPredecessors(3);
@@ -114,6 +115,7 @@ public class GraphTests extends IndexTests {
 		assertPredecessors(predecessors, 1, 2);
 	}
 
+	@Test
 	public void testGetNoSuchLabel() throws Exception {
 		try {
 			graph.getPredecessors(1);
@@ -123,6 +125,7 @@ public class GraphTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testClear() {
 		setPreds(graph, 3, 1, 2);
 
@@ -132,6 +135,7 @@ public class GraphTests extends IndexTests {
 		assertTrue("graph not properly cleared", nodes.isEmpty());
 	}
 
+	@Test
 	public void testGetNodes() {
 		setPreds(graph, 3, 1, 2);
 
@@ -150,6 +154,7 @@ public class GraphTests extends IndexTests {
 		}
 	}
 
+	@Test
 	public void testGetOrCreateNodeCreate() {
 		final Node<Integer> node = graph.getOrCreateNode(1);
 		
@@ -158,6 +163,7 @@ public class GraphTests extends IndexTests {
 		assertEmptyPreds(graph, 1);
 	}
 
+	@Test
 	public void testGetOrCreateNodeGet() {
 		graph.getOrCreateNode(1);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
@@ -32,6 +36,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -59,15 +66,13 @@ public class MarkerTests extends ModifyingResourceTests {
 
 	IRodinProject rodinProject;
 
-	public MarkerTests(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 	}
 
+	@After
 	public void tearDown() throws Exception {
 		// Clean up the workspace
 		getWorkspaceRoot().delete(true, true, null);
@@ -257,6 +262,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set on the Rodin database.
 	 */
+	@Test
 	public void testDBMarker() throws Exception {
 		IRodinDB db = getRodinDB();
 		createMarkerPositive(db, TestProblem.err0);
@@ -265,6 +271,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set on a Rodin Project.
 	 */
+	@Test
 	public void testProjectMarker() throws Exception {
 		createMarkerPositive(rodinProject, TestProblem.warn1, "1");
 	}
@@ -273,6 +280,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an inexistent Rodin
 	 * Project.
 	 */
+	@Test
 	public void testProjectMarkerInexistent() throws Exception {
 		IRodinProject rp = getRodinProject("Inexistent");
 		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, rp, TestProblem.warn1, "1");
@@ -281,6 +289,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set on a Rodin File.
 	 */
+	@Test
 	public void testFileMarker() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		createMarkerPositive(rodinFile, TestProblem.info2, 1, "");
@@ -289,6 +298,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker cannot be set on an inexistent Rodin File.
 	 */
+	@Test
 	public void testFileMarkerInexistent() throws Exception {
 		IRodinFile rodinFile = getRodinFile("P/inexistent.test");
 		createMarkerNegative(ELEMENT_DOES_NOT_EXIST, rodinFile,
@@ -298,6 +308,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set on a top-level internal element.
 	 */
+	@Test
 	public void testTopMarker() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -310,6 +321,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an inexistent top-level
 	 * internal element.
 	 */
+	@Test
 	public void testTopMarkerInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -321,6 +333,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of a top-level
 	 * internal element.
 	 */
+	@Test
 	public void testTopMarkerAttr() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -334,6 +347,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an attribute of an
 	 * inexistent top-level internal element.
 	 */
+	@Test
 	public void testTopMarkerAttrInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -346,6 +360,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of a top-level
 	 * internal element, together with a location.
 	 */
+	@Test
 	public void testTopMarkerAttrLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -359,6 +374,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an attribute of an
 	 * inexistent top-level internal element, together with a location.
 	 */
+	@Test
 	public void testTopMarkerAttrLocInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -371,6 +387,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of a non
 	 * top-level internal element, together with a location.
 	 */
+	@Test
 	public void testIntMarkerAttrLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -385,6 +402,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an attribute of an
 	 * inexistent non top-level internal element, together with a location.
 	 */
+	@Test
 	public void testIntMarkerAttrLocInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -399,6 +417,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an inexistent attribute of an
 	 * internal element.
 	 */
+	@Test
 	public void testMarkerAttrInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -411,6 +430,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set on an inexistent attribute of
 	 * an internal element, together with a location.
 	 */
+	@Test
 	public void testMarkerAttrLocInexistent() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -424,6 +444,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "boolean".
 	 */
+	@Test
 	public void testMarkerAttrBool() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -437,6 +458,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "handle".
 	 */
+	@Test
 	public void testMarkerAttrHandle() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -450,6 +472,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "integer".
 	 */
+	@Test
 	public void testMarkerAttrInt() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -463,6 +486,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker can be set on an attribute of an internal
 	 * element, when the attribute is of kind "long".
 	 */
+	@Test
 	public void testMarkerAttrLong() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -476,6 +500,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a problem marker cannot be set with a location but no
 	 * attribute.
 	 */
+	@Test
 	public void testMarkerNoAttrLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -492,6 +517,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker cannot be set with a partial location.
 	 */
+	@Test
 	public void testMarkerAttrBadLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -518,6 +544,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set with a null attribute id.
 	 */
+	@Test
 	public void testMarkerAttrNull() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -529,6 +556,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a problem marker can be set with a null attribute id.
 	 */
+	@Test
 	public void testMarkerAttrLocNull() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
@@ -541,6 +569,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a top-level internal element
 	 * is still relevant after moving its file.
 	 */
+	@Test
 	public void testTopMarkerMoveFile() throws Exception {
 		IRodinProject rp2 = createRodinProject("P2");
 		IRodinFile rf = createRodinFile("P/x.test");
@@ -561,6 +590,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a non top-level internal
 	 * element is still relevant after moving its file.
 	 */
+	@Test
 	public void testIntMarkerMoveFile() throws Exception {
 		IRodinProject rp2 = createRodinProject("P2");
 		IRodinFile rf = createRodinFile("P/x.test");
@@ -583,6 +613,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a top-level internal element
 	 * is still relevant after moving its file with renaming.
 	 */
+	@Test
 	public void testTopMarkerMoveFileRenaming() throws Exception {
 		IRodinProject rp2 = createRodinProject("P2");
 		IRodinFile rf = createRodinFile("P/x.test");
@@ -603,6 +634,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a non top-level internal
 	 * element is still relevant after moving its file with renaming.
 	 */
+	@Test
 	public void testIntMarkerMoveFileRenaming() throws Exception {
 		IRodinProject rp2 = createRodinProject("P2");
 		IRodinFile rf = createRodinFile("P/x.test");
@@ -625,6 +657,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a marker on a top-level internal element is not copied with
 	 * its Rodin file.
 	 */
+	@Test
 	public void testTopMarkerCopyFile() throws Exception {
 		IRodinFile rf = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -642,6 +675,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that a marker on a non top-level internal element is not copied
 	 * with its Rodin file.
 	 */
+	@Test
 	public void testIntMarkerCopyFile() throws Exception {
 		IRodinFile rf = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -660,6 +694,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a top-level internal element
 	 * is still relevant after renaming its project.
 	 */
+	@Test
 	public void testTopMarkerRenameProject() throws Exception {
 		IRodinFile rf = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -680,6 +715,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a top-level internal element
 	 * is still relevant after renaming its file.
 	 */
+	@Test
 	public void testTopMarkerRenameFile() throws Exception {
 		IRodinFile rf = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -699,6 +735,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that the data stored in a marker on a non top-level internal
 	 * element is still relevant after renaming its file.
 	 */
+	@Test
 	public void testIntMarkerRenameFile() throws Exception {
 		IRodinFile rf = createRodinFile("P/x.test");
 		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
@@ -719,6 +756,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensure that mapping from IRodinProblem to error code works in both ways.
 	 */
+	@Test
 	public void testProblem() {
 		assertEquals("Unexpected error code", PLUGIN_ID + ".err0",
 				TestProblem.err0.getErrorCode());
@@ -730,6 +768,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensures that passing a null marker to an inquiry method throws an
 	 * exception.
 	 */
+	@Test
 	public void testNullMarkerAccess() throws Exception {
 		for (MarkerMethod m: MarkerMethod.values()) {
 			m.invokeNull();
@@ -739,6 +778,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that passing a non-Rodin marker throws an exception.
 	 */
+	@Test
 	public void testNonRodinMarker() throws Exception {
 		final IProject project = rodinProject.getProject();
 		final IMarker marker = project.createMarker(IMarker.MARKER);
@@ -750,6 +790,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that passing an inexistent marker returns null.
 	 */
+	@Test
 	public void testInexistentMarker() throws Exception {
 		rodinProject.createProblemMarker(TestProblem.err0);
 		final IMarker marker = getMarker(rodinProject, RODIN_PROBLEM_MARKER);

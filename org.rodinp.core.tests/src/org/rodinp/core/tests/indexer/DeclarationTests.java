@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -29,12 +35,8 @@ public class DeclarationTests extends IndexTests {
 	private static final String eltName1 = "eltName1";
 	private static final String eltName2 = "eltName2";
 
-	public DeclarationTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "desc.test");
@@ -42,12 +44,13 @@ public class DeclarationTests extends IndexTests {
 		elt2 = createNamedElement(file, "internalName2");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
 	}
 
+	@Test
 	public void testGetElement() {
 		final IDeclaration declaration = new Declaration(elt1, eltName1);
 		
@@ -56,6 +59,7 @@ public class DeclarationTests extends IndexTests {
 		assertEquals("bad element in declaration", elt1, element);
 	}
 
+	@Test
 	public void testGetName() {
 		final IDeclaration declaration = new Declaration(elt1, eltName1);
 		
@@ -64,6 +68,7 @@ public class DeclarationTests extends IndexTests {
 		assertEquals("bad name in declaration", eltName1, name);
 	}
 	
+	@Test
 	public void testDiffers() throws Exception {
 		final IDeclaration decl11 = new Declaration(elt1, eltName1);
 		final IDeclaration decl12 = new Declaration(elt1, eltName2);
@@ -78,6 +83,7 @@ public class DeclarationTests extends IndexTests {
 		assertFalse(decl21.equals(decl22));
 	}
 	
+	@Test
 	public void testEquals() throws Exception {
 		final IDeclaration decl1 = new Declaration(elt1, eltName1);
 		final IDeclaration decl2 = new Declaration(elt1, eltName1);
