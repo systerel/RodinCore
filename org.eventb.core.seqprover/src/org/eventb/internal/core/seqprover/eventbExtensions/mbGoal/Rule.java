@@ -104,8 +104,6 @@ public class Rule<T extends Predicate> {
 		return relCons.getRight().equals(relCons.getLeft());
 	}
 
-	// This is not the regular equals() method from Object
-	// TODO see if really needed
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
