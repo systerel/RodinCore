@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.FilteringInspector;
@@ -45,7 +46,6 @@ import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
-import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.wd.WDComputer;
@@ -2425,19 +2425,33 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T translateDatatype(IDatatypeTranslation translation) {
 		ensureTypeChecked();
-		final DatatypeTranslation real = (DatatypeTranslation) translation;
-		if (fac != real.getSourceFormulaFactory()) {
-			throw new IllegalArgumentException("Formula factory " + fac
-					+ " incompatible with translation " + translation);
-		}
-		final ISealedTypeEnvironment typenv = real.getSourceTypeEnvironment();
-		for (final FreeIdentifier ident : freeIdents) {
-			if (!typenv.contains(ident)) {
-				throw new IllegalArgumentException("Free identifier " + ident
-						+ " is not part of the source type environment of "
-						+ translation);
-			}
-		}
+		final AbstractTranslation real = (AbstractTranslation) translation;
+		real.ensurePreconditions(this);
+		return rewrite(real.getFormulaRewriter());
+	}
+
+	/**
+	 * Returns the type-checked formula obtained by translating this formula
+	 * using the given extension translation.
+	 * 
+	 * @param translation
+	 *            some extension translation
+	 * @return a type-checked formula where most extensions have been translated
+	 *         to function applications
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @throws IllegalStateException
+	 *             if this formula is not type-checked
+	 * @throws IllegalArgumentException
+	 *             if this formula was built by a factory different from that of
+	 *             the source type environment of the given translation
+	 * @see ITypeEnvironment#makeExtensionTranslation()
+	 * @since 3.1
+	 */
+	public T translateExtensions(IExtensionTranslation translation) {
+		ensureTypeChecked();
+		final AbstractTranslation real = (AbstractTranslation) translation;
+		real.ensurePreconditions(this);
 		return rewrite(real.getFormulaRewriter());
 	}
 

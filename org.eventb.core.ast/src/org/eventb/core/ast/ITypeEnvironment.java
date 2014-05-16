@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,6 +180,18 @@ public interface ITypeEnvironment {
 	 * @since 2.7
 	 */
 	IDatatypeTranslation makeDatatypeTranslation();
+
+	/**
+	 * Returns a fresh extension translation based on a snapshot of this type
+	 * environment. The resulting translation will be applicable to any formula
+	 * which is type-checked within this type environment at the time of the
+	 * call to this method.
+	 * 
+	 * @return a fresh extension translation
+	 * @see Formula#translateExtensions(IExtensionTranslation)
+	 * @since 3.1
+	 */
+	IExtensionTranslation makeExtensionTranslation();
 
 	/**
 	 * Returns an iterator for traversing this type environment.
