@@ -27,6 +27,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FreshNameSolver;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
@@ -49,9 +50,9 @@ import org.eventb.internal.core.ast.extension.TranslatorRegistry.PredTranslatorR
  * 
  * @author Thomas Muller
  */
-public class ExtensionTranslation implements IExtensionTranslation {
+public class ExtensionTranslation extends AbstractTranslation implements
+		IExtensionTranslation {
 
-	private final ISealedTypeEnvironment srcTypenv;
 	private final FormulaFactory trgFactory;
 	private final ITypeEnvironmentBuilder trgTypenv;
 	private final FreshNameSolver nameSolver;
@@ -64,7 +65,7 @@ public class ExtensionTranslation implements IExtensionTranslation {
 	private ITypeCheckingRewriter rewriter;
 
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
-		this.srcTypenv = srcTypenv;
+		super(srcTypenv);
 		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
 		this.trgTypenv = srcTypenv.translate(trgFactory).makeBuilder();
 		this.nameSolver = new FreshNameSolver(trgTypenv);
@@ -86,10 +87,6 @@ public class ExtensionTranslation implements IExtensionTranslation {
 			}
 		}
 		return FormulaFactory.getInstance(keptExtensions);
-	}
-
-	public ISealedTypeEnvironment getSourceTypeEnvironment() {
-		return srcTypenv;
 	}
 
 	public FormulaFactory getTargetFactory() {
@@ -142,7 +139,8 @@ public class ExtensionTranslation implements IExtensionTranslation {
 		return "ext";
 	}
 
-	public ITypeCheckingRewriter getRewriter() {
+	@Override
+	public ITypeCheckingRewriter getFormulaRewriter() {
 		return rewriter;
 	}
 

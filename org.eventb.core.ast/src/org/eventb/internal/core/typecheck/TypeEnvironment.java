@@ -168,7 +168,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 
 	@Override
 	public IDatatypeTranslation makeDatatypeTranslation() {
-		return new DatatypeTranslation(this);
+		return new DatatypeTranslation(this.makeSnapshot());
 	}
 	
 	@Override

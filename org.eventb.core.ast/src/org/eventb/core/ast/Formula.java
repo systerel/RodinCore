@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.FilteringInspector;
@@ -45,8 +46,6 @@ import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
-import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
-import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.wd.WDComputer;
@@ -2426,19 +2425,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T translateDatatype(IDatatypeTranslation translation) {
 		ensureTypeChecked();
-		final DatatypeTranslation real = (DatatypeTranslation) translation;
-		if (fac != real.getSourceFormulaFactory()) {
-			throw new IllegalArgumentException("Formula factory " + fac
-					+ " incompatible with translation " + translation);
-		}
-		final ISealedTypeEnvironment typenv = real.getSourceTypeEnvironment();
-		for (final FreeIdentifier ident : freeIdents) {
-			if (!typenv.contains(ident)) {
-				throw new IllegalArgumentException("Free identifier " + ident
-						+ " is not part of the source type environment of "
-						+ translation);
-			}
-		}
+		final AbstractTranslation real = (AbstractTranslation) translation;
+		real.ensurePreconditions(this);
 		return rewrite(real.getFormulaRewriter());
 	}
 
@@ -2452,28 +2440,19 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         to function applications
 	 * @throws UnsupportedOperationException
 	 *             if this formula is an assignment
+	 * @throws IllegalStateException
+	 *             if this formula is not type-checked
 	 * @throws IllegalArgumentException
-	 *             if this formula is not type-checked within the source type
-	 *             environment of the given translation
+	 *             if this formula was built by a factory different from that of
+	 *             the source type environment of the given translation
 	 * @see ITypeEnvironment#makeExtensionTranslation()
 	 * @since 3.1
 	 */
 	public T translateExtensions(IExtensionTranslation translation) {
 		ensureTypeChecked();
-		final ExtensionTranslation real = (ExtensionTranslation) translation;
-		final ISealedTypeEnvironment typenv = real.getSourceTypeEnvironment();
-		if (fac != typenv.getFormulaFactory()) {
-			throw new IllegalArgumentException("Formula factory " + fac
-					+ " incompatible with translation " + translation);
-		}
-		for (final FreeIdentifier ident : freeIdents) {
-			if (!typenv.contains(ident)) {
-				throw new IllegalArgumentException("Free identifier " + ident
-						+ " is not part of the source type environment of "
-						+ translation);
-			}
-		}
-		return rewrite(real.getRewriter());
+		final AbstractTranslation real = (AbstractTranslation) translation;
+		real.ensurePreconditions(this);
+		return rewrite(real.getFormulaRewriter());
 	}
 
 	/**

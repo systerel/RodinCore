@@ -25,7 +25,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISealedTypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -34,6 +33,7 @@ import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDestructorExtension;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.FreshNameSolver;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.TypeRewriter;
@@ -47,12 +47,12 @@ import org.eventb.internal.core.ast.TypeRewriter;
  * 
  * @author Thomas Muller
  */
-public class DatatypeTranslation implements IDatatypeTranslation {
+public class DatatypeTranslation extends AbstractTranslation implements
+		IDatatypeTranslation {
 
 	private final FormulaFactory sourceFactory;
 	private final FormulaFactory targetFactory;
 
-	private final ISealedTypeEnvironment sourceTypeEnvironment;
 	private final FreshNameSolver nameSolver;
 
 	private final Map<ParametricType, DatatypeTranslator> translators//
@@ -61,10 +61,10 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 	private final TypeRewriter typeRewriter;
 	private final ITypeCheckingRewriter formulaRewriter;
 
-	public DatatypeTranslation(ITypeEnvironment typenv) {
+	public DatatypeTranslation(ISealedTypeEnvironment typenv) {
+		super(typenv);
 		this.sourceFactory = typenv.getFormulaFactory();
 		this.targetFactory = computeTargetFactory();
-		this.sourceTypeEnvironment = typenv.makeSnapshot();
 		final Set<String> usedNames = new HashSet<String>(typenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, targetFactory);
 		this.typeRewriter = new TypeRewriter(targetFactory) {
@@ -112,10 +112,7 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 		return targetFactory;
 	}
 
-	public ISealedTypeEnvironment getSourceTypeEnvironment() {
-		return sourceTypeEnvironment;
-	}
-	
+	@Override
 	public ITypeCheckingRewriter getFormulaRewriter() {
 		return formulaRewriter;
 	}
@@ -173,6 +170,6 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 	@Override
 	public String toString() {
 		return "Datatype Translation for factory: " + sourceFactory
-				+ " in type environment: " + sourceTypeEnvironment;
+				+ " in type environment: " + srcTypenv;
 	}
 }

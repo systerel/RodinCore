@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,7 +134,8 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 		public DatatypeTranslation getTranslation() {
 			if (translation == null) {
-				translation = new DatatypeTranslation(sourceTypeEnv);
+				translation = new DatatypeTranslation(
+						sourceTypeEnv.makeSnapshot());
 			}
 			return translation;
 		}
