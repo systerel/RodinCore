@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class FinitePositive extends EmptyInputReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finitePositive";
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -87,6 +88,7 @@ public class FinitePositive extends EmptyInputReasoner {
 		return "finite of set of non-negative numbers";
 	}
 
+	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		IAntecedent[] antecidents = getAntecedents(seq);

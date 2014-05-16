@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,9 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
-public class RemoveMembership extends AbstractManualRewrites implements
-		IReasoner {
+public abstract class RemoveMembership extends AbstractManualRewrites {
 
 	public static enum RMLevel {
 		L0, L1;
@@ -29,9 +26,12 @@ public class RemoveMembership extends AbstractManualRewrites implements
 			return this.ordinal() >= other.ordinal();
 		}
 	}
-	
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
 
+	private final RMLevel level;
+
+	protected RemoveMembership(RMLevel level) {
+		this.level = level;
+	}
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred != null)
@@ -41,7 +41,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = getRewriter();
+		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(level);
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;
@@ -51,14 +51,6 @@ public class RemoveMembership extends AbstractManualRewrites implements
 		if (newSubPredicate == null || newSubPredicate == predicate)
 			return null;
 		return pred.rewriteSubFormula(position, newSubPredicate);
-	}
-
-	protected RemoveMembershipRewriterImpl getRewriter() {
-		return new RemoveMembershipRewriterImpl(RMLevel.L0);
-	}
-
-	public String getReasonerID() {
-		return REASONER_ID;
 	}
 
 }

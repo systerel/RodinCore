@@ -35,7 +35,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Rela
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public abstract class AbstractExtractor {
 
 	protected final MembershipGoalRules rf;

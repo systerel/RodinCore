@@ -85,15 +85,18 @@ public class TacticDescriptors {
 			this.description = description;
 		}
 
+		@Override
 		public synchronized String getTacticDescription()
 				throws IllegalArgumentException {
 			return description;
 		}
 
+		@Override
 		public String getTacticID() {
 			return id;
 		}
 
+		@Override
 		public String getTacticName() {
 			return name;
 		}
@@ -139,6 +142,7 @@ public class TacticDescriptors {
 			this.element = element;
 		}
 
+		@Override
 		public synchronized ITactic getTacticInstance() {
 			if (instance != null) {
 				return instance;

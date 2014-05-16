@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,20 +65,17 @@ public final class ProofTree implements IProofTree {
 		node.setProofTree(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
-	 */
+	@Override
 	public void addChangeListener(IProofTreeChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
 	}
 
+	@Override
 	public Object getOrigin() {
 		return origin;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#getRoot()
-	 */
+	@Override
 	public ProofTreeNode getRoot() {
 		return root;
 	}
@@ -88,27 +85,22 @@ public final class ProofTree implements IProofTree {
 		return getRoot().getFormulaFactory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#getSequent()
-	 */
+	@Override
 	public IProverSequent getSequent() {
 		return getRoot().getSequent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#isClosed()
-	 */
+	@Override
 	public boolean isClosed() {
 		return getConfidence() > IConfidence.PENDING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#removeChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
-	 */
+	@Override
 	public void removeChangeListener(IProofTreeChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
 	}
 
+	@Override
 	public void run(Runnable op) {
 		boolean wasEnable = deltaProcessor.isEnable();
 		try {
@@ -123,9 +115,7 @@ public final class ProofTree implements IProofTree {
 		deltaProcessor.fireDeltas();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#getConfidence()
-	 */
+	@Override
 	public int getConfidence() {
 		if (getRoot().isOpen() && 
 				getRoot().getComment().length() == 0)
@@ -133,20 +123,17 @@ public final class ProofTree implements IProofTree {
 		return getRoot().getConfidence();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#proofAttempted()
-	 */
+	@Override
 	public boolean proofAttempted() {
 		return !(root.isOpen() && root.getComment().length() == 0);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#getProofDependencies()
-	 */
+	@Override
 	public IProofDependencies getProofDependencies() {
 		return getRoot().computeProofDeps().finished(getFormulaFactory());
 	}
 	
+	@Override
 	public String toString(){
 		return root.toString();
 	}

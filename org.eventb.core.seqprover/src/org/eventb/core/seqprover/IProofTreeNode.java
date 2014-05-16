@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
  * Common protocol for a proof tree node.
  * 
  * <p>
- * Each proof tree node contains a proof sequent (see {@link IProofSequent}). A
+ * Each proof tree node contains a proof sequent (see {@link IProverSequent}). A
  * node has children proof tree nodes iff a rule has been applied to it. Nodes
  * that have no rule applied to them are termed "open". Note that there is a
  * difference between a proof tree node having no children (no rule applied,
@@ -35,7 +35,7 @@ import org.eventb.core.ast.FormulaFactory;
  * </p>
  * <p>
  * Each node in addition has a confidence level associated to it (see
- * {@see org.eventb.core.prover.IConfidence}):
+ * {@link IConfidence}):
  * <ul>
  * <li>Pending nodes have their confidence levels set to PENDING, which is the
  * minimum confidence level and is reserved for this purpose. </li>
@@ -62,6 +62,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return an array of the children of this node
 	 * @see #hasChildren()
 	 */
+	@Override
 	IProofTreeNode[] getChildNodes();
 
 	/**
@@ -145,6 +146,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @return the rule applied to this node or <code>null</code> is this node
 	 *         is a leaf node
 	 */
+	@Override
 	IProofRule getRule();
 
 	/**
@@ -201,14 +203,15 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * Returns the comment field of the current proof tree node.
 	 * 
 	 * @return The comment field of the current proof tree node.
-	 * @see #setComment()
+	 * @see #setComment(String)
 	 */
+	@Override
 	String getComment();
 
 	/**
 	 * Returns the confidence of this proof tree node.
 	 * 
-	 * @return the confidence of this proof tree node (see {@see IConfidence})
+	 * @return the confidence of this proof tree node (see {@link IConfidence})
 	 */
 	int getConfidence();
 

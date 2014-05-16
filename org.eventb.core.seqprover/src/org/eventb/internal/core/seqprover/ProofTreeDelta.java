@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,15 +58,18 @@ public class ProofTreeDelta implements IProofTreeDelta {
 		return childDelta;
 	}
 	
+	@Override
 	public IProofTreeDelta[] getChildren() {
 		IProofTreeDelta[] result = new IProofTreeDelta[children.size()];
 		return children.toArray(result);
 	}
 
+	@Override
 	public int getFlags() {
 		return flags;
 	}
 
+	@Override
 	public IProofTreeNode getProofTreeNode() {
 		return node;
 	}
@@ -88,6 +91,7 @@ public class ProofTreeDelta implements IProofTreeDelta {
 		flags |= COMMENT;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		toString(builder, "");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,11 +56,9 @@ public interface IReasonerDesc {
 	 * A dummy reasoner cannot be replayed. An attempt to call the
 	 * <code>apply()</code> method on it will always return an
 	 * <code>IReasonerFailure</code>. One can know whether the returned instance
-	 * is a dummy one by calling {@link IReasonerRegistry#isDummyReasoner()}.
+	 * is a dummy one by calling {@link IReasonerRegistry#isDummyReasoner(IReasoner)}.
 	 * </p>
 	 * 
-	 * @param reasonerID
-	 *            the id of the reasoner
 	 * @return an instance of the reasoner (might be a dummy one in case of
 	 *         error)
 	 */

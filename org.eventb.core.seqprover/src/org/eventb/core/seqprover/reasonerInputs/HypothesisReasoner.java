@@ -56,16 +56,19 @@ public abstract class HypothesisReasoner implements IReasoner {
 			this.pred = pred;
 		}
 
+		@Override
 		public void applyHints(ReplayHints hints) {
 			if (pred != null) {
 				pred = hints.applyHints(pred);
 			}
 		}
 
+		@Override
 		public String getError() {
 			return null;
 		}
 
+		@Override
 		public boolean hasError() {
 			return false;
 		}
@@ -100,12 +103,14 @@ public abstract class HypothesisReasoner implements IReasoner {
 
 	}
 	
+	@Override
 	public final void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
 		
 		// Nothing to do, all is in the generated rule
 	}
 
+	@Override
 	public final Input deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		final Set<Predicate> neededHyps = reader.getNeededHyps();
@@ -124,6 +129,7 @@ public abstract class HypothesisReasoner implements IReasoner {
 		return new Input(pred);
 	}
 
+	@Override
 	public final IReasonerOutput apply(IProverSequent seq, IReasonerInput rInput,
 			IProofMonitor pm) {
 		

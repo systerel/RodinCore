@@ -49,7 +49,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author "Thomas Muller"
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class OnePointFilterUtils {
 
 	static class Replacement {

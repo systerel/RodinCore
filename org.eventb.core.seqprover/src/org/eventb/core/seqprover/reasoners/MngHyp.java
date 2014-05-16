@@ -54,6 +54,7 @@ public class MngHyp implements IReasoner {
 		}
 
 		// TODO share this with Review reasoner input
+		@Override
 		public void applyHints(ReplayHints hints) {
 
 			final String type = action.getActionType();
@@ -66,10 +67,12 @@ public class MngHyp implements IReasoner {
 			action = new SelectionHypAction(type, new LinkedHashSet<Predicate>(Arrays.asList(newPreds)));
 		}
 
+		@Override
 		public String getError() {
 			return null;
 		}
 
+		@Override
 		public boolean hasError() {
 			return false;
 		}
@@ -94,14 +97,17 @@ public class MngHyp implements IReasoner {
 
 	}
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer) throws SerializeException {
 		// Nothing to serialize, all is in the rule
 	}
 	
+	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
@@ -118,6 +124,7 @@ public class MngHyp implements IReasoner {
 		return new Input((ISelectionHypAction) actions.get(0));
 	}
 
+	@Override
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 

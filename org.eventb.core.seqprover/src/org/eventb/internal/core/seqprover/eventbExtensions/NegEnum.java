@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,10 +49,12 @@ public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	@ProverRule( { "NEG_IN_L", "NEG_IN_R" })
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {

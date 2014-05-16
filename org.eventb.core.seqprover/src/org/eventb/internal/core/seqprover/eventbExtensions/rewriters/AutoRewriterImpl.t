@@ -113,7 +113,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 /**
  * Basic automated rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class AutoRewriterImpl extends PredicateSimplifier {
 
 	private static final BigInteger TWO = BigInteger.valueOf(2L);
@@ -162,16 +162,6 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Expression right) {
 		final FormulaFactory ff = left.getFactory();
 		return ff.makeRelationalPredicate(tag, left, right, null);
-	}
-
-	protected AssociativePredicate makeAssociativePredicate(int tag, Predicate... children) {
-		final FormulaFactory ff = children[0].getFactory();
-		return ff.makeAssociativePredicate(tag, children, null);
-	}
-
-	protected QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
-		final FormulaFactory ff = child.getFactory();
-		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
 
 	protected SetExtension makeSetExtension(Collection<Expression> expressions) {

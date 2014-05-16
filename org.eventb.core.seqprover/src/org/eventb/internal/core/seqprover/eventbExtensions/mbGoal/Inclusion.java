@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class Inclusion extends Generator {
 		return rationale.makeRule();
 	}
 
+	@Override
 	public List<Goal> generate(final Goal goal) {
 		final List<Goal> result = new ArrayList<Goal>();
 		if (right.equals(goal.set())) {

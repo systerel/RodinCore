@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,7 @@ package org.eventb.core.seqprover;
  * <ul>
  * <li>It has been registered through the <code>reasoners</code> extension
  * point.</li>
- * <li>Its name has been requested by way of {@link #getReasonerName()}.</li>
- * <li>Its instance has been requested by way of {@link #getReasonerInstance()}.
- * </li>
- * <li>Its descriptor has been requested by way of {@link #getReasonerDesc()}.</li>
+ * <li>Its descriptor has been requested by way of {@link #getReasonerDesc(String)}.</li>
  * </ul>
  * </p>
  *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover;
 
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
@@ -20,7 +19,7 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
  * <p>
  * Each instance of this class represents a call to an external prover.
  * Instances are created by the
- * {@link XProverReasoner#newProverCall(IReasonerInput, Iterable, Predicate, IProofMonitor)}
+ * {@link XProverReasoner2#newProverCall(IReasonerInput, ISimpleSequent, IProofMonitor)}
  * method.
  * </p>
  * <p>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,13 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 
 	public static boolean DEBUG = false;
 
+	@Override
 	public void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
 		((XProverInput) rInput).serialize(writer);
 	}
 
+	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		return new XProverInput(reader);
@@ -67,14 +69,8 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 	 * @param input
 	 *            the input to this reasoner (can contain additional parameters
 	 *            specific to the external prover)
-	 * @param hypotheses
-	 *            hypotheses of the sequent to prove
-	 * @param goal
-	 *            goal of the sequent to prove
-	 * @param factory
-	 *            factory of the sequent to prove
-	 * @param origin
-	 *            origin of the sequent to prove
+	 * @param sequent
+	 *            the sequent to prove
 	 * @param pm
 	 *            proof monitor (might be <code>null</code>)
 	 * @return a new call of the external prover
@@ -84,6 +80,7 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 	abstract AbstractXProverCall makeCall(IReasonerInput input,
 			ISimpleSequent sequent, IProofMonitor pm);
 
+	@Override
 	public final IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 

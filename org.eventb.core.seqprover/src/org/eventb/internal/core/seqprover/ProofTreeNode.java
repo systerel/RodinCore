@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,10 @@
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -53,14 +50,17 @@ public final class ProofTreeNode implements IProofTreeNode {
 			this.proofRule = proofRule;
 		}
 
+		@Override
 		public IProofSkeleton[] getChildNodes() {
 			return childSkelNodes;
 		}
 
+		@Override
 		public IProofRule getRule() {
 			return proofRule;
 		}
 
+		@Override
 		public String getComment() {
 			return comment;
 		}
@@ -115,19 +115,19 @@ public final class ProofTreeNode implements IProofTreeNode {
 	/**
 	 * Proof tree to which this node belongs. This field is only set for a root node,
 	 * so that it's easy to remove a whole subtree from the tree. Always use
-	 * #getProofTree() to access this information.
+	 * {@link #getProofTree()} to access this information.
 	 */
-	private ProofTree tree;
+	private ProofTree proofTree;
 
 	/**
 	 * Creates a root node of a proof tree.
 	 * 
-	 * @param tree The proof tree to associate to 
+	 * @param proofTree The proof tree to associate to 
 	 * @param sequent The sequent used to construct the proof tree node
 	 */
-	public ProofTreeNode(ProofTree tree, IProverSequent sequent) {
-		assert tree != null;
-		this.tree = tree;
+	public ProofTreeNode(ProofTree proofTree, IProverSequent sequent) {
+		assert proofTree != null;
+		this.proofTree = proofTree;
 		this.parent = null;
 		this.sequent = sequent;
 		this.rule = null;
@@ -146,7 +146,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 */
 	private ProofTreeNode(ProofTreeNode parent, IProverSequent sequent) {
 		assert parent != null;
-		this.tree = null;
+		this.proofTree = null;
 		this.parent = parent;
 		this.sequent = sequent;
 		this.rule = null;
@@ -164,7 +164,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	 * 				node to copy
 	 */
 	private ProofTreeNode(ProofTreeNode node) {
-		this.tree = node.tree;
+		this.proofTree = node.proofTree;
 		this.parent = node.parent;
 		this.sequent = node.sequent;
 		this.rule = node.rule;
@@ -183,22 +183,20 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.comment = node.comment;
 	}
 	
+	@Override
 	public ProofTree copySubTree(){
 		// Copy the subtree
 		ProofTreeNode root = new ProofTreeNode(this);
 		// Disconnect the copy from the tree
 		root.parent = null;
-		root.tree = null;
-		ProofTree proofTree = new ProofTree(root);
-		assert proofTree.getRoot().classInvariant();
-		return proofTree;
+		root.proofTree = null;
+		ProofTree tree = new ProofTree(root);
+		assert tree.getRoot().classInvariant();
+		return tree;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IProofTreeNode#copyProofSkeleton()
-	 */
+	@Override
 	public IProofSkeleton copyProofSkeleton() {
-		final String comment = getComment();
 		final IProofRule proofRule = getRule();
 		final IProofTreeNode[] childNodes = getChildNodes();
 		final IProofSkeleton[] childSkelNodes = new IProofSkeleton[childNodes.length];
@@ -226,22 +224,20 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#applyRule(ProofRule)
-	 */
+	@Override
 	public boolean applyRule(IProofRule proofRule) {
-		ProofRule rule = (ProofRule) proofRule;
+		ProofRule newRule = (ProofRule) proofRule;
 		// force pruning to avoid losing child proofs
 		if (this.children != null) return false;
 		if (this.rule != null) return false;
-		IProverSequent[] antecedents = rule.apply(this.sequent);
+		IProverSequent[] antecedents = newRule.apply(this.sequent);
 		if (antecedents == null) return false;
 		final int length = antecedents.length;
 		ProofTreeNode[] newChildren = new ProofTreeNode[length];
 		for (int i = 0; i < length; i++) {
 			newChildren[i] = new ProofTreeNode(this, antecedents[i]);
 		}
-		setRule(rule);
+		setRule(newRule);
 		setChildren(newChildren);
 		if (length == 0)
 			this.setClosed();
@@ -288,9 +284,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getChildren()
-	 */
+	@Override
 	public ProofTreeNode[] getChildNodes() {
 		if (children == null)
 			return NO_NODE;
@@ -302,9 +296,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getFirstOpenDescendant()
-	 */
+	@Override
 	public IProofTreeNode getFirstOpenDescendant() {
 		if (isClosed())
 			return null;
@@ -318,9 +310,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return null;
 	}
 	
+	@Override
 	public IProofTreeNode getNextOpenNode() {
 		return getNextNode(true, new IProofTreeNodeFilter() {
 
+			@Override
 			public boolean select(IProofTreeNode node) {
 				return node.isOpen();
 			}
@@ -328,9 +322,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getOpenDescendants()
-	 */
+	@Override
 	public IProofTreeNode[] getOpenDescendants() {
 		if (isClosed())
 			return NO_NODE;
@@ -347,62 +339,46 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return list.toArray(result);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getParent()
-	 */
+	@Override
 	public IProofTreeNode getParent() {
 		return this.parent;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getProofTree()
-	 */
+	@Override
 	public ProofTree getProofTree() {
 		ProofTreeNode node = this;
 		while (node.parent != null) {
 			node = node.parent;
 		}
-		return node.tree;
+		return node.proofTree;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getRule()
-	 */
+	@Override
 	public IProofRule getRule() {
 		return this.rule;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getSequent()
-	 */
+	@Override
 	public IProverSequent getSequent() {
 		return this.sequent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#hasChildren()
-	 */
+	@Override
 	public boolean hasChildren() {
 		return this.children != null && this.children.length != 0;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#isClosed()
-	 */
+	@Override
 	public boolean isClosed() {
 		return confidence != IConfidence.PENDING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#isOpen()
-	 */
+	@Override
 	public boolean isOpen() {
 		return this.children == null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#pruneChildren()
-	 */
+	@Override
 	public ProofTree[] pruneChildren() {
 		if (isOpen())
 			return null;
@@ -445,7 +421,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 	}
 
 	protected void setProofTree(ProofTree tree) {
-		this.tree = tree;	
+		this.proofTree = tree;	
 	}
 	
 	/**
@@ -501,9 +477,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#setComment(java.lang.String)
-	 */
+	@Override
 	public void setComment(String comment) {
 		assert comment != null;
 		this.comment = comment;
@@ -511,21 +485,10 @@ public final class ProofTreeNode implements IProofTreeNode {
 		this.fireDeltas();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getComment()
-	 */
+	@Override
 	public String getComment() {
 		return this.comment;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getUsedHypotheses()
-	 */
-	public Set<Predicate> getNeededHypotheses(){
-		if (this.rule == null) return new HashSet<Predicate>();
-		return rule.getNeededHyps();
-	}
-
 	
 	public ProofDependenciesBuilder computeProofDeps(){
 		if (isOpen()) return new ProofDependenciesBuilder();
@@ -533,12 +496,10 @@ public final class ProofTreeNode implements IProofTreeNode {
 		for (int i = 0; i < children.length; i++) {
 			childProofDeps[i] = children[i].computeProofDeps();
 		}
-		return ((ProofRule)rule).processDeps(childProofDeps);
+		return rule.processDeps(childProofDeps);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#getConfidence()
-	 */
+	@Override
 	public int getConfidence() {
 		return this.confidence;
 	}
@@ -556,7 +517,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		if ((rule == null) && (children != null)) return false;
 		if (rule != null) {
 			if (children == null) return false;
-			IProverSequent[] anticidents = ((ProofRule) rule).apply(sequent);
+			IProverSequent[] anticidents = rule.apply(sequent);
 			if (anticidents == null) return false;
 			if (children.length != anticidents.length) return false;
 			for (int i=0;i<anticidents.length;i++)
@@ -567,7 +528,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 			}
 		}
 		if (isClosed() != (getOpenDescendants().length == 0)) return false;
-		if ((parent == null) == (tree == null)) return false;
+		if ((parent == null) == (proofTree == null)) return false;
 		if (confidence != computedConfidence()) return false;
 		return true;
 	}
@@ -638,6 +599,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return new ProofTreeIterator(this, rootIncluded);
 	}
 
+	@Override
 	public IProofTreeNode getNextNode(boolean rootIncluded,
 			IProofTreeNodeFilter filter) {
 		final Iterator<IProofTreeNode> iterator = iterator(rootIncluded);
@@ -654,6 +616,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return null;
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return sequent.getFormulaFactory();
 	}

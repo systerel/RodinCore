@@ -176,7 +176,7 @@
             id="rn"
             name="%rnName"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL0"
             id="rm"
             name="%rmName"/>
       <reasoner

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
  * uniform way. The sequent is guaranteed to be reduced: It does not contain any
  * true hypothesis or false goal. Moreover, if it contains a false hypothesis or
  * true goal, then this is the only predicate that it contains (see
- * {@link #getTrivialPredicate()).
+ * {@link #getTrivialPredicate()}).
  * </p>
  * <p>
  * Instances of this interface are manipulated by methods of class
@@ -103,6 +103,7 @@ public interface ISimpleSequent {
 	 *         this tracked predicate
 	 * @see ITrackedPredicate#equals(Object)
 	 */
+	@Override
 	boolean equals(Object obj);
 
 	/**

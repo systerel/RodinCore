@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,14 +39,17 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 @Deprecated
 public class TypePredRewriter implements Rewriter{
 
+	@Override
 	public String getRewriterID() {
 		return "typePredRewriter";
 	}
 	
+	@Override
 	public String getName() {
 		return "type predicate";
 	}
 	
+	@Override
 	public boolean isApplicable(Predicate p) {
 		if (isNotEq(p)) {
 			if (isEmptySet(notEqRight(p)) &&
@@ -75,6 +78,7 @@ public class TypePredRewriter implements Rewriter{
 		return false;
 	}
 
+	@Override
 	public Predicate apply(Predicate p, FormulaFactory ff) {
 		// Ty is a type expression (NAT, BOOL, carrierset, Pow(Ty), etc)
 		// t is an expression of type Ty

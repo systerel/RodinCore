@@ -54,11 +54,12 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 /**
  * Basic implementation for comparison of cardinalities
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class CardComparison extends AbstractManualInference {
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".cardComparison";
 	}

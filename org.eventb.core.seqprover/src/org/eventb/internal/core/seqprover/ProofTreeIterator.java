@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,18 +67,21 @@ public class ProofTreeIterator implements Iterator<IProofTreeNode> {
 		}
 	}
 
+	@Override
 	public boolean hasNext() {
 		if (nextNode == null)
 			return false;
 		return (currentNode == null || !nextNode.equals(original));
 	}
 
+	@Override
 	public IProofTreeNode next() {
 		currentNode = nextNode;
 		nextNode = getNextNode(nextNode);
 		return currentNode;
 	}
 
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

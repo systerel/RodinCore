@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.matchReplacement;
 import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.splitMapletEquality;
+import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointInstantiator.instantiatePredicate;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.ReplacementUtil;
 
@@ -36,7 +38,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.Replac
  * <li>for rewriting rules SIMP_IN_COMPSET and SIMP_IN_COMPSET_ONEPOINT, the
  * processing is done in {@link OnePointProcessorRewriting}</li>
  * <li>for rewriting rules SIMP_COMPSET_EQUAL, the processing is done in
- * {@link OnePointProcessorExpression}</li>
+ * {@link OnePointProcessor}</li>
  * </ul>
  * <p>
  * These operations are initiated in the method matchAndInstantiate, which is
@@ -75,7 +77,11 @@ public abstract class OnePointProcessor<T extends Formula<T>> {
 	 * Performs one or several instantiations, by calling
 	 * {@link OnePointInstantiator}.
 	 */
-	protected abstract T instantiate(T formula, Expression[] replacements);
+	protected final Predicate instantiate(Predicate predicate) {
+		final QuantifiedPredicate newQPred = ff.makeQuantifiedPredicate(
+				original.getTag(), bids, predicate, null);
+		return instantiatePredicate(newQPred, replacements, ff);
+	}
 
 	/**
 	 * Given a predicate with tag EQUAL, returns whether or not this predicate

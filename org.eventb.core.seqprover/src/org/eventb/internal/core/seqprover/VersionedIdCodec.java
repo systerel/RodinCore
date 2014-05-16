@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class VersionedIdCodec {
 	 * 
 	 * @param baseId
 	 * @param version
-	 * @return
+	 * @return an id encoding both the given baseId and version
 	 */
 	public static String encodeVersionInId(String baseId, int version) {
 		if (version == NO_VERSION) {
@@ -45,7 +45,7 @@ public class VersionedIdCodec {
 	 * Returns the bare id (with no version encoded) from the given id, which
 	 * potentially encodes a version.
 	 * 
-	 * @param id
+	 * @param versionedId
 	 *            an id with potentially a version encoded in it
 	 * @return the bare id (with no version encoded in it)
 	 */
@@ -61,7 +61,8 @@ public class VersionedIdCodec {
 	 * problem fetching the encoded version, then
 	 * {@value IReasonerDesc#NO_VERSION} is returned.
 	 * 
-	 * @param versionedID
+	 * @param versionedId
+	 *            an id with potentially a version encoded in it
 	 * @return a non negative integer, or {@value IReasonerDesc#NO_VERSION}
 	 */
 	public static int decodeVersion(String versionedId) {

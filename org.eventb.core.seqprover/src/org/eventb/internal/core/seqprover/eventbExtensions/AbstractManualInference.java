@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public abstract class AbstractManualInference extends PredicatePositionReasoner {
 	
+	@Override
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 		final Input input = (Input) reasonerInput;
@@ -134,8 +135,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(AssociativePredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(AssociativePredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -144,8 +145,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(BinaryPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(BinaryPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -174,8 +175,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(LiteralPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(LiteralPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -184,13 +185,13 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(QuantifiedPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(QuantifiedPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(RelationalPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -199,8 +200,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(SimplePredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(SimplePredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override
@@ -209,8 +210,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 			}
 
 			@Override
-			public boolean select(UnaryPredicate predicate) {
-				return isApplicable(predicate);
+			public boolean select(UnaryPredicate pred) {
+				return isApplicable(pred);
 			}
 
 			@Override

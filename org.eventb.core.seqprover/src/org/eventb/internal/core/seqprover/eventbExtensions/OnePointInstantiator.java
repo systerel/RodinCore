@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public abstract class OnePointInstantiator<T extends Formula<T>> {
 	 * 
 	 * @param input
 	 *            the formula where the instantiation shall take place
-	 * @param replacement
+	 * @param replacements
 	 *            the expressions to instantiate the bound identifiers with
 	 * @param ff
 	 *            a formula factory for building the result
@@ -119,20 +119,20 @@ public abstract class OnePointInstantiator<T extends Formula<T>> {
 	protected Expression[] getReplacements() {
 		final int offset = innerDecls.length;
 		final int firstRepIndex = indexOfFirstReplacement();
-		final Expression[] replacements = new Expression[offset];
-		for (int i = 0; i < replacements.length; i++) {
+		final Expression[] result = new Expression[offset];
+		for (int i = 0; i < result.length; i++) {
 			Expression replacement = this.replacements[i + firstRepIndex];
 			if (replacement == null) {
-				replacements[i] = null;
+				result[i] = null;
 			} else {
-				replacements[i] = replacement.shiftBoundIdentifiers(-offset);
+				result[i] = replacement.shiftBoundIdentifiers(-offset);
 			}
 		}
-		return replacements;
+		return result;
 	}
 
-	protected List<BoundIdentDecl> mergeIdentDecls(BoundIdentDecl[] outerDecls,
-			BoundIdentDecl[] innerDecls) {
+	protected static List<BoundIdentDecl> mergeIdentDecls(
+			BoundIdentDecl[] outerDecls, BoundIdentDecl[] innerDecls) {
 		final List<BoundIdentDecl> result = new ArrayList<BoundIdentDecl>();
 		result.addAll(Arrays.asList(outerDecls));
 		result.addAll(Arrays.asList(innerDecls));

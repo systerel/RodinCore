@@ -58,6 +58,7 @@ public class Review implements IReasoner{
 			this.confidence = confidence;
 		}
 
+		@Override
 		public void applyHints(ReplayHints hints) {
 			Predicate[] newPreds = new Predicate[hyps.size()];
 			int i = 0;
@@ -68,10 +69,12 @@ public class Review implements IReasoner{
 			goal = hints.applyHints(goal);
 		}
 
+		@Override
 		public String getError() {
 			return null;
 		}
 
+		@Override
 		public boolean hasError() {
 			return false;
 		}
@@ -100,14 +103,17 @@ public class Review implements IReasoner{
 	}
 	
 	
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
+	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer) {
 		// Nothing to serialize, all is in the rule.
 	}
 	
+	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
@@ -118,6 +124,7 @@ public class Review implements IReasoner{
 		);
 	}
 	
+	@Override
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 	

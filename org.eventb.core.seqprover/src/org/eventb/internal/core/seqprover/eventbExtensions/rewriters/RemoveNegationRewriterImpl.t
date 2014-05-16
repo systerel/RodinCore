@@ -46,7 +46,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 /**
  * Basic manual rewriter for the Event-B sequent prover.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	
 	private final boolean isRewrite; 

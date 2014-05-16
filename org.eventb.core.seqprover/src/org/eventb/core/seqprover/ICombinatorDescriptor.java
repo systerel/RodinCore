@@ -88,7 +88,7 @@ public interface ICombinatorDescriptor {
 
 	/**
 	 * Returns the minimum arity of this combinator. This is the minimum
-	 * required size of the list given to {@link #getTacticInstance(List)}.
+	 * required size of the list given to {@link #combine(List, String)}.
 	 * 
 	 * @return an integer greater than or equal to 0
 	 */
@@ -98,11 +98,11 @@ public interface ICombinatorDescriptor {
 	 * Returns whether the arity of this combinator is bound.
 	 * <p>
 	 * If <code>true</code>, the size of the list given to
-	 * {@link #getTacticInstance(List)} must be equal to {@link #getMinArity()}.
+	 * {@link #combine(List, String)} must be equal to {@link #getMinArity()}.
 	 * </p>
 	 * <p>
 	 * If <code>false</code>, the size of the list given to
-	 * {@link #getTacticInstance(List)} must be greater than or equal to
+	 * {@link #combine(List, String)} must be greater than or equal to
 	 * {@link #getMinArity()}.
 	 * </p>
 	 * 

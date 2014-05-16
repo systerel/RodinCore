@@ -46,7 +46,7 @@ import org.eventb.core.seqprover.ProverRule;
  * Implements syntactic simplification of event-B predicates based on some
  * simple rewrite rules.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class PredicateSimplifier extends DefaultRewriter {
 
 	public static final int MULTI_IMP = 1 << 0;

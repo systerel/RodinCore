@@ -71,6 +71,7 @@ public class MultipleExprInput implements IReasonerInput, ITranslatableReasonerI
 		this.error = null;
 	}
 	
+	@Override
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -78,6 +79,7 @@ public class MultipleExprInput implements IReasonerInput, ITranslatableReasonerI
 	/**
 	 * @return Returns the error.
 	 */
+	@Override
 	public final String getError() {
 		return error;
 	}
@@ -123,6 +125,7 @@ public class MultipleExprInput implements IReasonerInput, ITranslatableReasonerI
 		error = null;
 	}
 
+	@Override
 	public void applyHints(ReplayHints hints) {
 		for (int i = 0; i < expressions.length; i++) {
 			expressions[i] = hints.applyHints(expressions[i]);

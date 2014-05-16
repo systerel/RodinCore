@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,8 +119,8 @@ public class FunImgGoalApplier {
 	private Predicate getNewHyp(IProofTreeNode oldNode) {
 		final IProofRule rule = oldNode.getRule();
 		final IAntecedent antecedent = rule.getAntecedents()[0];
-		final Set<Predicate> addedHyps = antecedent.getAddedHyps();
-		return addedHyps.iterator().next();
+		final Set<Predicate> anteAddedHyps = antecedent.getAddedHyps();
+		return anteAddedHyps.iterator().next();
 	}
 
 	/**

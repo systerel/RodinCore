@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 		return reasonerId;
 	}
 
+	@Override
 	@ProverRule({ "GENMP_HYP_HYP", "GENMP_NOT_HYP_HYP", "GENMP_HYP_GOAL",
 			"GENMP_NOT_HYP_GOAL", "GENMP_GOAL_HYP", "GENMP_NOT_GOAL_HYP",
 			"GENMP_OR_GOAL_HYP", "GENMP_OR_NOT_GOAL_HYP" })

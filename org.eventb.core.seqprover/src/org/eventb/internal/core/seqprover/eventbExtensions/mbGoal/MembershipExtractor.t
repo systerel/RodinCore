@@ -37,7 +37,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.SetE
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class MembershipExtractor extends AbstractExtractor {
 
 	private final Expression member;
@@ -65,6 +65,7 @@ public class MembershipExtractor extends AbstractExtractor {
 	 * discharging when faced with contradictory hypotheses.
 	 */
 
+	@Override
 	protected void extractIn(final Rationale rat) {
 		if (pm.isCanceled()) {
 			return;
@@ -97,6 +98,7 @@ public class MembershipExtractor extends AbstractExtractor {
 		super.extractIn(rat);
 	}
 
+	@Override
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
 		%match (Expression left, Expression right) {

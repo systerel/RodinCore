@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.match;
 import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.matchAndDissociate;
-import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointInstantiator.instantiatePredicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,16 +113,8 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 			return;
 		}
 
-		processing = instantiate(processing, replacements);
+		processing = instantiate(processing);
 		successfullyApplied = true;
-	}
-
-	@Override
-	protected Predicate instantiate(Predicate predicate,
-			Expression[] replacements) {
-		final QuantifiedPredicate newQPred = ff.makeQuantifiedPredicate(
-				original.getTag(), bids, predicate, null);
-		return instantiatePredicate(newQPred, replacements, ff);
 	}
 
 	public QuantifiedPredicate getQuantifiedPredicate() {

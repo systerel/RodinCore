@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 			+ ".arithRewrites";
 	private static final int REASONER_VERSION = 1;
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -57,6 +58,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 		return pred.rewriteSubFormula(position, newSubFormula);
 	}
 
+	@Override
 	public int getVersion() {
 		return REASONER_VERSION;
 	}

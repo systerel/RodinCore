@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,6 +195,7 @@ public class Tactics {
 	public static ITactic review(final int reviewerConfidence) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				final ITactic tactic = BasicTactics.reasonerTac(new Review(),
 						new Review.Input(pt.getSequent(), reviewerConfidence));
@@ -217,6 +218,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new Cut(),
 						new SinglePredInput(lemma, pt.getSequent()
@@ -241,6 +243,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
 				// Try to generate a proof rule.
@@ -290,6 +293,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new AbstrExpr(),
 						new SingleExprInput(expression, pt.getSequent()
@@ -304,6 +308,7 @@ public class Tactics {
 		
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
 				// Apply the abstract expression tactic
@@ -385,6 +390,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new DoCase(),
 						new SinglePredInput(trueCase, pt.getSequent()
@@ -407,6 +413,7 @@ public class Tactics {
 
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				IProverSequent seq = pt.getSequent();
 				Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
@@ -505,6 +512,7 @@ public class Tactics {
 	public static ITactic exI(final String... witnesses) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(pt
@@ -528,6 +536,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				final AllD.Input input = new AllD.Input(pred, typeEnv, instantiations);
@@ -551,6 +560,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				ITypeEnvironment typeEnv = pt.getSequent().typeEnvironment();
 				final AllD.Input input = new AllD.Input(pred, typeEnv, instantiations);
@@ -574,6 +584,7 @@ public class Tactics {
 		final Predicate pred = univHyp;
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				final ITypeEnvironment typeEnv = pt.getSequent()
 						.typeEnvironment();
@@ -717,6 +728,7 @@ public class Tactics {
 	public static ITactic afterLasoo(final ITactic tactic) {
 		return new ITactic() {
 
+			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 
 				lasoo().apply(pt, pm);
@@ -823,13 +835,11 @@ public class Tactics {
 	}
 
 	/**
-	 * Tells if the tactic RemoveNegation can apply.
+	 * Tells if the tactic RemoveNegation can apply to the given predicate.
 	 * 
-	 * @param expr
-	 *            the expression
-	 * @param sequent
-	 *            the current sequent
-	 * @return <code>true</code> if the tactic is not applicable,
+	 * @param pred
+	 *            a predicate
+	 * @return <code>true</code> if the tactic is applicable,
 	 *         <code>false</code> otherwise
 	 * @since 3.0
 	 */
@@ -907,13 +917,11 @@ public class Tactics {
 	}
 	
 	/**
-	 * Tells if the tactic RemoveMembership can apply.
+	 * Tells if the tactic RemoveMembership can apply to the given predicate.
 	 * 
-	 * @param expr
-	 *            the expression
-	 * @param sequent
-	 *            the current sequent
-	 * @return <code>true</code> if the tactic is not applicable,
+	 * @param pred
+	 *            a predicate
+	 * @return <code>true</code> if the tactic is applicable,
 	 *         <code>false</code> otherwise
 	 * @since 3.0
 	 */
@@ -1133,13 +1141,13 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.EQUAL) {
-					Expression left = predicate.getLeft();
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.EQUAL) {
+					Expression left = pred.getLeft();
 					Type type = left.getType();
 					return type instanceof PowerSetType;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -1178,11 +1186,11 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LEQV) {
+			public boolean select(BinaryPredicate pred) {
+				if (pred.getTag() == Predicate.LEQV) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -1702,12 +1710,12 @@ public class Tactics {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(AssociativePredicate predicate) {
-				if (predicate.getTag() == Predicate.LAND
-						|| predicate.getTag() == Predicate.LOR) {
+			public boolean select(AssociativePredicate pred) {
+				if (pred.getTag() == Predicate.LAND
+						|| pred.getTag() == Predicate.LOR) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -1981,7 +1989,7 @@ public class Tactics {
 
 	/**
 	 * Return the list of applicable positions of the tactic "remove inclusion
-	 * (universal) rewrites" {@link RemoveInclusionUniversalRewrites} to a predicate.
+	 * (universal) rewrites" {@link RemoveInclusionUniversal} to a predicate.
 	 * <p>
 	 * 
 	 * @param predicate
@@ -1993,11 +2001,11 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
 					return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -2006,7 +2014,7 @@ public class Tactics {
 
 	/**
 	 * Return the tactic "remove inclusion (universal) rewrites"
-	 * {@link RemoveInclusionUniversalRewrites} which is applicable to a
+	 * {@link RemoveInclusionUniversal} which is applicable to a
 	 * hypothesis at a given position.
 	 * <p>
 	 * 
@@ -2299,6 +2307,7 @@ public class Tactics {
 	 */
 	public static class FailureTactic implements ITactic {
 
+		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			return "Not applicable";
 		}
@@ -2899,8 +2908,8 @@ public class Tactics {
 	 * {@link CardComparison} to a predicate.
 	 * <p>
 	 * 
-	 * @param predicate
-	 *            a predicate
+	 * @param goal
+	 *            a goal predicate
 	 * @return <code>true</code> if the tactic "cardinality arithmetic
 	 *         comparison" is applicable
 	 * @since 2.0
@@ -2980,12 +2989,12 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(predicate.getLeft()))
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(pred.getLeft()))
 						return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -3007,12 +3016,12 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(predicate.getRight()))
+			public boolean select(RelationalPredicate pred) {
+				if (pred.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(pred.getRight()))
 						return true;
 				}
-				return super.select(predicate);
+				return super.select(pred);
 			}
 
 		});
@@ -3074,8 +3083,8 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 
 			@Override
-			public boolean select(MultiplePredicate predicate) {
-				return predicate.getTag() == Predicate.KPARTITION;
+			public boolean select(MultiplePredicate pred) {
+				return pred.getTag() == Predicate.KPARTITION;
 			}
 
 		});

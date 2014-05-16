@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,17 +35,11 @@ public final class ConjF extends ForwardInfReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".conjF";
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getDisplay(org.eventb.core.ast.Predicate)
-	 */
 	@Override
 	protected String getDisplay(Predicate pred) {
 		return "∧ hyp (" + pred + ")";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getForwardInf(org.eventb.core.seqprover.IProverSequent, org.eventb.core.ast.Predicate)
-	 */
 	@ProverRule("AND_L")
 	@Override
 	protected IRewriteHypAction getRewriteAction(IProverSequent sequent,
@@ -60,9 +54,7 @@ public final class ConjF extends ForwardInfReasoner {
 				neededHyp);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.seqprover.IReasoner#getReasonerID()
-	 */
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

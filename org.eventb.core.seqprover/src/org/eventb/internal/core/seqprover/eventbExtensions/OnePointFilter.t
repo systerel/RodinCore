@@ -45,7 +45,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
  
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class OnePointFilter {
  
  	static class QuantifiedFormUtil {

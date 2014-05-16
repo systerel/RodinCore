@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,10 +141,12 @@ public class DeltaProcessor {
 		// wrap callback with Safe runnable for subsequent listeners
 		// to be called when some are causing grief
 		SafeRunner.run(new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable exception) {
 				Util.log(exception, 
 						"Exception within proof tree change notification"); //$NON-NLS-1$
 			}
+			@Override
 			public void run() throws Exception {
 				listener.proofTreeChanged(delta);
 			}

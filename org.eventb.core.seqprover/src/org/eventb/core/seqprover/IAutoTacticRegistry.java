@@ -106,7 +106,6 @@ public interface IAutoTacticRegistry {
 	 * </p>
 	 * 
 	 * @return an array of instantiators
-	 * @return
 	 * @since 2.3
 	 */
 	IParameterizerDescriptor[] getParameterizerDescriptors();

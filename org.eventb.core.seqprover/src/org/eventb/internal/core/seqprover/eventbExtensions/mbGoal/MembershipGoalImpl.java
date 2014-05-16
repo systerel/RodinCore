@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class MembershipGoalImpl {
 	private final List<Generator> inclHyps;
 
 	// Initial goal
-	private final Goal goal;
+	private final Goal topGoal;
 
 	// Goals already tried in this search thread
 	// Used to prevent loops
@@ -64,7 +64,7 @@ public class MembershipGoalImpl {
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff, IProofMonitor pm) {
 		assert goal.getTag() == IN;
-		this.goal = new Goal(goal) {
+		this.topGoal = new Goal(goal) {
 			@Override
 			public Rationale makeRationale(Rationale rat) {
 				return rat;
@@ -89,7 +89,7 @@ public class MembershipGoalImpl {
 
 	private void computeKnownMemberships() {
 		final MembershipExtractor extractor = new MembershipExtractor(rf,
-				goal.member(), hyps, pm);
+				topGoal.member(), hyps, pm);
 		for (final Rationale rat : extractor.extract()) {
 			knownMemberships.put(rat.predicate(), rat);
 		}
@@ -102,11 +102,11 @@ public class MembershipGoalImpl {
 		if (knownMemberships.isEmpty()) {
 			return null;
 		}
-		return search(goal);
+		return search(topGoal);
 	}
 
 	public boolean verify(Rule<?> rule) {
-		if (!rule.consequent.equals(goal.predicate())) {
+		if (!rule.consequent.equals(topGoal.predicate())) {
 			return false;
 		}
 		final Set<Predicate> neededHyps = rule.getHypotheses();

@@ -46,7 +46,7 @@ import org.eventb.core.seqprover.ProverRule;
  * Automated rewriter for the Event-B sequent prover: expand the definition of
  * a partition predicate.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class PartitionRewriterImpl extends DefaultRewriter {
 
 	public PartitionRewriterImpl() {

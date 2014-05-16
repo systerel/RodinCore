@@ -55,6 +55,7 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 		this.error = null;
 	}
 	
+	@Override
 	public final boolean hasError(){
 		return (error != null);
 	}
@@ -62,6 +63,7 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 	/**
 	 * @return Returns the error.
 	 */
+	@Override
 	public final String getError() {
 		return error;
 	}
@@ -106,6 +108,7 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 		expression = preds[0];
 	}
 
+	@Override
 	public void applyHints(ReplayHints hints) {
 		expression = hints.applyHints(expression);
 		

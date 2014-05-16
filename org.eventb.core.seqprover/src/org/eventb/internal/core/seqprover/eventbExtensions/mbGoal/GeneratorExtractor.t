@@ -28,7 +28,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RanP
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class GeneratorExtractor extends AbstractExtractor {
 
 	private final List<Generator> result;
@@ -48,6 +48,7 @@ public class GeneratorExtractor extends AbstractExtractor {
 		return result;
 	}
 
+	@Override
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
 		%match (Expression left, Expression right) {

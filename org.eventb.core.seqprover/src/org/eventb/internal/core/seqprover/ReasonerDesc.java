@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,20 +75,24 @@ public class ReasonerDesc implements IReasonerDesc {
 			this.reasonerID = reasonerID;
 		}
 
+		@Override
 		public String getReasonerID() {
 			return reasonerID;
 		}
 
+		@Override
 		public void serializeInput(IReasonerInput input,
 				IReasonerInputWriter writer) {
 			// Nothing to do
 		}
 
+		@Override
 		public IReasonerInput deserializeInput(IReasonerInputReader reader) {
 
 			return new EmptyInput();
 		}
 
+		@Override
 		public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 				IProofMonitor pm) {
 
@@ -223,16 +227,17 @@ public class ReasonerDesc implements IReasonerDesc {
 	 * Returns a copy of this ReasonerDesc with the version modified according
 	 * to the given parameter.
 	 * 
-	 * @param version
+	 * @param copyVersion
 	 *            the desired version of the copy
 	 * @return a new ReasonerDesc with the given version
 	 */
-	public ReasonerDesc copyWithVersion(int version) {
+	public ReasonerDesc copyWithVersion(int copyVersion) {
 		final String baseId = decodeId(id);
 		return new ReasonerDesc(configurationElement, instance,
-				baseId, name, version, contextDependent);
+				baseId, name, copyVersion, contextDependent);
 	}
 
+	@Override
 	public IReasoner getInstance() {
 		if (instance != null) {
 			return instance;
@@ -273,14 +278,17 @@ public class ReasonerDesc implements IReasonerDesc {
 		return instance;
 	}
 
+	@Override
 	public String getId() {
 		return decodeId(id);
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public int getVersion() {
 		if (version != UNKNOWN_VERSION) {
 			return version;
@@ -293,6 +301,7 @@ public class ReasonerDesc implements IReasonerDesc {
 		return version;
 	}
 
+	@Override
 	public int getRegisteredVersion() {
 		final IReasoner inst = getInstance();
 		if (inst instanceof IVersionedReasoner) {
@@ -302,11 +311,13 @@ public class ReasonerDesc implements IReasonerDesc {
 		}
 	}
 
+	@Override
 	public String getVersionedId() {
 		final int reasonerVersion = getVersion();
 		return encodeVersionInId(decodeId(id), reasonerVersion);
 	}
 
+	@Override
 	public boolean hasVersionConflict() {
 		return getVersion() != getRegisteredVersion();
 	}

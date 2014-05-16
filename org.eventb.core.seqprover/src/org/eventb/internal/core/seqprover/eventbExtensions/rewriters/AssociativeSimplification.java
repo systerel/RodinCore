@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,9 +219,9 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		}
 
 		protected Expression makeAssociativeFormula(
-				Collection<Expression> children) {
-			return ff.makeAssociativeExpression(original.getTag(), children,
-					null);
+				Collection<Expression> finalChildren) {
+			return ff.makeAssociativeExpression(original.getTag(),
+					finalChildren, null);
 		}
 
 		protected boolean isIntegerValue(Expression formula, BigInteger integer) {

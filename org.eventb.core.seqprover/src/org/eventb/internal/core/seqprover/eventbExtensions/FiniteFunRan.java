@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteFunRan";
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -63,7 +64,7 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
 		final Expression ranF = getFiniteExpression(goal);
 		Expression f = ((UnaryExpression) ranF).getChild();
-		final PFunSetInput pFunInput = (PFunSetInput) input;
+		final PFunSetInput pFunInput = input;
 		final Expression expr = pFunInput.getExpression();
 		if (!f.getType().equals(expr.getType().getBaseType())) {
 			return reasonerFailure(this, input, "Type check failed for " + f

@@ -49,11 +49,12 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 /**
  * Basic implementation for Cardinality of range of numbers "card(a..b)"
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class CardUpTo extends AbstractManualInference {
 
 	%include {FormulaV2.tom}
 	
+	@Override
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".cardUpTo";
 	}

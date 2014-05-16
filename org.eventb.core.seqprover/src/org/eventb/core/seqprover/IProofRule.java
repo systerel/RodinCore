@@ -94,7 +94,7 @@ public interface IProofRule extends IReasonerOutput {
 	/**
 	 * Returns the confidence of this proof rule as returned by the reasoner.
 	 * 
-	 * @return the confidence of this proof rule (see {@see IConfidence})
+	 * @return the confidence of this proof rule (see {@link IConfidence})
 	 */
 	int getConfidence();
 	
@@ -116,7 +116,7 @@ public interface IProofRule extends IReasonerOutput {
 	 * Note : The returned object must not be modified in any way.
 	 * </p>
 	 * 
-	 * @return the antecedents of this proof rule (see {@see IAntecedent})
+	 * @return the antecedents of this proof rule (see {@link IAntecedent})
 	 */
 	IAntecedent[] getAntecedents();
 	
@@ -152,7 +152,7 @@ public interface IProofRule extends IReasonerOutput {
 		 * the rule is ill formed and will not be applicable for any sequent.
 		 * </p>
 		 * 
-		 * @see IProofRule.getGoal()
+		 * @see IProofRule#getGoal()
 		 * 
 		 * @return the goal {@link Predicate} of this antecedent, or <code>null</code>
 		 * 		if the goal is intended to be identical to the goal of the sequent on which the
@@ -262,7 +262,7 @@ public interface IProofRule extends IReasonerOutput {
 	IProverSequent[] apply(IProverSequent seq);
 	
 	/**
-	 * Translates this proof rule with the given formula factory.
+	 * Translates this proof rule to the given formula factory.
 	 * 
 	 * @param factory
 	 *            the destination formula factory

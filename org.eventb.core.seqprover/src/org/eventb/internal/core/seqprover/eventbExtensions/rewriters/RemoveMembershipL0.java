@@ -12,12 +12,12 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import org.eventb.core.seqprover.SequentProver;
 
-public class RemoveMembershipL1 extends RemoveMembership {
+public class RemoveMembershipL0 extends RemoveMembership {
 
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rmL1";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
 
-	public RemoveMembershipL1() {
-		super(RMLevel.L1);
+	public RemoveMembershipL0() {
+		super(RMLevel.L0);
 	}
 
 	@Override

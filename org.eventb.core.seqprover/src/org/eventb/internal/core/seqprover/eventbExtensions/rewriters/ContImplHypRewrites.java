@@ -35,6 +35,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".doubleImplGoalRewrites";
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

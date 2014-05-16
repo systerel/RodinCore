@@ -43,22 +43,27 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		this.inferredHyps = new ArrayList<Predicate>(inferredHyps);
 	}
 		
+	@Override
 	public Collection<Predicate> getHyps() {
 		return hyps;
 	}
 
+	@Override
 	public String getActionType() {
 		return IForwardInfHypAction.ACTION_TYPE;
 	}
 
+	@Override
 	public FreeIdentifier[] getAddedFreeIdents() {
 		return addedIdents;
 	}
 
+	@Override
 	public Collection<Predicate> getInferredHyps() {
 		return inferredHyps;
 	}	
 
+	@Override
 	public IInternalProverSequent perform(IInternalProverSequent seq) {
 		final IInternalProverSequent result = seq.performfwdInf(hyps,
 				addedIdents, inferredHyps);
@@ -66,6 +71,7 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		return result;
 	}
 
+	@Override
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {
 		if (skipped) return;
 		if ((! Collections.disjoint(proofDeps.getUsedHypotheses(),inferredHyps)) ||

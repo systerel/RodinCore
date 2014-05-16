@@ -35,7 +35,7 @@ import org.eventb.core.ast.SetExtension;
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "cast"})
 public class MembershipGoalRules {
 
 	private final FormulaFactory ff;

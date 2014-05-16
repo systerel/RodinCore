@@ -63,15 +63,18 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 			this.position = position;
 		}
 
+		@Override
 		public void applyHints(ReplayHints renaming) {
 			if (pred != null)
 				pred = renaming.applyHints(pred);
 		}
 
+		@Override
 		public String getError() {
 			return null;
 		}
 
+		@Override
 		public boolean hasError() {
 			return false;
 		}
@@ -104,6 +107,7 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 
 	}
 
+	@Override
 	public final void serializeInput(IReasonerInput input,
 			IReasonerInputWriter writer) throws SerializeException {
 
@@ -112,6 +116,7 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 		writer.putString(POSITION_KEY, ((Input) input).position.toString());
 	}
 
+	@Override
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
