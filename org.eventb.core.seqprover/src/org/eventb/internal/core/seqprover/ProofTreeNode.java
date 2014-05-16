@@ -13,13 +13,10 @@
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -492,12 +489,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 	public String getComment() {
 		return this.comment;
 	}
-	
-	public Set<Predicate> getNeededHypotheses(){
-		if (this.rule == null) return new HashSet<Predicate>();
-		return rule.getNeededHyps();
-	}
-
 	
 	public ProofDependenciesBuilder computeProofDeps(){
 		if (isOpen()) return new ProofDependenciesBuilder();
