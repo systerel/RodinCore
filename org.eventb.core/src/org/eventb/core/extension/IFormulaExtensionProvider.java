@@ -71,7 +71,7 @@ public interface IFormulaExtensionProvider {
 	/**
 	 * Returns the formula factory previously stored in the given element. If no
 	 * formula factory was stored previously in this element, this is an error
-	 * and should be reported by throwing a Rodin DB exception.
+	 * and should be reported by throwing a Core exception.
 	 * 
 	 * @param element
 	 *            a Rodin element containing a serialized formula factory
