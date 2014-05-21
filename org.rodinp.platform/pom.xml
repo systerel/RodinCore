@@ -19,30 +19,11 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.2</version>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<file>${basedir}/plugin.properties</file>
-					<regex>false</regex>
-					<token>@version@</token>
-					<value>${unqualifiedVersion}${version-suffix}</value>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>process-plugin.properties</id>
+						<id>process-about.mappings</id>
 						<phase>prepare-package</phase>
 						<configuration>
 							<outputDirectory>${project.build.directory}</outputDirectory>
@@ -51,7 +32,7 @@
 								<resource>
 									<directory>${basedir}</directory>
 									<includes>
-										<include>plugin.properties</include>
+										<include>about.mappings</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -71,7 +52,7 @@
 						<fileSet>
 							<directory>${project.build.directory}</directory>
 							<includes>
-								<include>plugin.properties</include>
+								<include>about.mappings</include>
 							</includes>
 						</fileSet>
 					</additionalFileSets>
