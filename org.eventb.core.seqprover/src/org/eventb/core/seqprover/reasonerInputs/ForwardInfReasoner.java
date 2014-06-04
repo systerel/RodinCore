@@ -141,11 +141,8 @@ public abstract class ForwardInfReasoner implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 			"Expected exactly one required hypothesis."));
 		}
-		for (Predicate hyp: requiredHyps) {
-			return new Input(hyp);
-		}
-		assert false;
-		return null;
+
+		return new Input(requiredHyps.iterator().next());
 	}
 
 	public final IReasonerOutput apply(IProverSequent seq, IReasonerInput rInput,
