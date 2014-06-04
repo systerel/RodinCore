@@ -167,6 +167,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 			if (!changed && ff == src.getFactory()) {
 				return src;
 			}
+			if (src.getExtension().getOrigin() instanceof IDatatype) {
+				return super.rewrite(src, changed, newChildExprs, newChildPreds);
+			}
 			return translation.translate(src, newChildExprs, newChildPreds);
 		}
 

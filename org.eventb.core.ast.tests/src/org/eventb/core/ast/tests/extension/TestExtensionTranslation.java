@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -29,6 +31,7 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.tests.AbstractTests;
 import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 import org.junit.Before;
@@ -63,6 +66,16 @@ public class TestExtensionTranslation extends AbstractTests {
 		srcTypeEnv = mTypeEnvironment(typenvImage, EXTS_FAC);
 		trgTypeEnv = srcTypeEnv.translate(COND_FAC);
 		translation = srcTypeEnv.makeExtensionTranslation();
+	}
+
+	/**
+	 * Starts a translation with the given initial type environment.
+	 */
+	private void setUp(String typenvImage, FormulaFactory fac) {
+		srcTypeEnv = mTypeEnvironment(typenvImage, fac);
+		translation = srcTypeEnv.makeExtensionTranslation();
+		trgTypeEnv = srcTypeEnv.translate(translation
+				.getTargetTypeEnvironment().getFormulaFactory());
 	}
 
 	/**
@@ -177,6 +190,26 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertPredTranslation("belongs(TRUE, ⊤, ∅)", //
 				"belongs1(TRUE↦∅↦bool(⊤)) = TRUE", //
 				"belongs1=BOOL×ℙ(BOOL)×BOOL↔BOOL");
+	}
+
+	/**
+	 * Ensures that datatype operators are not translated.
+	 */
+	@Test
+	public void noDatatypeTranslation() {
+		final FormulaFactory ffExtended = extendFactory();
+		setUp("a=List(ℤ)", ffExtended);
+		assertPredTranslation("a = nil", "a = nil", "");
+		assertPredTranslation("a = cons(1, nil)", "a = cons(1, nil)", "");
+		assertPredTranslation("1 = head(a)", "1 = head(a)", "");
+		assertPredTranslation("a ∈ List({1})", "a ∈ List({1})", "");
+	}
+
+	private FormulaFactory extendFactory() {
+		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
+		extensions.addAll(EXTS_FAC.getExtensions());
+		final FormulaFactory newff = FormulaFactory.getInstance(extensions);
+		return newff;
 	}
 
 	private void assertPredTranslation(String srcImage, String trgImage,
