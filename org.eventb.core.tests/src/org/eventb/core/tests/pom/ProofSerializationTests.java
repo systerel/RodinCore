@@ -415,7 +415,53 @@ public class ProofSerializationTests extends BuilderTest {
 
 		checkReplay(sequent, proof);
 	}
-	
+
+	/**
+	 * Ensures that a rule produced by a manual rewriter in Rodin 2.8 can be
+	 * retrieved.
+	 */
+	@Test
+	public void testAbstractManualRewrites_Bug717() throws Exception {
+		importProofSerializationProofs();
+
+		final IPRRoot prFile = getProofRoot("partitionRewrite");
+		final IPRProof proof = prFile.getProof("oldPartitionRewrite");
+
+		// a IllegalStateException is thrown when the bug is present:
+		final IProofTree proofTree = proof.getProofTree(null);
+
+		// ensure that the proof rule is deserialized:
+		final IProofTreeNode root = proofTree.getRoot();
+		assertFalse(root.isOpen());
+		final IProofRule rule = root.getRule();
+		assertEquals(SequentProver.PLUGIN_ID + ".partitionRewrites", rule
+				.generatedBy().getReasonerID());
+		assertEquals(3, rule.getAntecedents()[0].getHypActions().size());
+	}
+
+	/**
+	 * Ensures that a rule produced by the reasoner exF in Rodin 2.8 can be
+	 * retrieved.
+	 */
+	@Test
+	public void testFwdInfReasonerRewrites_Bug717() throws Exception {
+		importProofSerializationProofs();
+
+		final IPRRoot prFile = getProofRoot("exF");
+		final IPRProof proof = prFile.getProof("oldExF");
+
+		// a IllegalStateException is thrown when the bug is present:
+		final IProofTree proofTree = proof.getProofTree(null);
+		
+		// ensure that the proof rule is deserialized:
+		final IProofTreeNode root = proofTree.getRoot();
+		assertFalse(root.isOpen());
+		final IProofRule rule = root.getRule();
+		assertEquals(SequentProver.PLUGIN_ID + ".exF", rule.generatedBy()
+				.getReasonerID());
+		assertEquals(3, rule.getAntecedents()[0].getHypActions().size());
+	}
+
 	/**
 	 * Ensures that a closed proof tree using a specialized factory is correctly
 	 * serialized and deserialized.
