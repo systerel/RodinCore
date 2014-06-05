@@ -84,12 +84,23 @@ public class TestExtensionTranslation extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that the expression of the form 'bool(exp = TRUE)' is rewritten
+	 * to 'exp'.
+	 */
+	@Test
+	public void simplifiedExpression() {
+		assertPredTranslation("∧∧(⊤, belongs(1, ⊤, {1, 2}))", //
+				"ext(bool(⊤) ↦ belongs(1 ↦ {1,2} ↦ bool(⊤)))=TRUE", //
+				"ext=BOOL×BOOL↔BOOL; belongs=ℤ×ℙ(ℤ)×BOOL↔BOOL");
+	}
+
+	/**
 	 * Ensures that nested predicate extensions are correctly translated.
 	 */
 	@Test
 	public void nestedPredicate() {
 		assertPredTranslation("belongs(TRUE, belongs(2, ⊤, ∅), ∅)", //
-				"belongs0(TRUE↦∅↦bool(belongs(2↦∅↦bool(⊤)) = TRUE)) = TRUE", //
+				"belongs0(TRUE ↦ ∅ ↦ belongs(2 ↦ ∅ ↦ bool(⊤)))=TRUE", //
 				"belongs0=BOOL×ℙ(BOOL)×BOOL↔BOOL; belongs=ℤ×ℙ(ℤ)×BOOL↔BOOL");
 	}
 
@@ -212,7 +223,8 @@ public class TestExtensionTranslation extends AbstractTests {
 
 	public static class ExtensionTranslationErrors {
 
-		final ISealedTypeEnvironment srcTypenv = mTypeEnvironment().makeSnapshot();
+		final ISealedTypeEnvironment srcTypenv = mTypeEnvironment()
+				.makeSnapshot();
 		final ExtensionTranslation trans = new ExtensionTranslation(srcTypenv);
 
 		final Expression untyped = mEmptySet(null);

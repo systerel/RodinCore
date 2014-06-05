@@ -16,9 +16,11 @@ import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.TRUE;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 
 /**
  * Common implementation of a translator for an extension instance. Instances
@@ -53,7 +55,13 @@ public abstract class ExtensionTranslator {
 
 	}
 
-	private Expression makeExprOfPred(final Predicate pred) {
+	private Expression makeExprOfPred(Predicate pred) {
+		if (pred.getTag() == Formula.EQUAL) {
+			final RelationalPredicate relPred = (RelationalPredicate) pred;
+			if (relPred.getRight().getTag() == Formula.TRUE) {
+				return relPred.getLeft();
+			}
+		}
 		return factory.makeBoolExpression(pred, null);
 	}
 
