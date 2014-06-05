@@ -23,6 +23,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -131,15 +132,15 @@ public abstract class ForwardInfReasoner implements IReasoner {
 			throw new SerializeException(new IllegalStateException(
 			"Expected at least one hyp action."));
 		}
-		if (! (hypActions.get(0) instanceof IRewriteHypAction)) {
+		if (! (hypActions.get(0) instanceof IForwardInfHypAction)) {
 			throw new SerializeException(new IllegalStateException(
-			"Expected the first hyp action to be a rewrite action."));
+			"Expected the first hyp action to be a forward inference."));
 		}
 
-		final IRewriteHypAction rwAction = (IRewriteHypAction) hypActions
+		final IForwardInfHypAction fwdAction = (IForwardInfHypAction) hypActions
 				.get(0);
 
-		final Collection<Predicate> requiredHyps = rwAction.getHyps();
+		final Collection<Predicate> requiredHyps = fwdAction.getHyps();
 		final int length = requiredHyps.size();
 
 		if (length != 1) {
