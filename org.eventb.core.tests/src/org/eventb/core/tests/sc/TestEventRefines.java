@@ -2164,4 +2164,95 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 						ParameterNameImportConflictWarning, "x", "evt"));
 	}
 
+	/*
+	 * Ensures that a collision between several abstract parameters and a
+	 * carrier set is properly reported (bug #712). Variant where the abstract
+	 * parameters bear different types.
+	 */
+	@Test
+	public void testEvents_57_abstractParametersCollideWithSet() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		addEvent(abs, "fvt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈BOOL"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		final IContextRoot ctx = createContext("ctx");
+		addCarrierSets(ctx, "x");
+		saveRodinFileOf(ctx);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addMachineSees(mac, "ctx");
+		addInitialisation(mac);
+		final IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventWitness(evt, "x", "x = 0");
+		final IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "fvt");
+		addEventWitness(fvt, "x", "x = TRUE");
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "x", "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "fvt"));
+	}
+
+	/*
+	 * A concrete machine must not declare a variable that has the same name as
+	 * parameters in the abstract machine. Variant with several abstract
+	 * parameters with the same name, but different types.
+	 */
+	@Test
+	public void testEvents_58_parametersRefByVariableConflict() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList(), makeSList());
+		addEvent(abs, "fvt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈BOOL"),//
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		final IEvent ini = addInitialisation(mac, "x");
+		final IEvent evt = addEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		final IEvent fvt = addEvent(mac, "fvt");
+		addEventRefines(fvt, "fvt");
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(
+				marker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						VariableNameConflictError, "x"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "evt"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ParameterNameImportConflictWarning, "x", "fvt"),
+				marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 0, 1,
+						UndeclaredFreeIdentifierError, "x"),
+				marker(ini.getActions()[0], ASSIGNMENT_ATTRIBUTE,
+						AssignedIdentifierNotVariableError, "x"),
+				marker(evt, WitnessLabelMissingWarning, "x"),
+				marker(fvt, WitnessLabelMissingWarning, "x"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		ISCEvent[] events = getSCEvents(file, INITIALISATION, "evt", "fvt");
+		containsWitnesses(events[1], emptyEnv, makeSList("x"), makeSList("⊤"));
+		containsWitnesses(events[2], emptyEnv, makeSList("x"), makeSList("⊤"));
+	}
+
 }
