@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - Simplify PO for anticipated event (FR326)
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -197,6 +198,11 @@ public class TestMachineVariant extends EventBPOTest {
 				
 				String[] hypotheses = invPredicates;
 		
+				if (convergence == ANTICIPATED) {
+					String diseq = "¬ " + item.varPost + " = " + item.variant;
+					hypotheses = append(hypotheses, diseq);
+				}
+
 				sequentHasHypotheses(sequent, environment, hypotheses);
 			
 				String rel = getRelationSymbol(convergence, item.kind);
@@ -225,6 +231,14 @@ public class TestMachineVariant extends EventBPOTest {
 		addVariables(mac, "A", "x", "y");
 		addInvariants(mac, invLabels, invPredicates, isTheorem);
 		return mac;
+	}
+
+	private String[] append(String[] hypotheses, String diseq) {
+		final int length = hypotheses.length;
+		final String[] result = new String[length + 1];
+		System.arraycopy(hypotheses, 0, result, 0, length);
+		result[length] = diseq;
+		return result;
 	}
 
 	/*

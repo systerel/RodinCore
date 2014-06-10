@@ -9,16 +9,19 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - Simplify PO for anticipated event (FR326)
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.ast.Formula.NATURAL;
+import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 
@@ -103,6 +106,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		};
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
+		if (concreteConvergence == ANTICIPATED) {
+			final Predicate eq = factory.makeRelationalPredicate(EQUAL,
+					nextVarExpression, varExpression, null);
+			final Predicate ineq = factory.makeUnaryPredicate(NOT, eq, null);
+			hyp.add(makePredicate(ineq, variantSource));
+		}
 		
 		String sequentNameVAR = concreteEventLabel + "/VAR";
 		createPO(
