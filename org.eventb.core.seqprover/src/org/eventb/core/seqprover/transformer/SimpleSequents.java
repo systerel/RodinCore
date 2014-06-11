@@ -31,6 +31,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.transformer.LanguageFilter;
 import org.eventb.internal.core.seqprover.transformer.SequentDatatypeTranslator;
+import org.eventb.internal.core.seqprover.transformer.SequentExtensionTranslator;
 import org.eventb.internal.core.seqprover.transformer.SequentSimplifier;
 import org.eventb.internal.core.seqprover.transformer.SimpleSequent;
 import org.eventb.internal.core.seqprover.transformer.TrackedPredicate;
@@ -293,6 +294,28 @@ public class SimpleSequents {
 	public static ISimpleSequent translateDatatypes(ISimpleSequent sequent) {
 		final ITypeEnvironment typenv = sequent.getTypeEnvironment();
 		return sequent.apply(new SequentDatatypeTranslator(typenv));
+	}
+
+	/**
+	 * Translates the operators and then the datatypes that occur in the given
+	 * sequent to pure set theory.
+	 * <p>
+	 * The result sequent is associated to the formula factory obtained from the
+	 * original sequent after all operator and datatype extensions have been
+	 * removed.
+	 * </p>
+	 * 
+	 * @param sequent
+	 *            sequent to translate
+	 * @return a sequent equivalent to the given one, where all operators and
+	 *         datatypes have been translated to pure set theory
+	 * @since 3.1
+	 */
+	public static ISimpleSequent translateExtensions(ISimpleSequent sequent) {
+		final ITypeEnvironment typenv = sequent.getTypeEnvironment();
+		final ISimpleSequent newSequent = sequent
+				.apply(new SequentExtensionTranslator(typenv));
+		return translateDatatypes(newSequent);
 	}
 
 	private SimpleSequents() {
