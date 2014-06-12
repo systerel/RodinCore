@@ -7,11 +7,12 @@
 : ${ECLIPSE_HOME:="$HOME"/progs/eclipse}
 
 SCRIPT_DIR=$(readlink -f $(dirname $0))
-CATEGORY_FILE="$SCRIPT_DIR"/../../org.rodinp.platform.repository/category.xml
+REPOSITORY_PROJECT_DIR="$SCRIPT_DIR"/../../org.rodinp.platform.repository
+CATEGORY_FILE="$REPOSITORY_PROJECT_DIR"/category.xml
 
 CoreUpdateSite=http://rodin-b-sharp.sourceforge.net/core-updates
 
-BuildUpdateSite=/tmp/rodin-build/rodin-3.0/update-site
+BuildUpdateSite="$REPOSITORY_PROJECT_DIR"/target/repository
 MergeUpdateSite=/tmp/merge-update-site
 
 fetch-index() {
