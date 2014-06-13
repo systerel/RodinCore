@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import static org.eventb.internal.ui.UIUtils.runWithRunnableContext;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
@@ -46,7 +51,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	private static abstract class InputMaker<T> {
 		protected final InputManager manager;
 		protected final T selection;
-		
+
 		public InputMaker(InputManager manager, T selection) {
 			this.manager = manager;
 			this.selection = selection;
@@ -56,7 +61,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 			return selection;
 		}
 		
-		public abstract IViewerInput makeInput();
+		public abstract IViewerInput makeInput(IProgressMonitor monitor);
 		
 		public abstract void addInputChangedListener();
 		
@@ -70,7 +75,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		}
 
 		@Override
-		public IViewerInput makeInput() {
+		public IViewerInput makeInput(IProgressMonitor monitor) {
 			return DefaultInput.getDefault();
 		}
 
@@ -139,14 +144,14 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		}
 
 		@Override
-		public IViewerInput makeInput() {
+		public IViewerInput makeInput(IProgressMonitor monitor) {
 			final IPRProof proof = selection.getProof();
 			if (!proof.exists()) {
 				return new ProofErrorInput(proof,
 						Messages.proofskeleton_proofdoesnotexist);
 			}
 			try {
-				final IProofTree prTree = proof.getProofTree(null);
+				final IProofTree prTree = proof.getProofTree(monitor);
 				if (prTree == null) {
 					if (ProofSkeletonView.DEBUG) {
 						printProofSkeleton(proof);
@@ -224,19 +229,49 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	}
 	
 	void setViewInput(final InputMaker<?> maker) {
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (currentInputMaker != null) {
-					currentInputMaker.removeInputChangedListener();
-				}
-				final IViewerInput input = maker.makeInput();
-				maker.addInputChangedListener();
-				currentInputMaker = maker;
-				view.setInput(input);
-			}
-		});
+		final IWorkbenchPartSite site = view.getSite();
+		final IProgressService service = (IProgressService) site
+				.getService(IProgressService.class);
+		final Shell shell = site.getShell();
+		final ComputeInputOperation computeInputOp = new ComputeInputOperation(
+				maker);
+		if (currentInputMaker != null) {
+			currentInputMaker.removeInputChangedListener();
+		}
+		runWithRunnableContext(service, shell, computeInputOp);
+		final boolean canceled = computeInputOp.canceled();
+		if (canceled) {
+			return;
+		}
+		final IViewerInput input = computeInputOp.input();
+		maker.addInputChangedListener();
+		currentInputMaker = maker;
+		view.setInput(input);
+	}
+
+	private static class ComputeInputOperation implements IRunnableWithProgress {
+
+		private final InputMaker<?> maker;
+		private IViewerInput input;
+		private boolean canceled = false;
+
+		public ComputeInputOperation(InputMaker<?> maker) {
+			this.maker = maker;
+		}
+
+		public IViewerInput input() {
+			return input;
+		}
+
+		public boolean canceled() {
+			return canceled;
+		}
+
+		@Override
+		public void run(final IProgressMonitor monitor) {
+			input = maker.makeInput(monitor);
+			canceled = monitor.isCanceled();
+		}
 	}
 
 	@Override

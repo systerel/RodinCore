@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -720,9 +721,14 @@ public class UIUtils {
 
 	public static void runWithProgressDialog(Shell shell,
 			final IRunnableWithProgress op) {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+		runWithRunnableContext(dialog, shell, op);
+	}
+
+	public static void runWithRunnableContext(IRunnableContext context, Shell shell,
+			final IRunnableWithProgress op) {
 		try {
-			dialog.run(true, true, op);
+			context.run(true, true, op);
 		} catch (InterruptedException exception) {
 			if (UIUtils.DEBUG)
 				System.out.println("Interrupt"); //$NON-NLS-1$
