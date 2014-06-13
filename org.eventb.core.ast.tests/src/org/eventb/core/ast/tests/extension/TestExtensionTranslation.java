@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -29,6 +31,7 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.tests.AbstractTests;
 import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 import org.junit.Before;
@@ -66,6 +69,16 @@ public class TestExtensionTranslation extends AbstractTests {
 	}
 
 	/**
+	 * Starts a translation with the given initial type environment.
+	 */
+	private void setUp(String typenvImage, FormulaFactory fac) {
+		srcTypeEnv = mTypeEnvironment(typenvImage, fac);
+		translation = srcTypeEnv.makeExtensionTranslation();
+		trgTypeEnv = srcTypeEnv.translate(translation
+				.getTargetTypeEnvironment().getFormulaFactory());
+	}
+
+	/**
 	 * Ensures that the And predicate extension is correctly translated.
 	 */
 	@Test
@@ -84,12 +97,23 @@ public class TestExtensionTranslation extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that the expression of the form 'bool(exp = TRUE)' is rewritten
+	 * to 'exp'.
+	 */
+	@Test
+	public void simplifiedExpression() {
+		assertPredTranslation("∧∧(⊤, belongs(1, ⊤, {1, 2}))", //
+				"ext(bool(⊤) ↦ belongs(1 ↦ {1,2} ↦ bool(⊤)))=TRUE", //
+				"ext=BOOL×BOOL↔BOOL; belongs=ℤ×ℙ(ℤ)×BOOL↔BOOL");
+	}
+
+	/**
 	 * Ensures that nested predicate extensions are correctly translated.
 	 */
 	@Test
 	public void nestedPredicate() {
 		assertPredTranslation("belongs(TRUE, belongs(2, ⊤, ∅), ∅)", //
-				"belongs0(TRUE↦∅↦bool(belongs(2↦∅↦bool(⊤)) = TRUE)) = TRUE", //
+				"belongs0(TRUE ↦ ∅ ↦ belongs(2 ↦ ∅ ↦ bool(⊤)))=TRUE", //
 				"belongs0=BOOL×ℙ(BOOL)×BOOL↔BOOL; belongs=ℤ×ℙ(ℤ)×BOOL↔BOOL");
 	}
 
@@ -168,6 +192,26 @@ public class TestExtensionTranslation extends AbstractTests {
 				"belongs1=BOOL×ℙ(BOOL)×BOOL↔BOOL");
 	}
 
+	/**
+	 * Ensures that datatype operators are not translated.
+	 */
+	@Test
+	public void noDatatypeTranslation() {
+		final FormulaFactory ffExtended = extendFactory();
+		setUp("a=List(ℤ)", ffExtended);
+		assertPredTranslation("a = nil", "a = nil", "");
+		assertPredTranslation("a = cons(1, nil)", "a = cons(1, nil)", "");
+		assertPredTranslation("1 = head(a)", "1 = head(a)", "");
+		assertPredTranslation("a ∈ List({1})", "a ∈ List({1})", "");
+	}
+
+	private FormulaFactory extendFactory() {
+		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
+		extensions.addAll(EXTS_FAC.getExtensions());
+		final FormulaFactory newff = FormulaFactory.getInstance(extensions);
+		return newff;
+	}
+
 	private void assertPredTranslation(String srcImage, String trgImage,
 			String typenvExtension) {
 		final Predicate src = parsePredicate(srcImage, srcTypeEnv);
@@ -212,7 +256,8 @@ public class TestExtensionTranslation extends AbstractTests {
 
 	public static class ExtensionTranslationErrors {
 
-		final ISealedTypeEnvironment srcTypenv = mTypeEnvironment().makeSnapshot();
+		final ISealedTypeEnvironment srcTypenv = mTypeEnvironment()
+				.makeSnapshot();
 		final ExtensionTranslation trans = new ExtensionTranslation(srcTypenv);
 
 		final Expression untyped = mEmptySet(null);

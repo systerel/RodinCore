@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer.tests;
 
-import static java.util.Arrays.copyOf;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.translateDatatypes;
 import static org.junit.Assert.assertEquals;
@@ -116,15 +115,6 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 		for (final IFormulaExtension extension : extensions) {
 			assertFalse(extension.getOrigin() instanceof IDatatype);
 		}
-	}
-
-	private ISimpleSequent getSimpleSequent(ITypeEnvironmentBuilder typenv,
-			String sequentImage) {
-		final String[] split = sequentImage.split("\\s*;;\\s*|\\s*\\|-\\s*");
-		final String goalStr = split[split.length - 1];
-		final String[] hStrs = copyOf(split, split.length - 1);
-		final String[] filtered = (hStrs[0].isEmpty()) ? new String[0] : hStrs;
-		return makeSequent(typenv, goalStr, filtered);
 	}
 
 }
