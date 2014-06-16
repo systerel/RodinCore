@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,18 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.ConfigurationMissingError;
+import static org.eventb.core.sc.GraphProblem.ContextOnlyInAbstractMachineWarning;
+import static org.eventb.core.sc.GraphProblem.SeenContextRedundantWarning;
+import static org.eventb.core.sc.GraphProblem.SeenContextWithoutConfigurationError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
@@ -44,8 +50,6 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
@@ -56,7 +60,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
@@ -74,8 +78,6 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("V1", factory.makeGivenType("S1"));
 		
 		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1=C1"), false);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -96,13 +98,11 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con2");
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -111,51 +111,55 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testSeesContext_02() throws Exception {
-		IContextRoot con = createContext("ctx");
+		final IContextRoot con = createContext("ctx");
 		saveRodinFileOf(con);
 		
-		IMachineRoot abs = createMachine("abs");
+		final IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "ctx");
+		addInitialisation(abs);
 		saveRodinFileOf(abs);
 		
-		IMachineRoot mac = createMachine("mac");
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ContextOnlyInAbstractMachineWarning, "ctx"));
 		
-		ISCMachineRoot file = mac.getSCMachineRoot();
+		final ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "ctx");
 		containsContexts(file, "ctx");
-		
-		hasMarker(mac.getRefinesClauses()[0]);
 	}
 
 	/**
 	 * Ensures that a context seen through the abstraction (and where it's
 	 * indirectly seen by the abstraction) is repaired and occurs 
-	 * as an internal context and but not in a sees clause.
+	 * as an internal context but not in a sees clause.
 	 */
 	@Test
 	public void testSeesContext_03() throws Exception {
-		IContextRoot con1 = createContext("con1");
+		final IContextRoot con1 = createContext("con1");
 		saveRodinFileOf(con1);
-		
-		IContextRoot con2 = createContext("con2");
+
+		final IContextRoot con2 = createContext("con2");
 		addContextExtends(con2, "con1");
 		saveRodinFileOf(con2);
-		
-		IMachineRoot abs = createMachine("abs");
+
+		final IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "con2");
+		addInitialisation(abs);
 		saveRodinFileOf(abs);
-		
-		IMachineRoot mac = createMachine("mac");
+
+		final IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 		saveRodinFileOf(mac);
-		
-		runBuilder();
-		
-		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		runBuilderCheck(marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				ContextOnlyInAbstractMachineWarning, "con2"));
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
 	}
@@ -175,15 +179,18 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "acon");
+		addInitialisation(abs);
 		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addMachineSees(mac, "acon");
 		addMachineSees(mac, "ccon");
+		addInitialisation(mac);
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+				SeenContextRedundantWarning, "acon"));
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		seesContexts(file, "acon", "ccon");
@@ -206,13 +213,13 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cab");
+		addInitialisation(con);
 
 		saveRodinFileOf(cco);
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getSeesClauses()[1]);
+		runBuilderCheck(marker(con.getSeesClauses()[1], TARGET_ATTRIBUTE,
+				SeenContextRedundantWarning, "cab"));
 	}
 
 	/**
@@ -225,14 +232,13 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cco");
+		addInitialisation(con);
 
 		saveRodinFileOf(cco);
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasNotMarker(con.getSeesClauses()[0]);
-		hasMarker(con.getSeesClauses()[1]);
+		runBuilderCheck(marker(con.getSeesClauses()[1], TARGET_ATTRIBUTE,
+				SeenContextRedundantWarning, "cco"));
 	}
 
 	/**
@@ -254,16 +260,18 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cab");
 		addMachineSees(con, "cab");
+		addInitialisation(con);
 
 		saveRodinFileOf(cco);
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getSeesClauses()[0]);
-		hasNotMarker(con.getSeesClauses()[1]);
-		hasMarker(con.getSeesClauses()[2]);
-		hasMarker(con.getSeesClauses()[3]);
+		runBuilderCheck(
+				marker(con.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						SeenContextRedundantWarning, "cab"),
+				marker(con.getSeesClauses()[2], TARGET_ATTRIBUTE,
+						SeenContextRedundantWarning, "cab"),
+				marker(con.getSeesClauses()[3], TARGET_ATTRIBUTE,
+						SeenContextRedundantWarning, "cab"));
 	}
 
 	/*
@@ -283,13 +291,15 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
-		
-		containsMarkers(con, true);
-		containsMarkers(mac, true);
+		runBuilderCheck(
+				marker(con, ConfigurationMissingError, "ctx"),
+				marker(con.getSCContextRoot(), ConfigurationMissingError, "ctx"),
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						SeenContextWithoutConfigurationError, "ctx"));
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
@@ -301,8 +311,6 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 				factory);
 		
 		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1∈ℕ"), false);
-
-		hasMarker(mac.getSeesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 }

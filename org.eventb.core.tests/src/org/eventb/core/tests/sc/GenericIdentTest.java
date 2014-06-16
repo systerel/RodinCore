@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,17 @@
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added check on primed identifiers
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.FreeIdentifierFaultyDeclError;
+import static org.eventb.core.sc.GraphProblem.InvalidIdentifierError;
+import static org.eventb.core.sc.GraphProblem.UndeclaredFreeIdentifierError;
+import static org.eventb.core.sc.ParseProblem.LexerError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -38,17 +46,16 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck(marker(getGeneric().getIdents(cmp)[0],
+				IDENTIFIER_ATTRIBUTE, getGeneric().getUntypedProblem(), "V1"));
 		
 		SCE file = getGeneric().getSCElement(cmp);
 		
 		getGeneric().containsIdents(file);
-		
-		hasMarker(getGeneric().getIdents(cmp)[0]);
 	}
 
 	/**
-	 * Creating a constant or variable without a type must succeed
+	 * Creating a constant or variable with a type must succeed
 	 */
 	@Test
 	public void testIdents_01() throws Exception {
@@ -56,10 +63,11 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().addIdents(cmp, makeSList("V1"));
 		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("V1∈ℤ"), false);
+		getGeneric().addInitialisation(cmp, "V1");
 		
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		final ITypeEnvironmentBuilder environment = mTypeEnvironment("V1=ℤ", factory);
 		
@@ -68,8 +76,6 @@ extends GenericEventBSCTest<E, SCE> {
 		getGeneric().containsIdents(file, "V1");
 		
 		getGeneric().containsPredicates(file, environment, makeSList("I1"), makeSList("V1∈ℤ"), false);
-
-		getGeneric().containsMarkers(cmp, false);
 	}
 	
 	/**
@@ -84,16 +90,17 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(getGeneric().getIdents(cmp)[0], IDENTIFIER_ATTRIBUTE,
+						getGeneric().getUntypedProblem(), "V1"),
+				marker(getGeneric().getPredicates(cmp)[0], PREDICATE_ATTRIBUTE,
+						0, 2, UndeclaredFreeIdentifierError, "V2"));
 		
 		SCE file = getGeneric().getSCElement(cmp);
 		
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
-		
-		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 	
 	/**
@@ -108,17 +115,21 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(getGeneric().getIdents(cmp)[0], IDENTIFIER_ATTRIBUTE,
+						getGeneric().getUntypedProblem(), "V1"),
+				marker(getGeneric().getIdents(cmp)[0], IDENTIFIER_ATTRIBUTE,
+						getGeneric().getIdentConflictProblem(), "V1"),
+				marker(getGeneric().getIdents(cmp)[1], IDENTIFIER_ATTRIBUTE,
+						getGeneric().getIdentConflictProblem(), "V1"),
+				marker(getGeneric().getPredicates(cmp)[0], PREDICATE_ATTRIBUTE,
+						0, 2, FreeIdentifierFaultyDeclError, "V1"));
 		
 		SCE file = getGeneric().getSCElement(cmp);
 		
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
-		
-		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getIdents(cmp)[1]);
-		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 
 	/**
@@ -133,16 +144,17 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(getGeneric().getIdents(cmp)[0], IDENTIFIER_ATTRIBUTE,
+						InvalidIdentifierError, "/V1"),
+				marker(getGeneric().getPredicates(cmp)[0], PREDICATE_ATTRIBUTE,
+						0, 1, LexerError, "/"));
 		
 		SCE file = getGeneric().getSCElement(cmp);
 		
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
-		
-		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 
 	
@@ -158,16 +170,17 @@ extends GenericEventBSCTest<E, SCE> {
 
 		getGeneric().save(cmp);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(getGeneric().getIdents(cmp)[0], IDENTIFIER_ATTRIBUTE,
+						InvalidIdentifierError, "v'"),
+				marker(getGeneric().getPredicates(cmp)[0], PREDICATE_ATTRIBUTE,
+						0, 2, UndeclaredFreeIdentifierError, "v'"));
 		
 		final SCE file = getGeneric().getSCElement(cmp);
 		
 		getGeneric().containsIdents(file);
 		
 		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
-		
-		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 	
 }

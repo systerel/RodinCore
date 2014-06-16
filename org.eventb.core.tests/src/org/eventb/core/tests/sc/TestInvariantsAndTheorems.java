@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,14 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.sc.ParseProblem.TypeUnknownError;
+import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
@@ -35,8 +40,6 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		addCarrierSets(con, "S1");
 	
 		saveRodinFileOf(con);
-		
-		runBuilder();
 
 		IMachineRoot mac = createMachine("mac");
 		
@@ -46,17 +49,16 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"), false, false);
+		addInitialisation(mac, "V1");
 	
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 3,
+				7, TypesDoNotMatchError, "ℤ", "S1"));
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
 		containsInvariants(file, typeEnvironment, makeSList("I2"), makeSList("V1∈S1"), false);
-		
-		hasMarker(mac.getInvariants()[0]);
-		
 	}
 	
 	/**
@@ -68,8 +70,6 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		addCarrierSets(con, "S1");
 	
 		saveRodinFileOf(con);
-		
-		runBuilder();
 
 		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("S1=ℙ(S1); V1=S1",
 				factory);
@@ -81,10 +81,12 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 				makeSList("I1", "I2", "I3", "I4"), 
 				makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"),
 				false, false, false, false);
+		addInitialisation(mac, "V1");
 	
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 0,
+				2, TypeUnknownError));
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
@@ -92,8 +94,6 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 				makeSList("I2", "I3", "I4"), 
 				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"),
 				false, false, false);
-		
-		hasMarker(mac.getInvariants()[0]);
 	}
 
 	@Override

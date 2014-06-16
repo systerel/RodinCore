@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -24,6 +25,8 @@ public interface IGenericElementTest<E extends IRodinElement> {
 	throws RodinDBException;
 	
 	void addIdents(E element, String... names) throws RodinDBException;
+	
+	void addInitialisation(E element, String... names) throws RodinDBException;
 	
 	abstract E createElement(String bareName) throws RodinDBException;
 

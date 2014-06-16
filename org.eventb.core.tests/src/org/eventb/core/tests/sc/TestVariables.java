@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,22 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.ConstantNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.ContextOnlyInAbstractMachineWarning;
+import static org.eventb.core.sc.GraphProblem.DisappearedVariableRedeclaredError;
+import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
+import static org.eventb.core.sc.GraphProblem.VariableNameConflictError;
+import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
@@ -42,8 +55,6 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
@@ -54,7 +65,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ITypeEnvironmentBuilder environment = mTypeEnvironment("S1=ℙ(S1); V1=S1",
 				factory);
@@ -68,8 +79,6 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		containsVariables(file, "V1");
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"), false);
-
-		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -84,18 +93,23 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("C1"));
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"), false, false);
+		addInitialisation(mac);
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						VariableNameConflictError, "C1"),
+				marker(mac.getSeesClauses()[0], TARGET_ATTRIBUTE,
+						ConstantNameImportConflictWarning, "C1", "ctx"),
+				marker(mac.getInvariants()[0], PREDICATE_ATTRIBUTE, 0, 4,
+						TypesDoNotMatchError, "ℤ", "BOOL"));
 		
 		ITypeEnvironmentBuilder environment = mTypeEnvironment("C1=BOOL",
 				factory);
@@ -109,9 +123,6 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		containsVariables(file);
 		
 		containsInvariants(file, environment, makeSList("I2"), makeSList("C1=TRUE"), false);
-
-		hasMarker(mac.getVariables()[0]);
-		hasMarker(mac.getInvariants()[0]);
 	}
 	
 	/**
@@ -126,8 +137,6 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
-		
-		runBuilder();
 
 		IMachineRoot mac = createMachine("mac");
 		
@@ -138,7 +147,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ITypeEnvironmentBuilder environment = mTypeEnvironment("V1=ℤ",
 				factory);
@@ -148,8 +157,6 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		containsVariables(file, "V1");
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"), false, false);
-
-		containsMarkers(mac, false);
 	}
 
 	/**
@@ -160,47 +167,83 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		final IMachineRoot m0 = createMachine("m0");
 		addVariables(m0, "v1");
 		addInvariants(m0, makeSList("I1"), makeSList("v1 ∈ ℕ"), true);
-		addInitialisation(m0, "v1");
+		addInitialisation(m0, makeSList("A1"), makeSList("v1 ≔ 0"));
 		saveRodinFileOf(m0);
 		
 		final IMachineRoot m1 = createMachine("m1");
 		addMachineRefines(m1, "m0");
 		addVariables(m1, "v2");
 		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"), true);
-		addInitialisation(m1, "v2");
+		addInitialisation(m1, makeSList("A1"), makeSList("v2 ≔ 0"));
 		saveRodinFileOf(m1);
 
 		final IMachineRoot m2 = createMachine("m2");
 		addMachineRefines(m2, "m1");
 		addVariables(m2, "v1");
 		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"), true);
-		addInitialisation(m2, "v1");
+		addInitialisation(m2, makeSList("A1"), makeSList("v1 ≔ 0"));
 		saveRodinFileOf(m2);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(m2.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						DisappearedVariableRedeclaredError, "v1"),
+				marker(m2.getInvariants()[0], PREDICATE_ATTRIBUTE, 0, 2,
+						VariableHasDisappearedError, "v1"),
+				marker(m2.getEvents()[0].getActions()[0], ASSIGNMENT_ATTRIBUTE,
+						VariableHasDisappearedError, "v1"));
 
 		final ISCMachineRoot m0c = m0.getSCMachineRoot();
 		containsVariables(m0c, "v1");
-		containsMarkers(m0c, false);
 
 		final ISCMachineRoot m1c = m1.getSCMachineRoot();
 		containsVariables(m1c, "v1", "v2");
 		forbiddenVariables(m1c, "v1");
-		containsMarkers(m1c, false);
 		
 		final ISCMachineRoot m2c = m2.getSCMachineRoot();
 		containsVariables(m2c, "v1", "v2");
 		forbiddenVariables(m2c, "v1", "v2");
-		containsMarkers(m2, true);
 		
 		ISCEvent[] events = getSCEvents(m2c, IEvent.INITIALISATION);
 		containsActions(events[0], emptyEnv, makeSList(), makeSList());
-		
-		// TODO should also check that sc reports only that "v1" has disappeared
-		// and can't be resurrected.
-		hasMarker(m2.getVariables()[0]);
 	}
 	
+	/**
+	 * name conflict of variable and seen carrier set (through abstraction):
+	 * variable removed!
+	 */
+	@Test
+	public void testVariables_05() throws Exception {
+		final IContextRoot con = createContext("ctx");
+		addCarrierSets(con, "x");
+		saveRodinFileOf(con);
+
+		final IMachineRoot abs = createMachine("abs");
+		addMachineSees(abs, "ctx");
+		addInitialisation(abs);
+		saveRodinFileOf(abs);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, makeSList("x"));
+		addInitialisation(mac);
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						ContextOnlyInAbstractMachineWarning, "ctx"),
+				marker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictWarning, "x", "ctx"),
+				marker(mac.getVariables()[0], IDENTIFIER_ATTRIBUTE,
+						VariableNameConflictError, "x"));
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		containsContexts(file, "ctx");
+		final ISCInternalContext[] contexts = getInternalContexts(file, 1);
+		containsCarrierSets(contexts[0], "x");
+		containsVariables(file);
+		containsNoInvariant(file);
+	}
+
 	@Override
 	protected IGenericSCTest<IMachineRoot, ISCMachineRoot> newGeneric() {
 		return new GenericMachineSCTest(this);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,14 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.sc.ParseProblem.TypeUnknownError;
+import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
@@ -41,13 +46,12 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck(marker(con.getAxioms()[0], PREDICATE_ATTRIBUTE, 3, 7,
+				TypesDoNotMatchError, "ℤ", "S1"));
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsAxioms(file, typeEnvironment, makeSList("A2"), makeSList("C1∈S1"), false);
-		
-		hasMarker(con.getAxioms()[0]);
 	}
 	
 	/**
@@ -65,14 +69,12 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck(marker(con.getAxioms()[0], PREDICATE_ATTRIBUTE, 0, 2,
+				TypeUnknownError));
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsAxioms(file, typeEnvironment, makeSList("A2", "A3", "A4"), makeSList("C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"), false, false, false);
-		
-		hasMarker(con.getAxioms()[0]);
-		
 	}
 
 	@Override

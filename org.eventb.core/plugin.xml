@@ -622,6 +622,10 @@
             class="org.eventb.core.sc.state.IMachineAccuracyInfo"
             id="machineAccuracyInfo"
             name="%machineAccuracyInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IReservedNameTable"
+            id="reservedNameTable"
+            name="%reservedNameTable"/>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">
@@ -878,7 +882,7 @@
             id="machineVariableModule"
             name="%scMachineVariableModule"
             parent="org.eventb.core.machineModule">
-         <prereq id="org.eventb.core.machineSeesContextModule"/>
+         <prereq id="org.eventb.core.machineContextClosureModule"/>
       </processorType>
       <filterType
             class="org.eventb.internal.core.sc.modules.MachineVariableFromParameterModule"

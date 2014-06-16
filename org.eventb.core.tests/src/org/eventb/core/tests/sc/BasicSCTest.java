@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - add marker matchers
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -21,8 +22,11 @@ import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +64,9 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.EventBTest;
+import org.eventb.core.tests.MarkerMatcher;
+import org.eventb.core.tests.SelfDescribingMarker;
+import org.hamcrest.StringDescription;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -81,6 +88,59 @@ public abstract class BasicSCTest extends EventBTest {
 		super.runBuilder();
 		for (IEventBRoot root : sourceRoots)
 			assertTrue("ill-formed markers", GraphProblemTest.check(root));
+	}
+
+	protected void runBuilderIssuesSomeMarkers() throws CoreException {
+		super.runBuilder();
+		final IMarker[] markers = rodinProject.getResource().findMarkers(
+				RODIN_PROBLEM_MARKER, true, DEPTH_INFINITE);
+		assertTrue("Expected some markers, but none found", markers.length != 0);
+	}
+
+	protected void runBuilderCheck(MarkerMatcher... matchers)
+			throws CoreException {
+		runBuilder();
+		final IMarker[] markers = rodinProject.getResource().findMarkers(
+				RODIN_PROBLEM_MARKER, true, DEPTH_INFINITE);
+		assertMarkers(markers, matchers);
+	}
+
+	private void assertMarkers(IMarker[] markers, MarkerMatcher[] matchers) {
+		final List<MarkerMatcher> unmatched;
+		unmatched = new LinkedList<MarkerMatcher>(Arrays.asList(matchers));
+		final List<SelfDescribingMarker> unexpected;
+		unexpected = new ArrayList<SelfDescribingMarker>();
+		for (final IMarker marker : markers) {
+			if (!matchAndRemove(marker, unmatched)) {
+				unexpected.add(new SelfDescribingMarker(marker));
+			}
+		}
+		if (unmatched.isEmpty() && unexpected.isEmpty()) {
+			// success
+			return;
+		}
+		final StringDescription desc = new StringDescription();
+		if (!unmatched.isEmpty()) {
+			desc.appendList("Some expected markers were not present:\n", ", ",
+					"\n", unmatched);
+		}
+		if (!unexpected.isEmpty()) {
+			desc.appendList("Some unexpected markers were present:\n", ", ",
+					"\n", unexpected);
+		}
+		fail(desc.toString());
+	}
+
+	private boolean matchAndRemove(IMarker marker, List<MarkerMatcher> matchers) {
+		final Iterator<MarkerMatcher> iter = matchers.iterator();
+		while (iter.hasNext()) {
+			final MarkerMatcher matcher = iter.next();
+			if (matcher.matches(marker)) {
+				iter.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private final List<IEventBRoot> sourceRoots = new ArrayList<IEventBRoot>();
@@ -285,6 +345,11 @@ public abstract class BasicSCTest extends EventBTest {
 		containsPredicates("axiom", environment, labels, strings, derived, axioms);
 	}
 
+	public void containsNoInvariant(ISCMachineRoot root) throws RodinDBException {
+		final ISCInvariant[] invariants = root.getSCInvariants();
+		assertEquals(0, invariants.length);
+	}
+
 	public void containsInvariants(ISCMachineRoot root, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		ISCInvariant[] invariants = root.getSCInvariants();
 		
@@ -412,7 +477,27 @@ public abstract class BasicSCTest extends EventBTest {
 			fail(sb.toString());
 		}
 	}
-	
+
+	public void containsMarkers(IInternalElement element, int expected)
+			throws CoreException {
+		final IFile file = element.getResource();
+		final IMarker[] markers = file.findMarkers(RODIN_PROBLEM_MARKER, true,
+				DEPTH_INFINITE);
+		if (expected != markers.length) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("Expected ");
+			sb.append(expected);
+			sb.append(" markers on element ");
+			sb.append(element);
+			sb.append(", but found:");
+			for (final IMarker marker : markers) {
+				sb.append("\n\t");
+				sb.append(marker.getAttribute(MESSAGE));
+			}
+			fail(sb.toString());
+		}
+	}
+
 	public void hasMarker(IRodinElement element, IAttributeType attrType) throws Exception {
 		hasMarker(element, attrType, null);
 	}

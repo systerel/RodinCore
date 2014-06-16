@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -25,17 +26,32 @@ public abstract class GenericMachineTest<T extends EventBTest>
 extends GenericTest<T>
 implements IGenericElementTest<IMachineRoot> {
 	
-	IEvent init;
 	int k = 0;
 	
 	@Override
 	public void addIdents(IMachineRoot element, String... names) throws RodinDBException {
 		test.addVariables(element, names);
+		addInitialisationActions(element, names);
+	}
+
+	protected void addInitialisationActions(IMachineRoot element,
+			String... names) throws RodinDBException {
+		IEvent init = findInitialisation(element);
 		IAction action = init.createChild(IAction.ELEMENT_TYPE, null, null);
 		for (String name : names) {
 			action.setLabel(name + k++, null);
 			action.setAssignmentString(name + ":∣ ⊤", null);
 		}
+	}
+
+	private IEvent findInitialisation(IMachineRoot root)
+			throws RodinDBException {
+		for (final IEvent event : root.getEvents()) {
+			if (event.isInitialisation()) {
+				return event;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -44,9 +60,15 @@ implements IGenericElementTest<IMachineRoot> {
 	}
 
 	@Override
+	public void addInitialisation(IMachineRoot element, String... names)
+			throws RodinDBException {
+		// Already done when adding the identifiers
+	}
+
+	@Override
 	public IMachineRoot createElement(String bareName) throws RodinDBException {
 		IMachineRoot mac = test.createMachine(bareName);
-		init = test.addInitialisation(mac);
+		test.addInitialisation(mac);
 		return mac;
 	}
 

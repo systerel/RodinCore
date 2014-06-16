@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,18 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameConflictError;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictWarning;
+import static org.eventb.core.sc.GraphProblem.InvalidIdentifierError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
+
+import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
@@ -33,13 +42,11 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsCarrierSets(file, "S1");
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -53,13 +60,11 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsCarrierSets(file, "S1", "S2");
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -73,14 +78,16 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
+		final ICarrierSet[] cs = con.getCarrierSets();
+		runBuilderCheck(
+				marker(cs[0], IDENTIFIER_ATTRIBUTE,
+						CarrierSetNameConflictError, "S1"),
+				marker(cs[1], IDENTIFIER_ATTRIBUTE,
+						CarrierSetNameConflictError, "S1"));
+
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsCarrierSets(file);
-				
-		hasMarker(con.getCarrierSets()[0]);
-		hasMarker(con.getCarrierSets()[1]);
 	}
 
 	/**
@@ -94,16 +101,17 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		final ICarrierSet[] cs = con.getCarrierSets();
+		runBuilderCheck(
+				marker(cs[0], IDENTIFIER_ATTRIBUTE, InvalidIdentifierError,
+						"S>"),
+				marker(cs[1], IDENTIFIER_ATTRIBUTE, InvalidIdentifierError,
+						"k-1"),
+				marker(cs[2], IDENTIFIER_ATTRIBUTE, InvalidIdentifierError, "#"));
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsCarrierSets(file);
-		
-		hasMarker(con.getCarrierSets()[0]);
-		hasMarker(con.getCarrierSets()[1]);
-		hasMarker(con.getCarrierSets()[2]);
-
 	}
 
 	/**
@@ -117,8 +125,6 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
@@ -126,7 +132,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -135,8 +141,6 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1");
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -149,8 +153,6 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
@@ -158,7 +160,11 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck(
+				marker(con.getCarrierSets()[0], IDENTIFIER_ATTRIBUTE,
+						CarrierSetNameConflictError, "S1"),
+				marker(con.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictWarning, "S1", "abs"));
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -167,9 +173,6 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1");
-		
-		hasMarker(con.getCarrierSets()[0]);
-		hasMarker(con.getExtendsClauses()[0]);
 	}
 
 

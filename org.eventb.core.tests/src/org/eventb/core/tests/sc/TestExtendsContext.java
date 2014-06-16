@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,17 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.eventb.core.EventBAttributes;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.AbstractContextRedundantWarning;
+import static org.eventb.core.sc.GraphProblem.AbstractContextWithoutConfigurationError;
+import static org.eventb.core.sc.GraphProblem.CarrierSetNameImportConflictError;
+import static org.eventb.core.sc.GraphProblem.ConfigurationMissingError;
+import static org.eventb.core.tests.MarkerMatcher.marker;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
@@ -34,14 +41,12 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -49,8 +54,6 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S");
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -63,22 +66,18 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1", "S2");
-		
-		containsMarkers(con, false);
 	}
 	
 	/**
@@ -91,14 +90,10 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs1);
 		
-		runBuilder();
-		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
 		saveRodinFileOf(abs2);
-		
-		runBuilder();
 		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
@@ -106,16 +101,15 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
+		runBuilderCheck(
+				marker(con.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "S11", "abs1"),
+				marker(con.getExtendsClauses()[1], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "S11", "abs2"));
 
 		ISCContextRoot file = con.getSCContextRoot();
 		extendsContexts(file);
 		getInternalContexts(file, 0);
-		
-		hasMarker(con.getExtendsClauses()[0]);
-		hasMarker(con.getExtendsClauses()[1]);
-		
 	}
 
 	/**
@@ -128,14 +122,10 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs1);
 		
-		runBuilder();
-		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S21", "S22"));
 		
 		saveRodinFileOf(abs2);
-		
-		runBuilder();
 		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
@@ -143,7 +133,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
+		runBuilderCheck();
 		
 
 		ISCContextRoot file = con.getSCContextRoot();
@@ -156,8 +146,6 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		containsCarrierSets(contexts[0], "S11", "S12");
 
 		containsCarrierSets(contexts[1], "S21", "S22");
-		
-		containsMarkers(con, false);
 	}
 	
 	/**
@@ -171,8 +159,6 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs1);
 		
-		runBuilder();
-		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
@@ -183,8 +169,6 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs3);
 		
-		runBuilder();
-		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
@@ -192,8 +176,11 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
+		runBuilderCheck(
+				marker(con.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "S11", "abs1"),
+				marker(con.getExtendsClauses()[1], TARGET_ATTRIBUTE,
+						CarrierSetNameImportConflictError, "S11", "abs2"));
 
 		ISCContextRoot file = con.getSCContextRoot();
 		
@@ -203,9 +190,6 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S31", "S32");
-		
-		hasMarker(con.getExtendsClauses()[0]);
-		hasMarker(con.getExtendsClauses()[1]);
 	}
 	
 	/**
@@ -226,14 +210,11 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs2");
 		saveRodinFileOf(con);
 
-		runBuilder();
-		
+		runBuilderCheck();
 
 		ISCContextRoot file = con.getSCContextRoot();
 		extendsContexts(file, "abs2");
 		containsContexts(file, "abs1", "abs2");
-		
-		containsMarkers(con, false);
 	}
 
 	/**
@@ -256,9 +237,8 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(cco);
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getExtendsClauses()[1]);
+		runBuilderCheck(marker(con.getExtendsClauses()[1], TARGET_ATTRIBUTE,
+				AbstractContextRedundantWarning, "cab"));
 	}
 
 	/**
@@ -275,9 +255,8 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(cco);
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getExtendsClauses()[1]);
+		runBuilderCheck(marker(con.getExtendsClauses()[1], TARGET_ATTRIBUTE,
+				AbstractContextRedundantWarning, "cco"));
 	}
 
 	/**
@@ -294,17 +273,15 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
+		// TODO why marker on SCContextRoot?
+		runBuilderCheck(
+				marker(abs, ConfigurationMissingError, "abs"),
+				marker(abs.getSCContextRoot(), ConfigurationMissingError, "abs"),
+				marker(con.getExtendsClauses()[0], TARGET_ATTRIBUTE,
+						AbstractContextWithoutConfigurationError, "abs"));
 
 		ISCContextRoot file = con.getSCContextRoot();
-		
-		containsMarkers(abs, true);
-		containsMarkers(con, true);
-		
 		containsCarrierSets(file, "T");
-		
-		hasMarker(con.getExtendsClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 }

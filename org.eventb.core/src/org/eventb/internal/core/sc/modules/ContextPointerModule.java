@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.core.sc.state.IReservedNameTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
@@ -49,6 +50,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	protected IIdentifierSymbolTable identifierSymbolTable;
 	protected ITypeEnvironmentBuilder typeEnvironment;
 	protected FormulaFactory factory;
+	protected IReservedNameTable reservedNameTable;
 
 	/*
 	 * (non-Javadoc)
@@ -69,6 +71,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				.getState(IIdentifierSymbolTable.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 		factory = repository.getFormulaFactory();
+		// reservedNameTable must be initialized by sub-classes
 	}
 
 	/*
@@ -87,6 +90,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 		identifierSymbolTable = null;
 		typeEnvironment = null;
 		factory = null;
+		reservedNameTable = null;
 	}
 
 	protected boolean fetchSCContexts(ContextPointerArray contextPointerArray,
@@ -217,9 +221,14 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				.createIdentifierSymbolInfo(name, element, contextPointerArray
 						.getContextPointer(index));
 
-		try {
-			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
-		} catch (CoreException e) {
+		if (reservedNameTable.isInConflict(name)) {
+			reservedNameTable.issueWarningFor(name, this);
+			newSymbolInfo.createConflictMarker(this);
+			contextPointerArray.setError(index);
+			return;
+		}
+
+		if (!identifierSymbolTable.tryPutSymbolInfo(newSymbolInfo)) {
 
 			newSymbolInfo.createConflictMarker(this);
 
@@ -229,8 +238,6 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 			IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
 					.getSymbolInfo(name);
-
-			symbolList.add(symbolInfo);
 
 			if (symbolInfo.hasError())
 				return; // the element in the symbol table has already an

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -31,8 +32,6 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "ctx");
@@ -43,18 +42,13 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(mac);
 		
-		runBuilder();
-		
-		containsMarkers(mac, true);
+		runBuilderIssuesSomeMarkers();
 		
 		addCarrierSets(con, makeSList("S1"));
 		
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		containsMarkers(mac, false);
-
+		runBuilderCheck();
 	}
 	
 	@Test
@@ -65,57 +59,48 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getExtendsClauses()[0]);
+		runBuilderIssuesSomeMarkers();
 		
 		IContextRoot abs = createContext("abs");
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
-		hasNotMarker(con.getExtendsClauses()[0]);
+		runBuilderCheck();
 	}
 	
 	@Test
 	public void testDep_03_nonexistentAbstractMachine() throws Exception {
 		IMachineRoot con = createMachine("ctx");
 		addMachineRefines(con, "abs");
+		addInitialisation(con);
 
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getRefinesClauses()[0]);
+		runBuilderIssuesSomeMarkers();
 		
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
-		hasNotMarker(con.getRefinesClauses()[0]);		
+		runBuilderCheck();
 	}
 	
 	@Test
-	public void testDep_03_nonexistentSeenContext() throws Exception {
+	public void testDep_04_nonexistentSeenContext() throws Exception {
 		IMachineRoot con = createMachine("ctx");
 		addMachineSees(con, "abs");
+		addInitialisation(con);
 
 		saveRodinFileOf(con);
 		
-		runBuilder();
-		
-		hasMarker(con.getSeesClauses()[0]);
+		runBuilderIssuesSomeMarkers();
 		
 		IContextRoot abs = createContext("abs");
 		
 		saveRodinFileOf(abs);
 		
-		runBuilder();
-		
-		hasNotMarker(con.getSeesClauses()[0]);
+		runBuilderCheck();
 	}
 
 }

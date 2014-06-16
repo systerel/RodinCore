@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - use marker matcher
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -45,7 +46,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"), false);
 		saveRodinFileOf(ctx);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCContextRoot scCtxFile = ctx.getSCContextRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S",
@@ -73,7 +74,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"), true);
 		saveRodinFileOf(cctx);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCContextRoot scCtxFile = cctx.getSCContextRoot();
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T",
 				factory);
@@ -93,7 +94,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		saveRodinFileOf(mch);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("v=BOOL",
@@ -121,7 +122,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ s"));
 		saveRodinFileOf(mch);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S",
@@ -156,7 +157,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ t"));
 		saveRodinFileOf(mch);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T; v=T",
@@ -184,7 +185,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ TRUE"));
 		saveRodinFileOf(cmch);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
@@ -227,7 +228,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ t"));
 		saveRodinFileOf(cmch);
 
-		runBuilder();
+		runBuilderCheck();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S; T=ℙ(T); t=T; w=T",
@@ -249,7 +250,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		saveRodinFileOf(mch);
 
-		runBuilder();
+		runBuilderCheck();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment();
@@ -279,7 +280,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		saveRodinFileOf(mch);
 
-		runBuilder();
+		runBuilderCheck();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment();

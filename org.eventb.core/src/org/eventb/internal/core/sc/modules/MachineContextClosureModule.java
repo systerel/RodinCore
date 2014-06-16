@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,24 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - refactor code for better readability
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.ContextOnlyInAbstractMachineWarning;
+
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCSeesContext;
-import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
@@ -32,10 +35,16 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
- * @author Stefan Hallerstede
+ * Copies the contexts seen in the abstract machine into the concrete machine if
+ * they are not already seen there (issuing a warning in this case).
  * 
+ * We use context names to determine whether a context is already seen or not,
+ * which is justified because the name space of contexts is the Rodin project.
+ * 
+ * @author Stefan Hallerstede
  */
 public class MachineContextClosureModule extends SCProcessorModule {
 
@@ -43,7 +52,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineContextClosureModule"); //$NON-NLS-1$
 
-	private static final String CSEES_NAME_PREFIX = "CSEES";
+	private static final String CSEES_NAME_PREFIX = "CSEES"; //$NON-NLS-1$
+	private static final ISCInternalContext[] NO_CONTEXTS = {};
 
 	@Override
 	public IModuleType<?> getModuleType() {
@@ -52,78 +62,74 @@ public class MachineContextClosureModule extends SCProcessorModule {
 
 	private IAbstractMachineInfo abstractMachineInfo;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement
-	 * , org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		ISCMachineRoot scMachRoot = (ISCMachineRoot) target;
-		
-		if (abstractMachineInfo.getAbstractMachine() == null)
+		final ISCMachineRoot scMachRoot = (ISCMachineRoot) target;
+		final ISCInternalContext[] abstractContexts = getAbstractContexts();
+		if (abstractContexts.length == 0) {
 			return;
-
-		ISCInternalContext[] abstractContexts = abstractMachineInfo
-				.getAbstractMachine().getSCSeenContexts();
-
-		if (abstractContexts.length == 0)
-			return;
-
-		ContextPointerArray contextPointerArray = (ContextPointerArray) repository
-				.getState(IContextPointerArray.STATE_TYPE);
-
-		List<ISCContext> validContexts = contextPointerArray.getValidContexts();
-
-		HashSet<String> validContextNames = new HashSet<String>(validContexts
-				.size() * 4 / 3 + 1);
-		for (ISCContext context : validContexts) {
-			validContextNames.add(context.getComponentName());
 		}
 
+		final Set<String> validContextNames = getValidContextNames(repository);
 		int count = 0;
-		for (ISCInternalContext context : abstractContexts) {
-			String name = context.getComponentName();
-			if (validContextNames.contains(name))
+		for (final ISCInternalContext context : abstractContexts) {
+			final String name = context.getComponentName();
+			if (validContextNames.contains(name)) {
 				continue;
-			else {
+			}
+			// repair
+			context.copy(scMachRoot, null, null, false, null);
 
+			final boolean added = copySeesClause(scMachRoot,
+					abstractMachineInfo.getAbstractMachine(), name, count++);
+			if (added) {
 				createProblemMarker(abstractMachineInfo.getRefinesClause(),
-						EventBAttributes.TARGET_ATTRIBUTE,
-						GraphProblem.ContextOnlyInAbstractMachineWarning,
-						context.getComponentName());
-
-				
-				// repair
-				copySeesClause(scMachRoot, abstractMachineInfo
-						.getAbstractMachine(), context, count++);
-				context.copy(scMachRoot, null, null, false, null);
-
+						TARGET_ATTRIBUTE, ContextOnlyInAbstractMachineWarning,
+						name);
 			}
 		}
-
 	}
 
-	// Copy the sees clause from the abstraction if it introduces directly the
-	// context, otherwise don't add any sees clause: the context is seen
-	// indirectly.
-	private void copySeesClause(ISCMachineRoot scMachine,
-			ISCMachineRoot scAbsMachFile, ISCInternalContext scContext,
-			int count) throws CoreException {
+	// Returns the abstract contexts seen by the abstract SC machine
+	private ISCInternalContext[] getAbstractContexts() throws RodinDBException {
+		final ISCMachineRoot absMach = abstractMachineInfo.getAbstractMachine();
+		return absMach == null ? NO_CONTEXTS : absMach.getSCSeenContexts();
+	}
 
-		final String ctxName = scContext.getElementName();
-		for (ISCSeesContext clause : scAbsMachFile.getSCSeesClauses()) {
+	// Returns the names of the contexts already seen by the concrete machine
+	private Set<String> getValidContextNames(ISCStateRepository repository)
+			throws CoreException {
+		final ContextPointerArray cpa = (ContextPointerArray) repository
+				.getState(IContextPointerArray.STATE_TYPE);
+		final List<ISCContext> validContexts = cpa.getValidContexts();
+		final Set<String> result = new HashSet<String>(
+				validContexts.size() * 4 / 3 + 1);
+		for (final ISCContext context : validContexts) {
+			result.add(context.getComponentName());
+		}
+		return result;
+	}
+
+	/*
+	 * Copy the sees clause from the abstraction if it introduces directly the
+	 * context, otherwise don't add any sees clause: the context is seen
+	 * indirectly.  Returns whether a clause was added.
+	 */
+	private boolean copySeesClause(ISCMachineRoot scMachine,
+			ISCMachineRoot scAbsMachFile, String ctxName, int count)
+			throws CoreException {
+
+		for (final ISCSeesContext clause : scAbsMachFile.getSCSeesClauses()) {
 			if (ctxName.equals(clause.getSeenSCContext().getComponentName())) {
 				final String name = CSEES_NAME_PREFIX + count;
 				clause.copy(scMachine, null, name, false, null);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override

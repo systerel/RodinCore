@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     University of Southampton - redesign of symbol table
+ *     Systerel - add tryPutSymbolInfo
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -58,16 +59,23 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 
 	@Override
 	public void putSymbolInfo(I symbolInfo) throws CoreException {
-
-		String key = symbolInfo.getSymbol();
-
-		I ocell = table.put(key, symbolInfo);
-		if (ocell != null) {
-			// revert to old symbol table and throw exception
-			table.put(key, ocell);
+		final boolean ok = tryPutSymbolInfo(symbolInfo);
+		if (!ok) {
 			throwSymbolConflict();
 		}
+	}
+
+	@Override
+	public boolean tryPutSymbolInfo(I symbolInfo) {
+		final String key = symbolInfo.getSymbol();
+		final I oldSymbol = table.put(key, symbolInfo);
+		if (oldSymbol != null) {
+			// revert to old symbol and fail
+			table.put(key, oldSymbol);
+			return false;
+		}
 		tableValues.add(symbolInfo);
+		return true;
 	}
 
 	@Override
