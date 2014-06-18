@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,10 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.UnaryExpression;
@@ -114,7 +116,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 				QuantifiedPredicate qPred = (QuantifiedPredicate) subFormula;
 				BoundIdentDecl[] boundIdentDecls = qPred.getBoundIdentDecls();
 				int index = boundIdentDecls[0].getSourceLocation().getStart();
-				return getOperatorPosition(predStr, 0, index);
+				return getOperatorPosition(predStr, qPred.getSourceLocation()
+						.getStart(), index);
 			}
 			if (subFormula instanceof RelationalPredicate) {
 				RelationalPredicate rPred = (RelationalPredicate) subFormula;
@@ -146,6 +149,19 @@ public class DefaultTacticProvider implements ITacticProvider {
 				return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
 						rightLocation.getStart());
 			}
+			if (subFormula instanceof QuantifiedExpression) {
+				QuantifiedExpression qExpr = (QuantifiedExpression) subFormula;
+				BoundIdentDecl[] boundIdentDecls = qExpr.getBoundIdentDecls();
+				int index = boundIdentDecls[0].getSourceLocation().getStart();
+				return getOperatorPosition(predStr, qExpr.getSourceLocation()
+						.getStart(), index);
+			}
+			if (subFormula instanceof SetExtension) {
+				SetExtension setExt = (SetExtension) subFormula;
+				final Expression[] members = setExt.getMembers();
+				return getOperatorPosition(predStr, setExt.getSourceLocation()
+						.getStart(), members[0].getSourceLocation().getStart());
+			}
 			if (subFormula instanceof UnaryExpression) {
 				UnaryExpression uPred = (UnaryExpression) subFormula;
 				if (uPred.getTag() == Expression.CONVERSE) {
@@ -165,7 +181,10 @@ public class DefaultTacticProvider implements ITacticProvider {
 						.getStart(), expression.getSourceLocation().getStart());
 			}
 			if (subFormula instanceof BoolExpression) {
-				return makeAtomicPos(subFormula.getSourceLocation());
+				BoolExpression bExpr = (BoolExpression) subFormula;
+				final Predicate pred = bExpr.getPredicate();
+				return getOperatorPosition(predStr, bExpr.getSourceLocation()
+						.getStart(), pred.getSourceLocation().getStart());
 			}
 			if (subFormula instanceof BoundIdentifier) {
 				return makeAtomicPos(subFormula.getSourceLocation());
