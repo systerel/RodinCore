@@ -39,6 +39,9 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 
@@ -192,7 +195,53 @@ public class DefaultTacticProvider implements ITacticProvider {
 			if (subFormula instanceof FreeIdentifier) {
 				return makeAtomicPos(subFormula.getSourceLocation());
 			}
+			if (subFormula instanceof IExtendedFormula) {
+				return getExtendedOperatorPos(predStr,
+						(IExtendedFormula) subFormula,
+						subFormula.getSourceLocation());
+			}
+
 			return makeAtomicPos(subFormula.getSourceLocation());// The first character
+		}
+
+		private Point getExtendedOperatorPos(String predStr,
+				IExtendedFormula parent, SourceLocation parentLoc) {
+
+			final IOperatorProperties properties = parent.getExtension()
+					.getKind().getProperties();
+			final ITypeDistribution childTypes = properties.getChildTypes();
+
+			final List<Formula<?>> children = childTypes.makeList(
+					parent.getChildExpressions(), parent.getChildPredicates());
+
+			if (children.isEmpty()) { // atomic operator
+				return getOperatorPosition(predStr, parentLoc.getStart(),
+						parentLoc.getEnd() + 1);
+			}
+
+			switch (properties.getNotation()) {
+			case PREFIX:
+				final int parentStart = parentLoc.getStart();
+				final int firstStart = children.get(0).getSourceLocation()
+						.getStart();
+				return getOperatorPosition(predStr, parentStart, firstStart);
+			case INFIX:
+				final int firstEnd = children.get(0).getSourceLocation()
+						.getEnd();
+				final int secondStart = children.get(1).getSourceLocation()
+						.getStart();
+				return getOperatorPosition(predStr, firstEnd + 1, secondStart);
+			case POSTFIX:
+				final int lastEnd = children.get(children.size() - 1)
+						.getSourceLocation().getEnd();
+				final int parentEnd = parentLoc.getEnd();
+				return getOperatorPosition(predStr, lastEnd+1, parentEnd+1);
+
+			default:
+				throw new IllegalStateException("Unsupported notation: "
+						+ properties.getNotation() + " for operator: "
+						+ parent.getExtension().getSyntaxSymbol());
+			}
 		}
 
 		private static Point makeAtomicPos(SourceLocation srcLoc) {
