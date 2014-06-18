@@ -16,32 +16,12 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.ITypeDistribution;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 
@@ -85,172 +65,94 @@ public class DefaultTacticProvider implements ITacticProvider {
 			return null;
 		}
 
+		private static Notation getNotation(Formula<?> formula) {
+			final int tag = formula.getTag();
+
+			if (tag < Formula.FIRST_RELATIONAL_PREDICATE) {
+				// free identifier
+				// bound identifier declaration
+				// bound identifier
+				// integer literal
+				// set extension
+				// [assignment operators irrelevant here]
+				// [predicate variable irrelevant here]
+				return Notation.PREFIX;
+			}
+			if (tag < Formula.FIRST_ATOMIC_EXPRESSION) {
+				// relational predicate
+				// binary expression
+				// binary predicate
+				// associative expression
+				// associative predicate
+				return Notation.INFIX;
+			}
+			if (tag < Formula.FIRST_UNARY_EXPRESSION) {
+				// bool expression
+				// literal predicate
+				// simple predicate
+				// unary predicate
+				return Notation.PREFIX;
+			}
+			if (tag == Formula.CONVERSE) {
+				return Notation.POSTFIX;
+			}
+			if (tag < Formula.FIRST_EXTENSION_TAG) {
+				// unary expression except CONVERSE
+				// quantified expression
+				// quantified predicate
+				// multiple predicate
+				return Notation.PREFIX;
+			}
+
+			// all extensions
+			final IFormulaExtension extension = formula.getFactory()
+					.getExtension(tag);
+			return extension.getKind().getProperties().getNotation();
+		}
+
 		/**
 		 * This is the default implementation for finding the source location of
 		 * position in predicate. Usually, plug-in writers do not need to
 		 * override this method.
 		 */
 		public Point getOperatorPosition(Predicate predicate, String predStr) {
-			Formula<?> subFormula = predicate.getSubFormula(position);
-			if (subFormula instanceof AssociativePredicate) {
-				// Return the operator between the first and second child
-				Predicate[] children = ((AssociativePredicate) subFormula)
-						.getChildren();
-				return getOperatorPosition(predStr, children[0].getSourceLocation()
-						.getEnd() + 1, children[1].getSourceLocation().getStart());
-			}
-			if (subFormula instanceof BinaryPredicate) {
-				BinaryPredicate bPred = (BinaryPredicate) subFormula;
-				SourceLocation leftLocation = bPred.getLeft().getSourceLocation();
-				SourceLocation rightLocation = bPred.getRight().getSourceLocation();
-				return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
-						rightLocation.getStart());
-			}
-			if (subFormula instanceof LiteralPredicate) {
-				return makeAtomicPos(subFormula.getSourceLocation());
-			}
-			if (subFormula instanceof MultiplePredicate) {
-				final MultiplePredicate mPred = (MultiplePredicate) subFormula;
-				final Expression[] children = mPred.getChildren();
-				return getOperatorPosition(predStr, subFormula.getSourceLocation()
-						.getStart(), children[0].getSourceLocation().getStart());
-			}
-			if (subFormula instanceof QuantifiedPredicate) {
-				QuantifiedPredicate qPred = (QuantifiedPredicate) subFormula;
-				BoundIdentDecl[] boundIdentDecls = qPred.getBoundIdentDecls();
-				int index = boundIdentDecls[0].getSourceLocation().getStart();
-				return getOperatorPosition(predStr, qPred.getSourceLocation()
-						.getStart(), index);
-			}
-			if (subFormula instanceof RelationalPredicate) {
-				RelationalPredicate rPred = (RelationalPredicate) subFormula;
-				Expression left = rPred.getLeft();
-				Expression right = rPred.getRight();
-				return getOperatorPosition(predStr, left.getSourceLocation()
-						.getEnd() + 1, right.getSourceLocation().getStart());
-			}
-			if (subFormula instanceof UnaryPredicate) {
-				UnaryPredicate uPred = (UnaryPredicate) subFormula;
-				Predicate child = uPred.getChild();
-				return getOperatorPosition(predStr, subFormula.getSourceLocation()
-						.getStart(), child.getSourceLocation().getStart());
-			}
-			if (subFormula instanceof AssociativeExpression) {
-				// Return the operator between the first and second child
-				Expression[] children = ((AssociativeExpression) subFormula)
-						.getChildren();
-				return getOperatorPosition(predStr, children[0].getSourceLocation()
-						.getEnd() + 1, children[1].getSourceLocation().getStart());
-			}
-			if (subFormula instanceof AtomicExpression) {
-				return makeAtomicPos(subFormula.getSourceLocation());
-			}
-			if (subFormula instanceof BinaryExpression) {
-				BinaryExpression bExp = (BinaryExpression) subFormula;
-				SourceLocation leftLocation = bExp.getLeft().getSourceLocation();
-				SourceLocation rightLocation = bExp.getRight().getSourceLocation();
-				return getOperatorPosition(predStr, leftLocation.getEnd() + 1,
-						rightLocation.getStart());
-			}
-			if (subFormula instanceof QuantifiedExpression) {
-				QuantifiedExpression qExpr = (QuantifiedExpression) subFormula;
-				BoundIdentDecl[] boundIdentDecls = qExpr.getBoundIdentDecls();
-				int index = boundIdentDecls[0].getSourceLocation().getStart();
-				return getOperatorPosition(predStr, qExpr.getSourceLocation()
-						.getStart(), index);
-			}
-			if (subFormula instanceof SetExtension) {
-				SetExtension setExt = (SetExtension) subFormula;
-				final Expression[] members = setExt.getMembers();
-				return getOperatorPosition(predStr, setExt.getSourceLocation()
-						.getStart(), members[0].getSourceLocation().getStart());
-			}
-			if (subFormula instanceof UnaryExpression) {
-				UnaryExpression uPred = (UnaryExpression) subFormula;
-				if (uPred.getTag() == Expression.CONVERSE) {
-					Expression child = uPred.getChild();
-					return getOperatorPosition(predStr, child.getSourceLocation()
-							.getEnd() + 1,
-							subFormula.getSourceLocation().getEnd() + 1);
-				}
-				Expression child = uPred.getChild();
-				return getOperatorPosition(predStr, subFormula.getSourceLocation()
-						.getStart(), child.getSourceLocation().getStart());
-			}
-			if (subFormula instanceof SimplePredicate) {
-				SimplePredicate sPred = (SimplePredicate) subFormula;
-				Expression expression = sPred.getExpression();
-				return getOperatorPosition(predStr, subFormula.getSourceLocation()
-						.getStart(), expression.getSourceLocation().getStart());
-			}
-			if (subFormula instanceof BoolExpression) {
-				BoolExpression bExpr = (BoolExpression) subFormula;
-				final Predicate pred = bExpr.getPredicate();
-				return getOperatorPosition(predStr, bExpr.getSourceLocation()
-						.getStart(), pred.getSourceLocation().getStart());
-			}
-			if (subFormula instanceof BoundIdentifier) {
-				return makeAtomicPos(subFormula.getSourceLocation());
-			}
-			if (subFormula instanceof FreeIdentifier) {
-				return makeAtomicPos(subFormula.getSourceLocation());
-			}
-			if (subFormula instanceof IExtendedFormula) {
-				return getExtendedOperatorPos(predStr,
-						(IExtendedFormula) subFormula,
-						subFormula.getSourceLocation());
+			final Formula<?> subFormula = predicate.getSubFormula(position);
+			final int childCount = subFormula.getChildCount();
+			final SourceLocation subLoc = subFormula.getSourceLocation();
+
+			if (childCount == 0) {
+				return getOperatorPosition(predStr, subLoc.getStart(),
+						subLoc.getEnd() + 1);
 			}
 
-			return makeAtomicPos(subFormula.getSourceLocation());// The first character
-		}
+			final Notation notation = getNotation(subFormula);
+			final SourceLocation firstLoc = subFormula.getChild(0)
+					.getSourceLocation();
 
-		private Point getExtendedOperatorPos(String predStr,
-				IExtendedFormula parent, SourceLocation parentLoc) {
-
-			final IOperatorProperties properties = parent.getExtension()
-					.getKind().getProperties();
-			final ITypeDistribution childTypes = properties.getChildTypes();
-
-			final List<Formula<?>> children = childTypes.makeList(
-					parent.getChildExpressions(), parent.getChildPredicates());
-
-			if (children.isEmpty()) { // atomic operator
-				return getOperatorPosition(predStr, parentLoc.getStart(),
-						parentLoc.getEnd() + 1);
-			}
-
-			switch (properties.getNotation()) {
+			switch (notation) {
 			case PREFIX:
-				final int parentStart = parentLoc.getStart();
-				final int firstStart = children.get(0).getSourceLocation()
-						.getStart();
-				return getOperatorPosition(predStr, parentStart, firstStart);
+				return getOperatorPosition(predStr, subLoc.getStart(),
+						firstLoc.getStart());
 			case INFIX:
-				final int firstEnd = children.get(0).getSourceLocation()
-						.getEnd();
-				final int secondStart = children.get(1).getSourceLocation()
-						.getStart();
-				return getOperatorPosition(predStr, firstEnd + 1, secondStart);
+				final SourceLocation secondLoc = subFormula.getChild(1)
+						.getSourceLocation();
+				return getOperatorPosition(predStr, firstLoc.getEnd() + 1,
+						secondLoc.getStart());
 			case POSTFIX:
-				final int lastEnd = children.get(children.size() - 1)
-						.getSourceLocation().getEnd();
-				final int parentEnd = parentLoc.getEnd();
-				return getOperatorPosition(predStr, lastEnd+1, parentEnd+1);
+				final SourceLocation lastLoc = subFormula.getChild(
+						childCount - 1).getSourceLocation();
+				return getOperatorPosition(predStr, lastLoc.getEnd() + 1,
+						subLoc.getEnd() + 1);
 
 			default:
 				throw new IllegalStateException("Unsupported notation: "
-						+ properties.getNotation() + " for operator: "
-						+ parent.getExtension().getSyntaxSymbol());
+						+ notation + " for root operator of: " + subFormula);
 			}
 		}
 
-		private static Point makeAtomicPos(SourceLocation srcLoc) {
-			return new Point(srcLoc.getStart(), srcLoc.getEnd() + 1);
-		}
-
 		/**
-		 * An utility method to return the operator source location within the range
-		 * (start, end).
+		 * An utility method to return the operator source location within the
+		 * range (start, end).
 		 * <p>
 		 * 
 		 * @param predStr
@@ -259,8 +161,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 		 *            the starting index for searching.
 		 * @param end
 		 *            the last index for searching
-		 * @return the location in the predicate string ignore the empty spaces or
-		 *         brackets in the beginning and in the end.
+		 * @return the location in the predicate string ignore the empty spaces
+		 *         or brackets in the beginning and in the end.
 		 */
 		protected Point getOperatorPosition(String predStr, int start, int end) {
 			int i = start;
@@ -285,8 +187,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 		}
 
 		/**
-		 * A private utility method to check if a character is either a space or a
-		 * bracket.
+		 * A private utility method to check if a character is either a space or
+		 * a bracket.
 		 * <p>
 		 * 
 		 * @param c
@@ -315,7 +217,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 */
 	public static class DefaultPredicateApplication implements
 			IPredicateApplication {
-		
+
 		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
 			return null;
@@ -330,7 +232,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 		public Image getIcon() {
 			return null;
 		}
-		
+
 		@Override
 		public String getTooltip() {
 			return null;
