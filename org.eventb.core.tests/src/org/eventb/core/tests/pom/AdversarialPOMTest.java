@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.core.tests.pom.POUtil.addPredicateSet;
 import static org.eventb.core.tests.pom.POUtil.addSequent;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicateSet;
@@ -23,12 +26,17 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Ensures that POM behaves correctly, even in the presence of adversarial
- * plug-ins.
+ * Ensures that POM behaves correctly, even in the presence of :
+ * <ul>
+ * <li>adversarial plug-ins
+ * <li>adversarial formula extension providers
+ * </ul>
  * 
  * @author Laurent Voisin
  */
@@ -41,6 +49,7 @@ public class AdversarialPOMTest extends AutoPOMTest {
 		createPOFile();
 		enableAutoProver("org.eventb.core.tests.adversarialTac");
 		AdversarialReasoner.reset();
+		PrimeFormulaExtensionProvider.reset();
 	}
 
 	private void createPOFile() throws CoreException {
@@ -121,4 +130,58 @@ public class AdversarialPOMTest extends AutoPOMTest {
 		assertEquals(0, skel.getChildNodes().length);
 	}
 
+	/**
+	 * Ensures that POM correctly traps formula factory storage problems caused
+	 * by an adversarial formula extension provider.
+	 */
+	@Test
+	public final void testSaveFFProblem() throws CoreException {
+		PrimeFormulaExtensionProvider.erroneousSaveFormulaFactory = true;
+		runBuilder();
+		assertNotDischarged(psStatus);
+	}
+
+	/**
+	 * Ensures that proofTree is re-generated when proof file language parse
+	 * problems occurred (the broken factory and the factory of the component are
+	 * compatible).
+	 */
+	@Test
+	public final void testLoadFFProblem() throws CoreException {
+		PrimeFormulaExtensionProvider.erroneousLoadFormulaFactory = true;
+		runBuilder();
+		final IPRProof proof = poRoot.getPRRoot().getProof(
+				psStatus.getElementName());
+		final IProofTree proofTree = proof.getProofTree(null);
+		assertNotNull(proofTree);
+		assertDischarged(psStatus);
+	}
+
+	/**
+	 * Ensures that a CoreException is thrown when trying to load a proof tree
+	 * that requires an extended formula factory, if there is a factory loading
+	 * problem and the proof component gives a wrong factory (the default
+	 * factory here).
+	 */
+	@Test
+	public void testLoadExtendedFFProblem() throws Exception {
+		PrimeFormulaExtensionProvider.add(poRoot);
+		PrimeFormulaExtensionProvider.add(poRoot.getPSRoot());
+		PrimeFormulaExtensionProvider.add(poRoot.getPRRoot());
+		final ITypeEnvironment te = EXT_FACTORY.makeTypeEnvironment();
+		addSequent(poRoot, "PO2", "⊤", null, te, "prime({2})");
+		saveRodinFileOf(poRoot);
+		runBuilder();
+
+		final IPRProof proof = poRoot.getPRRoot().getProof("PO2");
+		PrimeFormulaExtensionProvider.clear();
+		PrimeFormulaExtensionProvider.erroneousLoadFormulaFactory = true;
+
+		try {
+			proof.getProofTree(null);
+			fail("Expected a CoreException");
+		} catch (CoreException e) {
+			// as expected
+		}
+	}
 }

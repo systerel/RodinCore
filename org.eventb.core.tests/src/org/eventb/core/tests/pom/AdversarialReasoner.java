@@ -14,6 +14,9 @@ import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -136,7 +139,12 @@ public class AdversarialReasoner implements IReasoner, IRepairableInputReasoner 
 		if (goal.getTag() != BTRUE) {
 			return reasonerFailure(this, input, "Goal is not a tautology");
 		}
-		return makeProofRule(this, input, goal, "adversarial", NO_ANTE);
+		// needing all hypotheses
+		final Set<Predicate> neededHyps = new LinkedHashSet<Predicate>();
+		for (Predicate hyp : seq.hypIterable()) {
+			neededHyps.add(hyp);
+		}
+		return makeProofRule(this, input, goal, neededHyps, "adversarial", NO_ANTE);
 	}
 
 	public ITactic asTactic() {

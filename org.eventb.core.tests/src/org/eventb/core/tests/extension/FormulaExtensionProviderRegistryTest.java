@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_
 import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
 import static org.junit.Assert.assertSame;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
@@ -75,7 +76,7 @@ public class FormulaExtensionProviderRegistryTest extends EventBTest {
 	 * Ensures that it is not possible to deserialize a factory from an empty
 	 * element.
 	 */
-	@Test(expected = RodinDBException.class)
+	@Test(expected = CoreException.class)
 	public void deserializeFactoryError() throws Exception {
 		final ILanguage lang = createLanguage();
 		lang.getFormulaFactory(null);
