@@ -90,7 +90,13 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
 
 		final FormulaFactory ff = pt.getFormulaFactory();
-		setFormulaFactory(ff, sm.newChild(1));
+
+		try {
+			setFormulaFactory(ff, sm.newChild(1));
+		} catch(RodinDBException e) {
+			// exception already logged
+			pt.getRoot().pruneChildren();
+		}
 
 		// compute proof tree dependencies
 		IProofDependencies proofDeps = pt.getProofDependencies();

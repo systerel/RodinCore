@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -40,7 +40,7 @@ import org.rodinp.core.RodinDBException;
 
 public class AutoPOMTest extends BuilderTest {
 
-	private IPORoot poRoot;
+	protected IPORoot poRoot;
 	
 	private void createPOFile() throws CoreException {
 		poRoot = createPOFile("x");
@@ -137,8 +137,8 @@ public class AutoPOMTest extends BuilderTest {
 	}
 	
 
-	private void checkProofsConsistent(IPRRoot prRoot, IPSRoot psFile) throws RodinDBException {
-		IPSStatus[] statuses = psFile.getStatuses();
+	protected void checkProofsConsistent(IPRRoot prRoot, IPSRoot psRoot) throws RodinDBException {
+		IPSStatus[] statuses = psRoot.getStatuses();
 		for (IPSStatus status : statuses) {
 			IPRProof prProofTree = status.getProof();
 			String name = status.getElementName();
@@ -149,7 +149,7 @@ public class AutoPOMTest extends BuilderTest {
 	}
 
 	// TODO : make simpler and add check for PO stamps
-	private void checkPOsConsistent(
+	protected void checkPOsConsistent(
 			IInternalElement poElement,
 			IInternalElement prElement) throws RodinDBException {
 		
@@ -188,7 +188,7 @@ public class AutoPOMTest extends BuilderTest {
 		}
 	}
 
-	private void assertDischarged(IPSStatus status) throws RodinDBException {
+	protected void assertDischarged(IPSStatus status) throws RodinDBException {
 		assertFalse("PR " + status.getElementName() + " should be valid",
 				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should be closed",
@@ -205,7 +205,7 @@ public class AutoPOMTest extends BuilderTest {
 				status.getHasManualProof());
 	}
 	
-	private void assertNotDischarged(IPSStatus status) throws RodinDBException {
+	protected void assertNotDischarged(IPSStatus status) throws RodinDBException {
 		assertFalse("PR " + status.getElementName() + " should be valid",
 				status.isBroken());
 		assertTrue("PO " + status.getElementName() + " should not be closed",

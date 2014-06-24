@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,21 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	private static final List<String> FACTORY_NAMES = asList("Default",
 			"Ext Prime");
 
+	public static boolean erroneousLoadFormulaFactory = false;
+	public static boolean erroneousSaveFormulaFactory = false;
+
+	public static void reset() {
+		erroneousLoadFormulaFactory = false;
+		erroneousSaveFormulaFactory = false;
+	}
+
+	static void maybeFail(boolean condition) {
+		if (condition) {
+			throw new RuntimeException(
+					"Error in adversarial formula extension provider");
+		}
+	}
+
 	@Override
 	public String getId() {
 		return BuilderTest.PLUGIN_ID + ".PrimeFormulaExtensionProvider";
@@ -111,6 +126,7 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	@Override
 	public void saveFormulaFactory(ILanguage element, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {
+		maybeFail(erroneousSaveFormulaFactory);
 		if (element.hasChildren() || element.getAttributeTypes().length != 0) {
 			final IStatus status = new Status(Status.ERROR,
 					BuilderTest.PLUGIN_ID,
@@ -125,6 +141,7 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	@Override
 	public FormulaFactory loadFormulaFactory(ILanguage element,
 			IProgressMonitor monitor) throws RodinDBException {
+		maybeFail(erroneousLoadFormulaFactory);
 		final String name = element.getAttributeValue(FACTORY_ATTR);
 		final int idx = FACTORY_NAMES.indexOf(name);
 		assertFalse(idx < 0);

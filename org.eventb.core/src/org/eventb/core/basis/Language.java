@@ -33,7 +33,7 @@ import org.rodinp.core.basis.InternalElement;
  * <p>
  * This class should not be used in any other way than subclassing it in a
  * database extension. In particular, clients should not use it, but rather use
- * its associated interface <code>IConstant</code>.
+ * its associated interface <code>ILanguage</code>.
  * </p>
  * 
  * @author Laurent Voisin

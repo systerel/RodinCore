@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
@@ -319,12 +320,31 @@ public abstract class EventBProofElement extends InternalElement implements
 		final String comment = skel.getComment();
 		setComment(comment, null);
 		
-		if (skel.getRule() == null) return;
+		final IProofRule rule = skel.getRule();
+		if (rule == null) return;
 
-		final IPRProofRule prRule = getProofRule(skel.getRule(), store);
+		final IPRProofRule prRule = getProofRule(rule, store);
 		prRule.create(null,null);
-		
-		prRule.setProofRule(skel, store, monitor);
+
+		try {
+			prRule.setProofRule(skel, store, monitor);
+		} catch (Exception e) {
+			final String msg = "while serializing rule of reasoner: "
+					+ rule.getReasonerDesc().getId();
+			Util.log(e, msg);
+			// Repair: remove half-serialized rule and update proof tree
+			prRule.delete(true, monitor);
+			if (skel instanceof IProofTreeNode) {
+				final IProofTreeNode node = (IProofTreeNode) skel;
+				node.pruneChildren();
+			}
+			/*
+			 * Do not propagate the exception so that the rest of the proof tree
+			 * can be serialized.
+			 * 
+			 * TODO Rodin 4.0: return a Status object to propagate information 
+			 */
+		}
 	}
 
 	private IPRProofRule getProofRule(IProofRule rule, IProofStoreCollector store) {

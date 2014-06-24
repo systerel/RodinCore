@@ -108,7 +108,16 @@ public class ProofSkeletonBuilder {
 			throws CoreException {
 		final SubMonitor sm = SubMonitor.convert(pm, 110);
 		final IProofComponent pc = getProofComponent(pr);
-		final FormulaFactory ff = pr.getFormulaFactory(sm.newChild(10));
+		FormulaFactory ff;
+		boolean isBroken = false;
+		try {
+			ff = pr.getFormulaFactory(sm.newChild(10));
+		} catch (CoreException e) {
+			// exception already logged
+			isBroken = true;
+			ff = pc.getFormulaFactory();
+		}
+
 		if (sm.isCanceled()) {
 			return null;
 		}
@@ -128,14 +137,17 @@ public class ProofSkeletonBuilder {
 		if (sm.isCanceled()) {
 			return null;
 		}
-		
+
 		final IProofTree prTree = ProverFactory.makeProofTree(rootSequent, pr);
-		if (ProofBuilder.reuse(prTree.getRoot(), skel, new ProofMonitor(sm))) {
-			return prTree;
-		} else {
+		if (isBroken) {
+			if (!ProofBuilder.rebuild(prTree.getRoot(), skel, new ProofMonitor(sm))) {
+				return null;
+			}
+		} else if (!ProofBuilder.reuse(prTree.getRoot(), skel, new ProofMonitor(sm))) {
 			logIllFormedProof(pr);
 			return null;
 		}
+		return prTree;
 	}
 
 	private static void logIllFormedProof(IPRProof pr) {

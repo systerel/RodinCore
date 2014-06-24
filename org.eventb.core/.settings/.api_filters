@@ -16,6 +16,14 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/internal/core/Util.java" type="org.eventb.internal.core.Util">
+        <filter comment="Should be CoreException, but cannot change API." id="572522506">
+            <message_arguments>
+                <message_argument value="RodinDBException"/>
+                <message_argument value="Util"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/core/preferences/ITacticDescriptorRef.java" type="org.eventb.internal.core.preferences.ITacticDescriptorRef">
         <filter comment="required to reference tactic descriptors seemlessly" id="571473929">
             <message_arguments>

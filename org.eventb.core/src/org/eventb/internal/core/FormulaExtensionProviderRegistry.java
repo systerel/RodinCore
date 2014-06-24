@@ -91,7 +91,15 @@ public class FormulaExtensionProviderRegistry {
 	public synchronized FormulaFactory getFormulaFactory(ILanguage language,
 			IProgressMonitor pm) throws CoreException {
 		if (provider != null) {
-			return provider.loadFormulaFactory(language, pm);
+			try {
+				return provider.loadFormulaFactory(language, pm);
+			} catch (Exception e) {
+				final String msg = "while loading formula factory";
+				Util.log(e, msg);
+				throw Util.newCoreException(msg, e);
+				// TODO Rodin 4.0: return a Status object to propagate
+				// information
+			}
 		}
 		// No formula extensions available
 		return FormulaFactory.getDefault();
@@ -100,7 +108,16 @@ public class FormulaExtensionProviderRegistry {
 	public synchronized void setFormulaFactory(ILanguage language,
 			FormulaFactory ff, IProgressMonitor pm) throws RodinDBException {
 		if (provider != null) {
-			provider.saveFormulaFactory(language, ff, pm);
+			try {
+				provider.saveFormulaFactory(language, ff, pm);
+			} catch (Exception e) {
+				final String msg = "while saving formula factory";
+				Util.log(e, msg);
+				language.delete(true, pm);
+				throw Util.newRodinDBException(msg, e);
+				// TODO Rodin 4.0: return a Status object to propagate
+				// information
+			}
 		}
 	}
 
