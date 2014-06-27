@@ -472,4 +472,68 @@ public class TestMachineVariant extends EventBPOTest {
 		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");
 	}
 
+	/**
+	 * No PO is generated for an anticipated event that does not modify the
+	 * variant expression (case with a deterministic action).
+	 */
+	@Test
+	public void test_10_anticipatedDoesNotModifyVariantDeterministic() throws Exception {
+		IMachineRoot mch = createMachine("abs");
+
+		addVariables(mch, "x", "y");
+		addInvariants(mch, makeSList("I1", "I2"), makeSList("x∈ℤ", "y∈ℤ"),
+				false, false);
+		IEvent cvg = addEvent(mch, "cvg", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(cvg);
+		IEvent ant = addEvent(mch, "ant", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("y ≔ y+1"));
+		setAnticipated(ant);
+		addVariant(mch, "x");
+		saveRodinFileOf(mch);
+		
+		runBuilder();
+		
+		IPORoot po = mch.getPORoot();
+		
+		noSequent(po, "ant/VAR");
+		noSequent(po, "ant/NAT");
+	}
+
+	/**
+	 * No PO is generated for an anticipated event that does not modify the
+	 * variant expression (case with a non-deterministic action).
+	 */
+	@Test
+	public void test_11_anticipatedDoesNotModifyVariantNonDeterministic() throws Exception {
+		IMachineRoot mch = createMachine("abs");
+
+		addVariables(mch, "x", "y");
+		addInvariants(mch, makeSList("I1", "I2"), makeSList("x∈ℤ", "y∈ℤ"),
+				false, false);
+		IEvent cvg = addEvent(mch, "cvg", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(cvg);
+		IEvent ant = addEvent(mch, "ant", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("y :∣ y < y'"));
+		setAnticipated(ant);
+		addVariant(mch, "x");
+		saveRodinFileOf(mch);
+		
+		runBuilder();
+		
+		IPORoot po = mch.getPORoot();
+		
+		noSequent(po, "ant/VAR");
+		noSequent(po, "ant/NAT");
+	}
+
 }

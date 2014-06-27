@@ -96,6 +96,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		nextVarExpression = nextVarExpression.applyAssignments(substitution);
 
+		if (concreteConvergence == ANTICIPATED && nextVarExpression.equals(varExpression)) {
+			// The variant is not modified by this anticipated event,
+			// do not generate any proof obligation.
+			return;
+		}
+		
 		boolean isIntVariant = varExpression.getType() instanceof IntegerType;
 		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
 		
