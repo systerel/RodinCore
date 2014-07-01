@@ -652,6 +652,20 @@
                tooltip="%commands.newProject.tooltip">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:fr.systerel.explorer.navigator.view?after=group.edit">
+         <command
+               commandId="org.eclipse.ui.edit.copy"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="fr.systerel.explorer.allEventBRoot">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -675,6 +689,15 @@
             class="fr.systerel.internal.explorer.navigator.handlers.NewResourceHandler$NewProjectHandler"
             commandId="fr.systerel.explorer.navigator.newProject">
       </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.CopyEventBComponentHandler"
+            commandId="org.eclipse.ui.edit.copy">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.explorer.allEventBRoot">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.decorators">
@@ -697,6 +720,19 @@
          </enablement>
       </decorator>
    </extension>
-
+   <extension
+        point="org.eclipse.core.expressions.definitions">
+     <definition
+           id="fr.systerel.explorer.allEventBRoot">
+       <and>
+          <iterate
+                operator="and">
+             <instanceof
+                   value="org.eventb.core.IEventBRoot">
+             </instanceof>
+          </iterate>
+       </and>
+     </definition>
+   </extension>
 
 </plugin>
