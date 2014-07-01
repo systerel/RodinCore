@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,16 +76,20 @@ public class RodinTextGenerator {
 	 * 
 	 * @param inputRoot
 	 *            The machine or context that is displayed in the document.
+	 * @param showImplicitElements
+	 *            boolean value telling whether implicit elements should be
+	 *            displayed or not
 	 */
-	public String createText(ILElement inputRoot) {
+	public String createText(ILElement inputRoot, boolean showImplicitElements) {
 		mapper.reinitialize();
 		stream = new RodinTextStream();
-		traverseRoot(null, inputRoot);
+		traverseRoot(null, inputRoot, showImplicitElements);
 		mapper.processIntervals(stream.getRegions());
 		return stream.getText();
 	}
 
-	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
+	private void traverseRoot(IProgressMonitor monitor, ILElement e,
+			boolean showImplicitElements) {
 		final IElementDesc desc = getElementDesc(e);
 		stream.addSectionRegion(desc.getPrefix(null), e);
 		stream.incrementIndentation();
@@ -101,7 +105,7 @@ public class RodinTextGenerator {
 		processCommentedElement(e, sizer);
 		stream.appendLineSeparator(e);
 		stream.decrementIndentation();
-		traverse(monitor, e);
+		traverse(monitor, e, showImplicitElements);
 	}
 
 	// there is no ":" after the root name so we remove it from the sizer
@@ -114,7 +118,8 @@ public class RodinTextGenerator {
 		return b.toString();
 	}
 
-	private void traverse(IProgressMonitor mon, ILElement e) {
+	private void traverse(IProgressMonitor mon, ILElement e,
+			boolean showImplicitElements) {
 		final IElementDesc desc = getElementDesc(e);
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
 			stream.incrementIndentation();
@@ -125,8 +130,7 @@ public class RodinTextGenerator {
 				continue;
 			int start = -1;
 			final List<ILElement> c = e.getChildrenOfType(childType);
-			final boolean noChildren = c.isEmpty();
-			if (noChildren) {
+			if (noChildToDisplay(c, showImplicitElements)) {
 				continue;
 			}
 			start = stream.getLength();
@@ -136,9 +140,12 @@ public class RodinTextGenerator {
 				stream.addKeywordRegion(desc.getPrefix(childType), e);
 			}
 			for (ILElement in : c) {
+				if (in.isImplicit() && !showImplicitElements) {
+					continue; // do not show implicit elements
+				}
 				stream.appendLeftPresentationTabs(in);
 				processElement(in);
-				traverse(mon, in);
+				traverse(mon, in, showImplicitElements);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
 					stream.appendLineSeparator(e);
 				}
@@ -155,6 +162,22 @@ public class RodinTextGenerator {
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
 			stream.decrementIndentation();
 		}
+	}
+
+	private boolean noChildToDisplay(List<ILElement> elements,
+			boolean showImplicitElements) {
+		if (elements.isEmpty()) {
+			return true;
+		} // else
+		if (showImplicitElements) {
+			return false;
+		} // else
+		for (ILElement element : elements) {
+			if (!element.isImplicit()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -308,8 +331,7 @@ public class RodinTextGenerator {
 		if (rodinElement instanceof ICommentedElement) {
 			processCommentedElement(element, sizer);
 		}
-		// the separator belongs to the parent element
-		stream.appendLineSeparator(element.getParent());
+		stream.appendLineSeparator(element);
 	}
 
 	private void processElementHandle(ILElement element, TextAlignator sizer) {

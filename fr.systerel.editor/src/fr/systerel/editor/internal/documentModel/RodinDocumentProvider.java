@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.presentation.updaters.ImplicitPresentationUpdater;
 import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
 
 /**
@@ -55,7 +54,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private final RodinEditor editor;
 	private final DocumentMapper documentMapper;
 	private PresentationUpdater mainUpdater;
-	private ImplicitPresentationUpdater implicitUpdater;
 	
 	private IDocument document;
 	private ILElement inputRoot;
@@ -113,7 +111,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
 			textGenerator = new RodinTextGenerator(documentMapper);
-			doc.set(textGenerator.createText(inputRoot));
+			doc.set(textGenerator.createText(inputRoot,
+					editor.isShowImplicitElements()));
 			documentMapper.setDocument(doc);
 			documentMapper.setDocumentProvider(this);
 
@@ -168,7 +167,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	@Override
 	public void doSynchronize(Object element, IProgressMonitor monitor) {
-		document.set(textGenerator.createText(inputRoot));
+		document.set(textGenerator.createText(inputRoot,
+				editor.isShowImplicitElements()));
 	}
 	
 	public void synchronizeRoot(IProgressMonitor monitor, boolean silent) {
@@ -259,12 +259,16 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected void connected() {
 		addUpdaters();
 	}
+	
+	@Override
+	protected void disconnected() {
+		resource.removeEContentAdapter(mainUpdater);
+		JFaceResources.getFontRegistry().removeListener(mainUpdater);
+	}
 
 	private void addUpdaters() {
 		mainUpdater = new PresentationUpdater(editor, documentMapper);
-		implicitUpdater = new ImplicitPresentationUpdater(resource, mainUpdater);
 		resource.addEContentAdapter(mainUpdater);
-		resource.addAdapter(implicitUpdater);
 		JFaceResources.getFontRegistry().addListener(mainUpdater);
 	}
 	

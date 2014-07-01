@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  * </ul>
  */
 public class DocumentMapper {
-
+	
 	public static boolean DEBUG;
 
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
@@ -128,6 +128,18 @@ public class DocumentMapper {
 			return intervals.get(index);
 		}
 		return null;
+	}
+	
+	public Interval[] findIntervalsBetween(int offset1, int offset2) {
+		final List<Interval> result = new ArrayList<Interval>();
+		final EditPos zone = EditPos.newPosStartEnd(offset1, offset2);
+		for (Interval inter : intervals) {
+			final EditPos pos = inter.getPos();
+			if (zone.includes(pos) && inter.getLength() > 0) {
+				result.add(inter);
+			}
+		}
+		return result.toArray(new Interval[result.size()]);
 	}
 
 	/**
@@ -563,15 +575,6 @@ public class DocumentMapper {
 	public void elementChanged(ILElement element) {
 		final EditorElement el = findEditorElement(element);
 		final IInternalElement ie = element.getElement();
-		if (el != null && !ie.exists()) {
-			final List<Interval> intervals = el.getIntervals();
-			if (intervals.size() > 0) {
-				final Interval interval = getLastInterval();
-				adaptAfter(interval, -el.getLength());
-			}
-			editorElements.remove(element);
-			return;
-		}
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {
@@ -761,6 +764,15 @@ public class DocumentMapper {
 
 	public EditorElement findEditorElement(ILElement el) {
 		return editorElements.get(el);
+	}
+
+	public EditorElement findEditorElement(IRodinElement rodinElement) {
+		for (EditorElement element : editorElements.getItems()) {
+			if (element.getRodinElement().equals(rodinElement)) {
+				return element;
+			}
+		}
+		return null;
 	}
 
 	/**

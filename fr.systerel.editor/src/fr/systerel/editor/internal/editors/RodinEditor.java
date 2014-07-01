@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,11 +104,14 @@ public class RodinEditor extends TextEditor {
 	private EditorActionTarget editorActionTarget;
 
 	private HistoryActionUpdater historyActionUpdater;
+
+	private ShowImplicitElementStateManager showImplicitStateManager;
 	
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
+		showImplicitStateManager = new ShowImplicitElementStateManager(this);
 	}
 
 	@Override
@@ -163,6 +166,7 @@ public class RodinEditor extends TextEditor {
 		
 		historyActionUpdater =  new HistoryActionUpdater(this);
 		historyActionUpdater.startListening();
+		showImplicitStateManager.register();
 	}
 	
 	/**
@@ -237,6 +241,9 @@ public class RodinEditor extends TextEditor {
 		if (markerAnnotationsUpdater != null) {
 			getDocument().removeDocumentListener(markerAnnotationsUpdater);
 			markerAnnotationsUpdater.dispose();
+		}
+		if (showImplicitStateManager != null) {
+			showImplicitStateManager.unregister();
 		}
 		documentProvider.unloadResource();
 		deactivateRodinEditorContext();
@@ -485,6 +492,14 @@ public class RodinEditor extends TextEditor {
 		return viewer;
 	}
 
+	public void toggleShowImplicitElements() {
+		showImplicitStateManager.toggle();
+	}
+
+	public boolean isShowImplicitElements() {
+		return showImplicitStateManager.getValue();
+	}
+	
 //	/**
 //	 * Replaces the old folding structure with the current one.
 //	 */

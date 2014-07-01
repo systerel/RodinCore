@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils
 import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.getPlatformHistory;
+import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EDITION_MODE;
+import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EditionMode.OVERLAY;
+import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EditionMode.STRUCTURAL;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
@@ -62,6 +65,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
@@ -90,6 +94,7 @@ import fr.systerel.editor.internal.presentation.IRodinColorConstant;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.sourceprovider.EditionModeProvider;
 
 /**
  * This class manages the little text field that is used to edit an element.
@@ -235,6 +240,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	private String originalText = "";
 	private IDocument document;
 	private TextViewerUndoManager undoManager;
+	private EditionModeProvider editionModeProvider;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -246,6 +252,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		setupEditorText();
 		contentProposal = new ContentProposalManager(editorText, mapper
 				.getRoot().getElement());
+		final ISourceProviderService sourceService = (ISourceProviderService) editor
+				.getSite().getService(ISourceProviderService.class);
+		editionModeProvider = (EditionModeProvider) sourceService
+				.getSourceProvider(EDITION_MODE);
 	}
 
 	private void setupEditorText() {
@@ -384,6 +394,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		resizeAndPositionOverlay(editorText, parent, inter);
 		editorText.setVisible(true);
 		editorText.setFocus();
+		editionModeProvider.setCurrentMode(OVERLAY);
 		getPlatformHistory().addOperationHistoryListener(this);
 	}
 
@@ -480,6 +491,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		getPlatformHistory().removeOperationHistoryListener(this);
 		editorText.removeModifyListener(eventBTranslator);
 		editorText.setVisible(false);
+		editionModeProvider.setCurrentMode(STRUCTURAL);
 		if (maintainCaretPosition) {
 			final int newEditorOffset = overlayToEditorOffset();
 			parent.setCaretOffset(newEditorOffset);

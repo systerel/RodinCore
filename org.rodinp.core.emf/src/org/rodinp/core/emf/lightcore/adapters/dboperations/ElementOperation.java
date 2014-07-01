@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,7 @@ public abstract class ElementOperation implements Runnable {
 						.getChildren()) {
 					new AddElementOperation(child, root).run();
 				}
+				recursiveImplicitLoad(el);
 			} catch (RodinDBException e) {
 				Messages.dbOperationError(e.getMessage());
 			}
@@ -203,17 +204,18 @@ public abstract class ElementOperation implements Runnable {
 			}
 		}
 
-		private void recursiveImplicitLoad(LightElement element)
-				throws RodinDBException {
-			final Object rodinElement = element.getERodinElement();
-			if (rodinElement instanceof IInternalElement) {
-				final IInternalElement parent = (IInternalElement) rodinElement;
-				SynchroManager.implicitLoad(element, parent);
-			}
-			for (LightElement eChild : element.getEChildren()) {
-				if (!(eChild instanceof ImplicitElement)) {
-					recursiveImplicitLoad(eChild);
-				}
+	}
+	
+	private  static void recursiveImplicitLoad(LightElement element)
+			throws RodinDBException {
+		final Object rodinElement = element.getERodinElement();
+		if (rodinElement instanceof IInternalElement) {
+			final IInternalElement parent = (IInternalElement) rodinElement;
+			SynchroManager.implicitLoad(element, parent);
+		}
+		for (LightElement eChild : element.getEChildren()) {
+			if (!(eChild instanceof ImplicitElement)) {
+				recursiveImplicitLoad(eChild);
 			}
 		}
 	}

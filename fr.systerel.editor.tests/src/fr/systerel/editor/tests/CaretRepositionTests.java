@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,6 @@ import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.presentation.updaters.AfterAdditionResynchronizer;
-import fr.systerel.editor.internal.presentation.updaters.AfterDeletionResynchronizer;
-import fr.systerel.editor.internal.presentation.updaters.BasicEditorResynchronizer;
 import fr.systerel.editor.internal.presentation.updaters.EditorResynchronizer;
 import fr.systerel.editor.tests.commandTests.OperationTestHelper;
 
@@ -91,7 +88,7 @@ public class CaretRepositionTests {
 		editor.getStyledText().setCaretOffset(offset);
 		
 		// force refresh synchronously
-		new BasicEditorResynchronizer(editor, null)	.resynchronizeForTests();
+		new EditorResynchronizer(editor, null).resynchronizeForTests();
 		
 		assertEquals(offset, editor.getCurrentOffset());
 	}
@@ -124,12 +121,12 @@ public class CaretRepositionTests {
 		final StyledText styledText = editor.getStyledText();
 		final int firstDeletedLine = styledText
 				.getLineAtOffset(axm2EditElement.getOffset());
-
+		styledText.setCaretOffset(axm2OriginalOffset);
 		helper.setSelection(new ILElement[] { axm2IL });
 		helper.executeOperation(EDIT_DELETE);
 
 		// force refresh synchronously
-		new AfterDeletionResynchronizer(editor, null, axm2IL).resynchronizeForTests();
+		new EditorResynchronizer(editor, null).resynchronizeForTests();
 
 		helper.executeOperation(EDIT_UNDO);
 		final int expectedOffset = styledText.getOffsetAtLine(firstDeletedLine);
@@ -139,7 +136,7 @@ public class CaretRepositionTests {
 		final ILElement addedElement = ILUtils.findElement(axm2, root);
 		
 		// force refresh synchronously
-		new AfterAdditionResynchronizer(editor, null, addedElement)	.resynchronizeForTests();
+		new EditorResynchronizer(editor, null, addedElement).resynchronizeForTests();
 		
 		final EditorElement editElem2 = mapper.findEditorElement(addedElement);
 		final int expectedOffset2 = mapper.findEditableIntervalAfter(
