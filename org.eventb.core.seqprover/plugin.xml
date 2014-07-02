@@ -468,6 +468,16 @@
      		class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LocalEqRewrite"
       		id="locEq"
       		name="%locEqName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.EqvLR"
+            id="eqvLR"
+            name="%eqvLRName">
+      </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.EqvRL"
+            id="eqvRL"
+            name="%eqvRLName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

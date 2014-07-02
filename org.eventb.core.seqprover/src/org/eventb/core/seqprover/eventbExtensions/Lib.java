@@ -196,6 +196,31 @@ public final class Lib {
 		return P.getTag() == Formula.NOTEQUAL;
 	}
 
+	/**
+	 * @since 3.1
+	 */
+	public static boolean isEqv(Predicate P) {
+		return P.getTag() == Formula.LEQV;
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public static Predicate eqvLeft(Predicate P) {
+		if (!isEqv(P))
+			return null;
+		return ((BinaryPredicate) P).getLeft();
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public static Predicate eqvRight(Predicate P) {
+		if (!isEqv(P))
+			return null;
+		return ((BinaryPredicate) P).getRight();
+	}
+
 	public static boolean isInclusion(Predicate P) {
 		return P.getTag() == Formula.IN;
 	}

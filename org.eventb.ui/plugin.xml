@@ -1252,6 +1252,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.Equality1"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
+      <tactic
+            icon="icons/full/ctool16/eq1_prover.gif"
+            id="org.eventb.ui.eqvRL"
+            interrupt="false"
+            name="%proofTactics.eqvRL.name"
+            priority="8"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvRL"
+            target="hypothesis"
+            tooltip="%hypothesisProofTactics.EqvRL.tooltip"/>
+      <tactic
+            icon="icons/full/ctool16/eq1_prover.gif"
+            id="org.eventb.ui.eqvLR"
+            interrupt="false"
+            name="%proofTactics.eqvLR.name"
+            priority="8"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvLR"
+            target="hypothesis"
+            tooltip="%hypothesisProofTactics.EqvLR.tooltip"/>
       <dynamic_dropdown
             icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/lrun_obj.gif"
             id="org.eventb.ui.profile_dyn_dropdown"

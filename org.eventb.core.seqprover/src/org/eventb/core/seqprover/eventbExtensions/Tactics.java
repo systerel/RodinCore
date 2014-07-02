@@ -87,6 +87,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqvLR;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqvRL;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
@@ -667,6 +669,29 @@ public class Tactics {
 
 	public static boolean eqE_applicable(Predicate hyp) {
 		return Lib.isEq(hyp);
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public static ITactic eqvRL(Predicate eqHyp) {
+		return BasicTactics.reasonerTac(new EqvRL(),
+				new HypothesisReasoner.Input(eqHyp));
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public static ITactic eqvLR(Predicate eqHyp) {
+		return BasicTactics.reasonerTac(new EqvLR(),
+				new HypothesisReasoner.Input(eqHyp));
+	}
+
+	/**
+	 * @since 3.1
+	 */
+	public static boolean eqv_applicable(Predicate hyp) {
+		return Lib.isEqv(hyp);
 	}
 
 	/**
