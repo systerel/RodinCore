@@ -882,5 +882,13 @@
          </activeWhen>
       </handler>
    </extension>
-
+  <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eventb.ui.preferences.modellingUI"
+            class="fr.systerel.editor.internal.preferences.RodinEditorPreferencePage"
+            id="fr.systerel.editor.preferences.rodinEditor"
+            name="%preferencePage.rodinEditor.name">
+      </page>
+  </extension>
 </plugin>

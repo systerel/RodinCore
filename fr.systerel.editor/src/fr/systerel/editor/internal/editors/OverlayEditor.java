@@ -140,8 +140,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		
 		public abstract void doEdit(OverlayEditor editor, Interval interval, int pos);
 		
-		public static void handleEdit(OverlayEditor editor, Interval inter, int pos) {
+		public static void handleEdit(OverlayEditor editor, Interval inter, int pos, boolean changeBooleanValue) {
 			final EditType editType = computeEditType(inter);
+			if (editType.equals(EditType.BOOL) && !changeBooleanValue) {
+				return;
+			}
 			editType.doEdit(editor, inter, pos);
 		}
 		
@@ -302,6 +305,23 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	public void showAtOffset(int offset) {
+		showAtOffset(offset, false);
+	}
+	
+	/**
+	 * Shows the overlay editor at the given offset.
+	 * <p>
+	 * The changeBooleanValue parameter controls the edit behavior in case the
+	 * new offset is over a boolean attribute.
+	 * <p>
+	 * 
+	 * @param offset
+	 *            the offset in the main editor
+	 * @param changeBooleanValue
+	 *            <code>true</code> to toggle the boolean value,
+	 *            <code>false</code> to preserve its current value
+	 */
+	public void showAtOffset(int offset, boolean changeBooleanValue) {
 		// if the overlay editor is currently shown,
 		// save the content and show at the new location.
 		if (editorText.isVisible() && interval != null
@@ -319,7 +339,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		interval = inter;
 		if (!editorText.isVisible() && inter != null) {
 			final int pos = editorToOverlayOffset(offset);
-			EditType.handleEdit(this, inter, pos);
+			EditType.handleEdit(this, inter, pos, changeBooleanValue);
 		}
 	}
 	

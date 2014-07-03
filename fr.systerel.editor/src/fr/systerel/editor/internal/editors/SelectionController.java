@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.ISelectionService;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
@@ -46,6 +47,9 @@ import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.Selections.MultipleSelection;
 import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
+import fr.systerel.editor.internal.preferences.EditorPref;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * Controls the selection in the RodinEditor and decides when it should be
@@ -103,12 +107,36 @@ public class SelectionController implements MouseListener, VerifyListener,
 		return selection.getElements();
 	}
 	
+	private boolean isBooleanAttribute(int offset) {
+		final Interval inter = mapper.findInterval(offset);
+		if (inter == null) {
+			return false;
+		}
+		
+		final ContentType contentType = inter.getContentType();
+		if (!(contentType instanceof AttributeContentType)) {
+			return false;
+		}
+		
+		final IAttributeType attType = ((AttributeContentType) contentType)
+				.getAttributeType();
+		return attType instanceof IAttributeType.Boolean;
+	}
+	
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("double click " + e);
 		final int offset = getOffset(e);
 		if (offset < 0) return;
+
+		if (EditorPref.getInstance().isDoubleClick()
+				&& isBooleanAttribute(offset)) {
+			overlayEditor.showAtOffset(offset, true);
+			// do not select the element
+			return;
+		}
+		
 		toggleSelection(offset);
 		// clear the native and cumbersome selection
 		// that occurs after double click
@@ -277,7 +305,8 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (handleHandleSelection(offset)) {
 			return;
 		} else {
-			overlayEditor.showAtOffset(offset);
+			overlayEditor.showAtOffset(offset, !EditorPref.getInstance()
+					.isDoubleClick());
 		}
 		resetSelection(offset);
 	}
