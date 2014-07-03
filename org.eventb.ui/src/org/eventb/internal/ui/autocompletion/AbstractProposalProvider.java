@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eventb.internal.ui.autocompletion;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -99,23 +98,22 @@ public abstract class AbstractProposalProvider implements
 
 	private static List<String> filterAndSort(Set<String> completions,
 			String prefix) {
-		filterPrefix(completions, prefix);
-		final List<String> sortedNames = new ArrayList<String>(completions);
-		Collections.sort(sortedNames);
-		return sortedNames;
+		final List<String> filteredNames = filterPrefix(completions, prefix);
+		Collections.sort(filteredNames);
+		return filteredNames;
 	}
 
-	private static void filterPrefix(Set<String> names, String prefix) {
+	private static List<String> filterPrefix(Set<String> names, String prefix) {
 		if (prefix.length() == 0) {
-			return;
+			return new ArrayList<String>(names);
 		}
-		final Iterator<String> iter = names.iterator();
-		while (iter.hasNext()) {
-			final String name = iter.next();
-			if (!name.startsWith(prefix)) {
-				iter.remove();
+		final List<String> filteredNames = new ArrayList<String>();
+		for(String name: names) {
+			if (name.startsWith(prefix)) {
+				filteredNames.add(name);
 			}
 		}
+		return filteredNames;
 	}
 
 }
