@@ -64,6 +64,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FiniteInclusionTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunImageGoalAttempt;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
@@ -220,7 +221,22 @@ public class AutoTactics {
 			return "No selected hypothesis is contradicted";
 		}
 	}
-	
+
+	/**
+	 * Discharges a sequent such as : <code>A⊆B, finite(B) ⊦ finite(A)</code>
+	 * 
+	 * @author Josselin Dolhen
+	 * @since 3.1
+	 */
+	public static class FiniteInclusionAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return new FiniteInclusionTac();
+		}
+
+	}
+
 	/**
 	 * Discharges any sequent whose goal denotes a membership to a domain the
 	 * value of which is known.
