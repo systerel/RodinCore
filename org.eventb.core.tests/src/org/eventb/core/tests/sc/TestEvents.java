@@ -12,6 +12,7 @@
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added a test for extended initialization repairing
  *     Systerel - use marker matcher
+ *     Systerel - added test for bug #720
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -40,6 +41,7 @@ import static org.eventb.core.sc.GraphProblem.UntypedParameterError;
 import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
 import static org.eventb.core.sc.GraphProblem.VariableNameConflictWarning;
 import static org.eventb.core.sc.GraphProblem.WitnessLabelMissingWarning;
+import static org.eventb.core.sc.ParseProblem.FreeIdentifierHasBoundOccurencesWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
@@ -984,5 +986,26 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 						initialization),
 				marker(mac.getRodinFile(), MachineWithoutInitialisationWarning));
 	}
-	
+
+	/**
+	 * Ensures that a legibility warning is raised for an action quantifying on
+	 * a variable with the same name as a parameter (bug #720).
+	 */
+	@Test
+	public void testEvents_33_legibiliyInAction() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		addInitialisation(mac, "x");
+		final IEvent evt = addEvent(mac, "evt",
+				makeSList("p"), //
+				makeSList("G1"), makeSList("p∈ℕ"),
+				makeBList(false, false), //
+				makeSList("A"), makeSList("x :∣ x' = 1 ∧ (∀p·p∈ℕ)"));
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(marker(evt.getActions()[0], ASSIGNMENT_ATTRIBUTE,
+				FreeIdentifierHasBoundOccurencesWarning, "p"));
+	}
+
 }

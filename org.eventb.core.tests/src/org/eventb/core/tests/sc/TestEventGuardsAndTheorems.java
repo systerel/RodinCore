@@ -12,6 +12,7 @@ package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
+import static org.eventb.core.sc.ParseProblem.FreeIdentifierHasBoundOccurencesWarning;
 import static org.eventb.core.tests.MarkerMatcher.marker;
 
 import org.eventb.core.IEvent;
@@ -52,6 +53,24 @@ public class TestEventGuardsAndTheorems extends
 		createAbstractMachine();
 		createConcreteEvent(true);
 		runBuilderCheck();
+	}
+
+	/**
+	 * Ensures that a legibility warning is raised for a guard quantifying on a
+	 * variable with the same name as a parameter (bug #720).
+	 */
+	@Test
+	public void test_15() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		final IEvent evt = addEvent(mac, "evt",
+				makeSList("p"), //
+				makeSList("G1", "G2"), makeSList("p∈ℕ", "∀p·p∈ℕ"),
+				makeBList(false, false), makeSList(), makeSList());
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(marker(evt.getGuards()[1], PREDICATE_ATTRIBUTE,
+				FreeIdentifierHasBoundOccurencesWarning, "p"));
 	}
 
 	private IMachineRoot createAbstractMachine() throws RodinDBException {
