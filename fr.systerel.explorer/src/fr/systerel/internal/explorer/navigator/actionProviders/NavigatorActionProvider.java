@@ -28,7 +28,7 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class NavigatorActionProvider extends CommonActionProvider {
 	
-	public static String GROUP_MODELLING = "modelling";
+	public static final String GROUP_MODELLING = "modelling";
 	
     /**
      * Builds an Open With menu.
