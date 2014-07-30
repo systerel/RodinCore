@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,11 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 		public int compare(IStatistics stats1, IStatistics stats2) {
 			final String parentLbl1 = stats1.getParentLabel();
 			final String parentLbl2 = stats2.getParentLabel();
-			final int ascending = parentLbl1.compareTo(parentLbl2);
 			if (order == ASCENDING) {
-				return ascending;
-			} else return -ascending;
+				return parentLbl1.compareTo(parentLbl2);
+			} else {
+				return parentLbl2.compareTo(parentLbl1);
+			}
 		}
 
 	};
