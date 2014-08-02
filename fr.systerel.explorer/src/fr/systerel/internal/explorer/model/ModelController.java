@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -353,22 +355,33 @@ public class ModelController implements IElementChangedListener {
 	/**
 	 * React to changes in the database.
 	 *
+	 * The actual changes to the model must be executed within the UI thread to
+	 * avoid any concurrency issue.
 	 */
 	@Override
-	public void elementChanged(ElementChangedEvent event) {	
-		
-		DeltaProcessor processor =  new DeltaProcessor(event.getDelta());
+	public void elementChanged(ElementChangedEvent event) {
+		final DeltaProcessor processor = new DeltaProcessor(event.getDelta());
 		final ArrayList<IRodinElement> toRefresh = processor.getToRefresh();
 		final ArrayList<IRodinElement> toRemove = processor.getToRemove();
-		
-		cleanUpModel(toRemove);
-		//refresh the model
-		for (IRodinElement elem : toRefresh) {
-			refreshModel(elem);
+		final Runnable operation = new Runnable() {
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public void run() {
+				cleanUpModel(toRemove);
+				// refresh the model
+				for (final IRodinElement elem : toRefresh) {
+					refreshModel(elem);
+				}
+				notifyListeners(toRefresh);
+			}
+		};
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		if (Thread.currentThread() == display.getThread()) {
+			operation.run();
+		} else {
+			display.asyncExec(operation);
 		}
-		notifyListeners(toRefresh);
 	}
-
 	
 	/**
 	 * Refreshes explorer model for all Rodin projects.
@@ -391,7 +404,7 @@ public class ModelController implements IElementChangedListener {
 	 * @param element
 	 *            The element to refresh
 	 */
-	public void refreshModel(IRodinElement element) {
+	private void refreshModel(IRodinElement element) {
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject());
 			if (project != null) {
@@ -449,7 +462,7 @@ public class ModelController implements IElementChangedListener {
 	 * Removes the corresponding elements from the model
 	 * @param toRemove
 	 */
-	public void cleanUpModel(ArrayList<IRodinElement> toRemove){
+	private void cleanUpModel(ArrayList<IRodinElement> toRemove){
 		for (IRodinElement element : toRemove) {
 			if (element instanceof IContextRoot) {
 				removeContext((IContextRoot) element);
