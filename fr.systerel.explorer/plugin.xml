@@ -693,9 +693,17 @@
             class="fr.systerel.internal.explorer.navigator.handlers.CopyEventBComponentHandler"
             commandId="org.eclipse.ui.edit.copy">
          <activeWhen>
-            <reference
-                  definitionId="fr.systerel.explorer.allEventBRoot">
-            </reference>
+            <and>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="fr.systerel.explorer.navigator.view">
+                  </equals>
+               </with>
+               <reference
+                     definitionId="fr.systerel.explorer.allEventBRoot">
+               </reference>
+            </and>
          </activeWhen>
       </handler>
    </extension>
