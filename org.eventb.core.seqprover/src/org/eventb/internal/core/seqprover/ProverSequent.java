@@ -370,6 +370,10 @@ public final class ProverSequent implements IInternalProverSequent{
 					if (hideInfHyps)
 						newHiddenHypotheses.add(infHyp);
 					modified = true;
+				} else if (selectInfHyps && !hiddenHypotheses.contains(infHyp)) {
+					// Select the hypothesis if not already hidden
+					newSelectedHypotheses.add(infHyp);
+					modified = true;
 				}
 			}
 		}

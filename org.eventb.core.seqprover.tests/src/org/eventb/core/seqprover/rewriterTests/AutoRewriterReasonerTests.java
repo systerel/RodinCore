@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - tests with already existing hypothesis
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
@@ -30,6 +31,26 @@ public class AutoRewriterReasonerTests extends AbstractAutomaticReasonerTests {
 				new SuccessfulTest(
 						";H; ;S; ⊤ |- ⊥",
 						"{}[⊤][][] |- ⊥"),
+				// Select hypothesis as a result of simplification
+				new SuccessfulTest(
+						"a=1 ;H; ;S; ⊤ ⇒ a=1 |- ⊥",
+						"{}[⊤ ⇒ a=1][][a=1] |- ⊥"),
+				// Just hide the rewritten hypothesis if inferred already selected
+				new SuccessfulTest(
+						";H; ;S; a=1 ;; ⊤ ⇒ a=1 |- ⊥",
+						"{}[⊤ ⇒ a=1][][a=1] |- ⊥"),
+				// Do not select if neither was selected
+				new SuccessfulTest(
+						"⊤ ⇒ a=1 ;; a=1 ;H; ;S; |- ⊥",
+						"{}[⊤ ⇒ a=1][a=1][] |- ⊥"),
+				// Do not resurrect a hidden hypothesis (from normal)
+				new SuccessfulTest(
+						"⊤ ⇒ a=1 ;H; a=1 ;S; |- ⊥",
+						"{}[a=1 ;; ⊤ ⇒ a=1][][] |- ⊥"),
+				// Do not resurrect a hidden hypothesis (from selected)
+				new SuccessfulTest(
+						";H; a=1 ;S; ⊤ ⇒ a=1 |- ⊥",
+						"{}[a=1 ;; ⊤ ⇒ a=1][][] |- ⊥"),
 
 		};
 	}

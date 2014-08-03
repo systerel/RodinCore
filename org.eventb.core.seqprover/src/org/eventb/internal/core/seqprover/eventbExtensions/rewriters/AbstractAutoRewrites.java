@@ -71,15 +71,6 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 				continue;
 			}
 				
-			// Check if rewriting generated something new
-			if (seq.containsHypotheses(inferredHyps)) {
-				// IMPORTANT: Do NOT de-select the original if the inferred
-				// hypotheses already exist.
-
-				// Do NOT re-select the inferred hyps
-				continue;
-			}
-
 			if (!inferredHyps.isEmpty()) {
 				if (hideOriginal) {
 					// do a rewrite action
