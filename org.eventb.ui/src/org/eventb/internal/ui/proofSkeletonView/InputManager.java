@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
@@ -232,18 +234,24 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		final Shell shell = site.getShell();
 		final ComputeInputOperation computeInputOp = new ComputeInputOperation(
 				maker);
-		if (currentInputMaker != null) {
-			currentInputMaker.removeInputChangedListener();
-		}
-		runWithRunnableContext(service, shell, computeInputOp);
-		final boolean canceled = computeInputOp.canceled();
-		if (canceled) {
-			return;
-		}
-		final IViewerInput input = computeInputOp.input();
-		maker.addInputChangedListener();
-		currentInputMaker = maker;
-		view.setInput(input);
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (currentInputMaker != null) {
+					currentInputMaker.removeInputChangedListener();
+					currentInputMaker = null;
+				}
+				runWithRunnableContext(service, shell, computeInputOp);
+				if (computeInputOp.canceled()) {
+					return;
+				}
+				final IViewerInput input = computeInputOp.input();
+				maker.addInputChangedListener();
+				currentInputMaker = maker;
+				view.setInput(input);
+			}
+		});
 	}
 
 	private static class ComputeInputOperation implements IRunnableWithProgress {
