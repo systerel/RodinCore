@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,10 +49,10 @@ public class ProofRebuilder extends ProofModifier {
 				pt.getRoot(), new ProofMonitor(monitor));
 
 		final boolean success = (result == null);
-		if (success && applyPostTactics && !pt.isClosed()) {
+		if (applyPostTactics && !pt.isClosed()) {
 			applyPostTacticsIfEnabled(pt, monitor);
 		}
-		return success;
+		return success || pt.isClosed();
 	}
 
 	private static void applyPostTacticsIfEnabled(IProofTree pt,

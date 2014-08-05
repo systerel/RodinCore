@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd" version="3">
+<org.eventb.core.axiom name="'" org.eventb.core.label="thm" org.eventb.core.predicate="1 = 1" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>

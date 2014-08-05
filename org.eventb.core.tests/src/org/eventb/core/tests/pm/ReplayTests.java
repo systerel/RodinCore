@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static org.junit.Assert.assertEquals;
 import static org.eventb.core.EventBPlugin.rebuildProof;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,6 +40,21 @@ public class ReplayTests extends BuilderTest {
 		assertUndischarged("c", "axm4/THM");
 	}
 
+	/**
+	 * Regression test for bug {@link #bug723()}. Ensure that the post-tactic is
+	 * run after replay. Context d contains a partially invalid proof which gets
+	 * completed by the post tactic.
+	 */
+	@Test
+	public void bug723() throws Exception {
+		importProject("Small");
+		runBuilder();
+		assertUndischarged("d", "thm/THM");
+		enablePostTactic("org.eventb.core.seqprover.trueGoalTac");
+		replay("d");
+		assertUndischarged("d");
+	}
+
 	private void assertUndischarged(String compName, String... pos)
 			throws CoreException {
 		final Set<String> actual = getUndischarged(compName);
@@ -66,7 +81,7 @@ public class ReplayTests extends BuilderTest {
 		final Set<String> undischarged = getUndischarged(compName);
 		for (final String poName : undischarged) {
 			final IPRProof proof = prRoot.getProof(poName);
-			rebuildProof(proof, false, null);
+			rebuildProof(proof, true, null);
 		}
 	}
 
