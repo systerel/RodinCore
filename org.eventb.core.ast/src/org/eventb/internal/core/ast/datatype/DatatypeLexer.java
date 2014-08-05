@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class DatatypeLexer implements ILexer {
 	}
 
 	private void addProblem(Token tk, Token expected) {
-		final int end = tk.pos + tk.val.length() - 1;
+		final int end = tk.pos + tk.val.length();
 		final SourceLocation sloc = new SourceLocation(tk.pos, end);
 		final ASTProblem problem = new ASTProblem(sloc, DatatypeParsingError,
 				Error, expected.val);
