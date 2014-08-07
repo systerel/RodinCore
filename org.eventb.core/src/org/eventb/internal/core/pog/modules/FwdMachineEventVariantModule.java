@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,21 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - Simplify PO for anticipated event (FR326)
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
+
+import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
+import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.LE;
+import static org.eventb.core.ast.Formula.LT;
+import static org.eventb.core.ast.Formula.NATURAL;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.SUBSET;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,13 +33,13 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGNature;
@@ -60,18 +73,17 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			throws CoreException {
 		
 		// no PO for ordinary events
-		if (concreteConvergence == IConvergenceElement.Convergence.ORDINARY)
+		if (concreteConvergence == ORDINARY)
 			return;
 		
 		// no PO for convergent events if the abstract event was convergent
-		if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
-				&& abstractConvergence == IConvergenceElement.Convergence.CONVERGENT)
+		if (concreteConvergence == CONVERGENT
+				&& abstractConvergence == CONVERGENT)
 			return;
 		
 		// no PO for anticipated events if there is no variant
 		Expression varExpression = machineVariantInfo.getExpression();
-		if (concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED
-				&& varExpression == null)
+		if (concreteConvergence == ANTICIPATED && varExpression == null)
 			return;
 		
 		IPORoot target = repository.getTarget();
@@ -84,7 +96,13 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
 		nextVarExpression = nextVarExpression.applyAssignments(substitution);
 
-		boolean isIntVariant = varExpression.getType().equals(factory.makeIntegerType());
+		if (concreteConvergence == ANTICIPATED && nextVarExpression.equals(varExpression)) {
+			// The variant is not modified by this anticipated event,
+			// do not generate any proof obligation.
+			return;
+		}
+		
+		boolean isIntVariant = varExpression.getType() instanceof IntegerType;
 		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
 		
 		IRodinElement variantSource = machineVariantInfo.getVariant().getSource();
@@ -94,6 +112,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		};
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
+		if (concreteConvergence == ANTICIPATED) {
+			final Predicate eq = factory.makeRelationalPredicate(EQUAL,
+					nextVarExpression, varExpression, null);
+			final Predicate ineq = factory.makeUnaryPredicate(NOT, eq, null);
+			hyp.add(makePredicate(ineq, variantSource));
+		}
 		
 		String sequentNameVAR = concreteEventLabel + "/VAR";
 		createPO(
@@ -113,9 +137,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		if (isIntVariant) {
 			Predicate natPredicate = 
 				factory.makeRelationalPredicate(
-						Formula.IN, 
+						IN, 
 						varExpression, 
-						factory.makeAtomicExpression(Formula.NATURAL, null), 
+						factory.makeAtomicExpression(NATURAL, null), 
 						null);
 			String sequentNameNAT = concreteEventLabel + "/NAT";
 			createPO(
@@ -139,24 +163,18 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			Expression varExpression, 
 			boolean isIntVariant) {
 		int tag;
-		if (concreteConvergence == IConvergenceElement.Convergence.ANTICIPATED)
-			if (isIntVariant)
-				tag = Formula.LE;
-			else
-				tag = Formula.SUBSETEQ;
+		if (concreteConvergence == ANTICIPATED)
+			tag = isIntVariant ? LE : SUBSETEQ;
 		else
-			if (isIntVariant)
-				tag = Formula.LT;
-			else
-				tag = Formula.SUBSET;
+			tag = isIntVariant ? LT : SUBSET;
 		
 		Predicate varPredicate = 
 			factory.makeRelationalPredicate(tag, nextVarExpression, varExpression, null);
 		return varPredicate;
 	}
 
-	protected IConvergenceElement.Convergence concreteConvergence;
-	protected IConvergenceElement.Convergence abstractConvergence;
+	protected Convergence concreteConvergence;
+	protected Convergence abstractConvergence;
 	protected IMachineVariantInfo machineVariantInfo;
 	
 	@Override
@@ -180,8 +198,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		}
 		
-		List<IConvergenceElement.Convergence> convergences = 
-			new ArrayList<IConvergenceElement.Convergence>(abstractEvents.size());
+		List<Convergence> convergences = new ArrayList<Convergence>(
+				abstractEvents.size());
 		
 		for(ISCEvent abstractEvent : abstractEvents) {
 			convergences.add(abstractEvent.getConvergence());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,15 +9,15 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
+ *     Systerel - Simplify PO for anticipated event (FR326)
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
+import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -41,12 +41,11 @@ public class TestMachineVariant extends EventBPOTest {
 		public final String[] actionLabels;
 		public final String[] actions;
 		public final String varPost;
-		public final String[] hypotheses;
 		public VariantTestItem(
 				final int kind, final String variant, 
 				final String[] guardLabels, final String[] guards, 
 				final String[] actionLabels, final String[] actions, 
-				final String varPost, final String[] hypotheses) {
+				final String varPost) {
 			assert guardLabels.length == guards.length;
 			assert actionLabels.length == actions.length;
 			this.kind = kind;
@@ -56,7 +55,6 @@ public class TestMachineVariant extends EventBPOTest {
 			this.actionLabels = actionLabels;
 			this.actions = actions;
 			this.varPost = varPost;
-			this.hypotheses = hypotheses;
 		}
 	}
 	
@@ -71,8 +69,7 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList(),
 				makeSList("A"),
 				makeSList("x ≔ 1"),
-				"1",
-				makeSList()),
+				"1"),
 		new VariantTestItem(
 				INT_VARIANT,
 				"x",
@@ -80,8 +77,7 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList(),
 				makeSList("A"),
 				makeSList("x ≔ x+1"),
-				"x+1",
-				makeSList()),
+				"x+1"),
 		new VariantTestItem(
 				INT_VARIANT,
 				"x+y",
@@ -89,8 +85,7 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList(),
 				makeSList("A", "B"),
 				makeSList("x ≔ x+1", "y ≔ y∗x"),
-				"(x+1)+(y∗x)",
-				makeSList()),
+				"(x+1)+(y∗x)"),
 		new VariantTestItem(
 				SET_VARIANT,
 				"A",
@@ -98,8 +93,7 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList(),
 				makeSList("A", "B"),
 				makeSList("x ≔ x+1", "A ≔ {x}"),
-				"{x}",
-				makeSList()),
+				"{x}"),
 		new VariantTestItem(
 				SET_VARIANT,
 				"A∖{x}",
@@ -107,8 +101,7 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList(),
 				makeSList("A", "B"),
 				makeSList("x ≔ x+1", "A ≔ A ∪ {x}"),
-				"(A∪{x})∖{x+1}",
-				makeSList()),
+				"(A∪{x})∖{x+1}"),
 		new VariantTestItem(
 				SET_VARIANT,
 				"A∖{x}",
@@ -116,12 +109,12 @@ public class TestMachineVariant extends EventBPOTest {
 				makeSList("x>1", "A≠∅"),
 				makeSList("A", "B"),
 				makeSList("x ≔ x+1", "A ≔ A ∪ {x}"),
-				"(A∪{x})∖{x+1}",
-				makeSList()),
+				"(A∪{x})∖{x+1}"),
 	};
 	
-	private String getRelationSymbol(IConvergenceElement.Convergence convergence, int kind) {
-		if (convergence == IConvergenceElement.Convergence.ANTICIPATED)
+	private String getRelationSymbol(Convergence convergence, int kind) {
+		switch (convergence) {
+		case ANTICIPATED:
 			switch (kind) {
 			case INT_VARIANT:
 				return " ≤ ";
@@ -130,7 +123,7 @@ public class TestMachineVariant extends EventBPOTest {
 			default:
 				return null;
 			}
-		if (convergence == IConvergenceElement.Convergence.CONVERGENT)
+		case CONVERGENT:
 			switch (kind) {
 			case INT_VARIANT:
 				return " < ";
@@ -139,7 +132,9 @@ public class TestMachineVariant extends EventBPOTest {
 			default:
 				return null;
 			}
-		return null;
+		default:
+			return null;
+		}
 	}
 	
 	/*
@@ -148,7 +143,7 @@ public class TestMachineVariant extends EventBPOTest {
 	@Test
 	public void test_01_anticipated() throws Exception {
 		
-		Convergence convergence = IConvergenceElement.Convergence.ANTICIPATED;
+		Convergence convergence = ANTICIPATED;
 		
 		testItemList(convergence);
 	
@@ -160,7 +155,7 @@ public class TestMachineVariant extends EventBPOTest {
 	@Test
 	public void test_02_convergent() throws Exception {
 		
-		Convergence convergence = IConvergenceElement.Convergence.CONVERGENT;
+		Convergence convergence = CONVERGENT;
 		
 		testItemList(convergence);
 	
@@ -193,7 +188,7 @@ public class TestMachineVariant extends EventBPOTest {
 		
 			IPOSequent sequent;
 			
-			if (convergence == IConvergenceElement.Convergence.ORDINARY)
+			if (convergence == ORDINARY)
 				
 				noSequent(po, "evt/VAR");
 			
@@ -201,8 +196,13 @@ public class TestMachineVariant extends EventBPOTest {
 			
 				sequent = getSequent(po, "evt/VAR");
 				
-				String[] hypotheses = concat(invPredicates, item.hypotheses);
+				String[] hypotheses = invPredicates;
 		
+				if (convergence == ANTICIPATED) {
+					String diseq = "¬ " + item.varPost + " = " + item.variant;
+					hypotheses = append(hypotheses, diseq);
+				}
+
 				sequentHasHypotheses(sequent, environment, hypotheses);
 			
 				String rel = getRelationSymbol(convergence, item.kind);
@@ -233,21 +233,21 @@ public class TestMachineVariant extends EventBPOTest {
 		return mac;
 	}
 
-	private String[] concat(String[] as, String[] bs) {
-		List<String> hypothesesList = Arrays.asList(as);
-		hypothesesList.addAll(Arrays.asList(bs));
-		String[] cs = new String[hypothesesList.size()];
-		hypothesesList.toArray(cs);
-		return cs;
+	private String[] append(String[] hypotheses, String diseq) {
+		final int length = hypotheses.length;
+		final String[] result = new String[length + 1];
+		System.arraycopy(hypotheses, 0, result, 0, length);
+		result[length] = diseq;
+		return result;
 	}
-	
+
 	/*
 	 * ordinary event variants
 	 */
 	@Test
 	public void test_03_ordinary() throws Exception {
 		
-		Convergence convergence = IConvergenceElement.Convergence.ORDINARY;
+		Convergence convergence = ORDINARY;
 		
 		testItemList(convergence);
 	
@@ -314,8 +314,8 @@ public class TestMachineVariant extends EventBPOTest {
 	}
 
 	/*
-	 * if a machine does not have a variant, antipated events should generate
-	 * variant proof obligations
+	 * if a machine does not have a variant, anticipated events should not
+	 * generate variant proof obligations
 	 */
 	@Test
 	public void test_06_anticipatedNoVariantNoPO() throws Exception {
@@ -470,6 +470,70 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		IPOSequent sequent = getSequent(po, "evt/VAR");
 		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");
+	}
+
+	/**
+	 * No PO is generated for an anticipated event that does not modify the
+	 * variant expression (case with a deterministic action).
+	 */
+	@Test
+	public void test_10_anticipatedDoesNotModifyVariantDeterministic() throws Exception {
+		IMachineRoot mch = createMachine("abs");
+
+		addVariables(mch, "x", "y");
+		addInvariants(mch, makeSList("I1", "I2"), makeSList("x∈ℤ", "y∈ℤ"),
+				false, false);
+		IEvent cvg = addEvent(mch, "cvg", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(cvg);
+		IEvent ant = addEvent(mch, "ant", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("y ≔ y+1"));
+		setAnticipated(ant);
+		addVariant(mch, "x");
+		saveRodinFileOf(mch);
+		
+		runBuilder();
+		
+		IPORoot po = mch.getPORoot();
+		
+		noSequent(po, "ant/VAR");
+		noSequent(po, "ant/NAT");
+	}
+
+	/**
+	 * No PO is generated for an anticipated event that does not modify the
+	 * variant expression (case with a non-deterministic action).
+	 */
+	@Test
+	public void test_11_anticipatedDoesNotModifyVariantNonDeterministic() throws Exception {
+		IMachineRoot mch = createMachine("abs");
+
+		addVariables(mch, "x", "y");
+		addInvariants(mch, makeSList("I1", "I2"), makeSList("x∈ℤ", "y∈ℤ"),
+				false, false);
+		IEvent cvg = addEvent(mch, "cvg", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x ≔ x+1"));
+		setConvergent(cvg);
+		IEvent ant = addEvent(mch, "ant", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("y :∣ y < y'"));
+		setAnticipated(ant);
+		addVariant(mch, "x");
+		saveRodinFileOf(mch);
+		
+		runBuilder();
+		
+		IPORoot po = mch.getPORoot();
+		
+		noSequent(po, "ant/VAR");
+		noSequent(po, "ant/NAT");
 	}
 
 }
