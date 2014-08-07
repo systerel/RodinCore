@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  * This class represents a Context in the model
  *
  */
-public class ModelContext extends ModelPOContainer implements IModelElement{
+public class ModelContext extends ModelPOContainer {
 	
 	/**
 	 * The nodes are used by the ContentProviders to present a node in the tree

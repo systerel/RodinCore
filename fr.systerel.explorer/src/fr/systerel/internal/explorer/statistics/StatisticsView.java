@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,7 +183,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 
 	private void setUpDetailsColumn(StatisticsColumn column, StatisticsDetailsComparator comparator) {
-		columns.put(new Integer(column.getIndex()), column);
+		columns.put(column.getIndex(), column);
 		addSelectionListener(column, comparator);
 	}
 	
@@ -264,7 +264,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 	
 	public StatisticsColumn getDetailColumn(int index){
-		return columns.get(new Integer(index));
+		return columns.get(index);
 	}
 	
 

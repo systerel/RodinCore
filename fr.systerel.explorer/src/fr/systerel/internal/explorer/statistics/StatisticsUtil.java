@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class StatisticsUtil {
 	}
 
 	public static String getParentLabelOf(Object parent) {
-		Object internal_parent = null;
+		IRodinElement internal_parent = null;
 		if (parent instanceof IElementNode) {
 			return ((IElementNode) parent).getLabel();
 		}
@@ -152,8 +152,8 @@ public class StatisticsUtil {
 		if (internal_parent instanceof IEventBRoot) {
 			return ((IEventBRoot) internal_parent).getComponentName();
 		}
-		if (internal_parent instanceof IRodinElement) {
-			return ((IRodinElement) internal_parent).getElementName();
+		if (internal_parent != null) {
+			return internal_parent.getElementName();
 		}
 		return parent.toString();
 	}
