@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
@@ -39,7 +38,7 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 	
 	protected PrfSklMasterDetailsBlock masterDetailsBlock;
 	private InputManager selManager;
-	private IManagedForm managedForm;
+	private ManagedForm managedForm;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -69,7 +68,7 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 
 	@Override
 	public void setFocus() {
-		// Do nothing
+		managedForm.getForm().setFocus();
 	}
 
 	@Override
@@ -77,6 +76,7 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 		getSite().setSelectionProvider(null);
 		selManager.unregister();
 		JFaceResources.getFontRegistry().removeListener(this);
+		managedForm.dispose();
 		super.dispose();
 	}
 
