@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,7 @@ public class SequentDetailsPage implements IDetailsPage {
 		if (selection instanceof ITreeSelection) {
 			final Object selectedNode = ((ITreeSelection) selection).getPaths()[0]
 					.getLastSegment();
-			if (selectedNode != null && selectedNode instanceof IProofTreeNode) {
+			if (selectedNode instanceof IProofTreeNode) {
 				viewer.setInput(((IProofTreeNode) selectedNode).getSequent());
 			}
 		}

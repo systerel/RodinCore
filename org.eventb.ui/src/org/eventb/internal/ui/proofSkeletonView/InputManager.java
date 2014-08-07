@@ -206,9 +206,6 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			Object element = ((IStructuredSelection) selection)
 					.getFirstElement();
-			if (element == null) {
-				return;
-			}
 			if (element instanceof IPSStatus) {
 				final InputMaker<?> newInputMaker = new StatusInputMaker(this,
 						(IPSStatus) element);

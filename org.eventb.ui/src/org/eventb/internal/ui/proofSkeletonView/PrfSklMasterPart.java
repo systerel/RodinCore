@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,8 +53,7 @@ public class PrfSklMasterPart implements IFormPart {
 	private ExpandAllHandler expandHandler;
 
 	void fireSelectionChanged(SelectionChangedEvent event) {
-		managedForm.fireSelectionChanged(PrfSklMasterPart.this, event
-				.getSelection());
+		managedForm.fireSelectionChanged(this, event.getSelection());
 	}
 
 	/**
@@ -83,9 +82,6 @@ public class PrfSklMasterPart implements IFormPart {
 
 	@Override
 	public boolean setFormInput(Object input) {
-		if (input == null) {
-			return false;
-		}
 		if (input instanceof IViewerInput) {
 			setViewerInput((IViewerInput) input);
 			return true;
