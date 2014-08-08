@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Rodin Platform" uid="org.rodinp.platform.product" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="3.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Rodin Platform" uid="org.rodinp.platform.product" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="3.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.rodinp.platform/icons/about.gif"/>
@@ -44,8 +44,8 @@
    </plugins>
 
    <features>
-      <feature id="org.eventb.ide" version="3.0.0.qualifier"/>
-      <feature id="org.rodinp.platform" version="3.0.0.qualifier"/>
+      <feature id="org.eventb.ide" version="3.1.0.qualifier"/>
+      <feature id="org.rodinp.platform" version="3.1.0.qualifier"/>
       <feature id="org.rodinp.handbook.feature" installMode="root"/>
       <!-- Specifying a version for Handbook causes a packaging error as -->
       <!-- qualifier format does not match the one from main POM with git commit -->
