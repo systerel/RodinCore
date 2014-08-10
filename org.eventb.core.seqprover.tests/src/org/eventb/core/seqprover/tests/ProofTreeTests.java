@@ -11,12 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.ProverLib.isProofReusable;
-import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genPreds;
-import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,21 +19,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashSet;
-
-import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.proofBuilderTests.ContextDependentReasoner;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.junit.Test;
 
 /**
@@ -287,120 +273,6 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		
 	}
 	
-	// TODO split in four tests below
-	/**
-	 * Checks that proof dependency information has been properly generated.
-	 */
-	@Test
-	public void testProofDependencies() {
-		final IReasonerDesc hypDesc = getDesc("org.eventb.core.seqprover.hyp");
-		final IReasonerDesc impIDesc = getDesc("org.eventb.core.seqprover.impI");
-		final IReasonerDesc lemmaDesc = getDesc("org.eventb.core.seqprover.cut");
-		final IReasonerDesc allIDesc = getDesc("org.eventb.core.seqprover.allI");
-		final IReasonerDesc disjEDesc = getDesc("org.eventb.core.seqprover.disjE");
-		
-		IProverSequent sequent;
-		IProofTree proofTree;
-		IProofDependencies proofDependencies;
-		
-		// test getUsedHypotheses
-		sequent = TestLib.genSeq("y=2;; x=1 |- x=1");
-		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.hyp().apply(proofTree.getRoot(), null);
-		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(isProofReusable(proofDependencies,sequent, null));
-		assertEquals(genPred("x=1"), proofDependencies.getGoal());
-		assertEquals(genPreds("x=1"), proofDependencies.getUsedHypotheses());
-		assertEquals(mTypeEnvironment("x=ℤ").makeSnapshot(),
-				proofDependencies.getUsedFreeIdents());
-		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
-		assertEquals(singleton(hypDesc), proofDependencies.getUsedReasoners());
-		assertFalse(proofDependencies.isContextDependent());
-		
-		// test getUsedHypotheses
-		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
-		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.impI().apply(proofTree.getRoot(), null);
-		Tactics.hyp().apply(proofTree.getRoot().getFirstOpenDescendant(), null);
-		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(isProofReusable(proofDependencies,sequent, null));
-		
-		assertEquals(genPred("x=1 ⇒ x=1"), proofDependencies.getGoal());
-		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
-		assertEquals(mTypeEnvironment("x=ℤ").makeSnapshot(),
-				proofDependencies.getUsedFreeIdents());
-		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
-		assertEquals(new HashSet<IReasonerDesc>(asList(impIDesc, hypDesc)),
-				proofDependencies.getUsedReasoners());
-		assertFalse(proofDependencies.isContextDependent());
-		
-		
-		// test getUsedFreeIdents
-		sequent = TestLib.genSeq("y=2;; 1=1 |- 1=1");
-		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.lemma("y=2").apply(proofTree.getRoot(), null);
-		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(isProofReusable(proofDependencies,sequent, null));
-		assertNull(proofDependencies.getGoal());
-		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
-		assertEquals(mTypeEnvironment("y=ℤ").makeSnapshot(),
-				proofDependencies.getUsedFreeIdents());
-		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
-		assertEquals(singleton(lemmaDesc), proofDependencies.getUsedReasoners());
-		assertFalse(proofDependencies.isContextDependent());
-		
-		//	 test getIntroducedFreeIdents
-		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
-		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.allI().apply(proofTree.getRoot(), null);
-		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(isProofReusable(proofDependencies,sequent, null));
-		assertEquals(genPred("∀ x· x∈ℤ"), proofDependencies.getGoal());
-		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
-		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
-		assertEquals(singleton("x"),
-				proofDependencies.getIntroducedFreeIdents());
-		assertEquals(singleton(allIDesc), proofDependencies.getUsedReasoners());
-		assertFalse(proofDependencies.isContextDependent());
-		
-		// test getGoal
-		sequent = TestLib.genSeq("1=2 ;; 3=3 ∨ 4=4 |- 1=2");
-		proofTree = ProverFactory.makeProofTree(sequent, null);
-		Tactics.disjE(TestLib.genPred("3=3 ∨ 4=4")).apply(proofTree.getRoot(),
-				null);
-		BasicTactics.onPending(0, Tactics.hyp()).apply(proofTree.getRoot(), null);
-		
-		proofDependencies = proofTree.getProofDependencies();
-		assertTrue(ProverLib.isProofReusable(proofDependencies,sequent, null));
-		
-		assertEquals(genPred("1=2"), proofDependencies.getGoal());
-		assertEquals(genPreds("1=2", "3=3 ∨ 4=4"), proofDependencies.getUsedHypotheses());
-		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
-		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
-		assertEquals(new HashSet<IReasonerDesc>(asList(disjEDesc, hypDesc)),
-				proofDependencies.getUsedReasoners());
-		assertFalse(proofDependencies.isContextDependent());
-	}
-
-	@Test
-	public void testContextDependentProofDependencies() throws Exception {
-		final IReasonerDesc ctxDesc = getDesc(ContextDependentReasoner.REASONER_ID);
-		ContextDependentReasoner.setContextValidity(true);
-		
-		final IProverSequent sequent = TestLib.genSeq(" |- 1=1");
-		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
-		BasicTactics.reasonerTac(ctxDesc.getInstance(), new EmptyInput())
-				.apply(proofTree.getRoot(), null);
-		final IProofDependencies proofDependencies = proofTree.getProofDependencies();
-		assertEquals(new HashSet<IReasonerDesc>(asList(ctxDesc)),
-				proofDependencies.getUsedReasoners());
-		assertTrue(proofDependencies.isContextDependent());
-	}
-	
-	private static IReasonerDesc getDesc(String id) {
-		return ReasonerRegistry.getReasonerRegistry().getLiveReasonerDesc(id);
-	}
-
 	/**
 	 * Ensures that the origin of a proof tree is tracked.
 	 */
