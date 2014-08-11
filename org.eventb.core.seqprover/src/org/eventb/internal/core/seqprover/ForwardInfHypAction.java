@@ -111,5 +111,14 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		}
 		return new ForwardInfHypAction(trHyps, trAddedIdents, trInferredHyps);
 	}
-	
+
+	// For use by the rewrite hyp action
+	void setSkipped(boolean skipped) {
+		this.skipped = skipped;
+	}
+
+	boolean isSkipped() {
+		return skipped;
+	}
+
 }

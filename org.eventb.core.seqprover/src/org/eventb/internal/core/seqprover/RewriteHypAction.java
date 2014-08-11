@@ -29,10 +29,6 @@ public class RewriteHypAction implements IInternalHypAction, IRewriteHypAction {
 	private final ForwardInfHypAction fwdInf;
 	private final SelectionHypAction hide;
 
-	// Internal field to enforce that only rewrites that were not skipped
-	// while building a proof are used to process proof dependencies.
-	private boolean skipped = true;
-
 	public RewriteHypAction(Collection<Predicate> hyps,
 			FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps,
 			Collection<Predicate> disappearingHyps) {
@@ -77,13 +73,13 @@ public class RewriteHypAction implements IInternalHypAction, IRewriteHypAction {
 	public IInternalProverSequent perform(IInternalProverSequent sequent) {
 		final IInternalProverSequent result = sequent.performRewrite(getHyps(),
 				getAddedFreeIdents(), getInferredHyps(), getDisappearingHyps());
-		skipped = (result == sequent);
+		fwdInf.setSkipped(result == sequent);
 		return result;
 	}
 
 	@Override
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {
-		if (skipped) {
+		if (fwdInf.isSkipped()) {
 			return;
 		}
 		fwdInf.processDependencies(proofDeps);

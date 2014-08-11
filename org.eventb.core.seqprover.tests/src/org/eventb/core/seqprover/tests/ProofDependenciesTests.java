@@ -31,7 +31,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilderTests.ContextDependentReasoner;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -148,6 +150,50 @@ public class ProofDependenciesTests extends AbstractProofTreeTests {
 		expected.setGoal("1=1");
 		expected.addUsedReasoners(reasoner.getReasonerID());
 		expected.setContextDependent(true);
+		expected.matches(proofTree.getProofDependencies());
+	}
+
+	/**
+	 * Ensures that dependencies are correctly computed for a rewriting
+	 * reasoner. The sequent contains two hypotheses that get rewritten, but
+	 * only one of them contributes to the proof.
+	 */
+	@Test
+	public void rewriteDependencies() throws Exception {
+		final IProofTree proofTree = makeProofTree("1=2 ;; 3=3 |- ⊥");
+		final IProofTreeNode root = proofTree.getRoot();
+		Tactics.autoRewrite().apply(root, null);
+		final ITactic falseHypTac = new AutoTactics.FalseHypTac();
+		falseHypTac.apply(root.getFirstOpenDescendant(), null);
+		assertProofReusable(proofTree);
+
+		final DependencyMatcher expected = new DependencyMatcher();
+		expected.addUsedHypotheses("1=2");
+		expected.addUsedReasoners("org.eventb.core.seqprover.autoRewritesL4");
+		expected.addUsedReasoners("org.eventb.core.seqprover.falseHyp");
+		expected.matches(proofTree.getProofDependencies());
+	}
+
+	/**
+	 * Ensures that dependencies are correctly computed for a forward inference
+	 * reasoner. The sequent contains two hypotheses that get rewritten, but
+	 * only one of them contributes to the proof.
+	 */
+	@Test
+	public void forwardInferenceDependencies() throws Exception {
+		final IProofTree proofTree = //
+		makeProofTree("x∈{1,2,3} ;; x∈{1,4} ;; ¬x=1 |- x∈{2,3}");
+		final IProofTreeNode root = proofTree.getRoot();
+		final ITactic shrinkEnumHypTac = new AutoTactics.ShrinkEnumHypTac();
+		shrinkEnumHypTac.apply(root, null);
+		Tactics.hyp().apply(root.getFirstOpenDescendant(), null);
+		assertProofReusable(proofTree);
+
+		final DependencyMatcher expected = new DependencyMatcher();
+		expected.setGoal("x∈{2,3}");
+		expected.addUsedHypotheses("x∈{1,2,3}", "¬x=1");
+		expected.addUsedReasoners("org.eventb.core.seqprover.negEnum");
+		expected.addUsedReasoners("org.eventb.core.seqprover.hyp");
 		expected.matches(proofTree.getProofDependencies());
 	}
 
