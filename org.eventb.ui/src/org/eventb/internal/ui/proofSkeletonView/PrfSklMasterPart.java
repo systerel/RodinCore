@@ -29,9 +29,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.handlers.CollapseAllHandler;
-import org.eclipse.ui.handlers.ExpandAllHandler;
-import org.eclipse.ui.handlers.IHandlerService;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -53,8 +51,6 @@ public class PrfSklMasterPart implements IFormPart {
 		}
 
 	};
-	private CollapseAllHandler collapseHandler;
-	private ExpandAllHandler expandHandler;
 
 	void fireSelectionChanged(SelectionChangedEvent event) {
 		managedForm.fireSelectionChanged(this, event.getSelection());
@@ -79,7 +75,7 @@ public class PrfSklMasterPart implements IFormPart {
 		viewer.addSelectionChangedListener(treeListener);
 		setupCommentTooltip(viewer);
 		createContextMenu(site);
-		activateHandlers((IHandlerService) site.getService(IHandlerService.class));
+		UIUtils.activateHandlers(viewer, site);
 	}
 
 	private void createContextMenu(IWorkbenchPartSite site) {
@@ -142,8 +138,6 @@ public class PrfSklMasterPart implements IFormPart {
 
 	@Override
 	public void dispose() {
-		collapseHandler.dispose();
-		expandHandler.dispose();
 		viewer.removeSelectionChangedListener(treeListener);
 		viewer.getTree().dispose();
 		viewer.getControl().dispose();
@@ -154,19 +148,4 @@ public class PrfSklMasterPart implements IFormPart {
 		// Do nothing
 	}
 
-	/**
-	 * Activates the handlers using the given handler service.
-	 * 
-	 * @param handlerService
-	 *            the handler service to use for handler activation
-	 */
-	private void activateHandlers(IHandlerService handlerService) {
-		collapseHandler = new CollapseAllHandler(viewer);
-		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID,
-				collapseHandler);
-		
-		expandHandler = new ExpandAllHandler(viewer);
-		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID,
-				expandHandler);
-	}
 }

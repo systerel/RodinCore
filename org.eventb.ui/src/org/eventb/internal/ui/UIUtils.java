@@ -48,6 +48,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
@@ -65,6 +66,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.ExpandAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
@@ -1063,6 +1067,33 @@ public class UIUtils {
 		final IWorkbenchWindow window = site.getWorkbenchWindow();
 		final IAction bridge = new LegacyCommandAction(window, commandId);
 		bars.setGlobalActionHandler(actionId, bridge);
+	}
+
+	/**
+	 * Activates the handlers for expanding and collapsing in a tree viewer
+	 * 
+	 * @param viewer
+	 *            the tree viewer to act on
+	 * @param site
+	 *            the site which contains the viewer
+	 */
+	public static void activateHandlers(TreeViewer viewer, IWorkbenchSite site) {
+		final IHandlerService handlerService = getHandlerService(site);
+		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID,
+				new CollapseAllHandler(viewer));
+		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID,
+				new ExpandAllHandler(viewer));
+	}
+
+	/**
+	 * Returns the handler service attached to the given site
+	 * 
+	 * @param site
+	 *            some site
+	 * @return the attached handler service
+	 */
+	public static IHandlerService getHandlerService(IWorkbenchSite site) {
+		return (IHandlerService) site.getService(IHandlerService.class);
 	}
 
 }

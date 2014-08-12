@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.handlers.CollapseAllHandler;
-import org.eclipse.ui.handlers.ExpandAllHandler;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
@@ -66,6 +63,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
@@ -103,10 +101,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	PageBook pageBook;
 	
 	private ProofStatusLineManager statusManager;
-
-	private CollapseAllHandler collapseHandler;
-
-	private ExpandAllHandler expandHandler;
 
 	/**
 	 * @author htson
@@ -224,24 +218,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		activateHandlers();
+		UIUtils.activateHandlers(viewer, getSite());
 
 		if (fInput != null)
 			update();
 		
 		this.getSite().setSelectionProvider(viewer);
-	}
-
-	private void activateHandlers() {
-		final IHandlerService handlerService = (IHandlerService) getSite()
-				.getService(IHandlerService.class);
-		collapseHandler = new CollapseAllHandler(viewer);
-		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID,
-				collapseHandler);
-		
-		expandHandler = new ExpandAllHandler(viewer);
-		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID,
-				expandHandler);
 	}
 
 	/**
@@ -283,9 +265,6 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 	@Override
 	public void dispose() {
-		collapseHandler.dispose();
-		expandHandler.dispose();
-
 		USM.removeChangeListener(this);
 		super.dispose();
 	}
