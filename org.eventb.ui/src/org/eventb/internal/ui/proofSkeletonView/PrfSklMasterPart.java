@@ -27,8 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.AbstractFormPart;
 import org.eventb.internal.ui.UIUtils;
 
 /**
@@ -37,10 +36,9 @@ import org.eventb.internal.ui.UIUtils;
  * @author Nicolas Beauger
  * 
  */
-public class PrfSklMasterPart implements IFormPart {
+public class PrfSklMasterPart extends AbstractFormPart {
 
 	private final TreeViewer viewer;
-	private IManagedForm managedForm;
 
 	// listener to the tree selection
 	private final ISelectionChangedListener treeListener = new ISelectionChangedListener() {
@@ -53,7 +51,7 @@ public class PrfSklMasterPart implements IFormPart {
 	};
 
 	void fireSelectionChanged(SelectionChangedEvent event) {
-		managedForm.fireSelectionChanged(this, event.getSelection());
+		getManagedForm().fireSelectionChanged(this, event.getSelection());
 	}
 
 	/**
@@ -112,28 +110,9 @@ public class PrfSklMasterPart implements IFormPart {
 	}
 
 	@Override
-	public void setFocus() {
-		// Do nothing
-	}
-
-	@Override
 	public void refresh() {
 		viewer.refresh();
-	}
-
-	@Override
-	public boolean isStale() {
-		return false;
-	}
-
-	@Override
-	public boolean isDirty() {
-		return false;
-	}
-
-	@Override
-	public void initialize(IManagedForm form) {
-		this.managedForm = form;
+		super.refresh();
 	}
 
 	@Override
@@ -141,11 +120,6 @@ public class PrfSklMasterPart implements IFormPart {
 		viewer.removeSelectionChangedListener(treeListener);
 		viewer.getTree().dispose();
 		viewer.getControl().dispose();
-	}
-
-	@Override
-	public void commit(boolean onSave) {
-		// Do nothing
 	}
 
 }
