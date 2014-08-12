@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
-import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * MasterDetailsBlock for the proof skeleton viewer.
@@ -27,15 +26,17 @@ import org.eclipse.ui.handlers.IHandlerService;
  */
 public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 
+	private final IWorkbenchPartSite site;
+
 	protected PrfSklMasterPart masterPart;
 
-	public PrfSklMasterDetailsBlock() {
-		// Do nothing
+	public PrfSklMasterDetailsBlock(IWorkbenchPartSite site) {
+		this.site = site;
 	}
 
 	@Override
 	protected void createMasterPart(IManagedForm managedForm, Composite parent) {
-		masterPart = new PrfSklMasterPart(parent);
+		masterPart = new PrfSklMasterPart(parent, site);
 		managedForm.addPart(masterPart);
 		managedForm.setInput(DefaultInput.getDefault());
 		sashForm.setOrientation(SWT.VERTICAL);
@@ -51,16 +52,6 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 		part.setPageProvider(PrfSklDetailsPageProvider.getDefault());
 	}
 
-	/**
-	 * Get the master part TreeViewer.
-	 * 
-	 * @return the master part TreeViewer.
-	 */
-	public TreeViewer getViewer() {
-		return masterPart.getViewer();
-	}
-
-
 	public void switchOrientation() {
 		if (sashForm.getOrientation() == SWT.VERTICAL) {
 			sashForm.setOrientation(SWT.HORIZONTAL);
@@ -74,14 +65,4 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 		SequentDetailsPage.getDefault().setFont(font);
 	}
 
-	/**
-	 * Activates the handlers using the given handler service.
-	 * 
-	 * @param handlerService
-	 *            the handler service to use for handler activation
-	 */
-	public void activateHandlers(IHandlerService handlerService) {
-		masterPart.activateHandlers(handlerService);
-	}
-	
 }

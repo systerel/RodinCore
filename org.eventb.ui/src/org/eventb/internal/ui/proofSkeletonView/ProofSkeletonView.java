@@ -12,18 +12,13 @@ package org.eventb.internal.ui.proofSkeletonView;
 
 import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.ManagedForm;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -44,26 +39,13 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		managedForm = new ManagedForm(parent);
-		masterDetailsBlock = new PrfSklMasterDetailsBlock();
+		masterDetailsBlock = new PrfSklMasterDetailsBlock(getSite());
 		masterDetailsBlock.createContent(managedForm);
-		masterDetailsBlock.activateHandlers((IHandlerService) getSite()
-				.getService(IHandlerService.class));
 
 		selManager = new InputManager(this);
 		selManager.register();
 		
-		addContextMenu();
 		JFaceResources.getFontRegistry().addListener(this);
-	}
-
-	private void addContextMenu() {
-		final Viewer viewer = masterDetailsBlock.getViewer();
-		final Control control = viewer.getControl();
-		final MenuManager menuManager = new MenuManager();
-		final Menu menu = menuManager.createContextMenu(control);
-		control.setMenu(menu);
-		getSite().registerContextMenu(menuManager, viewer);
-		getSite().setSelectionProvider(viewer);
 	}
 
 	@Override
@@ -78,21 +60,6 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 		JFaceResources.getFontRegistry().removeListener(this);
 		managedForm.dispose();
 		super.dispose();
-	}
-
-	/**
-	 * Expand or collapse the master part tree viewer.
-	 * 
-	 * @param expand
-	 *            expands all when <code>true</code>; collapses all when
-	 *            <code>false</code>.
-	 */
-	public void changeExpansionState(boolean expand) {
-		if (expand) {
-			masterDetailsBlock.getViewer().expandAll();
-		} else {
-			masterDetailsBlock.getViewer().collapseAll();
-		}
 	}
 
 	public void switchOrientation() {

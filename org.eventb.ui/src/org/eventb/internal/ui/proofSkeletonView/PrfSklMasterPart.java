@@ -14,6 +14,7 @@ package org.eventb.internal.ui.proofSkeletonView;
 import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
 import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -22,6 +23,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -61,8 +65,10 @@ public class PrfSklMasterPart implements IFormPart {
 	 * 
 	 * @param parent
 	 *            the parent Composite.
+	 * @param site
+	 *            the part site (for registering the context menu)
 	 */
-	public PrfSklMasterPart(Composite parent) {
+	public PrfSklMasterPart(Composite parent, IWorkbenchPartSite site) {
 		this.viewer = new TreeViewer(parent);
 		setFont(JFaceResources.getFont(RODIN_MATH_FONT));
 		viewer.setContentProvider(new PrfSklContentProvider());
@@ -72,6 +78,17 @@ public class PrfSklMasterPart implements IFormPart {
 				new PrfSklLabelProvider(), decorator));
 		viewer.addSelectionChangedListener(treeListener);
 		setupCommentTooltip(viewer);
+		createContextMenu(site);
+		activateHandlers((IHandlerService) site.getService(IHandlerService.class));
+	}
+
+	private void createContextMenu(IWorkbenchPartSite site) {
+		final Control control = viewer.getControl();
+		final MenuManager menuManager = new MenuManager();
+		final Menu menu = menuManager.createContextMenu(control);
+		control.setMenu(menu);
+		site.registerContextMenu(menuManager, viewer);
+		site.setSelectionProvider(viewer);
 	}
 
 	public void setFont(Font font) {
@@ -138,21 +155,12 @@ public class PrfSklMasterPart implements IFormPart {
 	}
 
 	/**
-	 * Get the TreeViewer.
-	 * 
-	 * @return the TreeViewer.
-	 */
-	public TreeViewer getViewer() {
-		return viewer;
-	}
-
-	/**
 	 * Activates the handlers using the given handler service.
 	 * 
 	 * @param handlerService
 	 *            the handler service to use for handler activation
 	 */
-	public void activateHandlers(IHandlerService handlerService) {
+	private void activateHandlers(IHandlerService handlerService) {
 		collapseHandler = new CollapseAllHandler(viewer);
 		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID,
 				collapseHandler);
