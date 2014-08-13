@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -103,9 +104,7 @@ public class PrfSklMasterPart extends AbstractFormPart {
 	void setViewerInput(IViewerInput input) {
 		if (viewer != null) {
 			viewer.setInput(input);
-			viewer.getTree().setSelection(viewer.getTree().getItem(0));
-			treeListener.selectionChanged(new SelectionChangedEvent(viewer,
-					viewer.getSelection()));
+			viewer.setSelection(new StructuredSelection(input.getElements()));
 		}
 	}
 
