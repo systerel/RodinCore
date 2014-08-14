@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,8 +136,8 @@ public class NewConstantDialog extends EventBDialog {
 				LABEL_ATTRIBUTE);
 		providerListener.addInputText(identifierText);
 		
-		final Triplet<IEventBInputText, IEventBInputText, Button> axiom = createAxiom();
-		addGuardListener(identifierText, axiom.getSecond());
+		final IEventBInputText axiom = createAxiom();
+		addGuardListener(identifierText, axiom);
 
 		setText(identifierText, cstIdentifier);
 		select(identifierText);
@@ -154,8 +154,9 @@ public class NewConstantDialog extends EventBDialog {
 			identifierResult = null;
 			axmResults.clear();
 		} else if (buttonId == MORE_AXIOM_ID) {
-			createAxiom();
+			IEventBInputText text = createAxiom();
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			if (!checkAndSetFieldValues()) {
 				return;
@@ -170,7 +171,7 @@ public class NewConstantDialog extends EventBDialog {
 		super.buttonPressed(buttonId);
 	}
 
-	private Triplet<IEventBInputText, IEventBInputText, Button> createAxiom() {
+	private IEventBInputText createAxiom() {
 		createLabel(composite, "Axiom");
 		final IEventBInputText axiomNameText = createNameInputText(composite,
 				getNewAxiomName());
@@ -183,7 +184,7 @@ public class NewConstantDialog extends EventBDialog {
 		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
 				axiomNameText, axiomPredicateText, button);
 		axiomTexts.add(p);
-		return p;
+		return axiomPredicateText;
 	}
 
 	private String getNewAxiomName() {

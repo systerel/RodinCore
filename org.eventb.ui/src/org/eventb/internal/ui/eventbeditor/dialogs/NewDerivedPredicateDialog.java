@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		select(texts.get(0).getSecond());
 	}
 	
-	private void createInputs() {
+	private IEventBInputText createInputs() {
 		final int index = Integer.parseInt(firstIndex) + texts.size();
 		final IEventBInputText name = createNameInputText(getBody(), prefix
 				+ index);
@@ -117,6 +117,7 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		addProposalAdapter(type, PREDICATE_ATTRIBUTE, content);
 		final Button button = createIsTheoremCheck(getBody());
 		texts.add(newWidgetTriplet(name, content, button));
+		return content;
 	}
 
 	@Override
@@ -124,8 +125,9 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		if (buttonId == CANCEL_ID) {
 			// do nothing
 		} else if (buttonId == MORE_ID) {
-			createInputs();
+			final IEventBInputText text = createInputs();
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			fillTripletResult(texts, results);
 		}

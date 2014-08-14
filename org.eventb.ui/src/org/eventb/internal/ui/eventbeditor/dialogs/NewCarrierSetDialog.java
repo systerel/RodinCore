@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,10 +109,11 @@ public class NewCarrierSetDialog extends EventBDialog {
 		createLabel(getBody(), message);
 	}
 
-	private void createBText(String value) {
+	private EventBText createBText(String value) {
 		final EventBText text = createBText(getBody(), value);
 		addProposalAdapter(ICarrierSet.ELEMENT_TYPE, LABEL_ATTRIBUTE, text);
 		namesTexts.add(text);
+		return text;
 	}
 	
 	/*
@@ -126,9 +127,10 @@ public class NewCarrierSetDialog extends EventBDialog {
 			// do nothing
 		} else if (buttonId == MORE_ID) {
 			createLabel(message);
-			createBText(EMPTY);
+			final EventBText text = createBText(EMPTY);
 			toolkit.paintBordersFor(getBody());
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			if (!checkAndSetFieldValues()) {
 				return;

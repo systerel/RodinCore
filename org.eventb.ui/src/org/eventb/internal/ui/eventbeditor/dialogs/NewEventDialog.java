@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -288,14 +288,17 @@ public class NewEventDialog extends EventBDialog {
 			changeColumn(parComposite, parCount);
 			changeWidthParameter();
 			updateSize();
+			select(parLabel);
 			
 			parTexts.add(parLabel);
 		} else if (buttonId == MORE_GUARD_ID) {
-			createGuard();
+			final IEventBInputText text = createGuard();
 			updateSize();
+			select(text);
 		} else if (buttonId == MORE_ACTION_ID) {
-			createAction();
+			final IEventBInputText text = createAction();
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			if (!checkAndSetFieldValues()) {
 				return;
@@ -316,7 +319,7 @@ public class NewEventDialog extends EventBDialog {
 		gd.widthHint = 50 * parCount + 10 * (parCount - 1);
 	}
 	
-	private void createAction() {
+	private IEventBInputText createAction() {
 		actCount++;
 		final IEventBInputText actionLabel = createNameText(actPrefix
 				+ actCount);
@@ -327,6 +330,7 @@ public class NewEventDialog extends EventBDialog {
 		final IEventBInputText actionSub = createContentText(composite);
 		addProposalAdapter(action, ASSIGNMENT_ATTRIBUTE, actionSub);
 		actTexts.add(newWidgetPair(actionLabel, actionSub));
+		return actionSub;
 	}
 	
 	private IEventBInputText createGuard() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,14 +152,14 @@ public class NewVariableDialog extends EventBDialog {
 		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
 
-		final Triplet<IEventBInputText, IEventBInputText, Button> invariant = createInvariant();
-		addGuardListener(identifierText, invariant.getSecond());
+		final IEventBInputText invariant = createInvariant();
+		addGuardListener(identifierText, invariant);
 
 		setText(identifierText, getFreeVariable());
 		select(identifierText);
 	}
 
-	private Triplet<IEventBInputText, IEventBInputText, Button> createInvariant() {
+	private IEventBInputText createInvariant() {
 		createLabel(getBody(), "Invariant");
 		final IEventBInputText invariantNameText = createNameInputText(
 				getBody(),
@@ -173,7 +173,7 @@ public class NewVariableDialog extends EventBDialog {
 		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
 				invariantNameText, invariantPredicateText, button);
 		invariantsTexts.add(p);
-		return p;
+		return invariantPredicateText;
 	}
 	
 	/*
@@ -189,8 +189,9 @@ public class NewVariableDialog extends EventBDialog {
 			initLabelResult = null;
 			initSubstitutionResult = null;
 		} else if (buttonId == MORE_INVARIANT_ID) {
-			createInvariant();
+			final IEventBInputText text = createInvariant();
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			if (!checkAndSetFieldValues()) {
 				return;

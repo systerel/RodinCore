@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,10 +103,11 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 		return input;
 	}
 	
-	private void createElement() {
+	private IEventBInputText createElement() {
 		final IEventBInputText text = createInput("Element",
 				IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 		elementTexts.add(text);
+		return text;
 	}
 	
 	@Override
@@ -115,8 +116,9 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 			name = null;
 			elements.clear();
 		} else if (buttonId == MORE_ELEMENT_ID) {
-			createElement();
+			final IEventBInputText text = createElement();
 			updateSize();
+			select(text);
 		} else if (buttonId == OK_ID) {
 			if (!checkAndSetFieldValues()) {
 				return;
