@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
+import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,21 +43,20 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * 
  * @author Laurent Voisin
  */
-public class Specialization extends DefaultTypeCheckingRewriter implements
-		ISpecialization {
+public class Specialization extends Substitution implements ISpecialization {
 
 	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
 
 	// Identifier substitutions
-	private final Map<FreeIdentifier, Expression> identSubst;
+	private final Map<FreeIdentifier, Substitute> identSubst;
 	
 	private final TypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
-		identSubst = new HashMap<FreeIdentifier, Expression>();
+		identSubst = new HashMap<FreeIdentifier, Substitute>();
 		speTypeRewriter = new TypeRewriter(ff) {
 			@Override
 			public void visit(GivenType type) {
@@ -70,7 +71,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	public Specialization(Specialization other) {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
-		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
+		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
 		speTypeRewriter = other.speTypeRewriter;
 	}
 
@@ -93,7 +94,8 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		}
 		// TODO: If formula factory is the same do not rewrite (to be checked
 		// after Formula factory cleaning)
-		identSubst.put(type.toExpression(), value.toExpression());
+		final Substitute subst = makeSubstitute(value.toExpression());
+		identSubst.put(type.toExpression(), subst);
 	}
 
 	public Type get(GivenType key) {
@@ -111,14 +113,13 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
-		if (!value.isWellFormed())
-			throw new IllegalArgumentException("Ill-formed value");
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
-		final Expression oldValue = identSubst.put(ident, value);
-		if (oldValue != null && !oldValue.equals(value)) {
-			identSubst.put(ident, oldValue); // repair
+		final Substitute subst = makeSubstitute(value);
+		final Substitute oldSubst = identSubst.put(ident, subst);
+		if (oldSubst != null && !oldSubst.equals(subst)) {
+			identSubst.put(ident, oldSubst); // repair
 			throw new IllegalArgumentException("Identifier substitution for "
 					+ ident + " already registered");
 		}
@@ -176,9 +177,9 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	}
 
 	public Expression get(FreeIdentifier ident) {
-		final Expression value = identSubst.get(ident);
-		if (value != null) {
-			return value;
+		final Substitute subst = identSubst.get(ident);
+		if (subst != null) {
+			return subst.getSubstitute(ident, getBindingDepth());
 		}
 		final Type type = ident.getType();
 		final Type newType = type.specialize(this);
@@ -189,7 +190,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			result = ff.makeFreeIdentifier(ident.getName(),
 					ident.getSourceLocation(), newType);
 		}
-		identSubst.put(ident, result);
+		identSubst.put(ident, makeSubstitute(result));
 		return result;
 	}
 
@@ -279,7 +280,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
-		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
+		for (Entry<FreeIdentifier, Substitute> entry : identSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
 			sb.append(entry.getKey());

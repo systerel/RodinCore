@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,16 @@ import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -252,6 +257,26 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"∀x⦂S·x∈A", "S := T || A := B", "∀x⦂T·x∈B");
 		assertPredicateSpecialization(te,//
 				"∀a⦂S·a∈A", "S := ℤ || a := 5 || A := {2}", "∀a⦂ℤ·a∈{2}");
+	}
+
+	/**
+	 * Ensures that a specialization containing non-locally bound identifiers
+	 * properly renumbers de Bruijn indices. For this, we check that we get the
+	 * same result as a free identifier substitution, when using a
+	 * specialization that does not substitute types.
+	 */
+	@Test
+	public void testQuantifiedPredicateNotFree() {
+		final Predicate src = parsePredicate("∀x⦂S·x∈A", te);
+		final FreeIdentifier sIdent = src.getFreeIdentifiers()[0];
+		final BoundIdentifier expr = ff.makeBoundIdentifier(0, null, POW(S));
+		final Map<FreeIdentifier, Expression> subst;
+		subst = new HashMap<FreeIdentifier, Expression>();
+		subst.put(sIdent, expr);
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(sIdent, expr);
+		final Predicate expected = src.substituteFreeIdents(subst);
+		assertSpecialization(te, src, spe, expected);
 	}
 
 	/**

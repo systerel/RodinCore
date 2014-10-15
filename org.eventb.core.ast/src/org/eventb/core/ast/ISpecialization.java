@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,8 +102,10 @@ public interface ISpecialization {
 	 * substitutions will be applied in parallel when specializing a formula.
 	 * Both parameters must be type-checked. The given identifier must not
 	 * denote a type. The added substitution must be compatible with already
-	 * registered substitutions (for both given types and free identifiers).
-	 * The given expression must be well-formed.
+	 * registered substitutions (for both given types and free identifiers). The
+	 * given expression needs not be well-formed. In case the expression contains
+	 * bound identifiers, it is up to the caller to manage that they do not
+	 * escape their scope.
 	 * 
 	 * @param ident
 	 *            a typed identifier to substitute
@@ -112,10 +114,8 @@ public interface ISpecialization {
 	 * @throws IllegalArgumentException
 	 *             if either parameter is not typed, or if the identifier
 	 *             denotes a type, or if this substitution is not compatible
-	 *             with already registered substitutions, or if the expression
-	 *             is not well-formed
+	 *             with already registered substitutions
 	 * @see Formula#isTypeChecked()
-	 * @see Formula#isWellFormed()
 	 */
 	void put(FreeIdentifier ident, Expression value);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,17 +270,12 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that an identifier substitution which contains an ill-formed expression 
-	 * is rejected.
+	 * Ensures that an identifier substitution which contains an ill-formed
+	 * expression is accepted.
 	 */
-	@Test 
+	@Test
 	public void testIllFormedExpression() {
-		try {
-			spec.put(aS, ff.makeBoundIdentifier(0, null, S));
-			fail("Shall have raised an exception");
-		} catch (IllegalArgumentException e) {
-			// pass
-		}
+		spec.put(aS, ff.makeBoundIdentifier(0, null, S));
 	}
 
 	/**
