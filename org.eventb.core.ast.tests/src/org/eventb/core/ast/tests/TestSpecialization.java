@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.fail;
+import static java.math.BigInteger.ZERO;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -70,6 +71,19 @@ public class TestSpecialization extends AbstractTests {
 			spec.put(S, null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that a type value from another factory is rejected.
+	 */
+	@Test 
+	public void testWrongFactoryTypeValue() {
+		try {
+			spec.put(S, LIST_FAC.makeIntegerType());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
 			// pass
 		}
 	}
@@ -157,6 +171,20 @@ public class TestSpecialization extends AbstractTests {
 			spec.put(aS, null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an expression from another factory is rejected.
+	 */
+	@Test 
+	public void testWrongFactoryExpression() {
+		spec.put(S, Z);
+		try {
+			spec.put(aS, LIST_FAC.makeIntegerLiteral(ZERO, null));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
 			// pass
 		}
 	}

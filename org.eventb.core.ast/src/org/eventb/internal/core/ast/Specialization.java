@@ -61,9 +61,13 @@ public class Specialization extends Substitution implements ISpecialization {
 			@Override
 			public void visit(GivenType type) {
 				final Type rewritten = get(type);
-				// If the given type translates to itself, return the same
-				// object
-				result = type.equals(rewritten) ? type : rewritten;
+				// If the given type is not rewritten, use the super algorithm
+				// (this implements factory translation)
+				if (type.equals(rewritten)) {
+					super.visit(type);
+				} else {
+					result = rewritten;
+				}
 			}
 		};
 	}
@@ -86,14 +90,16 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		final Type oldValue = typeSubst.put(type, value);
 		if (oldValue != null && !oldValue.equals(value)) {
 			typeSubst.put(type, oldValue); // repair
 			throw new IllegalArgumentException("Type substitution for " + type
 					+ " already registered");
 		}
-		// TODO: If formula factory is the same do not rewrite (to be checked
-		// after Formula factory cleaning)
 		final Substitute subst = makeSubstitute(value.toExpression());
 		identSubst.put(type.toExpression(), subst);
 	}
@@ -115,6 +121,10 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);

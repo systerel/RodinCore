@@ -21,6 +21,11 @@ package org.eventb.core.ast;
  * <code>specialize()</code> method on a type, type environment or formula.
  * </p>
  * <p>
+ * The substitutions can also change the formula factory. Consequently, all
+ * substitutes must have been created with the same formula factory as this
+ * specialization.
+ * </p>
+ * <p>
  * Both substitutions must be compatible, that is the expression to be
  * substituted for an identifier must bear a type which is the result of
  * applying the type substitution to the type of the identifier.
@@ -85,7 +90,8 @@ public interface ISpecialization {
 	 * Adds a new type substitution to this specialization. All substitutions
 	 * will be applied in parallel when specializing a formula. The added
 	 * substitution must be compatible with already registered substitutions
-	 * (for both given types and free identifiers).
+	 * (for both given types and free identifiers). The value must have been
+	 * created by the same formula factory as this instance.
 	 * 
 	 * @param type
 	 *            given type to specialize
@@ -93,7 +99,9 @@ public interface ISpecialization {
 	 *            replacement for the given type
 	 * @throws IllegalArgumentException
 	 *             if this substitution is not compatible with already
-	 *             registered substitutions
+	 *             registered substitutions or the value has been created by
+	 *             another formula factory
+	 * @see Type#getFactory()
 	 */
 	void put(GivenType type, Type value);
 
@@ -105,7 +113,8 @@ public interface ISpecialization {
 	 * registered substitutions (for both given types and free identifiers). The
 	 * given expression needs not be well-formed. In case the expression contains
 	 * bound identifiers, it is up to the caller to manage that they do not
-	 * escape their scope.
+	 * escape their scope. The given expression must have been created by the
+	 * same formula factory as this instance.
 	 * 
 	 * @param ident
 	 *            a typed identifier to substitute
@@ -114,8 +123,10 @@ public interface ISpecialization {
 	 * @throws IllegalArgumentException
 	 *             if either parameter is not typed, or if the identifier
 	 *             denotes a type, or if this substitution is not compatible
-	 *             with already registered substitutions
+	 *             with already registered substitutions or the value has been
+	 *             created by another formula factory
 	 * @see Formula#isTypeChecked()
+	 * @see Formula#getFactory()
 	 */
 	void put(FreeIdentifier ident, Expression value);
 

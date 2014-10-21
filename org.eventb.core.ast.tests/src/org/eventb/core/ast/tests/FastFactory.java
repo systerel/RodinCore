@@ -429,15 +429,22 @@ public class FastFactory {
 	}
 
 	public static ISpecialization mTypeSpecialization(ITypeEnvironment te,
-			String typeSpecialization) {
-		final SpecializationBuilder builder = new SpecializationBuilder(te);
+			String typeSpecialization, FormulaFactory dstFac) {
+		final SpecializationBuilder builder = new SpecializationBuilder(te,
+				dstFac);
 		builder.addTypeSpecializations(typeSpecialization);
 		return builder.getResult();
 	}
 
 	public static ISpecialization mSpecialization(ITypeEnvironment te,
 			String specialization) {
-		final SpecializationBuilder builder = new SpecializationBuilder(te);
+		return mSpecialization(te, specialization, te.getFormulaFactory());
+	}
+
+	public static ISpecialization mSpecialization(ITypeEnvironment te,
+			String specialization, FormulaFactory dstFac) {
+		final SpecializationBuilder builder = new SpecializationBuilder(te,
+				dstFac);
 		builder.addSpecialization(specialization);
 		return builder.getResult();
 	}

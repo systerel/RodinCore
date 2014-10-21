@@ -14,8 +14,10 @@ import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
+import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
@@ -32,6 +34,9 @@ import org.junit.Test;
  * @author Laurent Voisin
  */
 public class TestTypenvSpecialization extends AbstractTests {
+	
+	// Destination factory for specializations.
+	private static final FormulaFactory DST_FAC = EXTS_FAC;
 
 	private static final GivenType S = ff.makeGivenType("S");
 	private static final GivenType T = ff.makeGivenType("T");
@@ -152,13 +157,13 @@ public class TestTypenvSpecialization extends AbstractTests {
 		 * We need to build the specialization by hand, because it is too
 		 * difficult to build it correctly from strings.
 		 */
-		final ISpecialization spe = ff.makeSpecialization();
+		final ISpecialization spe = DST_FAC.makeSpecialization();
 		final FreeIdentifier aS = mFreeIdentifier("a", S);
 		final FreeIdentifier bT = mFreeIdentifier("b", T);
-		spe.put(S, T);
-		spe.put(T, S);
-		spe.put(aS, bT);
-		spe.put(bT, aS);
+		spe.put(S, T.translate(DST_FAC));
+		spe.put(T, S.translate(DST_FAC));
+		spe.put(aS, bT.translate(DST_FAC));
+		spe.put(bT, aS.translate(DST_FAC));
 		assertSpecialization(//
 				"S=ℙ(S); T=ℙ(T); a=S; b=T",//
 				spe,//
@@ -168,14 +173,14 @@ public class TestTypenvSpecialization extends AbstractTests {
 	private static void assertSpecialization(String srcTypenvImage,
 			String specImage, String expectedImage) {
 		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);
-		final ISpecialization spe = mSpecialization(typenv, specImage);
+		final ISpecialization spe = mSpecialization(typenv, specImage, DST_FAC);
 		assertSpecialization(typenv, spe, expectedImage);
 	}
 
 	private static void assertTypeSpecialization(String srcTypenvImage,
 			String specImage, String expectedImage) {
 		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);
-		final ISpecialization spe = mTypeSpecialization(typenv, specImage);
+		final ISpecialization spe = mTypeSpecialization(typenv, specImage, DST_FAC);
 		assertSpecialization(typenv, spe, expectedImage);
 	}
 
@@ -187,7 +192,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 
 	private static void assertSpecialization(ITypeEnvironment typenv,
 			ISpecialization spe, String expectedImage) {
-		final ITypeEnvironment expected = mTypeEnvironment(expectedImage, ff);
+		final ITypeEnvironment expected = mTypeEnvironment(expectedImage, DST_FAC);
 		final ITypeEnvironment actual = typenv.specialize(spe);
 		assertEquals(expected, actual);
 	}

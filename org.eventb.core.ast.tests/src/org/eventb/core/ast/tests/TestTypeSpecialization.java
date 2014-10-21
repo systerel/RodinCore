@@ -10,17 +10,22 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
+import static org.eventb.core.ast.tests.datatype.TestDatatypes.MOULT_FAC;
+import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
-import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
-import static org.eventb.core.ast.tests.datatype.TestDatatypes.MOULT_FAC;
+
+import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.junit.Test;
 
 /**
@@ -34,6 +39,13 @@ import org.junit.Test;
  * @author Thomas Muller
  */
 public class TestTypeSpecialization extends AbstractTests {
+
+	/*
+	 * Set of unused extensions to be used for constructing a different
+	 * destination formula factory.
+	 */
+	private static final Set<IFormulaExtension> OTHER_EXTNS = EXTS_FAC
+			.getExtensions();
 
 	/**
 	 * Ensures that a given type can be specialized in various ways.
@@ -125,6 +137,19 @@ public class TestTypeSpecialization extends AbstractTests {
 
 	}
 
+	/**
+	 * Ensures that specializing a type which has no substitution translates it
+	 * to the factory of the specialization.
+	 */
+	@Test
+	public void bug726() {
+		final GivenType src = ff.makeGivenType("S");
+		final ISpecialization spe = LIST_FAC.makeSpecialization();
+		final Type actual = src.specialize(spe);
+		assertEquals(src, actual);
+		assertSame(LIST_FAC, actual.getFactory());
+	}
+
 	private static void assertSpecialization(String typeImage,
 			String typeSpecializationImage, String expectedImage) {
 		assertSpecialization(typeImage, typeSpecializationImage, expectedImage,
@@ -132,19 +157,30 @@ public class TestTypeSpecialization extends AbstractTests {
 	}
 
 	private static void assertSpecialization(String typeImage,
-			String typeSpecImage, String expectedImage,
-			FormulaFactory fac) {
+			String typeSpecImage, String expectedImage, FormulaFactory fac) {
 		final Type type = parseType(typeImage, fac);
 		final ITypeEnvironmentBuilder te = fac.makeTypeEnvironment();
 		addGivenSets(te, type);
-		final ISpecialization spe = mTypeSpecialization(te, typeSpecImage);
-		final Type expected = parseType(expectedImage, fac);
-		final Type actual = type.specialize(spe);
+		assertSpecialization(te, type, fac, typeSpecImage, expectedImage);
+		final FormulaFactory otherFac = fac.withExtensions(OTHER_EXTNS);
+		assertSpecialization(te, type, otherFac, typeSpecImage, expectedImage);
+	}
+
+	private static void assertSpecialization(ITypeEnvironment srcTypenv,
+			Type srcType, FormulaFactory dstFac, String typeSpecImage,
+			String expectedImage) {
+		final ISpecialization spe = mTypeSpecialization(srcTypenv,
+				typeSpecImage, dstFac);
+		final Type expected = parseType(expectedImage, dstFac);
+		final Type actual = srcType.specialize(spe);
 		assertEquals(expected, actual);
-		// If the specialization did not change the type, it should be the
-		// same object
-		if (expected.equals(type)) {
-			assertSame(type, actual);
+		// If the specialization did not change the type nor the factory,
+		// it should be the same object
+		if (expected.equals(srcType)
+				&& expected.getFactory() == srcType.getFactory()) {
+			assertSame(srcType, actual);
+		} else {
+			assertSame(expected.getFactory(), actual.getFactory());
 		}
 	}
 

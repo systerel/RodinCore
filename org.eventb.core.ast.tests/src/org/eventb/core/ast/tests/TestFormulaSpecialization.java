@@ -15,12 +15,15 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
+import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -34,6 +37,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.junit.Test;
 
@@ -54,6 +58,13 @@ import org.junit.Test;
  * @author Laurent Voisin
  */
 public class TestFormulaSpecialization extends AbstractTests {
+
+	/*
+	 * Set of unused extensions to be used for constructing a different
+	 * destination formula factory.
+	 */
+	private static final Set<IFormulaExtension> OTHER_EXTNS = EXTS_FAC
+			.getExtensions();
 
 	private static final GivenType S = ff.makeGivenType("S");
 	private static final GivenType T = ff.makeGivenType("T");
@@ -154,7 +165,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	@Test 
 	public void testBoundIdentDecl() {
 		final BoundIdentDecl aS = mBoundIdentDecl("a", S);
-		final BoundIdentDecl aT = mBoundIdentDecl("a", T);
+		final BoundIdentDecl aT = mBoundIdentDecl("a", T).translate(EXTS_FAC);
 		assertSpecialization(te, aS, "S := T", aT);
 		assertSpecialization(te, aS, "S := T || a := b", aT);
 	}
@@ -164,8 +175,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testBoundIdentifier() {
-		final Expression bS = FastFactory.mBoundIdentifier(0, S);
-		final Expression bT = FastFactory.mBoundIdentifier(0, T);
+		final Expression bS = mBoundIdentifier(0, S);
+		final Expression bT = mBoundIdentifier(0, T).translate(EXTS_FAC);
 		assertSpecialization(te, bS, "S := T", bT);
 	}
 
@@ -273,9 +284,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 		final Map<FreeIdentifier, Expression> subst;
 		subst = new HashMap<FreeIdentifier, Expression>();
 		subst.put(sIdent, expr);
-		final ISpecialization spe = ff.makeSpecialization();
-		spe.put(sIdent, expr);
-		final Predicate expected = src.substituteFreeIdents(subst);
+		final ISpecialization spe = EXTS_FAC.makeSpecialization();
+		spe.put(sIdent, expr.translate(EXTS_FAC));
+		final Predicate expected = src.substituteFreeIdents(subst).translate(
+				EXTS_FAC);
 		assertSpecialization(te, src, spe, expected);
 	}
 
@@ -347,9 +359,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 			String srcImage, String specImage, String expectedImage) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Expression src = parseExpression(srcImage, fac);
-		ITypeEnvironmentBuilder typenvb = typeCheck(src, typenv);
-		final ISpecialization spec = mSpecialization(typenvb, specImage);
-		final Expression expected = parseExpression(expectedImage, fac);
+		final ITypeEnvironmentBuilder typenvb = typeCheck(src, typenv);
+		final FormulaFactory dstFac = fac.withExtensions(OTHER_EXTNS);
+		final ISpecialization spec = mSpecialization(typenvb, specImage, dstFac);
+		final Expression expected = parseExpression(expectedImage, dstFac);
 		typeCheck(expected, typenvb.specialize(spec));
 		assertSpecialization(typenvb, src, spec, expected);
 	}
@@ -359,16 +372,18 @@ public class TestFormulaSpecialization extends AbstractTests {
 			String expectedImage) {
 		final FormulaFactory fac = baseTypenv.getFormulaFactory();
 		final Predicate src = parsePredicate(srcImage, fac);
-		ITypeEnvironment typenv = typeCheck(src, baseTypenv);
-		final ISpecialization spec = mSpecialization(typenv, specImage);
-		final Predicate expected = parsePredicate(expectedImage, fac);
+		final ITypeEnvironment typenv = typeCheck(src, baseTypenv);
+		final FormulaFactory dstFac = fac.withExtensions(OTHER_EXTNS);
+		final ISpecialization spec = mSpecialization(typenv, specImage, dstFac);
+		final Predicate expected = parsePredicate(expectedImage, dstFac);
 		typeCheck(expected, typenv.specialize(spec));
 		assertSpecialization(typenv, src, spec, expected);
 	}
 
 	private static <T extends Formula<T>> void assertSpecialization(
 			ITypeEnvironment typenv, T src, String speImage, T expected) {
-		final ISpecialization spe = mSpecialization(typenv, speImage);
+		final FormulaFactory dstFac = expected.getFactory();
+		final ISpecialization spe = mSpecialization(typenv, speImage, dstFac);
 		assertSpecialization(typenv, src, spe, expected);
 	}
 
