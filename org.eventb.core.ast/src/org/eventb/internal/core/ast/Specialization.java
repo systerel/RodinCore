@@ -99,9 +99,11 @@ public class Specialization extends Substitution implements ISpecialization {
 	}
 
 	public Type get(GivenType key) {
-		final Type value = typeSubst.get(key);
-		if (value == null)
-			return key;
+		Type value = typeSubst.get(key);
+		if (value == null) {
+			value = key.translate(ff);
+			put(key,  value);
+		}
 		return value;
 	}
 
@@ -136,21 +138,8 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Incompatible types for "
 					+ ident);
 		}
-		freezeSetsFor(identType);
 	}
 
-	/*
-	 * To freeze a set, we just add a substitution to itself, so that it cannot
-	 * be substituted to something else afterwards.
-	 */
-	private void freezeSetsFor(Type identType) {
-		for (final GivenType gt : identType.getGivenTypes()) {
-			if (!typeSubst.containsKey(gt)) {
-				typeSubst.put(gt, gt);
-			}
-		}
-	}
-	
 	public Type specialize(Type type) {
 		return speTypeRewriter.rewrite(type);
 	}

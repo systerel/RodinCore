@@ -31,13 +31,13 @@ package org.eventb.core.ast;
  * specialization strictly before the considered free identifier substitution.
  * </p>
  * <p>
- * When specializing a type-environment or a formula, an instance of this class
- * can change by side-effect in the following manner: For each free identifier,
- * not already part of the free identifier substitution and which occurs in the
- * specialized type environment or formula, a new identifier substitution is
- * added to this specialization. It maps that identifier to an identifier with
- * the same name, but bearing the type obtained by specializing the type of the
- * original identifier.
+ * When specializing a type, type-environment or a formula, an instance of this
+ * class can change by side-effect in the following manner: For each free
+ * identifier, not already part of the free identifier substitution and which
+ * occurs in the specialized type, type environment or formula, a new identifier
+ * substitution is added to this specialization. It maps that identifier to an
+ * identifier with the same name, but bearing the type obtained by specializing
+ * the type of the original identifier.
  * </p>
  * <p>
  * For instance, if a specialization substitutes type <code>T</code> for type
