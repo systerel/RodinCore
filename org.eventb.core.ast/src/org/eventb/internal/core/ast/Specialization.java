@@ -155,8 +155,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
-			final FreeIdentifier ident = ff.makeFreeIdentifier(iter.getName(),
-					null, iter.getType());
+			final FreeIdentifier ident = iter.asFreeIdentifier();
 			final Expression expr = this.get(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);

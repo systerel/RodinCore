@@ -74,9 +74,8 @@ public class IdentifierDecomposer implements ISequentTransformer {
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
-			final Type type = iter.getType();
-			if (type instanceof ProductType) {
-				result.add(ff.makeFreeIdentifier(iter.getName(), null, type));
+			if (iter.getType() instanceof ProductType) {
+				result.add(iter.asFreeIdentifier());
 			}
 		}
 		return result;
