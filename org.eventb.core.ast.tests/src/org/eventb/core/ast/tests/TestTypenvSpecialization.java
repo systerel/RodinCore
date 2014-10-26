@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -41,10 +41,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testEmptySpecialization() {
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S)", ff),//
-				"",//
-				mTypeEnvironment("S=ℙ(S)", ff));
+		assertSpecialization("S=ℙ(S)", "", "S=ℙ(S)");
 	}
 
 	/**
@@ -53,10 +50,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testGivenDisappears() {
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S)", ff),//
-				"S := ℤ",//
-				mTypeEnvironment());
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -65,18 +59,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testGivenReappears() {
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff),//
-				"S := ℤ || T := S",//
-				mTypeEnvironment("S=ℙ(S)", ff));
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S)", ff),//
-				"S := S",//
-				mTypeEnvironment("S=ℙ(S)", ff));
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S)", ff),//
-				"S := ℙ(S×T)",//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff));
+		assertSpecialization("S=ℙ(S); T=ℙ(T)", "S := ℤ || T := S", "S=ℙ(S)");
+		assertSpecialization("S=ℙ(S)", "S := S", "S=ℙ(S)");
+		assertSpecialization("S=ℙ(S)", "S := ℙ(S×T)", "S=ℙ(S); T=ℙ(T)");
 	}
 
 	/**
@@ -86,10 +71,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testGivenReappearsNot() {
-		assertTypeSpecialization(//
-				mTypeEnvironment("S=ℙ(S)", ff),//
-				"S := ℤ || T := S",//
-				mTypeEnvironment());
+		assertTypeSpecialization("S=ℙ(S)", "S := ℤ || T := S", "");
 	}
 
 	/**
@@ -98,10 +80,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testGivenUnchanged() {
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff),//
-				"S := ℤ",//
-				mTypeEnvironment("T=ℙ(T)", ff));
+		assertSpecialization("S=ℙ(S); T=ℙ(T)", "S := ℤ", "T=ℙ(T)");
 	}
 
 	/**
@@ -110,22 +89,16 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testIdentNotSubstituted() {
+		assertSpecialization("S=ℙ(S); a=S", "S := T", "T=ℙ(T); a=T");
+		assertSpecialization("S=ℙ(S); T=ℙ(T); b=S×T", "S := T", "T=ℙ(T); b=T×T");
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); a=S", ff),//
+				"S=ℙ(S); U=ℙ(U); c=U",//
 				"S := T",//
-				mTypeEnvironment("T=ℙ(T); a=T", ff));
+				"T=ℙ(T); U=ℙ(U); c=U");
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); b=S×T", ff),//
-				"S := T",//
-				mTypeEnvironment("T=ℙ(T); b=T×T", ff));
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); U=ℙ(U); c=U", ff),//
-				"S := T",//
-				mTypeEnvironment("T=ℙ(T); U=ℙ(U); c=U", ff));
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S×T", ff),//
+				"S=ℙ(S); T=ℙ(T); a=S×T",//
 				"S := T || T := S×T",//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=T×(S×T)", ff));
+				"S=ℙ(S); T=ℙ(T); a=T×(S×T)");
 	}
 
 	/**
@@ -134,10 +107,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testIdentSubstitutedNoTypeChange() {
-		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); a=S", ff),//
-				"a := b",//
-				mTypeEnvironment("S=ℙ(S); b=S", ff));
+		assertSpecialization("S=ℙ(S); a=S", "a := b", "S=ℙ(S); b=S");
 	}
 
 	/**
@@ -146,9 +116,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testIdentSubstituted() {
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); a=S×T", ff),//
+				"S=ℙ(S); a=S×T",//
 				"S := T || a := b",//
-				mTypeEnvironment("T=ℙ(T); b=T×T", ff));
+				"T=ℙ(T); b=T×T");
 	}
 
 	/**
@@ -157,9 +127,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testSwapTypes() {
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S×T", ff),//
+				"S=ℙ(S); T=ℙ(T); a=S×T",//
 				"S := T || T := S",//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=T×S", ff));
+				"S=ℙ(S); T=ℙ(T); a=T×S");
 	}
 
 	/**
@@ -168,9 +138,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testSwapIdents() {
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); a=S; b=S", ff),//
+				"S=ℙ(S); a=S; b=S",//
 				"a := b || b := a",//
-				mTypeEnvironment("S=ℙ(S); a=S; b=S", ff));
+				"S=ℙ(S); a=S; b=S");
 	}
 
 	/**
@@ -190,25 +160,34 @@ public class TestTypenvSpecialization extends AbstractTests {
 		spe.put(aS, bT);
 		spe.put(bT, aS);
 		assertSpecialization(//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S; b=T", ff),//
+				"S=ℙ(S); T=ℙ(T); a=S; b=T",//
 				spe,//
-				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S; b=T", ff));
+				"S=ℙ(S); T=ℙ(T); a=S; b=T");
 	}
 
-	private static void assertSpecialization(ITypeEnvironment typenv,
-			String specImage, ITypeEnvironment expected) {
+	private static void assertSpecialization(String srcTypenvImage,
+			String specImage, String expectedImage) {
+		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);
 		final ISpecialization spe = mSpecialization(typenv, specImage);
-		assertSpecialization(typenv, spe, expected);
+		assertSpecialization(typenv, spe, expectedImage);
 	}
 
-	private static void assertTypeSpecialization(ITypeEnvironment typenv,
-			String typeSpecImage, ITypeEnvironment expected) {
-		final ISpecialization spe = mTypeSpecialization(typenv, typeSpecImage);
-		assertSpecialization(typenv, spe, expected);
+	private static void assertTypeSpecialization(String srcTypenvImage,
+			String specImage, String expectedImage) {
+		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);
+		final ISpecialization spe = mTypeSpecialization(typenv, specImage);
+		assertSpecialization(typenv, spe, expectedImage);
+	}
+
+	private static void assertSpecialization(String srcTypenvImage,
+			ISpecialization spe, String expectedImage) {
+		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);
+		assertSpecialization(typenv, spe, expectedImage);
 	}
 
 	private static void assertSpecialization(ITypeEnvironment typenv,
-			ISpecialization spe, ITypeEnvironment expected) {
+			ISpecialization spe, String expectedImage) {
+		final ITypeEnvironment expected = mTypeEnvironment(expectedImage, ff);
 		final ITypeEnvironment actual = typenv.specialize(spe);
 		assertEquals(expected, actual);
 	}
