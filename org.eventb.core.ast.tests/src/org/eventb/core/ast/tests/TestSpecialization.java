@@ -16,6 +16,9 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Expression;
@@ -347,6 +350,64 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bT);
 		spec.put(T, S);
 		spec.put(bT, aS);
+	}
+
+	/**
+	 * Ensures that {@link ISpecialization#getFactory()} returns the right
+	 * factory.
+	 */
+	@Test
+	public void testGetFactory() {
+		assertSame(ff, spec.getFactory());
+		assertSame(LIST_FAC, LIST_FAC.makeSpecialization().getFactory());
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution.
+	 */
+	@Test
+	public void testGetForTypeWithSubstitution() {
+		spec.put(S, T);
+		assertEquals(T, spec.get(S));
+	}
+
+	/**
+	 * Ensures that one gets null if there is no substitution and that no
+	 * substitution is created as a side-effect.
+	 */
+	@Test
+	public void testGetForTypeWithoutSubstitution() {
+		assertNull(spec.get(S));
+		assertNull(spec.get(S));
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution.
+	 */
+	@Test
+	public void testGetForIdentWithSubstitution() {
+		spec.put(aS, bS);
+		assertEquals(bS, spec.get(aS));
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution for an identifier
+	 * corresponding to a substituted type.
+	 */
+	@Test
+	public void testGetForIdentWithTypeSubstitution() {
+		spec.put(S, T);
+		assertEquals(T.toExpression(), spec.get(S.toExpression()));
+	}
+
+	/**
+	 * Ensures that one gets null if there is no substitution and that no
+	 * substitution is created as a side-effect.
+	 */
+	@Test
+	public void testGetForIdentWithoutSubstitution() {
+		assertNull(spec.get(aS));
+		assertNull(spec.get(aS));
 	}
 
 }

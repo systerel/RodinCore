@@ -87,6 +87,14 @@ public interface ISpecialization {
 	ISpecialization clone();
 
 	/**
+	 * Returns the formula factory with which this specialization was created.
+	 * 
+	 * @return the formula factory of this specialization
+	 * @since 3.1
+	 */
+	FormulaFactory getFactory();
+
+	/**
 	 * Adds a new type substitution to this specialization. All substitutions
 	 * will be applied in parallel when specializing a formula. The added
 	 * substitution must be compatible with already registered substitutions
@@ -104,6 +112,18 @@ public interface ISpecialization {
 	 * @see Type#getFactory()
 	 */
 	void put(GivenType type, Type value);
+
+	/**
+	 * Returns the type to be substituted for the given given type.
+	 * 
+	 * @param type
+	 *            some given type
+	 * @return the type to be substituted for the given given type of
+	 *         <code>null</code> if no substitution has been defined for the
+	 *         given given type
+	 * @since 3.1
+	 */
+	Type get(GivenType type);
 
 	/**
 	 * Adds a new free identifier substitution to this specialization. All
@@ -129,5 +149,17 @@ public interface ISpecialization {
 	 * @see Formula#getFactory()
 	 */
 	void put(FreeIdentifier ident, Expression value);
+
+	/**
+	 * Returns the expression to be substituted for the given identifier.
+	 * 
+	 * @param ident
+	 *            a typed identifier
+	 * @return the expression to be substituted for the given identifier of
+	 *         <code>null</code> if no substitution has been defined for the
+	 *         given identifier
+	 * @since 3.1
+	 */
+	Expression get(FreeIdentifier ident);
 
 }

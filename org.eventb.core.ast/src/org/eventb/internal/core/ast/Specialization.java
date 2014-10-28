@@ -60,7 +60,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		speTypeRewriter = new TypeRewriter(ff) {
 			@Override
 			public void visit(GivenType type) {
-				final Type rewritten = get(type);
+				final Type rewritten = getOrSetDefault(type);
 				// If the given type is not rewritten, use the super algorithm
 				// (this implements factory translation)
 				if (type.equals(rewritten)) {
@@ -104,8 +104,13 @@ public class Specialization extends Substitution implements ISpecialization {
 		identSubst.put(type.toExpression(), subst);
 	}
 
+	@Override
 	public Type get(GivenType key) {
-		Type value = typeSubst.get(key);
+		return typeSubst.get(key);
+	}
+
+	public Type getOrSetDefault(GivenType key) {
+		Type value = get(key);
 		if (value == null) {
 			value = key.translate(ff);
 			put(key,  value);
@@ -166,7 +171,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		while (iter.hasNext()) {
 			iter.advance();
 			final FreeIdentifier ident = iter.asFreeIdentifier();
-			final Expression expr = this.get(ident);
+			final Expression expr = this.getOrSetDefault(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
@@ -174,7 +179,13 @@ public class Specialization extends Substitution implements ISpecialization {
 		return result;
 	}
 
+	@Override
 	public Expression get(FreeIdentifier ident) {
+		final Substitute subst = identSubst.get(ident);
+		return subst == null ? null : subst.getSubstitute(ident, 0);
+	}
+
+	private Expression getOrSetDefault(FreeIdentifier ident) {
 		final Substitute subst = identSubst.get(ident);
 		if (subst != null) {
 			return subst.getSubstitute(ident, getBindingDepth());
@@ -194,7 +205,7 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
-		final Expression newIdent = get(identifier);
+		final Expression newIdent = getOrSetDefault(identifier);
 		if (newIdent.equals(identifier)) {
 			return super.rewrite(identifier);
 		}
