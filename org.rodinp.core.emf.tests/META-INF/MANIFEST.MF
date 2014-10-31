@@ -6,7 +6,7 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.rodinp.core.emf.tests.RodinEmfTestPlugin
 Bundle-Vendor: Systerel
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;bundle-version="[2.7.0,3.0.0)",
+ org.eclipse.emf.ecore,
  org.junit,
  org.rodinp.core.emf,
  org.rodinp.core.tests,

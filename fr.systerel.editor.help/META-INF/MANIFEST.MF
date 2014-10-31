@@ -4,5 +4,5 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: fr.systerel.editor.help;singleton:=true
 Bundle-Version: 0.6.0.qualifier
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.help;bundle-version="3.5.0"
+Require-Bundle: org.eclipse.help
 Bundle-Localization: plugin
