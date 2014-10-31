@@ -19,19 +19,14 @@
 
 	<repositories>
 		<repository>
-			<id>juno-3.8</id>
+			<id>luna-4.4</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/3.8/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.4/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
 			<layout>p2</layout>
 			<url>http://handbook.event-b.org/updatesite</url>
-		</repository>
-		<repository>
-			<id>emf</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/modeling/emf/emf/updates/releases/</url>
 		</repository>
 	</repositories>
 
