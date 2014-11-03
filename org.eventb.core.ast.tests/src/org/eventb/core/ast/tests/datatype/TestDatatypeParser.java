@@ -14,7 +14,6 @@ import static org.eventb.core.ast.ProblemKind.DatatypeParsingError;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -29,7 +28,6 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.tests.AbstractTests;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
