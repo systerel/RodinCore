@@ -72,7 +72,9 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 				managedForm.setInput(input);
 			}
 		}
-		setTitleToolTip(input.getTitleTooltip());
+		if (input != null) {
+			setTitleToolTip(input.getTitleTooltip());
+		}
 	}
 
 	@Override
