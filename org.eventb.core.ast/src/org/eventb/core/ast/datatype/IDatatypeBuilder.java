@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,10 @@ import org.eventb.core.ast.Type;
  * declare all constructors of the datatype and finalize it.
  * <p>
  * New instances can be obtained by calling
- * {@link FormulaFactory#makeDatatypeBuilder(String, java.util.List)}or
- * {@link FormulaFactory#makeDatatypeBuilder(String, GivenType...)} providing it
- * with the datatype name and type parameters.
+ * {@link FormulaFactory#makeDatatypeBuilder(String, java.util.List)} or
+ * {@link FormulaFactory#makeDatatypeBuilder(String, GivenType...)} or
+ * {@link FormulaFactory#makeDatatypeBuilder(String, java.util.List, Object)}
+ * providing it with the datatype name and type parameters.
  * </p>
  * <p>
  * Then datatype constructors can be added with the

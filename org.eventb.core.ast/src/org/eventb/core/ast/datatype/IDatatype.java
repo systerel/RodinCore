@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,4 +150,12 @@ public interface IDatatype {
 	 */
 	ISetInstantiation getSetInstantiation(Expression set);
 
+	/**
+	 * Returns the origin of this extension, or <code>null</code> if no origin
+	 * is defined.
+	 * 
+	 * @return an Object or <code>null</code>
+	 * @since 3.1
+	 */
+	Object getOrigin();
 }

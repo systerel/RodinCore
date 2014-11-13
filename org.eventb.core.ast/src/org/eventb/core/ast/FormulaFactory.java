@@ -322,7 +322,7 @@ public class FormulaFactory {
 	 */
 	public IDatatypeBuilder makeDatatypeBuilder(String name,
 			List<GivenType> parameters) {
-		return new DatatypeBuilder(this, name, parameters);
+		return new DatatypeBuilder(this, name, parameters, null);
 	}
 
 	/**
@@ -346,7 +346,35 @@ public class FormulaFactory {
 	 */
 	public IDatatypeBuilder makeDatatypeBuilder(String name,
 			GivenType... parameters) {
-		return new DatatypeBuilder(this, name, Arrays.asList(parameters));
+		return new DatatypeBuilder(this, name, Arrays.asList(parameters), null);
+	}
+
+	/**
+	 * Returns a new datatype builder for the datatype with the given name and
+	 * type parameters. The type parameters are specified as given types. The
+	 * given origin object will be returned by {@link IDatatype#getOrigin()} in
+	 * the finalized datatype.
+	 * 
+	 * @param name
+	 *            the datatype name
+	 * @param parameters
+	 *            the formal type parameters of the datatype
+	 * @param origin
+	 *            the origin of the datatype, or <code>null</code>
+	 * @return a datatype builder
+	 * @throws IllegalArgumentException
+	 *             if the datatype name is not a valid identifier in this
+	 *             factory
+	 * @throws IllegalArgumentException
+	 *             if the type parameters names are in conflict with each other
+	 *             or with the datatype name
+	 * @throws IllegalArgumentException
+	 *             if one of the type parameters was built with another factory
+	 * @since 3.1
+	 */
+	public IDatatypeBuilder makeDatatypeBuilder(String name,
+			List<GivenType> parameters, Object origin) {
+		return new DatatypeBuilder(this, name, parameters, origin);
 	}
 
 	@SuppressWarnings("deprecation")

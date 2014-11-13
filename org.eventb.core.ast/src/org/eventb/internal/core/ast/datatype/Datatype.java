@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,9 +79,12 @@ public class Datatype implements IDatatype {
 
 	// Cache of the extensions provided by this datatype
 	private final Set<IFormulaExtension> extensions;
+	
+	private final Object origin;
 
 	private Datatype(DatatypeBuilder dtBuilder) {
 		baseFactory = dtBuilder.getBaseFactory();
+		origin = dtBuilder.getOrigin();
 		typeCons = new TypeConstructorExtension(this, dtBuilder);
 		constructors = new LinkedHashMap<String, ConstructorExtension>();
 		destructors = new HashMap<String, DestructorExtension>(); 
@@ -161,8 +164,13 @@ public class Datatype implements IDatatype {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return prime * typeCons.hashCode() + constructors.hashCode();
+		int result = 1;
+		result = prime * result	+ typeCons.hashCode();
+		result = prime * result + constructors.hashCode();
+		result = prime * result + ((origin == null) ? 0 : origin.hashCode());
+		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -175,7 +183,15 @@ public class Datatype implements IDatatype {
 		final Datatype other = (Datatype) obj;
 		return this.typeCons.isSimilarTo(other.typeCons)
 				&& areSimilarConstructors(this.constructors.values(),
-						other.constructors.values());
+						other.constructors.values())
+				&& areEqualOrigins(this.origin, other.origin);
+	}
+	
+	private static boolean areEqualOrigins(Object origin1, Object origin2) {
+		if (origin1 == null) {
+			return origin2 == null;
+		}
+		return origin1.equals(origin2);
 	}
 
 	private static boolean areSimilarConstructors(
@@ -208,6 +224,11 @@ public class Datatype implements IDatatype {
 			cons.toString(sb);
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public Object getOrigin() {
+		return origin;
 	}
 
 }

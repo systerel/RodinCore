@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -450,7 +450,6 @@ public class TestDatatypes extends AbstractTests {
 		}
 	}
 
-
 	public static final IDatatype MOULT_DT;
 	public static final FormulaFactory MOULT_FAC;
 
@@ -512,7 +511,8 @@ public class TestDatatypes extends AbstractTests {
 	private static final IDatatype NO_INDUC_EXTNS = NO_INDUC_BUILDER
 			.finalizeDatatype();
 
-	private static final FormulaFactory NO_INDUC_FAC = NO_INDUC_EXTNS.getFactory();
+	private static final FormulaFactory NO_INDUC_FAC = NO_INDUC_EXTNS
+			.getFactory();
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
 			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
@@ -659,13 +659,13 @@ public class TestDatatypes extends AbstractTests {
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
 		builder.addConstructor("123");
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddConstructorSameNameAsDatatype() {
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
 		builder.addConstructor("DT");
 	}
-	
+
 	public void testAddConstructorSameNameAsTypeParameter() {
 		final GivenType tyS = ff.makeGivenType("S");
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT", tyS);
@@ -678,7 +678,6 @@ public class TestDatatypes extends AbstractTests {
 		builder.addConstructor("cons");
 		builder.addConstructor("cons");
 	}
-
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddConstructorSameNameAsDestructor() {
@@ -698,8 +697,8 @@ public class TestDatatypes extends AbstractTests {
 		final GivenType tyS = fac.makeGivenType("S");
 		final GivenType tyT = fac.makeGivenType("T");
 		final GivenType tyU = fac.makeGivenType("U");
-		final IDatatypeBuilder dtBuilder = fac.makeDatatypeBuilder("List3", tyS,
-				tyT, tyU);
+		final IDatatypeBuilder dtBuilder = fac.makeDatatypeBuilder("List3",
+				tyS, tyT, tyU);
 		dtBuilder.addConstructor("nil3");
 		final IConstructorBuilder cons = dtBuilder.addConstructor("cons3");
 		cons.addArgument("head1", tyS);
@@ -812,43 +811,43 @@ public class TestDatatypes extends AbstractTests {
 		assertSame(dt1, dt2);
 		assertSame(dt2, dt3);
 	}
-	
+
 	@Test
 	public void testDatatypeDifferentTypeConstructors() {
 		assertDifferentDatatypes("D ::= f", "E ::= f");
 	}
-	
+
 	@Test
 	public void testDatatypeMissingConstructor() {
 		assertDifferentDatatypes("D ::= f || g", "D ::= f");
 	}
-	
+
 	@Test
 	public void testDatatypeDifferentConstructors() {
 		assertDifferentDatatypes("D ::= f", "D ::= g");
 	}
-	
+
 	@Test
 	public void testDatatypeMissingDestructor() {
 		assertDifferentDatatypes("D ::= f[ℤ]", "D ::= f");
 	}
-	
+
 	@Test
 	public void testDatatypeDifferentArgumentTypes() {
 		assertDifferentDatatypes("D ::= f[ℤ]", "D ::= f[BOOL]");
 		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[d: BOOL]");
 	}
-	
+
 	@Test
 	public void testDatatypeUnnamedDestructor() {
 		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[ℤ]");
 	}
-	
+
 	@Test
 	public void testDatatypeDifferentDestructorNames() {
 		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[e: ℤ]");
 	}
-	
+
 	/*
 	 * Verifies that two datatypes are different and that all their extensions
 	 * are also different.
@@ -860,7 +859,7 @@ public class TestDatatypes extends AbstractTests {
 		assertDifferent(dt1.getTypeConstructor(), dt2.getTypeConstructor());
 		assertAllDifferent(dt1.getConstructors(), dt2.getConstructors());
 	}
-	
+
 	private void assertAllDifferent(IConstructorExtension[] cs1,
 			IConstructorExtension[] cs2) {
 		for (final IConstructorExtension c1 : cs1) {
@@ -998,4 +997,49 @@ public class TestDatatypes extends AbstractTests {
 		assertSame(dtFF, dt.getBaseFactory());
 	}
 
+	private static IDatatype makeSimpleDT(Object origin) {
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT",
+				Collections.<GivenType> emptyList(), origin);
+		dtBuilder.addConstructor("dt");
+		final IDatatype dt = dtBuilder.finalizeDatatype();
+		return dt;
+	}
+
+	/**
+	 * Ensures that a null origin given to a datatype builder is found null in
+	 * the finalized datatype.
+	 */
+	@Test
+	public void originNull() throws Exception {
+		final IDatatype dt = makeSimpleDT(null);
+		assertNull(dt.getOrigin());
+	}
+
+	/**
+	 * Ensures that a non null origin given to a datatype builder is found null
+	 * in the finalized datatype.
+	 */
+	@Test
+	public void originNotNull() throws Exception {
+		final Object origin = new Object();
+		final IDatatype dt = makeSimpleDT(origin);
+		assertSame(origin, dt.getOrigin());
+	}
+
+	/**
+	 * Ensures that the datatype cache distinguishes similar datatypes with a
+	 * different origin.
+	 */
+	@Test
+	public void originWithSimilarDatatypeInCache() throws Exception {
+		final Object origin1 = new Object();
+		final IDatatype dt1 = makeSimpleDT(origin1);
+		final Object origin2 = new Object();
+		final IDatatype dt2 = makeSimpleDT(origin2);
+
+		assertNotSame(dt1, dt2);
+		assertSame(origin1, dt1.getOrigin());
+		assertSame(origin2, dt2.getOrigin());
+	}
+	
 }

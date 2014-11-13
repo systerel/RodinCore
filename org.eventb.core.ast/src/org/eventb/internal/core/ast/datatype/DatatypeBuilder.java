@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,8 +97,12 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	// Constructors added so far.
 	private final List<ConstructorBuilder> constructors;
 
+	// Origin of the datatype, or null
+	private final Object origin;
+	
 	// The resulting datatype if finalized, null otherwise
 	private Datatype finalized = null;
+
 
 	/**
 	 * Initialize a datatype builder with a formula factory, a datatype name and
@@ -110,6 +114,8 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 *            the name of the datatype
 	 * @param params
 	 *            the type parameters of the datatype
+	 * @param origin
+	 *            the origin of the datatype, or <code>null</code>
 	 * @throws IllegalArgumentException
 	 *             if the given datatype name is not a valid identifier in the
 	 *             given factory
@@ -120,9 +126,10 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 *             datatype or another type parameter
 	 */
 	public DatatypeBuilder(FormulaFactory ff, String name,
-			List<GivenType> params) {
+			List<GivenType> params, Object origin) {
 		this.ff = ff;
 		this.name = name;
+		this.origin = origin;
 		this.givenType = ff.makeGivenType(name);
 		this.argumentTypeChecker = new ArgumentTypeChecker(givenType);
 		checkTypeParameters(params);
@@ -251,9 +258,9 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	private final void completeDatatypes(Set<IFormulaExtension> extns) {
 		final Set<IFormulaExtension> newExtns = new HashSet<IFormulaExtension>();
 		for (final IFormulaExtension extn : extns) {
-			final Object origin = extn.getOrigin();
-			if (origin instanceof IDatatype) {
-				final IDatatype dt = (IDatatype) origin;
+			final Object extnOrigin = extn.getOrigin();
+			if (extnOrigin instanceof IDatatype) {
+				final IDatatype dt = (IDatatype) extnOrigin;
 				newExtns.addAll(dt.getBaseFactory().getExtensions());
 				newExtns.addAll(dt.getExtensions());
 			}
@@ -264,6 +271,15 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	@Override
 	public FormulaFactory getFactory() {
 		return ff;
+	}
+
+	/**
+	 * Returns the origin of the datatype.
+	 * 
+	 * @return an Object, or <code>null</code>
+	 */
+	public Object getOrigin() {
+		return origin;
 	}
 
 }
