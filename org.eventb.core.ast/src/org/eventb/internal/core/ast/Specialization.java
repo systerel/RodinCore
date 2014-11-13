@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
-import java.util.Collection;
+import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,28 +43,31 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * 
  * @author Laurent Voisin
  */
-public class Specialization extends DefaultTypeCheckingRewriter implements
-		ISpecialization {
+public class Specialization extends Substitution implements ISpecialization {
 
 	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
 
 	// Identifier substitutions
-	private final Map<FreeIdentifier, Expression> identSubst;
+	private final Map<FreeIdentifier, Substitute> identSubst;
 	
 	private final TypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
-		identSubst = new HashMap<FreeIdentifier, Expression>();
+		identSubst = new HashMap<FreeIdentifier, Substitute>();
 		speTypeRewriter = new TypeRewriter(ff) {
 			@Override
 			public void visit(GivenType type) {
-				final Type rewritten = get(type);
-				// If the given type translates to itself, return the same
-				// object
-				result = type.equals(rewritten) ? type : rewritten;
+				final Type rewritten = getOrSetDefault(type);
+				// If the given type is not rewritten, use the super algorithm
+				// (this implements factory translation)
+				if (type.equals(rewritten)) {
+					super.visit(type);
+				} else {
+					result = rewritten;
+				}
 			}
 		};
 	}
@@ -71,7 +75,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	public Specialization(Specialization other) {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
-		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
+		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
 		speTypeRewriter = other.speTypeRewriter;
 	}
 
@@ -86,34 +90,32 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		final Type oldValue = typeSubst.put(type, value);
 		if (oldValue != null && !oldValue.equals(value)) {
 			typeSubst.put(type, oldValue); // repair
 			throw new IllegalArgumentException("Type substitution for " + type
 					+ " already registered");
 		}
-		// TODO: If formula factory is the same do not rewrite (to be checked
-		// after Formula factory cleaning)
-		identSubst.put(type.toExpression(), value.toExpression());
+		final Substitute subst = makeSubstitute(value.toExpression());
+		identSubst.put(type.toExpression(), subst);
 	}
 
+	@Override
 	public Type get(GivenType key) {
-		final Type value = typeSubst.get(key);
-		if (value == null)
-			return key;
+		return typeSubst.get(key);
+	}
+
+	public Type getOrSetDefault(GivenType key) {
+		Type value = get(key);
+		if (value == null) {
+			value = key.translate(ff);
+			put(key,  value);
+		}
 		return value;
-	}
-
-	public Collection<Type> getSubstitutionTypes() {
-		return typeSubst.values();
-	}
-
-	public Map<GivenType, Type> getTypeSubstitutions() {
-		return typeSubst;
-	}
-
-	public Map<FreeIdentifier, Expression> getIndentifierSubstitutions() {
-		return identSubst;
 	}
 
 	@Override
@@ -124,14 +126,17 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
-		if (!value.isWellFormed())
-			throw new IllegalArgumentException("Ill-formed value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
-		final Expression oldValue = identSubst.put(ident, value);
-		if (oldValue != null && !oldValue.equals(value)) {
-			identSubst.put(ident, oldValue); // repair
+		final Substitute subst = makeSubstitute(value);
+		final Substitute oldSubst = identSubst.put(ident, subst);
+		if (oldSubst != null && !oldSubst.equals(subst)) {
+			identSubst.put(ident, oldSubst); // repair
 			throw new IllegalArgumentException("Identifier substitution for "
 					+ ident + " already registered");
 		}
@@ -148,21 +153,8 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			throw new IllegalArgumentException("Incompatible types for "
 					+ ident);
 		}
-		freezeSetsFor(identType);
 	}
 
-	/*
-	 * To freeze a set, we just add a substitution to itself, so that it cannot
-	 * be substituted to something else afterwards.
-	 */
-	private void freezeSetsFor(Type identType) {
-		for (final GivenType gt : identType.getGivenTypes()) {
-			if (!typeSubst.containsKey(gt)) {
-				typeSubst.put(gt, gt);
-			}
-		}
-	}
-	
 	public Type specialize(Type type) {
 		return speTypeRewriter.rewrite(type);
 	}
@@ -178,9 +170,8 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
-			final FreeIdentifier ident = ff.makeFreeIdentifier(iter.getName(),
-					null, iter.getType());
-			final Expression expr = this.get(ident);
+			final FreeIdentifier ident = iter.asFreeIdentifier();
+			final Expression expr = this.getOrSetDefault(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
@@ -188,10 +179,16 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		return result;
 	}
 
+	@Override
 	public Expression get(FreeIdentifier ident) {
-		final Expression value = identSubst.get(ident);
-		if (value != null) {
-			return value;
+		final Substitute subst = identSubst.get(ident);
+		return subst == null ? null : subst.getSubstitute(ident, 0);
+	}
+
+	private Expression getOrSetDefault(FreeIdentifier ident) {
+		final Substitute subst = identSubst.get(ident);
+		if (subst != null) {
+			return subst.getSubstitute(ident, getBindingDepth());
 		}
 		final Type type = ident.getType();
 		final Type newType = type.specialize(this);
@@ -202,13 +199,13 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			result = ff.makeFreeIdentifier(ident.getName(),
 					ident.getSourceLocation(), newType);
 		}
-		identSubst.put(ident, result);
+		identSubst.put(ident, makeSubstitute(result));
 		return result;
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
-		final Expression newIdent = get(identifier);
+		final Expression newIdent = getOrSetDefault(identifier);
 		if (newIdent.equals(identifier)) {
 			return super.rewrite(identifier);
 		}
@@ -292,7 +289,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
-		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
+		for (Entry<FreeIdentifier, Substitute> entry : identSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
 			sb.append(entry.getKey());

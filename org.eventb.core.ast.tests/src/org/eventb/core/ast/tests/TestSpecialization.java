@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.fail;
+import static java.math.BigInteger.ZERO;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -70,6 +74,19 @@ public class TestSpecialization extends AbstractTests {
 			spec.put(S, null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that a type value from another factory is rejected.
+	 */
+	@Test 
+	public void testWrongFactoryTypeValue() {
+		try {
+			spec.put(S, LIST_FAC.makeIntegerType());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
 			// pass
 		}
 	}
@@ -157,6 +174,20 @@ public class TestSpecialization extends AbstractTests {
 			spec.put(aS, null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an expression from another factory is rejected.
+	 */
+	@Test 
+	public void testWrongFactoryExpression() {
+		spec.put(S, Z);
+		try {
+			spec.put(aS, LIST_FAC.makeIntegerLiteral(ZERO, null));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
 			// pass
 		}
 	}
@@ -270,17 +301,12 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that an identifier substitution which contains an ill-formed expression 
-	 * is rejected.
+	 * Ensures that an identifier substitution which contains an ill-formed
+	 * expression is accepted.
 	 */
-	@Test 
+	@Test
 	public void testIllFormedExpression() {
-		try {
-			spec.put(aS, ff.makeBoundIdentifier(0, null, S));
-			fail("Shall have raised an exception");
-		} catch (IllegalArgumentException e) {
-			// pass
-		}
+		spec.put(aS, ff.makeBoundIdentifier(0, null, S));
 	}
 
 	/**
@@ -324,6 +350,64 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bT);
 		spec.put(T, S);
 		spec.put(bT, aS);
+	}
+
+	/**
+	 * Ensures that {@link ISpecialization#getFactory()} returns the right
+	 * factory.
+	 */
+	@Test
+	public void testGetFactory() {
+		assertSame(ff, spec.getFactory());
+		assertSame(LIST_FAC, LIST_FAC.makeSpecialization().getFactory());
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution.
+	 */
+	@Test
+	public void testGetForTypeWithSubstitution() {
+		spec.put(S, T);
+		assertEquals(T, spec.get(S));
+	}
+
+	/**
+	 * Ensures that one gets null if there is no substitution and that no
+	 * substitution is created as a side-effect.
+	 */
+	@Test
+	public void testGetForTypeWithoutSubstitution() {
+		assertNull(spec.get(S));
+		assertNull(spec.get(S));
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution.
+	 */
+	@Test
+	public void testGetForIdentWithSubstitution() {
+		spec.put(aS, bS);
+		assertEquals(bS, spec.get(aS));
+	}
+
+	/**
+	 * Ensures that one can retrieve a substitution for an identifier
+	 * corresponding to a substituted type.
+	 */
+	@Test
+	public void testGetForIdentWithTypeSubstitution() {
+		spec.put(S, T);
+		assertEquals(T.toExpression(), spec.get(S.toExpression()));
+	}
+
+	/**
+	 * Ensures that one gets null if there is no substitution and that no
+	 * substitution is created as a side-effect.
+	 */
+	@Test
+	public void testGetForIdentWithoutSubstitution() {
+		assertNull(spec.get(aS));
+		assertNull(spec.get(aS));
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
@@ -368,6 +369,7 @@ public class TestTypeEnvironment {
 		iter.advance();
 		assertEquals("S", iter.getName());
 		assertEquals(POW(t_S), iter.getType());
+		assertEquals(mFreeIdentifier("S", POW(t_S)), iter.asFreeIdentifier());
 		assertExhausted(iter);
 		
 		te.addName("x", INT);
@@ -393,13 +395,19 @@ public class TestTypeEnvironment {
 	private void assertNoCurrentElement(ITypeEnvironment.IIterator iter) {
 		try {
 			iter.getName();
-			assertTrue("getName() should have raised an exception", false);
+			fail("getName() should have raised an exception");
 		} catch (NoSuchElementException e) {
 			// Test passed.
 		}
 		try {
 			iter.getType();
-			assertTrue("getType() should have raised an exception", false);
+			fail("getType() should have raised an exception");
+		} catch (NoSuchElementException e) {
+			// Test passed.
+		}
+		try {
+			iter.asFreeIdentifier();
+			fail("asFreeIdentifier() should have raised an exception");
 		} catch (NoSuchElementException e) {
 			// Test passed.
 		}

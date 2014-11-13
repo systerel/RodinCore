@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,6 +282,11 @@ public abstract class Type {
 	 * type. Applying a specialization to a type has the effect of replacing all
 	 * given types occurring in this type by their substitute as defined by the
 	 * given specialization.
+	 * <p>
+	 * The given specialization may change as a side-effect of calling this
+	 * method. Please see the documentation of {@link ISpecialization} for
+	 * details.
+	 * </p>
 	 * <p>
 	 * If the specialization does not have any effect on this type (i.e., no
 	 * given type gets substituted), this method returns this type rather than a

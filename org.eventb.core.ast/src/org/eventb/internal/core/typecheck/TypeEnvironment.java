@@ -52,7 +52,7 @@ import org.eventb.internal.core.ast.extension.ExtensionTranslation;
  */
 public abstract class TypeEnvironment implements ITypeEnvironment{
 
-	static final class InternalIterator implements
+	final class InternalIterator implements
 			IIterator {
 
 		Iterator<Map.Entry<String, Type>> iterator;
@@ -93,6 +93,14 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 		@Override
 		public boolean isGivenSet() throws NoSuchElementException {
 			return GivenTypeHelper.isGivenSet(getName(), getType());
+		}
+
+		@Override
+		public FreeIdentifier asFreeIdentifier() throws NoSuchElementException {
+			if (current == null) {
+				throw new NoSuchElementException();
+			}
+			return ff.makeFreeIdentifier(getName(), null, getType());
 		}
 	}
 

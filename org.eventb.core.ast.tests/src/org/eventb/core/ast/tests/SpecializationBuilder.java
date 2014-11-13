@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,14 +42,20 @@ public class SpecializationBuilder {
 
 	private static final String[] NO_IMAGES = new String[0];
 
-	private final FormulaFactory fac;
+	private final FormulaFactory srcFac;
 	private final ISealedTypeEnvironment srcTypenv;
+	private final FormulaFactory dstFac;
 	private final ISpecialization result;
 
 	public SpecializationBuilder(ITypeEnvironment typenv) {
-		this.fac = typenv.getFormulaFactory();
+		this(typenv, typenv.getFormulaFactory());
+	}
+
+	public SpecializationBuilder(ITypeEnvironment typenv, FormulaFactory dstFac) {
+		this.srcFac = typenv.getFormulaFactory();
 		this.srcTypenv = typenv.makeSnapshot();
-		this.result = fac.makeSpecialization();
+		this.dstFac = dstFac;
+		this.result = dstFac.makeSpecialization();
 	}
 
 	public ISpecialization getResult() {
@@ -92,18 +98,18 @@ public class SpecializationBuilder {
 	}
 
 	private void addTypeSpecialization(String srcImage, String dstImage) {
-		final GivenType src = fac.makeGivenType(srcImage);
-		final Type dst = parseType(dstImage, fac);
+		final GivenType src = srcFac.makeGivenType(srcImage);
+		final Type dst = parseType(dstImage, dstFac);
 		result.put(src, dst);
 	}
 
 	private void addIdentSpecialization(String srcImage, String dstImage) {
-		final FreeIdentifier src = fac.makeFreeIdentifier(srcImage, null);
+		final FreeIdentifier src = srcFac.makeFreeIdentifier(srcImage, null);
 		typeCheck(src, srcTypenv);
-		final Expression dst = parseExpression(dstImage, fac);
+		final Expression dst = parseExpression(dstImage, dstFac);
 		final Type dstType = src.getType().specialize(result);
 		final ISpecialization temp = result.clone();
-		final ISealedTypeEnvironment dstTypenv = srcTypenv.specialize(temp).makeSnapshot();
+		final ITypeEnvironment dstTypenv = srcTypenv.specialize(temp);
 		final ITypeCheckResult tcResult = dst.typeCheck(dstTypenv, dstType);
 		if (tcResult.hasProblem()) {
 			fail("Typecheck failed for expression " + dstImage

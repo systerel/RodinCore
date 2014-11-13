@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,23 @@ public abstract class Substitute {
 		}
 
 		@Override
+		public int hashCode() {
+			return expr.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null || this.getClass() != obj.getClass()) {
+				return false;
+			}
+			final SimpleSubstitute other = (SimpleSubstitute) obj;
+			return expr.equals(other.expr);
+		}
+
+		@Override
 		public String toString() {
 			return expr.toString();
 		}
@@ -71,6 +88,23 @@ public abstract class Substitute {
 			return original.getFactory().makeBoundIdentifier(
 					index + nbOfInternallyBound, original.getSourceLocation(),
 					original.getType());
+		}
+
+		@Override
+		public int hashCode() {
+			return index;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null || this.getClass() != obj.getClass()) {
+				return false;
+			}
+			final BoundIdentSubstitute other = (BoundIdentSubstitute) obj;
+			return index == other.index;
 		}
 
 		@Override
@@ -115,6 +149,27 @@ public abstract class Substitute {
 		}
 
 		@Override
+		public int hashCode() {
+			return cache.get(0).hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null || this.getClass() != obj.getClass()) {
+				return false;
+			}
+			return equalExpressions((ComplexSubstitute) obj);
+		}
+
+		// Test extracted to a method for subclass comparison
+		protected boolean equalExpressions(ComplexSubstitute other) {
+			return cache.get(0).equals(other.cache.get(0));
+		}
+
+		@Override
 		public String toString() {
 			return cache.get(0).toString();
 		}
@@ -137,6 +192,23 @@ public abstract class Substitute {
 		@Override
 		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
 			return super.getSubstitute(original, nbOfInternallyBound + offset);
+		}
+
+		@Override
+		public int hashCode() {
+			return super.hashCode() + 31 * offset;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null || this.getClass() != obj.getClass()) {
+				return false;
+			}
+			final ComplexSubstituteWithOffset other = (ComplexSubstituteWithOffset) obj;
+			return equalExpressions(other) && offset == other.offset;
 		}
 
 		@Override

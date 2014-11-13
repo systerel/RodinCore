@@ -72,6 +72,8 @@ public interface ITypeEnvironment {
 	 *    }
 	 * </pre>
 	 * </p>
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noextend This interface is not intended to be extended by clients.
 	 */
 	static interface IIterator {
 
@@ -128,6 +130,20 @@ public interface ITypeEnvironment {
 		 *             if <code>advance</code> hasn't been called before
 		 */
 		boolean isGivenSet() throws NoSuchElementException;
+
+		/**
+		 * Returns a typed free identifier corresponding to the current mapping.
+		 * <p>
+		 * The method {@link #advance()} must have been called at least once
+		 * since the creation of the iterator, before calling this method.
+		 * </p>
+		 * 
+		 * @return a free identifier corresponding to the current mapping
+		 * @throws NoSuchElementException
+		 *             if <code>advance</code> hasn't been called before
+		 * @since 3.1
+		 */
+		FreeIdentifier asFreeIdentifier() throws NoSuchElementException;
 	}
 
 	/**
