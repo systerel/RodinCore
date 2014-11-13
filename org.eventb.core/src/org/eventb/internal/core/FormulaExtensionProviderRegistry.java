@@ -88,15 +88,25 @@ public class FormulaExtensionProviderRegistry {
 		return FormulaFactory.getInstance(getFormulaExtensions(root));
 	}
 
+	private static CoreException factoryIssue(String msg, Exception e) {
+		Util.log(e, msg);
+		return Util.newCoreException(msg, e);
+	}
+
 	public synchronized FormulaFactory getFormulaFactory(ILanguage language,
 			IProgressMonitor pm) throws CoreException {
 		if (provider != null) {
 			try {
-				return provider.loadFormulaFactory(language, pm);
+				final FormulaFactory factory = provider.loadFormulaFactory(
+						language, pm);
+				if (factory == null) {
+					throw factoryIssue(
+							"null factory returned by formula extension provider: "
+									+ provider.getId(), null);
+				}
+				return factory;
 			} catch (Exception e) {
-				final String msg = "while loading formula factory";
-				Util.log(e, msg);
-				throw Util.newCoreException(msg, e);
+				throw factoryIssue("while loading formula factory", e);
 				// TODO Rodin 4.0: return a Status object to propagate
 				// information
 			}
