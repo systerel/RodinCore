@@ -24,7 +24,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Instances of this class represent two list of strings. An main list and a
@@ -48,7 +53,8 @@ public class DetailedList {
 
 	private static final String[] NO_ELEMENT = new String[0];
 	
-	private final ListViewer list;
+	final ListViewer list;
+	private final Text filter;
 	private final Composite details;
 	private final Composite buttons;
 	private final java.util.List<String> entries = new ArrayList<String>();
@@ -57,11 +63,11 @@ public class DetailedList {
 
 	private IDetailsProvider provider;
 
-	public DetailedList(String listTitle, String detailsTitle, Composite parent) {
+	public DetailedList(String detailsTitle, Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NONE);
 		setTableLayout(composite, 3);
 
-		createLabel(composite, listTitle);
+		filter = createFilter(composite);
 		createLabel(composite, detailsTitle);
 		createLabel(composite, "");
 
@@ -88,8 +94,34 @@ public class DetailedList {
 			}
 
 		});
+		list.addFilter(new ViewerFilter() {
+			
+			@Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return filterMatches((String) element);
+			}
+		});
 	}
 
+	private Text createFilter(Composite parent) {
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH
+				| SWT.CANCEL | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
+		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		filterText.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				list.refresh();
+			}
+		});
+		return filterText;
+	}
+
+	boolean filterMatches(String text) {
+		final String filterText = filter.getText();
+		return text.toUpperCase().contains(filterText.toUpperCase());
+	}
+	
 	private GridData getFillData() {
 		final GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;

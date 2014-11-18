@@ -195,8 +195,8 @@ public class PostAutoTacticPreferencePage extends
 		setLayout(parent, 2);
 		setFillParent(parent);
 
-		tacticList = new DetailedList("",
-				preferencepage_postautotactic_tacticdetails_header, parent);
+		tacticList = new DetailedList(preferencepage_postautotactic_tacticdetails_header,
+				parent);
 		tacticList.setDetailsProvider(new TacticDetailsProvider(cache));
 		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
