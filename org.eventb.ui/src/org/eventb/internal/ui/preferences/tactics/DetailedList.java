@@ -11,6 +11,8 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
+import static org.eventb.internal.ui.UIUtils.createFilterText;
+import static org.eventb.internal.ui.UIUtils.setupFilter;
 import static org.eventb.internal.ui.UIUtils.showQuestion;
 import static org.eventb.internal.ui.utils.Messages.tacticlist_currentunsaved;
 
@@ -24,11 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,7 +65,7 @@ public class DetailedList {
 		final Composite composite = new Composite(parent, SWT.NONE);
 		setTableLayout(composite, 3);
 
-		filter = createFilter(composite);
+		filter = createFilterText(composite);
 		createLabel(composite, detailsTitle);
 		createLabel(composite, "");
 
@@ -94,27 +92,7 @@ public class DetailedList {
 			}
 
 		});
-		list.addFilter(new ViewerFilter() {
-			
-			@Override
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return filterMatches((String) element);
-			}
-		});
-	}
-
-	private Text createFilter(Composite parent) {
-		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH
-				| SWT.CANCEL | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
-		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		filterText.addModifyListener(new ModifyListener() {
-			
-			@Override
-			public void modifyText(ModifyEvent e) {
-				list.refresh();
-			}
-		});
-		return filterText;
+		setupFilter(filter, list);
 	}
 
 	boolean filterMatches(String text) {

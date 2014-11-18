@@ -46,16 +46,26 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -1094,6 +1104,58 @@ public class UIUtils {
 	 */
 	public static IHandlerService getHandlerService(IWorkbenchSite site) {
 		return (IHandlerService) site.getService(IHandlerService.class);
+	}
+
+	/**
+	 * Creates a filter text box under the given parent.
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @return a filter text
+	 */
+	public static Text createFilterText(Composite parent) {
+		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH
+				| SWT.ICON_SEARCH | SWT.CANCEL | SWT.ICON_CANCEL);
+		filterText
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		return filterText;
+	}
+
+	/**
+	 * Sets up the given filter to refresh the given viewer upon text changes.
+	 * <p>
+	 * It will work only if the given viewer has a content provider and is given
+	 * an input, although it may not yet be the case when calling this function.
+	 * </p>
+	 * 
+	 * @param filter
+	 *            a text widget where filter is typed
+	 * @param viewer
+	 *            a structured viewer to filter
+	 */
+	public static void setupFilter(final Text filter,
+			final StructuredViewer viewer) {
+		filter.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				viewer.refresh();
+			}
+		});
+		viewer.addFilter(new ViewerFilter() {
+			@Override
+			public boolean select(Viewer v, Object parentElement, Object element) {
+				final IBaseLabelProvider lblProv = viewer.getLabelProvider();
+				if (!(lblProv instanceof ILabelProvider)) {
+					return false;
+				}
+				final String text = ((ILabelProvider) lblProv).getText(element);
+				if (text == null) {
+					return false;
+				}
+				final String filterText = filter.getText();
+				return text.toUpperCase().contains(filterText.toUpperCase());
+			}
+		});
 	}
 
 }

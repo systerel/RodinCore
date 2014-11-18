@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eventb.internal.ui.UIUtils.createFilterText;
+import static org.eventb.internal.ui.UIUtils.setupFilter;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_combinators;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_profiles;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_tactics;
@@ -20,24 +22,19 @@ import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -237,7 +234,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Group group = makeGroup(parent, text);
 		Text filter = null;
 		if (withFilter) {
-			filter = createFilter(group);
+			filter = createFilterText(group);
 		}
 		final ListViewer viewer = new ListViewer(group);
 		viewer.getList().setLayoutData(
@@ -256,35 +253,6 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			setupFilter(filter, viewer);
 		}
 		return viewer;
-	}
-	
-	private static Text createFilter(Composite parent) {
-		final Text filterText = new Text(parent, SWT.BORDER | SWT.SEARCH
-				| SWT.ICON_SEARCH | SWT.CANCEL | SWT.ICON_CANCEL);
-		filterText
-				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		return filterText;
-	}
-
-	private static void setupFilter(final Text filter, final ListViewer viewer) {
-		filter.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				viewer.refresh();
-			}
-		});
-		viewer.addFilter(new ViewerFilter() {
-			@Override
-			public boolean select(Viewer v, Object parentElement, Object element) {
-				final String text = ((ILabelProvider) ((StructuredViewer) v)
-						.getLabelProvider()).getText(element);
-				if (text == null) {
-					return false;
-				}
-				final String filterText = filter.getText();
-				return text.toUpperCase().contains(filterText.toUpperCase());
-			}
-		});
 	}
 	
 	private static Group makeGroup(Composite parent, String text) {
