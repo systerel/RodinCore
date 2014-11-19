@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,9 +50,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -148,7 +148,7 @@ public class PostAutoTacticPreferencePage extends
 		}
 	}
 
-	private void createAutoPostTab(Composite tab) {
+	private void createAutoPostTab(final Composite tab) {
 		setLayout(tab, 1);
 		autoTactic = new EnabledComboEditor(getPreferenceStore(),
 				Messages.preferencepage_pomtactic_title, P_AUTOTACTIC_ENABLE,
@@ -171,7 +171,7 @@ public class PostAutoTacticPreferencePage extends
 				final String[] names = getSortedProfileNames();
 				autoTactic.setItems(names);
 				postTactic.setItems(names);
-
+				tab.pack();
 			}
 		});
 
@@ -195,8 +195,8 @@ public class PostAutoTacticPreferencePage extends
 		setLayout(parent, 2);
 		setFillParent(parent);
 
-		tacticList = new DetailedList("",
-				preferencepage_postautotactic_tacticdetails_header, parent);
+		tacticList = new DetailedList(preferencepage_postautotactic_tacticdetails_header,
+				parent);
 		tacticList.setDetailsProvider(new TacticDetailsProvider(cache));
 		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
@@ -271,10 +271,10 @@ public class PostAutoTacticPreferencePage extends
 		edit.setEnabled(false);
 		remove.setEnabled(false);
 		duplicate.setEnabled(false);
-		tacticList.addSelectionListener(new SelectionAdapter() {
+		tacticList.addSelectionListener(new ISelectionChangedListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
 
@@ -335,10 +335,10 @@ public class PostAutoTacticPreferencePage extends
 			}
 		};
 
-		tacticList.addSelectionListener(new SelectionAdapter() {
+		tacticList.addSelectionListener(new ISelectionChangedListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void selectionChanged(SelectionChangedEvent event) {
 				boolean enableExport = true;
 				final int selectionCount = tacticList.getSelectionCount();
 				if (selectionCount <= 2) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eventb.internal.ui.UIUtils.createFilterText;
+import static org.eventb.internal.ui.UIUtils.setupFilter;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_combinators;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_profiles;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_tactics;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -174,18 +177,21 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	@Override
 	public void createContents(Composite parent) {
 		composite = makeGrid(parent, 3);
-		
-		simpleList = makeListViewer(composite, wizard_editprofile_combedit_list_tactics);
+
+		simpleList = makeListViewer(composite,
+				wizard_editprofile_combedit_list_tactics, true);
 		simpleList.setComparator(new TacticNodeComparator());
-		
+
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
-		
+
 		final Composite combRefDescr = makeRightRow(composite);
-		combList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_combinators);
-		
-		refList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_profiles);
-		
+		combList = makeListViewer(combRefDescr,
+				wizard_editprofile_combedit_list_combinators, false);
+
+		refList = makeListViewer(combRefDescr,
+				wizard_editprofile_combedit_list_profiles, false);
+
 		final Group descrGroup = makeGroup(combRefDescr, "Description");
 		descrText = makeDescription(descrGroup);
 		tacSelListener = new TacSelListener(descrText);
@@ -219,16 +225,22 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		refList.removeSelectionChangedListener(tacSelListener);
 	}
 
-	private static ListViewer makeListViewer(Composite parent, String text) {
+	private static ListViewer makeListViewer(Composite parent, String text,
+			boolean withFilter) {
 		final TacticNodeLabelProvider labelProvider = new TacticNodeLabelProvider();
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 
 		final Group group = makeGroup(parent, text);
+		Text filter = null;
+		if (withFilter) {
+			filter = createFilterText(group);
+		}
 		final ListViewer viewer = new ListViewer(group);
 		viewer.getList().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, false, true));
 		
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(labelProvider);
 		
 		viewer.setComparator(new ViewerComparator());
@@ -236,6 +248,10 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final ViewerSelectionDragEffect simpleDrag = new ViewerSelectionDragEffect(
 				viewer);
 		viewer.addDragSupport(DND.DROP_MOVE, transferTypes, simpleDrag);
+		
+		if (withFilter) {
+			setupFilter(filter, viewer);
+		}
 		return viewer;
 	}
 	
@@ -294,7 +310,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		for (int i = 0; i < dynTacticRefs.length; i++) {
 			simpleNodes[autoTacs.length + i] = new SimpleNode(dynTacticRefs[i]);
 		}
-		simpleList.add(simpleNodes);
+		simpleList.setInput(simpleNodes);
 	}
 
 	private void initCombinators() {
@@ -306,7 +322,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		for (int i = 0; i < combinators.length; i++) {
 			combNodes[i] = new CombinatorNode(null, combinators[i]);
 		}
-		combList.add(combNodes);
+		combList.setInput(combNodes);
 	}
 
 	private void initProfiles() {
@@ -317,7 +333,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			final ProfileNode profileNode = new ProfileNode(profile);
 			profileNodes.add(profileNode);
 		}
-		refList.add(profileNodes.toArray(new ITacticNode[profileNodes.size()]));
+		refList.setInput(profileNodes.toArray(new ITacticNode[profileNodes.size()]));
 	}
 
 	@Override

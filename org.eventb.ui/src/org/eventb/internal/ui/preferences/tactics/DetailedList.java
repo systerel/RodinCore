@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,22 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
+import static org.eventb.internal.ui.UIUtils.createFilterText;
+import static org.eventb.internal.ui.UIUtils.setupFilter;
 import static org.eventb.internal.ui.UIUtils.showQuestion;
 import static org.eventb.internal.ui.utils.Messages.tacticlist_currentunsaved;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -30,6 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Instances of this class represent two list of strings. An main list and a
@@ -42,24 +49,28 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class DetailedList {
 
-	private final List list;
+	private static final String[] NO_ELEMENT = new String[0];
+	
+	final ListViewer list;
+	private final Text filter;
 	private final Composite details;
 	private final Composite buttons;
+	private final java.util.List<String> entries = new ArrayList<String>();
 
 	private final int minWidth = 200;
 
 	private IDetailsProvider provider;
 
-	public DetailedList(String listTitle, String detailsTitle, Composite parent) {
+	public DetailedList(String detailsTitle, Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NONE);
 		setTableLayout(composite, 3);
 
-		createLabel(composite, listTitle);
+		filter = createFilterText(composite);
 		createLabel(composite, detailsTitle);
 		createLabel(composite, "");
 
-		list = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		list = new ListViewer(new List(composite, SWT.BORDER | SWT.MULTI
+				| SWT.H_SCROLL | SWT.V_SCROLL));
 		details = new Composite(composite, SWT.BORDER | SWT.FILL| SWT.NO_FOCUS);
 		buttons = new Composite(composite, SWT.NONE);
 
@@ -67,20 +78,28 @@ public class DetailedList {
 
 		final GridData gd = getFillData();
 		gd.minimumWidth = minWidth;
-		list.setLayoutData(gd);
+		list.getList().setLayoutData(gd);
 		details.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-		list.addSelectionListener(new SelectionAdapter() {
+		list.setContentProvider(ArrayContentProvider.getInstance());
+		list.setInput(entries);
+		list.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void selectionChanged(SelectionChangedEvent event) {
 				updateDetails();
 			}
 
 		});
+		setupFilter(filter, list);
 	}
 
+	boolean filterMatches(String text) {
+		final String filterText = filter.getText();
+		return text.toUpperCase().contains(filterText.toUpperCase());
+	}
+	
 	private GridData getFillData() {
 		final GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
@@ -104,35 +123,30 @@ public class DetailedList {
 	}
 
 	/**
-	 * Adds the element to the end of the main list and selected it.
+	 * Adds the element to the end of the main list and selects it.
 	 */
 	public void addElement(String element) {
-		if (Arrays.asList(list.getItems()).contains(element)){
+		if (entries.contains(element)){
 			return;
 		}
-		list.add(element);
-		final int index = list.getItemCount() - 1;
-		list.setSelection(index);
+		entries.add(element);
+		list.refresh();
+		list.setSelection(new StructuredSelection(element));
 		updateDetails();
 	}
 
-	/**
-	 * Adds all items to the end of main list.
-	 */
-	public void addElements(String[] items) {
-		for (String item : items) {
-			list.add(item);
-		}
+	private IStructuredSelection internalGetSelection() {
+		return (IStructuredSelection) list.getSelection();
 	}
 
 	/**
 	 * Removes all selected elements in the main list.
 	 */
 	public void removeSelectedElement() {
-		if (list.getSelectionCount() >= 0) {
-			list.remove(list.getSelectionIndices());
-			provider.clear();
-		}
+		final IStructuredSelection selection = internalGetSelection();
+		entries.removeAll(selection.toList());
+		list.refresh();
+		provider.clear();
 	}
 
 	/**
@@ -140,29 +154,30 @@ public class DetailedList {
 	 * unspecified. An empty array indicates that no items are selected.
 	 */
 	public String[] getSelection() {
-		return list.getSelection();
+		final IStructuredSelection selection = internalGetSelection();
+		if (selection.isEmpty()) {
+			return NO_ELEMENT;
+		}
+		
+		// cannot cast selection.toArray() into String[]
+		final Object[] array = selection.toArray();
+		final String[] result = new String[array.length];
+		System.arraycopy(array, 0, result, 0, array.length);
+		return result;
 	}
 
 	/**
 	 * Returns the number of selected items in the main list.
 	 */
 	public int getSelectionCount() {
-		return list.getSelectionCount();
-	}
-
-	/**
-	 * Returns the indices of selected items in the main list. The order of the
-	 * items is unspecified. The array is empty if no items are selected.
-	 */
-	public int[] getSelectionIndices() {
-		return list.getSelectionIndices();
+		return internalGetSelection().size();
 	}
 
 	/**
 	 * Set the selected elements in the main list.
 	 */
 	public void setSelection(String[] selection) {
-		list.setSelection(selection);
+		list.setSelection(new StructuredSelection(selection));
 	}
 
 	public void setDetailsProvider(IDetailsProvider provider) {
@@ -174,15 +189,20 @@ public class DetailedList {
 	 * Remove all items in the main list
 	 */
 	public void clear() {
-		list.removeAll();
+		entries.clear();
+		list.refresh();
 	}
 
 	/**
 	 * Sets the main list's items to be the given array of items.
 	 */
 	public void setList(String[] items) {
-		list.setItems(items);
-		list.pack();
+		clear();
+		for (String item : items) {
+			addElement(item);
+		}
+
+		list.refresh();
 	}
 
 	/**
@@ -190,7 +210,8 @@ public class DetailedList {
 	 * index to the string argument.
 	 */
 	public void rename(int indice, String name) {
-		list.setItem(indice, name);
+		entries.set(indice, name);
+		list.refresh();
 	}
 
 	/**
@@ -218,12 +239,12 @@ public class DetailedList {
 	 * when the user changes the main list's selection, by sending it one of the
 	 * messages defined in the <code>SelectionListener</code> interface.
 	 */
-	public void addSelectionListener(SelectionListener listener) {
-		list.addSelectionListener(listener);
+	public void addSelectionListener(ISelectionChangedListener listener) {
+		list.addSelectionChangedListener(listener);
 	}
 
 	public void setEnabled(boolean enabled) {
-		list.setEnabled(enabled);
+		list.getList().setEnabled(enabled);
 		details.setEnabled(enabled);
 		for (Control child : buttons.getChildren()) {
 			final Button button = (Button) child;
@@ -236,9 +257,10 @@ public class DetailedList {
 	 */
 	public void updateDetails() {
 		if (provider != null) {
-			if (list.getSelectionCount() == 1) {
+			final IStructuredSelection selection = internalGetSelection();
+			if (selection.size() == 1) {
 				saveCurrentIfChanges(true);
-				provider.putDetails(getSelectedItem());
+				provider.putDetails((String) selection.getFirstElement());
 			} else {
 				provider.clear();
 			}
@@ -246,23 +268,20 @@ public class DetailedList {
 		details.redraw();
 	}
 
-	private String getSelectedItem() {
-		return list.getItem(list.getSelectionIndex());
-	}
-
 	/**
 	 * Set a context menu on the main list.
 	 */
 	public void setMenu(MenuManager menuManager) {
-		final Menu menu = menuManager.createContextMenu(list);
-		list.setMenu(menu);
+		final List l = list.getList();
+		final Menu menu = menuManager.createContextMenu(l);
+		l.setMenu(menu);
 	}
 
 	/**
 	 * Enables context menu of the main list
 	 */
 	public void setContextMenuEnabled(boolean enabled) {
-		list.getMenu().setEnabled(enabled);
+		list.getList().getMenu().setEnabled(enabled);
 	}
 	
 	public void saveCurrentIfChanges(boolean ask) {
