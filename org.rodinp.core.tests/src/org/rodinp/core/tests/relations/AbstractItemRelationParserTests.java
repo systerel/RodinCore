@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,14 +94,13 @@ public class AbstractItemRelationParserTests {
 		if (m.matches()) {
 			final String parentId = m.group(1);
 			final ItemRelation itemRelation = new ItemRelation(
-					(InternalElementType<?>) eTypes.get(p(parentId)));
+					eTypes.get(p(parentId)));
 			final Pattern p2 = compile(",");
 			final String children = m.group(2);
 			for (String child : p2.split(children)) {
 				if (child.isEmpty())
 					continue;
-				itemRelation.addChildType((InternalElementType<?>) eTypes
-						.get(p(child)));
+				itemRelation.addChildType(eTypes.get(p(child)));
 			}
 			final String attributes = m.group(3);
 			for (String attr : p2.split(attributes)) {

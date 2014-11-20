@@ -428,7 +428,7 @@ public class DocumentMapper {
 	public EditorElement findEditorElementAt(int offset) {
 		for (EditorElement item : editorElements.getItems()) {
 			if (item.explicitlyContains(offset)) {
-				return (EditorElement) item;
+				return item;
 			}
 		}
 		return null;
@@ -450,7 +450,7 @@ public class DocumentMapper {
 		for (EditorElement item : editorElements.getItems()) {
 			final EditPos pos = item.getPos();
 			if (zone.includes(pos)) {
-				result.add((EditorElement) item);
+				result.add(item);
 			}
 		}
 		return result.toArray(new EditorElement[result.size()]);

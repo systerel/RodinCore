@@ -123,7 +123,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 		assertAdapterPositive(rodinProject, IResource.class, project);
 		
 		IRodinFile rodinFile = getRodinFile(rodinProject, "x.test");
-		IFile file = (IFile) rodinFile.getResource();
+		IFile file = rodinFile.getResource();
 		assertAdapterPositive(rodinFile, IResource.class, file);
 		
 		// Internal elements do not have a corresponding resource 

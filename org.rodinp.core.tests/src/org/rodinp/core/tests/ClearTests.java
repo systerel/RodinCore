@@ -261,7 +261,7 @@ public class ClearTests extends ModifyingResourceTests {
 						e.getStatus().getCode());
 			}
 			
-			final IInternalElement root2 = (IInternalElement) root.getSnapshot();
+			final IInternalElement root2 = root.getSnapshot();
 			try {
 				root2.clear(false, null);
 				fail("Should have raised a Rodin exception");

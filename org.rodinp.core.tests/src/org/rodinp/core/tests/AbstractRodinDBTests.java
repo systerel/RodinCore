@@ -312,7 +312,7 @@ public abstract class AbstractRodinDBTests {
 		sortResources(resources);
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, length = resources.length; i < length; i++){
-			IResource resource = (IResource)resources[i];
+			IResource resource = resources[i];
 			buffer.append(resource == null ? "<null>" : resource.getName());
 			if (i != length-1)buffer.append("\n");
 		}
