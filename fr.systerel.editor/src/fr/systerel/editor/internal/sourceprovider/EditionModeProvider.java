@@ -47,8 +47,8 @@ public class EditionModeProvider extends AbstractSourceProvider {
 	}
 
 	@Override
-	public Map getCurrentState() {
-		final Map<String, Object> map = new HashMap<String, Object>();
+	public Map<String, String> getCurrentState() {
+		final Map<String, String> map = new HashMap<String, String>();
 		map.put(EDITION_MODE, currentMode.getId());
 		return map;
 	}
