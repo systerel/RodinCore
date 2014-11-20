@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.persistence;
 
-import static junit.framework.Assert.*;
-import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.*;
+import static org.junit.Assert.assertEquals;
+import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.getRoot;
 
 import java.io.File;
 import java.util.ArrayList;
