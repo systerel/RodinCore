@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.rodinp.core.emf.lightcore;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.emf.lightcore.adapters.DeltaProcessor;
 import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
@@ -22,7 +21,7 @@ import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class LightCorePlugin extends Plugin implements BundleActivator {
+public class LightCorePlugin extends Plugin {
 
 	public static final String PLUGIN_ID = "org.rodinp.core.emf";
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Iterator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -33,7 +32,7 @@ import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public abstract class MoveHandler extends AbstractHandler implements IHandler {
+public abstract class MoveHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {

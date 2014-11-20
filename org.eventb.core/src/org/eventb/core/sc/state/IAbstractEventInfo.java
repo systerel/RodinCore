@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eventb.core.tool.IStateType;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
+public interface IAbstractEventInfo extends IConvergenceInfo,
 		Comparable<IAbstractEventInfo> {
 	
 	final static IStateType<IAbstractEventInfo> STATE_TYPE = 

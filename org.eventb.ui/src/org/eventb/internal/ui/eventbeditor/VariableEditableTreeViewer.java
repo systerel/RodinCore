@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -39,8 +38,7 @@ public class VariableEditableTreeViewer extends EventBEditableTreeViewer {
 	 *         <p>
 	 *         The content provider class.
 	 */
-	class VariableContentProvider implements IStructuredContentProvider,
-			ITreeContentProvider {
+	class VariableContentProvider implements ITreeContentProvider {
 		// The invisible root
 		private IMachineRoot invisibleRoot = null;
 

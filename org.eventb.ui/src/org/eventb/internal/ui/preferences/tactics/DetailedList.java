@@ -17,8 +17,6 @@ import static org.eventb.internal.ui.UIUtils.showQuestion;
 import static org.eventb.internal.ui.utils.Messages.tacticlist_currentunsaved;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

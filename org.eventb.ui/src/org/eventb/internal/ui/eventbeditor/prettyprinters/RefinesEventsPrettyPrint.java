@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,15 +24,13 @@ import static org.eventb.ui.prettyprint.PrettyPrintUtils.wrapString;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
-import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class RefinesEventsPrettyPrint extends DefaultPrettyPrinter implements
-		IElementPrettyPrinter {
+public class RefinesEventsPrettyPrint extends DefaultPrettyPrinter {
 
 	private static final String ABSTRACT_EVENT_LABEL = "abstractEventLabel";
 	private static final String BEGIN_ABSTRACT_EVENT_LABEL_SEPARATOR = null;

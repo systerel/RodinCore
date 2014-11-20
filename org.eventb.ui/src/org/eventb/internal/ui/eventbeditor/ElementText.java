@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -44,7 +43,7 @@ import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
  *         This class implements the decorator for Text input that is used in
  *         the Editable Tree Viewer.
  */
-public abstract class ElementText extends TimerText implements ModifyListener {
+public abstract class ElementText extends TimerText {
 
 	IRodinElement element;
 

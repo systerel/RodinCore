@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -35,7 +34,7 @@ import org.rodinp.core.RodinDBException;
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ISCRefinesEvent extends ITraceableElement, IInternalElement {
+public interface ISCRefinesEvent extends ITraceableElement {
 
 	IInternalElementType<ISCRefinesEvent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scRefinesEvent"); //$NON-NLS-1$

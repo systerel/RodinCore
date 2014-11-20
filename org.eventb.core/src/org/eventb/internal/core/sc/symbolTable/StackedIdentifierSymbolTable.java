@@ -24,8 +24,7 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
  * @author Stefan Hallerstede
  * 
  */
-public class StackedIdentifierSymbolTable extends IdentifierSymbolTable
-		implements IIdentifierSymbolTable {
+public class StackedIdentifierSymbolTable extends IdentifierSymbolTable {
 
 	private final Collection<FreeIdentifier> allFreeIdentifiers;
 

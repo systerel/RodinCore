@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.internal.ui.utils.Messages;
 
 /**
@@ -19,8 +18,7 @@ import org.eventb.internal.ui.utils.Messages;
  *         An extension of {@link EventBEditorPreferencePage} to contribute a
  *         preference page for Machine editor.
  */
-public class MachineEditorPreferencePage extends EventBEditorPreferencePage
-		implements IWorkbenchPreferencePage {
+public class MachineEditorPreferencePage extends EventBEditorPreferencePage {
 
 	/**
 	 * Constructor.
