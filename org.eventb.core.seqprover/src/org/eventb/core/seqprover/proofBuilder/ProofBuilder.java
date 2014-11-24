@@ -386,24 +386,22 @@ public class ProofBuilder {
 
 		boolean reuseSuccessfull = false;
 		boolean replaySuccessfull = false;
-
-		if (reuseProofRule.getConfidence() <= IConfidence.UNCERTAIN_MAX) {
-			if (tryReplayUncertain) {
-				replaySuccessfull = tryReplay(reuseProofRule, node,
-						replayHints, proofMonitor);
-			}
-			if (!replaySuccessfull) {
-				// force reuse
-				reuseSuccessfull = node.applyRule(reuseProofRule);
-			}
-		} else {
+		
+		final boolean certain = reuseProofRule.getConfidence() > IConfidence.UNCERTAIN_MAX;
+		if (certain) {
 			reuseSuccessfull = tryReuse(reuseProofRule, node, replayHints);
-
-			if (!reuseSuccessfull) { // reuse failed; try replay
-				replaySuccessfull = tryReplay(reuseProofRule, node,
-						replayHints, proofMonitor);
-			}
 		}
+		
+		if (certain ? !reuseSuccessfull : tryReplayUncertain) {
+			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints,
+					proofMonitor);
+		}
+		
+		if (!(reuseSuccessfull || replaySuccessfull)) {
+			// force reuse
+			reuseSuccessfull = node.applyRule(reuseProofRule);
+		}
+			
 
 		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
 		IProofTreeNode[] nodeChildren = node.getChildNodes();
