@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -46,8 +45,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	 *         <p>
 	 *         The content provider class.
 	 */
-	class SyntheticContentProvider implements IStructuredContentProvider,
-			ITreeContentProvider {
+	class SyntheticContentProvider implements ITreeContentProvider {
 		// The invisible root
 		private IEventBRoot invisibleRoot = null;
 

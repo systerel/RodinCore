@@ -32,7 +32,7 @@ import org.rodinp.core.RodinDBException;
  *
  * @since 1.0
  */
-public abstract class SCModule extends Module implements IModule, IMarkerDisplay {
+public abstract class SCModule extends Module implements IMarkerDisplay {
 	
 	public static boolean DEBUG_MODULE = false;
 	

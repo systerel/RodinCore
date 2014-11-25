@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
-import static junit.framework.Assert.assertFalse;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.ast.extension.ExtensionFactory.TWO_OR_MORE_EXPRS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.math.BigInteger;
 import java.util.Arrays;

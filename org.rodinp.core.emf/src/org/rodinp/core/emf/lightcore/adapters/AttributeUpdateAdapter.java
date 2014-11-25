@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 			try {
 				isUpdating = true;
 				final Attribute attribute = (Attribute) notifier;
-				final Object rElement = (IRodinElement) attribute.getEOwner()
+				final Object rElement = attribute.getEOwner()
 						.getERodinElement();
 				if (rElement instanceof IInternalElement) {
 					if (attribute.getType() instanceof IAttributeType) {

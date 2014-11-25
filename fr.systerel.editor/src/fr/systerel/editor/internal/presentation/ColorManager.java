@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,11 @@ public class ColorManager {
 	public void dispose() {
 		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			 e.next().dispose();
 	}
 	
 	public Color getColor(RGB rgb) {
-		Color color = (Color) fColorTable.get(rgb);
+		Color color = fColorTable.get(rgb);
 		if (color == null) {
 			color = new Color(Display.getCurrent(), rgb);
 			fColorTable.put(rgb, color);

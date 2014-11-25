@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,12 +39,11 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class UserSupport implements IElementChangedListener, IUserSupport {
+public class UserSupport implements IUserSupport {
 
 	private static final class ProofStateLoader implements Runnable {
 

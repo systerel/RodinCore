@@ -107,7 +107,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			final IFile file = (IFile) ((IEditorInput) element)
 					.getAdapter(IFile.class);
 			editorInput = (IEditorInput) element;
-			inputResource = (ILFile) getResource(file);
+			inputResource = getResource(file);
 			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
 			textGenerator = new RodinTextGenerator(documentMapper);
@@ -135,7 +135,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		final ILFile inputFile = (ILFile) inputResource;
+		final ILFile inputFile = inputResource;
 		if (editor.isOverlayActive()) {
 			editor.getOverlayEditor().saveAndExit(true);
 			waitForUpdate(); // waiting for the overlay closing updates

@@ -538,7 +538,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		final int code = IRodinDBStatusConstants.READ_ONLY;
 		rodinFile.save(null, false);
 
-		final IInternalElement snapshot = (IInternalElement) ie.getSnapshot();
+		final IInternalElement snapshot = ie.getSnapshot();
 		removeAttrNegative(snapshot, fBool, code);
 		setBoolAttrNegative(snapshot, fBool, true, code);
 		setHandleAttrNegative(snapshot, fHandle, rodinFile, code);

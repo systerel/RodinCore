@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
@@ -40,7 +39,7 @@ import org.rodinp.core.IRodinElement;
  *         <p>
  *         An extension of {@link AbstractHandler} for handling Paste action.
  */
-public class PasteHandler extends AbstractHandler implements IHandler {
+public class PasteHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {

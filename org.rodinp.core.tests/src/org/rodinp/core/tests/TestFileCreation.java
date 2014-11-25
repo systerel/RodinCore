@@ -77,7 +77,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertNotExists("File should not exist", rodinFile);
 		
 		// Actually create the file
-		IFile file = (IFile) rodinFile.getResource();
+		IFile file = rodinFile.getResource();
 		
 		String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ "<org.rodinp.core.tests.test/>\n";
@@ -112,7 +112,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertNotExists("File should not exist", rodinFile);
 		
 		// Actually create the file
-		IFile file = (IFile) rodinFile.getResource();
+		IFile file = rodinFile.getResource();
 		
 		String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ "<org.rodinp.core.tests.test>\n"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,8 +114,7 @@ public class SynchroUtils {
 			LightElement root) {
 		if (toFind.equals(root.getElement()))
 			return root;
-		final TreeIterator<EObject> eAllContents = ((LightElement) root)
-				.eAllContents();
+		final TreeIterator<EObject> eAllContents = root.eAllContents();
 		while (eAllContents.hasNext()) {
 			final EObject next = eAllContents.next();
 			if (next instanceof LightElement

@@ -213,8 +213,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		
 		// Start with a fresh file
 		final String fileName = "titi.test";
-		final IRodinFile rf = (IRodinFile) rodinProject
-				.getRodinFile(fileName);
+		final IRodinFile rf = rodinProject.getRodinFile(fileName);
 		final RodinTestRoot r = (RodinTestRoot) rf.getRoot();
 		assertNotExists("Target file should not exist", rf);
 		

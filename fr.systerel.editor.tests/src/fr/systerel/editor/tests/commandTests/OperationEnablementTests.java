@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package fr.systerel.editor.tests.commandTests;
 
 import static fr.systerel.editor.tests.TestUtils.copyTestFileInProject;
-import static junit.framework.Assert.assertEquals;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_COPY;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_CUT;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_DELETE;
@@ -19,6 +18,7 @@ import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_PASTE;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_REDO;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_SELECT_ALL;
 import static org.eclipse.ui.IWorkbenchCommandConstants.EDIT_UNDO;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;

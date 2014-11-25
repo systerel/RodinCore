@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,15 +31,13 @@ import org.eventb.core.IParameter;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
-import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.eventb.ui.prettyprint.IPrettyPrintStream;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class GuardsPrettyPrinter extends DefaultPrettyPrinter implements
-		IElementPrettyPrinter {
+public class GuardsPrettyPrinter extends DefaultPrettyPrinter {
 	private static final String GUARD_LABEL = "guardLabel";
 	private static final String GUARD_THEOREM_LABEL = "guardTheoremLabel";
 	private static final String IMPLICIT_GUARD_LABEL = "implicitGuardLabel";

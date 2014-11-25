@@ -224,8 +224,7 @@ public class ExtendedFormulas {
 	}
 
 	// associative infix expression in independent parse group
-	public static class AssociativeExpressionExtension extends ExpressionExtension implements
-	IExpressionExtension {
+	public static class AssociativeExpressionExtension extends ExpressionExtension {
 
 		public AssociativeExpressionExtension(String symbol, boolean wdStrict) {
 			super(symbol, wdStrict, ASSOCIATIVE_INFIX_EXPRESSION);

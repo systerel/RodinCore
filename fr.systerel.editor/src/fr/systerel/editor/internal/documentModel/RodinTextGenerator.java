@@ -305,7 +305,7 @@ public class RodinTextGenerator {
 	}
 
 	private void processElement(ILElement element) {
-		final IRodinElement rodinElement = (IRodinElement) element.getElement();
+		final IRodinElement rodinElement = element.getElement();
 		if (!rodinElement.exists()) {
 			return;
 		}

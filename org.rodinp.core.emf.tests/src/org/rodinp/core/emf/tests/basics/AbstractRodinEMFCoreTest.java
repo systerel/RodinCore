@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public abstract class AbstractRodinEMFCoreTest {
 
 	protected static NamedElement getNamedElement(IInternalElement parent,
 			String name) throws RodinDBException {
-		final NamedElement ne = (NamedElement) parent.getInternalElement(
+		final NamedElement ne = parent.getInternalElement(
 				NamedElement.ELEMENT_TYPE, name);
 		ne.create(null, null);
 		return ne;
