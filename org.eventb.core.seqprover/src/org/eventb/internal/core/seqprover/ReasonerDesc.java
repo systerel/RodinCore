@@ -326,4 +326,11 @@ public class ReasonerDesc implements IReasonerDesc {
 	public boolean isContextDependent() {
 		return contextDependent;
 	}
+	
+	@Override
+	public boolean isTrusted() {
+		final ReasonerRegistry reg = ReasonerRegistry.getReasonerRegistry();
+		return reg.isRegistered(getId()) && !hasVersionConflict()
+				&& !reg.isDummyReasoner(getInstance());
+	}
 }

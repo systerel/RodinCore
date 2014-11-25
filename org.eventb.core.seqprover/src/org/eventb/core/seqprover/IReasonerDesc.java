@@ -137,4 +137,20 @@ public interface IReasonerDesc {
 	 */
 	boolean isContextDependent();
 
+	/**
+	 * Returns whether the described reasoner is trusted.
+	 * <p>
+	 * A reasoner is trusted if all of the following hold:
+	 * <li>it is registered ( {@link IReasonerRegistry#isRegistered(String)})</li>
+	 * <li>it is NOT a dummy reasoner (
+	 * {@link IReasonerRegistry#isDummyReasoner(IReasoner)})</li>
+	 * <li>it has NO version conflict ({@link #hasVersionConflict()}</li>
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the reasoner is trusted, <code>false</code>
+	 *         otherwise
+	 * @since 3.1
+	 */
+	boolean isTrusted();
+
 }
