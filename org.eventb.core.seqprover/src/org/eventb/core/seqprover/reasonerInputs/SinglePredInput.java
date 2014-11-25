@@ -35,6 +35,10 @@ public class SinglePredInput implements IReasonerInput, ITranslatableReasonerInp
 	
 	public SinglePredInput(String predString, ITypeEnvironment typeEnv){
 		
+		if (predString.trim().length() == 0) {
+			error = "Missing predicate in Proof Control";
+			return;
+		}
 		final FormulaFactory ff = typeEnv.getFormulaFactory();
 		predicate = DLib.parsePredicate(ff, predString);
 		if (predicate == null)

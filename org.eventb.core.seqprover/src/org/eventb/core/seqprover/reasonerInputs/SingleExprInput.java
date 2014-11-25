@@ -35,6 +35,10 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 	
 	public SingleExprInput(String exprString, ITypeEnvironment typeEnv){
 		
+		if (exprString.trim().length() == 0) {
+			setError("Missing expression in Proof Control");
+			return;
+		}
 		final FormulaFactory ff = typeEnv.getFormulaFactory();
 		expression = DLib.parseExpression(ff, exprString);
 		if (expression == null)
