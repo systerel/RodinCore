@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,12 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 
 /**
  * Common implementation for representing the shape of a proof tree. Instances
@@ -104,12 +108,7 @@ public abstract class ProofTreeShape {
 			public void create(IProofTreeNode node) {
 				assertTrue(node.isOpen());
 				Tactics.conjI().apply(node, null);
-				final IProofTreeNode[] childNodes = node.getChildNodes();
-				assertNotNull(childNodes);
-				assertEquals(childShapes.length, childNodes.length);
-				for (int i = 0; i < childShapes.length; i++) {
-					childShapes[i].create(childNodes[i]);
-				}
+				createChildShapes(node, childShapes);
 			}
 		};
 	}
@@ -132,14 +131,44 @@ public abstract class ProofTreeShape {
 			public void create(IProofTreeNode node) {
 				assertTrue(node.isOpen());
 				Tactics.impI().apply(node, null);
-				final IProofTreeNode[] childNodes = node.getChildNodes();
-				assertNotNull(childNodes);
-				assertEquals(childShapes.length, childNodes.length);
-				for (int i = 0; i < childShapes.length; i++) {
-					childShapes[i].create(childNodes[i]);
-				}
+				createChildShapes(node, childShapes);
 			}
 		};
+	}
+
+	public static final ProofTreeShape reasoner(final IReasoner r,
+			final IReasonerInput input, final ProofTreeShape... childShapes) {
+		return new ProofTreeShape() {
+
+			@Override
+			public void check(IProofTreeNode node) {
+				assertReasonerID(node, r.getReasonerID());
+				final IProofRule rule = node.getRule();
+				assertEquals(input.getClass(), rule.generatedUsing().getClass());
+				if (r instanceof IVersionedReasoner) {
+					assertEquals(((IVersionedReasoner) r).getVersion(), rule
+							.getReasonerDesc().getVersion());
+				}
+			}
+
+			@Override
+			public void create(IProofTreeNode node) {
+				assertTrue(node.isOpen());
+				BasicTactics.reasonerTac(r, input).apply(node, null);
+				createChildShapes(node, childShapes);
+			}
+
+		};
+	}
+	
+	private static void createChildShapes(IProofTreeNode node,
+			final ProofTreeShape... childShapes) {
+		final IProofTreeNode[] childNodes = node.getChildNodes();
+		assertNotNull(childNodes);
+		assertEquals(childShapes.length, childNodes.length);
+		for (int i = 0; i < childShapes.length; i++) {
+			childShapes[i].create(childNodes[i]);
+		}
 	}
 
 	/**
