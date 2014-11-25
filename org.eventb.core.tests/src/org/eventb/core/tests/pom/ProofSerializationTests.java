@@ -21,10 +21,7 @@ import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.core.tests.pom.TestLib.genPred;
 import static org.eventb.core.tests.pom.TestLib.genSeq;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
@@ -72,20 +69,32 @@ public class ProofSerializationTests extends BuilderTest {
 	
 	private static void checkProofTreeSerialization(IPRProof proof,
 			IProofTree proofTree, boolean hasDeps) throws CoreException {
+		checkProofTreeSerialization(proof, proofTree, proofTree, hasDeps);
+	}
+	
+	private static void checkProofTreeSerialization(IPRProof proof,
+			IProofTree proofTree, IProofTree expectedDeserialized,
+			boolean hasDeps) throws CoreException {
 
 		// Store the proof tree
 		proof.setProofTree(proofTree, null);
 		assertEquals(proofTree.getConfidence(), proof.getConfidence());
 
 		// Check that the stored tree is the same
-		checkDeserialization(proof, proofTree, hasDeps);
+		checkDeserialization(proof, proofTree, expectedDeserialized, hasDeps);
 	}
 
 	private static void checkDeserialization(IPRProof proof,
 			IProofTree proofTree, boolean hasDeps) throws CoreException {
+		checkDeserialization(proof, proofTree, proofTree, hasDeps);
+	}
+	
+	private static void checkDeserialization(IPRProof proof,
+			IProofTree proofTree, IProofTree expectedDeserialized,
+			boolean hasDeps) throws CoreException {
 		final FormulaFactory fac = proof.getFormulaFactory(null);
 		IProofSkeleton skel = proof.getSkeleton(fac, null);
-		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
+		assertTrue(ProverLib.deepEquals(expectedDeserialized.getRoot(), skel));
 		
 		assertEquals(hasDeps, proof.getProofDependencies(fac, null).hasDeps());
 	}
@@ -240,25 +249,42 @@ public class ProofSerializationTests extends BuilderTest {
 
 	}
 
-	@Test
-	public void testReasonerVersionOld() throws Exception {
-		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
-
+	private static IProofTree makeVersionProof(int version, int confidence) {
 		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
-
+		
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
 		final IReasonerDesc desc = registry
 				.getReasonerDesc(new ReasonerV2().getReasonerID() + ":1");
 		final Set<Predicate> noHyps = Collections.emptySet();
 		final IProofRule rule = ProverFactory.makeProofRule(desc,
 				new EmptyInput(), sequent.goal(), noHyps,
-				IConfidence.DISCHARGED_MAX, desc.getName());
+				confidence, desc.getName());
 		final boolean success = proofTree.getRoot().applyRule(rule);
 		assertTrue(success);
 		assertTrue(proofTree.isClosed());
+		
+		return proofTree;
+	}
+	
+	/**
+	 * Checks that a proof serialized with an old reasoner version is
+	 * deserialized so that the current reasoner version is attempted and used
+	 * if possible.
+	 */
+	@Test
+	public void testReasonerVersionOld() throws Exception {
+		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
-		checkProofTreeSerialization(proof1, proofTree, true);
+
+		final IProofTree proofTree = makeVersionProof(1,
+				IConfidence.DISCHARGED_MAX);
+		final IProofTree expectedDeserialized = makeVersionProof(2,
+				IConfidence.UNCERTAIN_MAX);
+		checkProofTreeSerialization(proof1, proofTree, expectedDeserialized,
+				true);
+		// check stability for deserialized proof tree
+		checkProofTreeSerialization(proof1, expectedDeserialized, true);
 	}
 
 	@Test
@@ -477,4 +503,36 @@ public class ProofSerializationTests extends BuilderTest {
 		checkProofTreeSerialization(proof, proofTree, true);
 	}
 
+	/**
+	 * Ensures that a proof that references an unknown reasoner is rebuilt with
+	 * UNCERTAIN confidence.
+	 */
+	@Test
+	public void testUnknownReasoner() throws Exception {
+		
+		// FIXME serialisation d'une preuve obtenue avec un dummy reasoner
+		// quand il y a un input: il faut conserver l'input original.
+		// FIXME ça peut être appelé au chargement d'une preuve interactive non ?
+		// dans ce cas on peut vouloir afficher la preuve avec son sous-arbre
+		// sous les noeuds UNCERTAIN, voir comment ça se passe.
+		importProofSerializationProofs();
+
+		final IPRRoot prFile = getProofRoot("unknownReasoner");
+		final IPRProof proof = prFile.getProof("unknownReasonerProof");
+
+		final IProofTree proofTree = proof.getProofTree(null);
+		
+		assertNotNull(proofTree);
+		
+		// ensure that the proof rule is deserialized:
+		final IProofTreeNode root = proofTree.getRoot();
+		assertFalse(root.isOpen());
+		final IProofRule rule = root.getRule();
+		assertEquals("unknown.reasoner.id", rule.generatedBy().getReasonerID());
+		assertEquals(IConfidence.UNCERTAIN_MAX, rule.getConfidence());
+		
+		// ensure that the whole proof tree has UNCERTAIN confidence:
+		assertTrue(proofTree.isClosed());
+		assertEquals(IConfidence.UNCERTAIN_MAX, proofTree.getConfidence());
+	}
 }
