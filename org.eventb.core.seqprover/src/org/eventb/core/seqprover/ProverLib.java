@@ -226,9 +226,18 @@ public class ProverLib {
 		return (confidence == IConfidence.PENDING);
 	}
 
-	public static boolean isReviewed(int confidence){
+	/**
+	 * @since 3.1
+	 */
+	public static boolean isUncertain(int confidence){
 		return 
 		(confidence > IConfidence.PENDING) && 
+		(confidence <= IConfidence.UNCERTAIN_MAX);		
+	}
+
+	public static boolean isReviewed(int confidence){
+		return 
+		(confidence > IConfidence.UNCERTAIN_MAX) && 
 		(confidence <= IConfidence.REVIEWED_MAX);		
 	}
 

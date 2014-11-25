@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -124,7 +125,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertNodePending(root);
 		assertFalse("Tree is closed", tree.isClosed());
 		
-		Tactics.review(1).apply(right, null);
+		Tactics.review(IConfidence.REVIEWED_MAX).apply(right, null);
 		assertNodeReviewed(right);
 		assertNodeDischarged(left);
 		assertNodeReviewed(conj);
