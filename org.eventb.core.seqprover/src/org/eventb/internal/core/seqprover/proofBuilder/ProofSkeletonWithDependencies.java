@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofBuilder;
 
+import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+
 import java.util.List;
 
 import org.eventb.core.ast.ISealedTypeEnvironment;
@@ -20,7 +22,6 @@ import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.internal.core.seqprover.ProofDependenciesBuilder;
 import org.eventb.internal.core.seqprover.ProofRule;
 
@@ -263,7 +264,7 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
 	private static boolean doRebuild(ProofSkeletonWithDependencies skeleton,
 			IProofTreeNode node, IProofMonitor proofMonitor) {
-		final boolean success = ProofBuilder.rebuild(node, skeleton,
+		final boolean success = rebuild(node, skeleton, null, true,
 				proofMonitor);
 		if (!success) {
 			node.pruneChildren();

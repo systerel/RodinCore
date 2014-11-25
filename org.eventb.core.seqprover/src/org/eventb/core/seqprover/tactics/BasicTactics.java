@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics;
 
+import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -511,7 +513,7 @@ public class BasicTactics {
 			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				if (!pt.isOpen()) return "Root already has children";
-				boolean success = ProofBuilder.rebuild(pt,proofSkeleton, pm);
+				boolean success = rebuild(pt, proofSkeleton, null, true, pm);
 				if (success) return null;
 				return "Rebuild unsuccessful";
 			}
