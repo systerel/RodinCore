@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui.handlers;
 
-import static org.eventb.internal.ui.prooftreeui.handlers.Messages.commandError;
 import static org.eventb.internal.ui.prooftreeui.handlers.Messages.copySuccessMessage;
-
-import java.util.Collection;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 
@@ -43,31 +42,16 @@ public class CopyHandler extends AbstractProofTreeCommandHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final Object appContext = event.getApplicationContext();
-		if (!(appContext instanceof EvaluationContext)) {
-			log(commandError(COMMAND_ID, "invalid context"));
-			return null;
-		}
-		final EvaluationContext context = (EvaluationContext) appContext;
+		final ISelection sel = HandlerUtil.getCurrentSelectionChecked(event);
 
-		// default variable is the selection as a collection
-		final Object var = context.getDefaultVariable();
-		if (!(var instanceof Collection)) {
-			log(commandError(COMMAND_ID,
-					"invalid context variable: collection expected"));
-			return null;
+		if (!(sel instanceof IStructuredSelection)) {
+			throw new ExecutionException(
+					"invalid selection for proof tree copy");
 		}
-		final Collection<?> selection = (Collection<?>) var;
-		if (selection.size() != 1) {
-			log(commandError(COMMAND_ID, "invalid selection size: 1 expected"));
-			return null;
-		}
-
-		final Object selected = selection.iterator().next();
+		final Object selected = ((IStructuredSelection) sel).getFirstElement();
 		if (!(selected instanceof IProofTreeNode)) {
-			log(commandError(COMMAND_ID,
-					"invalid selection: proof tree node expected"));
-			return null;
+			throw new ExecutionException(
+					"invalid selection: proof tree node expected");
 		}
 		final IProofTreeNode selectedNode = (IProofTreeNode) selected;
 

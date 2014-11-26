@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getVariableChecked;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 
@@ -34,21 +35,15 @@ public class InsertHandler extends AbstractHandler {
 			return "Unable to retrieve the text to insert";
 		}
 
-		Object appContext = event.getApplicationContext();
-
-		if (!(appContext instanceof EvaluationContext)) {
-			return "Unexpected context for insertion: operation aborted";
-		}
-
-		final EvaluationContext context = (EvaluationContext) appContext;
-		Object activeFocusControl = context.getVariable("activeFocusControl");
+		final Object activeFocusControl = getVariableChecked(event,
+				"activeFocusControl");
 
 		if (activeFocusControl instanceof StyledText) {
 			doInsertion((StyledText) activeFocusControl, insertText);
 		} else if (activeFocusControl instanceof Text) {
 			doInsertion((Text) activeFocusControl, insertText);
 		} else {
-			return "No active place for insertion";
+			throw new ExecutionException("No active place for insertion");
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 vgheorgh and others.
+ * Copyright (c) 2013, 2014 vgheorgh and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -17,8 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.ISources;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -134,10 +134,7 @@ public class CreateElementHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		// Get the selection from the current active workbench page.
-		final ISelection selection = (ISelection) HandlerUtil.getVariable(
-				event.getApplicationContext(),
-				ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		final ISelection selection = getCurrentSelectionChecked(event);
 
 		final IInternalElement insertionPoint = insertionPointForSelection(selection);
 

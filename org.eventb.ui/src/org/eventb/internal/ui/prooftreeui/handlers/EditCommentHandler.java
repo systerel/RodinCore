@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getActiveShell;
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
 import static org.eventb.internal.ui.prooftreeui.handlers.Messages.proofTreeHandler_editCommentTitle;
 import static org.eventb.internal.ui.prooftreeui.handlers.Messages.proofTreeHandler_editSuccessMessage;
 
@@ -45,7 +47,7 @@ public class EditCommentHandler extends AbstractProofTreeCommandHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IWorkbenchWindow ww = getActiveIWorkbenchWindow();
 		final ProofTreeUI ui = getActiveProofTreeUI(ww);
-		final ISelection selection = ui.getSelection();
+		final ISelection selection = getCurrentSelectionChecked(event);
 		if (!(selection instanceof ITreeSelection)) {
 			return null;
 		}
@@ -56,7 +58,7 @@ public class EditCommentHandler extends AbstractProofTreeCommandHandler {
 		}
 		final IProofTreeNode ptNode = (IProofTreeNode) nodeObject;
 		final String currentComment = ptNode.getComment();
-		final Shell shell = ww.getShell();
+		final Shell shell = getActiveShell(event);
 		final IUserSupport userSupport = getUserSupport(ui);
 		final InputDialog dialog = new MultiLineInputDialog(shell,
 				proofTreeHandler_editCommentTitle, null, currentComment, null,
