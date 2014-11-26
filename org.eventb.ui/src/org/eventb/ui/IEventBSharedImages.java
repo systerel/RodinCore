@@ -60,6 +60,16 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_PENDING_BROKEN = "Pending Broken";
 
+	/**
+	 * @since 3.1
+	 */
+	public static final String IMG_UNCERTAIN = "Uncertain";
+
+	/**
+	 * @since 3.1
+	 */
+	public static final String IMG_UNCERTAIN_PALE = "Uncertain Pale";
+
 	public static final String IMG_REVIEWED = "REVIEWED";
 
 	public static final String IMG_REVIEWED_PALE = "Reviewed Pale";
@@ -177,9 +187,24 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_PENDING_OVERLAY_PATH = "icons/full/ovr16/pending_ovr.gif";
 
+	/**
+	 * @since 3.1
+	 */
+	public static final String IMG_UNCERTAIN_OVERLAY_PATH = "icons/full/ovr16/uncertain_ovr.gif";
+
 	public static final String IMG_REVIEWED_OVERLAY_PATH = "icons/full/ovr16/reviewed_ovr.gif";
 	
 	public static final String IMG_DISCHARGED_OVERLAY_PATH = "icons/full/ovr16/discharged_ovr.gif";
+
+	/**
+	 * @since 3.1
+	 */
+	public static final String IMG_UNCERTAIN_PATH = "icons/uncertain.gif";
+
+	/**
+	 * @since 3.1
+	 */
+	public static final String IMG_UNCERTAIN_PALE_PATH = "icons/uncertain_pale.gif";
 
 	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
 

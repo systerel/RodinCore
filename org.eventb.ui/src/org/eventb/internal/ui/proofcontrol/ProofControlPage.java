@@ -695,7 +695,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
 				else {
 					int confidence = root.getConfidence();
-					if (confidence <= IConfidence.PENDING)
+					if (confidence <= IConfidence.UNCERTAIN_MAX)
 						image = EventBImage
 								.getImage(EventBImage.IMG_PENDING_SMILEY);
 					else if (confidence <= IConfidence.REVIEWED_MAX)
