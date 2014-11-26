@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.core.seqprover.ProverLib.isUncertain;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
@@ -17,6 +19,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -29,7 +32,7 @@ public class NextPending implements IProofCommand {
 
 			@Override
 			public boolean select(IProofTreeNode node) {
-				return node.isOpen();
+				return node.isOpen() || isUncertain(node.getRuleConfidence());
 			}
 			
 		});
@@ -38,14 +41,19 @@ public class NextPending implements IProofCommand {
 	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		final IProofState currentPO = us.getCurrentPO();
-		if (currentPO == null) {
-			return false;
+		try {
+			if (currentPO == null) {
+				return false;
+			}
+			if (!currentPO.isClosed()) {
+				return true;
+			}
+			final IProofTree pt = currentPO.getProofTree();
+			return pt != null && isUncertain(pt.getConfidence());
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleGetAttributeException(e);
 		}
-		final IProofTree proofTree = currentPO.getProofTree();
-		if (proofTree == null) {
-			return false;
-		}
-		return !proofTree.isClosed();
+		return false;
 	}
 
 }
