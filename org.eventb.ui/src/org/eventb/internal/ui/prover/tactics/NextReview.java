@@ -12,6 +12,7 @@
 package org.eventb.internal.ui.prover.tactics;
 
 import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
+import static org.eventb.core.seqprover.IConfidence.UNCERTAIN_MAX;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -19,7 +20,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
@@ -43,10 +43,9 @@ public class NextReview implements IProofCommand {
 
 					@Override
 					public boolean select(IProofTreeNode node) {
-						int confidence = node.getConfidence();
-						return !node.isOpen() && !node.hasChildren()
-								&& confidence <= IConfidence.REVIEWED_MAX
-								&& IConfidence.PENDING <= confidence;
+						final int confidence = node.getRuleConfidence();
+						return UNCERTAIN_MAX < confidence
+										&& confidence <= REVIEWED_MAX;
 					}
 					
 				});
