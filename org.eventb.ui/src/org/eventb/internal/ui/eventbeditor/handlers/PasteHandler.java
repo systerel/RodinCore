@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
 import static org.eventb.internal.ui.utils.Messages.dialogs_nothingToPaste;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
@@ -25,7 +26,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -42,21 +42,9 @@ import org.rodinp.core.IRodinElement;
 public class PasteHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
-
-		// Get the current selection from the active page.
-		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-		ISelection selection = activePage.getSelection();
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final ISelection selection = getCurrentSelectionChecked(event);
 		
-		// Do nothing if there is no selection.
-		if (selection == null) {
-			if (EventBEditorUtils.DEBUG) {
-				EventBEditorUtils.debug("Paste action: Current active page is "
-						+ activePage);
-			}
-			return "Must have a selection to paste";
-		}
-
 		// Create the clipboard associated with the workbench.
 		IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		Clipboard clipboard = new Clipboard(workbench.getDisplay());

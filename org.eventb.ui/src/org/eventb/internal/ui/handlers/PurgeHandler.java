@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getActiveShellChecked;
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
 import static org.rodinp.core.RodinCore.asRodinElement;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,10 +28,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
@@ -149,13 +147,7 @@ public class PurgeHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbench w = PlatformUI.getWorkbench();
-		final IWorkbenchWindow ww = w.getActiveWorkbenchWindow();
-		if (ww == null) {
-			return null;
-		}
-		final ISelectionService selectionService = ww.getSelectionService();
-		final ISelection selection = selectionService.getSelection();
+		final ISelection selection = getCurrentSelectionChecked(event);
 		if (!(selection instanceof IStructuredSelection)) {
 			return null;
 		}
@@ -167,7 +159,7 @@ public class PurgeHandler extends AbstractHandler {
 		}
 		final ComputeUnused computeUnused =
 				new ComputeUnused(input);
-		final Shell shell = ww.getShell();
+		final Shell shell = getActiveShellChecked(event);
 		launchPurgerOperation(shell, computeUnused);
 		if (computeUnused.wasCancelled())
 			return null;

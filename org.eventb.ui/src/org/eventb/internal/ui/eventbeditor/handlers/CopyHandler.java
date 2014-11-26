@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,13 +45,8 @@ import org.rodinp.core.IRodinProject;
 public class CopyHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
-		// Get the selection from the current active page.
-		ISelection selection = EventBUIPlugin.getActivePage().getSelection();
-		
-		// If there is no selection then do nothing.
-		if (selection == null)
-			return "There is no selection";
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final ISelection selection = getCurrentSelectionChecked(event);
 		
 		// If the selection is not a structured selection then do nothing.
 		if (!(selection instanceof IStructuredSelection))

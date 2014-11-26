@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getActiveEditorChecked;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBInputDialog;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.SearchHighlighter;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * Handler used to open an input dialog to search a string pattern in
@@ -37,14 +37,11 @@ public class SearchHighlight extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
-		if (page != null) {
-			final IEditorPart activeEditor = page.getActiveEditor();
-			if (activeEditor instanceof ProverUI) {
-				final ProverUI pu = ((ProverUI) activeEditor);
-				if (pu.getHighlighter().isHighlightActivated())
-					highlight(pu);
-			}
+		final IEditorPart activeEditor = getActiveEditorChecked(event);
+		if (activeEditor instanceof ProverUI) {
+			final ProverUI pu = ((ProverUI) activeEditor);
+			if (pu.getHighlighter().isHighlightActivated())
+				highlight(pu);
 		}
 		return null;
 	}

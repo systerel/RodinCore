@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelectionChecked;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,7 +26,6 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -35,13 +36,8 @@ import org.rodinp.core.RodinDBException;
 public abstract class MoveHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
-		// Get the selection from the current active page.
-		ISelection selection = EventBUIPlugin.getActivePage().getSelection();
-		
-		// If there is no selection then do nothing.
-		if (selection == null)
-			return null;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final ISelection selection = getCurrentSelectionChecked(event);
 		
 		// If the selection is not a structured selection then do nothing.
 		if (!(selection instanceof IStructuredSelection))
