@@ -17,6 +17,7 @@
 package org.eventb.internal.core.pm;
 
 import static java.util.Collections.emptyList;
+import static org.eventb.core.seqprover.ProverLib.isUncertain;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
 import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
@@ -317,7 +318,7 @@ public class ProofState implements IProofState {
 		return node.getNextNode(true, new IProofTreeNodeFilter() {
 			@Override
 			public boolean select(IProofTreeNode n) {
-				return n.isOpen();
+				return n.isOpen() || isUncertain(n.getRuleConfidence());
 			}
 			
 		});
