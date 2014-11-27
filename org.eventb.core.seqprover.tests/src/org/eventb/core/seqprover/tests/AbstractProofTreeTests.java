@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eventb.core.seqprover.tests;
 
 import static java.util.Collections.emptySet;
+import static org.eventb.core.seqprover.IConfidence.PENDING;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
@@ -125,6 +126,7 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 		assertNull(node.getFirstOpenDescendant());
 		assertEmpty(node.getOpenDescendants());
 		assertNotNull(node.getRule());
+		assertEquals(node.getRule().getConfidence(), node.getRuleConfidence());
 		// node.hasChildren() is irrelevent
 		assertTrue(node.isClosed());
 		assertFalse(node.isOpen());
@@ -173,6 +175,7 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 		assertSame(node, node.getFirstOpenDescendant());
 		assertSingleton(node, node.getOpenDescendants());
 		assertNull(node.getRule());
+		assertEquals(PENDING, node.getRuleConfidence());
 		assertFalse(node.hasChildren());
 		assertFalse(node.isClosed());
 		assertTrue(node.isOpen());
@@ -190,6 +193,7 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 		assertNotSame(node, node.getFirstOpenDescendant());
 		assertNotEmpty(node.getOpenDescendants());
 		assertNotNull(node.getRule());
+		assertEquals(node.getRule().getConfidence(), node.getRuleConfidence());
 		assertTrue(node.hasChildren());
 		assertFalse(node.isClosed());
 		assertFalse(node.isOpen());

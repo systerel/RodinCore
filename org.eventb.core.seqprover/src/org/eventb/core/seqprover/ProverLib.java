@@ -35,7 +35,6 @@ import org.eventb.core.seqprover.IHypAction.IRewriteHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ProofRule;
-import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
 import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
@@ -226,9 +225,18 @@ public class ProverLib {
 		return (confidence == IConfidence.PENDING);
 	}
 
-	public static boolean isReviewed(int confidence){
+	/**
+	 * @since 3.1
+	 */
+	public static boolean isUncertain(int confidence){
 		return 
 		(confidence > IConfidence.PENDING) && 
+		(confidence <= IConfidence.UNCERTAIN_MAX);		
+	}
+
+	public static boolean isReviewed(int confidence){
+		return 
+		(confidence > IConfidence.UNCERTAIN_MAX) && 
 		(confidence <= IConfidence.REVIEWED_MAX);		
 	}
 
@@ -279,7 +287,7 @@ public class ProverLib {
 				proofDependencies.getIntroducedFreeIdents())) return false;	
 
 		for (IReasonerDesc reasonerDesc : proofDependencies.getUsedReasoners()) {
-			if (!isReasonerReusable(reasonerDesc, null)) {
+			if (!reasonerDesc.isTrusted()) {
 				return false;
 			}
 		}
@@ -361,27 +369,7 @@ public class ProverLib {
 				&& !isContextDependentRuleReusable(rule)) {
 			return false;
 		}
-		final IReasonerInput input = rule.generatedUsing();
-		return isReasonerReusable(reasoner, input);
-	}
-
-	// NB: to check reusability of context dependent reasoners, also check
-	// reusability of all rules where the reasoner is applied.
-	private static boolean isReasonerReusable(IReasonerDesc reasoner, IReasonerInput input) {
-		final ReasonerRegistry registry = ReasonerRegistry.getReasonerRegistry();
-		if (!registry.isRegistered(reasoner.getId())) {
-			return false;
-		}
-		final IReasoner instance = reasoner.getInstance();
-		if (registry.isDummyReasoner(instance)) {
-			return false;
-		}
-		
-		if (reasoner.hasVersionConflict()) {
-			return false;
-		}
-		
-		return true;
+		return reasoner.isTrusted();
 	}
 
 	/**

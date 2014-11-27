@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -316,24 +316,6 @@ public class ProverUIUtils {
 	 */
 	public static boolean isAutomatic(IPSStatus status) throws RodinDBException {
 		return !status.getHasManualProof();
-	}
-
-	/**
-	 * Check if a proof status is reviewed (i.e. between
-	 * {@link IConfidence#PENDING} and {@link IConfidence#REVIEWED_MAX}).
-	 * 
-	 * @param status
-	 *            a proof status
-	 * @return <code>true</code> if the proof status is reviewed, return
-	 *         <code>false</code> otherwise.
-	 * @throws RodinDBException
-	 *             if error occurs in getting the confidence of the input proof
-	 *             status.
-	 */
-	public static boolean isReviewed(IPSStatus status) throws RodinDBException {
-		int confidence = status.getConfidence();
-		return confidence > IConfidence.PENDING
-				&& confidence <= IConfidence.REVIEWED_MAX;
 	}
 
 	public static void addHyperlink(Composite parent, FormToolkit toolkit, int alignment, Image icon, String tooltip, IHyperlinkListener listener, boolean enable) {

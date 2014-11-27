@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static org.eventb.core.seqprover.IConfidence.PENDING;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -356,6 +358,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 	@Override
 	public IProofRule getRule() {
 		return this.rule;
+	}
+
+	@Override
+	public int getRuleConfidence() {
+		return rule == null ? PENDING : rule.getConfidence();
 	}
 	
 	@Override

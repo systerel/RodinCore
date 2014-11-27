@@ -57,8 +57,8 @@ public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 			checkCancel(monitor);
 
 			final IProofTree result = makeProofTree(tree.getSequent(), this);
-			final boolean success = rebuild(result.getRoot(), simplified,
-					monitor);
+			final boolean success = rebuild(result.getRoot(), simplified, null,
+					true, monitor);
 			checkCancel(monitor);
 			if (!success || !result.isClosed()) {
 				return null;

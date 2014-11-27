@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilderTests;
 
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
  * @author "Nicolas Beauger"
@@ -17,16 +18,17 @@ package org.eventb.core.seqprover.proofBuilderTests;
  */
 public class FailureReasoner extends AbstractFakeReasoner {
 
-	private static final String REASONER_ID = "org.eventb.core.seqprover.tests.failureReasoner";
+	public static final String REASONER_ID = "org.eventb.core.seqprover.tests.failureReasoner";
 	private static final int DEFAULT_VERSION = 2;
 	private static final boolean DEFAULT_SUCCESS = false;
 
 	public FailureReasoner() {
 		super(DEFAULT_VERSION, DEFAULT_SUCCESS);
 	}
-	
-	public FailureReasoner(int version, boolean success) {
-		super(version, success);
+
+	public FailureReasoner(int version, boolean success,
+			IAntecedent... antecedents) {
+		super(version, success, antecedents);
 	}
 
 	public String getReasonerID() {

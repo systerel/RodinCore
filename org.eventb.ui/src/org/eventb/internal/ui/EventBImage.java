@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
+import static org.eventb.core.seqprover.ProverLib.isDischarged;
+import static org.eventb.core.seqprover.ProverLib.isPending;
+import static org.eventb.core.seqprover.ProverLib.isReviewed;
+import static org.eventb.core.seqprover.ProverLib.isUncertain;
 import static org.eventb.ui.IEventBSharedImages.IMG_ACTION;
 import static org.eventb.ui.IEventBSharedImages.IMG_ACTION_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_ADD;
@@ -77,6 +81,10 @@ import static org.eventb.ui.IEventBSharedImages.IMG_SH_PROVER_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_THEOREM;
 import static org.eventb.ui.IEventBSharedImages.IMG_THEOREMS;
 import static org.eventb.ui.IEventBSharedImages.IMG_THEOREM_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_UNCERTAIN;
+import static org.eventb.ui.IEventBSharedImages.IMG_UNCERTAIN_PALE;
+import static org.eventb.ui.IEventBSharedImages.IMG_UNCERTAIN_PALE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_UNCERTAIN_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_UP;
 import static org.eventb.ui.IEventBSharedImages.IMG_UP_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE;
@@ -126,6 +134,8 @@ public class EventBImage {
 	public static final String IMG_DISCHARGED_SMILEY = "Discharged Smiley";
 
 	public static final String IMG_PENDING_SMILEY = "Pending Smiley";
+
+	public static final String IMG_UNCERTAIN_SMILEY = "Uncertain Smiley";
 
 	public static final String IMG_REVIEW_SMILEY = "Review Smiley";
 
@@ -189,6 +199,8 @@ public class EventBImage {
 		registerImage(registry, IMG_DISCHARGED_PALE, IMG_DISCHARGED_PALE_PATH);
 		registerImage(registry, IMG_DISCHARGED_BROKEN,
 				IMG_DISCHARGED_BROKEN_PATH);
+		registerImage(registry, IMG_UNCERTAIN, IMG_UNCERTAIN_PATH);
+		registerImage(registry, IMG_UNCERTAIN_PALE, IMG_UNCERTAIN_PALE_PATH);
 		registerImage(registry, IMG_REVIEWED, IMG_REVIEWED_PATH);
 		registerImage(registry, IMG_REVIEWED_PALE, IMG_REVIEWED_PALE_PATH);
 		registerImage(registry, IMG_REVIEWED_BROKEN, IMG_REVIEWED_BROKEN_PATH);
@@ -223,6 +235,8 @@ public class EventBImage {
 				"icons/full/ctool16/wink-green.gif");
 		registerImage(registry, EventBImage.IMG_PENDING_SMILEY,
 				"icons/full/ctool16/sad.gif");
+		registerImage(registry, EventBImage.IMG_UNCERTAIN_SMILEY,
+				"icons/full/ctool16/uncertain.gif");
 		registerImage(registry, EventBImage.IMG_REVIEW_SMILEY,
 				"icons/full/ctool16/wink-blue.gif");
 
@@ -329,17 +343,23 @@ public class EventBImage {
 
 		int confidence = node.getConfidence();
 
-		if (confidence == IConfidence.PENDING) {
+		if (isPending(confidence)) {
 			if (node.hasChildren())
 				return IMG_PENDING_PALE;
 			return IMG_PENDING;
 		}
-		if (confidence <= IConfidence.REVIEWED_MAX) {
+		if (isUncertain(confidence)) {
+			if (isUncertain(node.getRuleConfidence())) {
+				return IMG_UNCERTAIN;
+			}
+			return IMG_UNCERTAIN_PALE;
+		}
+		if (isReviewed(confidence)) {
 			if (node.hasChildren())
 				return IMG_REVIEWED_PALE;
 			return IMG_REVIEWED;
 		}
-		if (confidence <= IConfidence.DISCHARGED_MAX) {
+		if (isDischarged(confidence)) {
 			if (node.hasChildren())
 				return IMG_DISCHARGED_PALE;
 			return IMG_DISCHARGED;
@@ -407,16 +427,13 @@ public class EventBImage {
 				return null;
 			}
 			if (isProofBroken) {
-				if (confidence == IConfidence.PENDING) {
-					// Do nothing
-				}
 				baseKey = IMG_PENDING;
 			} else {
-				if (confidence == IConfidence.PENDING)
+				if (isPending(confidence) || isUncertain(confidence))
 					baseKey = IMG_PENDING;
-				else if (confidence <= IConfidence.REVIEWED_MAX)
+				else if (isReviewed(confidence))
 					baseKey = IMG_REVIEWED;
-				else if (confidence <= IConfidence.DISCHARGED_MAX)
+				else if (isDischarged(confidence))
 					baseKey = IMG_DISCHARGED;
 				else
 					// cannot happen

@@ -139,15 +139,18 @@ public class ProofSkeletonBuilder {
 		}
 
 		final IProofTree prTree = ProverFactory.makeProofTree(rootSequent, pr);
-		if (isBroken) {
-			if (!ProofBuilder.rebuild(prTree.getRoot(), skel, new ProofMonitor(sm))) {
-				return null;
-			}
-		} else if (!ProofBuilder.reuse(prTree.getRoot(), skel, new ProofMonitor(sm))) {
-			logIllFormedProof(pr);
-			return null;
+
+		// try to rebuild
+		if (ProofBuilder.rebuild(prTree.getRoot(), skel, null, false,
+				new ProofMonitor(sm))) {
+			return prTree;
 		}
-		return prTree;
+
+		// give up
+		if (!isBroken) {
+			logIllFormedProof(pr);
+		}
+		return null;
 	}
 
 	private static void logIllFormedProof(IPRProof pr) {

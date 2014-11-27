@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.ui.markers.IMarkerRegistry;
 import org.eventb.internal.ui.markers.MarkerRegistry;
 import org.eventb.ui.IEventBSharedImages;
@@ -71,6 +72,8 @@ public class RodinLblDec {
 
 		private static final int F_DISCHARGED_BROKEN = 0x00008;
 
+		private static final int F_UNCERTAIN_BROKEN = 0x00010;
+
 		private static int getOverlay(IPSStatus status) throws RodinDBException {
 			final int confidence = status.getConfidence();
 
@@ -80,12 +83,15 @@ public class RodinLblDec {
 			if (isAttempted) {
 				final boolean isProofBroken = status.isBroken();
 				if (isProofBroken) {
-					if (confidence == IConfidence.PENDING) {
+					if (ProverLib.isPending(confidence)) {
 						// Do nothing
-					} else if (confidence <= IConfidence.REVIEWED_MAX)
+					} else if (ProverLib.isUncertain(confidence)) {
+						overlay = overlay | F_UNCERTAIN_BROKEN;
+					} else if (ProverLib.isReviewed(confidence)) {
 						overlay = overlay | F_REVIEWED_BROKEN;
-					else if (confidence <= IConfidence.DISCHARGED_MAX)
+					} else if (ProverLib.isDischarged(confidence)) {
 						overlay = overlay | F_DISCHARGED_BROKEN;
+					}
 				}
 			}
 
@@ -118,6 +124,12 @@ public class RodinLblDec {
 							.addOverlay(
 									getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH),
 									IDecoration.BOTTOM_LEFT);
+				if ((overlay & F_UNCERTAIN_BROKEN) != 0) {
+					decoration
+							.addOverlay(
+									getImageDescriptor(IEventBSharedImages.IMG_UNCERTAIN_OVERLAY_PATH),
+									IDecoration.BOTTOM_RIGHT);
+				}
 				if ((overlay & F_REVIEWED_BROKEN) != 0) {
 					decoration
 							.addOverlay(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,11 +146,14 @@ public class ReasonerRegistryTest {
 			final IReasoner reasoner = desc.getInstance();
 			final String actual = reasoner.getReasonerID();
 			//Checks if reasoner has the same ID as its contribution
-			assertEquals("Contribution should have the same ID as its desc: "
-					+ desc.getId(), expected, actual);
-			assertFalse("No dummy reasoner should appear!" + //
-					" Reasoner: " + actual + " is dummy!", //
-					registry.isDummyReasoner(reasoner) && !isFromTest(actual));
+			if (!isFromTest(actual)) {
+				assertEquals(
+						"Contribution should have the same ID as its desc: "
+								+ desc.getId(), expected, actual);
+				assertFalse("No dummy reasoner should appear!" + //
+						" Reasoner: " + actual + " is dummy!", //
+						registry.isDummyReasoner(reasoner));
+			}
 		}
 	}
 

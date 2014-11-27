@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -357,7 +357,7 @@ public class ExplorerUtils {
 	private static boolean isBrokenOrPending(IPSStatus status)
 			throws RodinDBException {
 		return status.isBroken()
-				|| status.getConfidence() <= IConfidence.PENDING;
+				|| status.getConfidence() <= IConfidence.UNCERTAIN_MAX;
 	}
 
 

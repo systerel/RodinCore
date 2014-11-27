@@ -140,4 +140,27 @@ public class ReasonerDescTests {
 		assertTrue(reasonerOutput instanceof IReasonerFailure);
 	}
 
+	/**
+	 * Ensures that an unregistered reasoner is not trusted.
+	 */
+	@Test
+	public void testIsTrustedUnregistered() throws Exception {
+		final IReasonerDesc unregistered = getDesc(getDummyId());
+		assertFalse("unregistered reasoner should be untrusted",
+				unregistered.isTrusted());
+	}
+
+	/**
+	 * Ensures that a reasoner with version conflict is not trusted.
+	 */
+	@Test
+	public void testIsTrustedConflict() throws Exception {
+		final IReasonerDesc desc1 = getLiveDesc(ReasonerV1.REASONER_ID);
+		assertTrue("Registered reasoner without conflict should be trusted",
+				desc1.isTrusted());
+
+		final IReasonerDesc desc2 = getDesc(ReasonerV1.REASONER_ID + ":0");
+		assertFalse("Registered reasoner with conflict should be untrusted",
+				desc2.isTrusted());
+	}
 }

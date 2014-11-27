@@ -42,17 +42,24 @@ public class ReplayTests extends BuilderTest {
 
 	/**
 	 * Regression test for bug {@link #bug723()}. Ensure that the post-tactic is
-	 * run after replay. Context d contains a partially invalid proof which gets
-	 * completed by the post tactic.
+	 * run after replay.
+	 * <p>
+	 * Context d contains two proofs:
+	 * <li>a "replayable" partial proof, which gets completed by the post
+	 * tactic;</li>
+	 * <li>a "notReplayable" complete proof mentioning an unknown reasoner, that
+	 * gets reused with {@link IConfidence#UNCERTAIN_MAX} confidence, hence
+	 * remains undischarged.</li>
+	 * </p>
 	 */
 	@Test
 	public void bug723() throws Exception {
 		importProject("Small");
 		runBuilder();
-		assertUndischarged("d", "thm/THM");
+		assertUndischarged("d", "replayable/THM", "notReplayable/THM");
 		enablePostTactic("org.eventb.core.seqprover.trueGoalTac");
 		replay("d");
-		assertUndischarged("d");
+		assertUndischarged("d", "notReplayable/THM");
 	}
 
 	private void assertUndischarged(String compName, String... pos)

@@ -28,6 +28,7 @@ import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -112,11 +113,13 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		}
 
 		final String display = getRuleDisplay();
-		final int confidence = getConfidence();
 		final IReasonerDesc reasonerDesc = getReasonerDesc(store);
+		final int confidence = reasonerDesc.isTrusted() ? getConfidence()
+				: IConfidence.UNCERTAIN_MAX;
+				
 
-		final IReasonerInputReader deserializer = new ProofStoreReader.Bridge(this, store, confidence,
-				display, goal, neededHyps, antecedents);
+		final IReasonerInputReader deserializer = new ProofStoreReader.Bridge(
+				this, store, confidence, display, goal, neededHyps, antecedents);
 
 		final IReasonerInput input;
 		try {

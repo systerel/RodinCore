@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eventb.core.tests.pm;
 
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPOPredicateSet;
@@ -353,7 +354,7 @@ public class TestUserSupportChanges extends TestPM {
 	}
 
 	/**
-	 * This corresponding to the case where the orinal PO is modified but it is
+	 * This corresponds to the case where the original PO is modified but it is
 	 * still reusable with the new PO. The proof tree is REUSED hence a new
 	 * PROOFTREE is create with the new current NODE.
 	 * <p>
@@ -378,8 +379,8 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport.applyTactic(Tactics.review(1), false,
 				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, reusablePO, originalPO);
-		assertString(
-				"Change: PO is modified and reusable ",
+		assertEquals(
+				"Change: modified PO should be reusable",
 				userSupport.toString(),
 				"****** User Support for: x ******\n"
 						+ "** Proof States **\n"

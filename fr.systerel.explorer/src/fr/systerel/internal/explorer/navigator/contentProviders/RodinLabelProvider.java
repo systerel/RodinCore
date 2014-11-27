@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,9 +90,10 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
 					ModelPOContainer parent = ((ModelElementNode) node)
 							.getModelParent();
-					boolean discharged = parent.getMinConfidence() > IConfidence.REVIEWED_MAX;
-					boolean reviewed = parent.getMinConfidence() > IConfidence.PENDING;
-					boolean unattempted = parent.getMinConfidence() == IConfidence.UNATTEMPTED;
+					final int minConfidence = parent.getMinConfidence();
+					boolean discharged = minConfidence > IConfidence.REVIEWED_MAX;
+					boolean reviewed = minConfidence > IConfidence.UNCERTAIN_MAX;
+					boolean unattempted = minConfidence == IConfidence.UNATTEMPTED;
 
 					if (discharged) {
 						return EventBImage
@@ -103,7 +104,7 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 					} else if (unattempted) {
 						return EventBImage
 								.getImage(IEventBSharedImages.IMG_PENDING_PALE);
-					} else {
+					} else { // including uncertain
 						return EventBImage
 								.getImage(IEventBSharedImages.IMG_PENDING);
 					}

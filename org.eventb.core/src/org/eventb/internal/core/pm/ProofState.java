@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
 package org.eventb.internal.core.pm;
 
 import static java.util.Collections.emptyList;
+import static org.eventb.core.seqprover.ProverLib.isUncertain;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
 import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
@@ -189,7 +190,7 @@ public class ProofState implements IProofState {
 		if (skeleton != null) {
 			final IProofTreeNode root = pt.getRoot();
 			final ProofMonitor pm = new ProofMonitor(monitor);
-			if (!rebuild(root, skeleton, pm))
+			if (!rebuild(root, skeleton, null, true, pm))
 				setDirty(true);
 		}
 		if (hasBrokenStatus())
@@ -317,7 +318,7 @@ public class ProofState implements IProofState {
 		return node.getNextNode(true, new IProofTreeNodeFilter() {
 			@Override
 			public boolean select(IProofTreeNode n) {
-				return n.isOpen();
+				return n.isOpen() || isUncertain(n.getRuleConfidence());
 			}
 			
 		});

@@ -150,6 +150,16 @@ public interface IProofTreeNode extends IProofSkeleton {
 	IProofRule getRule();
 
 	/**
+	 * Returns the confidence of the rule applied to this node or
+	 * <code>PENDING</code> if this node is open.
+	 * 
+	 * @return the confidence of the rule applied to this node or
+	 *         <code>PENDING</code> if this node is a leaf node
+	 * @since 3.1
+	 */
+	int getRuleConfidence();
+
+	/**
 	 * Returns the proof sequent associated to this node.
 	 * 
 	 * @return the proof sequent of this node

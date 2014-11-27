@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 			int confidence = status.getConfidence();
 			discharged = (status.getConfidence() > IConfidence.REVIEWED_MAX)
 					&& !status.isBroken();
-			reviewed = (confidence > IConfidence.PENDING && confidence <= IConfidence.REVIEWED_MAX);
+			reviewed = (confidence > IConfidence.UNCERTAIN_MAX && confidence <= IConfidence.REVIEWED_MAX);
 			broken = status.isBroken();
 			manual = status.getHasManualProof();
 		} catch (RodinDBException e) {
