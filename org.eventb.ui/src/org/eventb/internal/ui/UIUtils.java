@@ -1037,11 +1037,12 @@ public class UIUtils {
 
 	private static void setCComboValues(CCombo combo, String[] values) {
 		final String currentText = combo.getText();
-		combo.removeAll();
-		for (String value : values) {
-			combo.add(value);
-		}
+		combo.setItems(values);
 		combo.setText(currentText);
+		if (combo.getSelectionIndex() < 0) {
+			// force selection
+			combo.select(0);
+		}
 	}
 
 	/**
