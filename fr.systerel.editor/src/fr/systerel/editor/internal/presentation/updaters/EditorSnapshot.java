@@ -106,6 +106,9 @@ public class EditorSnapshot {
 		final int caretLine = text.getLineAtOffset(caretOffset);
 		final int cartetLineOffset = text.getOffsetAtLine(caretLine);
 		final Interval interval = mapper.findInterval(caretOffset);
+		if (interval == null) {
+			return;
+		}
 		final EditorElement editorElement = mapper.findEditorElement(interval
 				.getElement());
 		IRodinElement element = null;
