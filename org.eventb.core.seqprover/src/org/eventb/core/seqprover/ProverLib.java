@@ -524,6 +524,9 @@ public class ProverLib {
 			FormulaFactory factory) {
 		try {
 			final IProofRule rule = skeleton.getRule();
+			if (rule == null) {
+				return TranslatedProofSkeleton.empty(skeleton.getComment());
+			}
 			final IProofRule trRule = rule.translate(factory);
 			final IProofSkeleton[] childNodes = skeleton.getChildNodes();
 			final IProofSkeleton[] trChildNodes = new IProofSkeleton[childNodes.length];
