@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * If the given name already occurs in this environment, it must be
 	 * associated with the given type. The given type is also analyzed to check
 	 * that GivenType types used are defined (if not add them) or are coherent
-	 * with current environment.
+	 * with the current environment.
 	 * </p>
 	 * 
 	 * @param name

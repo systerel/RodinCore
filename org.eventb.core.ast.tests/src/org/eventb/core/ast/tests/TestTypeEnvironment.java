@@ -239,6 +239,13 @@ public class TestTypeEnvironment {
 		te.addName("s", eBOOL);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddSelfReferringType() throws Exception {
+		final ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		final Type powST = POW(ff.makeProductType(t_S, t_T));
+		te.addName("S", powST);
+	}
+
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.clone()'
 	 */

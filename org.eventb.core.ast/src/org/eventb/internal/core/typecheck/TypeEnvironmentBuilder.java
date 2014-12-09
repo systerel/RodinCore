@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2014 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
@@ -99,7 +100,17 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	protected void setName(String name, Type type) {
 		// Avoid infinite recursion when adding a given set
 		if (!isGivenSet(name, type)) {
-			for (final GivenType givenType : type.getGivenTypes()) {
+			final Set<GivenType> givenTypes = type.getGivenTypes();
+			// Maintain the atomicity of this operation by first checking
+			// for self-references in the type.
+			for (final GivenType givenType : givenTypes) {
+				if (name.equals(givenType.getName())) {
+					throw new IllegalArgumentException(
+							"Trying to add an invalid self-referring type: "
+									+ name);
+				}
+			}
+			for (final GivenType givenType : givenTypes) {
 				addGivenSet(givenType);
 			}
 		}
