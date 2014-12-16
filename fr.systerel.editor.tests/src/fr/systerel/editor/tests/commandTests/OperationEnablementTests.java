@@ -36,6 +36,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -49,6 +50,8 @@ import fr.systerel.editor.tests.TestUtils;
  * Tests which verify the enablement of redirected text operation actions such
  * as copy, paste and delete.
  */
+@Ignore("These tests are too fragile:"
+		+ "They do not work if the workbench window does not have the focus.")
 public class OperationEnablementTests {
 
 	private static final IWorkbench WORKBENCH = PlatformUI.getWorkbench();
