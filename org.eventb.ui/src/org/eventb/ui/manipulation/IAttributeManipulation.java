@@ -115,6 +115,11 @@ public interface IAttributeManipulation {
 	 * Gets the possible values of the attribute for the given element. This is
 	 * used for filling the list of a combo-box. Returns <code>null</code> if
 	 * the attribute is not intended to be edited by a combo-box widget.
+	 * <p>
+	 * The returned list must include the current value of the attribute,
+	 * otherwise the display of the combo box will not be accurate on Linux and
+	 * Mac OS X.
+	 * </p>
 	 * 
 	 * @param element
 	 *            an internal element
