@@ -397,7 +397,7 @@
             categoryId="fr.systerel.editor.editionCategory"
             description="Open the new constant wizard"
             id="fr.systerel.editor.openNewConstantWizard"
-            name="New constant wizardrd">
+            name="New constant wizard">
       </command>
    </extension>
    <extension
