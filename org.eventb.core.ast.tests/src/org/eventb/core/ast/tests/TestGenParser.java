@@ -225,7 +225,8 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	private static Expression parseAndCheck(String formula,
-			Expression expected, FormulaFactory factory) {
+			Expression expected) {
+		final FormulaFactory factory = expected.getFactory();
 		final Expression actual = parseExpr(formula, factory);
 		checkParsedFormula(formula, expected, actual);
 
@@ -233,17 +234,7 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Expression doParseUnparseTest(String formula, Expression expected) {
-		final Expression actual = parseExpr(formula);
-		checkParsedFormula(formula, expected, actual);
-		
-		final String actToStr = actual.toString();
-		final Expression reparsed = parseExpr(actToStr);
-		assertEquals("bad reparsed", expected, reparsed);
-	
-		return actual;
-	}
-
-	private static Expression doParseUnparseTest(String formula, Expression expected, FormulaFactory factory) {
+		final FormulaFactory factory = expected.getFactory();
 		final Expression actual = parseExpr(formula, factory);
 		checkParsedFormula(formula, expected, actual);
 		
@@ -255,11 +246,12 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Predicate doParseUnparseTest(String formula, Predicate expected) {
-		final Predicate actual = parsePred(formula);
+		final FormulaFactory factory = expected.getFactory();
+		final Predicate actual = parsePred(formula, factory);
 		checkParsedFormula(formula, expected, actual);
 		
 		final String actToStr = actual.toString();
-		final Predicate reparsed = parsePred(actToStr);
+		final Predicate reparsed = parsePred(actToStr, factory);
 		assertEquals("bad reparsed, unparser produced " + actToStr + "\n",
 				expected, reparsed);
 	
@@ -289,28 +281,17 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
-	private static Expression parseExpr(String formula) {
-		return parseExpr(formula, ff);
-	}
-
-	private static Predicate parsePred(String formula) {
-		return parsePred(formula, ff);
-	}
-
 	private static IParseResult parseExprRes(String formula) {
 		return ff.parseExpression(formula, null);
 	}
 	
-	private static Expression doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
-		return parseAndCheck(formula, expected, factory);
+	private static Expression doExpressionTest(String formula, Expression expected) {
+		return parseAndCheck(formula, expected);
 	}
 	
 	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType, boolean typeCheck) {
-		return doExpressionTest(formula, expected, expectedType, ff, typeCheck);
-	}	
-
-	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType, FormulaFactory factory, boolean typeCheck) {
-		final Expression actual = doExpressionTest(formula, expected, factory);
+		final FormulaFactory factory = expected.getFactory();
+		final Expression actual = doExpressionTest(formula, expected);
 		if (typeCheck) {
 			final ITypeCheckResult result = actual.typeCheck(factory.makeTypeEnvironment());
 			assertFalse(
@@ -321,15 +302,8 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 	
-	private static Expression doExpressionTest(String formula, Expression expected) {
-		return doExpressionTest(formula, expected, ff);
-	}
-	
 	private static Predicate doPredicateTest(String formula, Predicate expected) {
-		return doPredicateTest(formula, expected, ff);
-	}
-	
-	private static Predicate doPredicateTest(String formula, Predicate expected, FormulaFactory factory) {
+		final FormulaFactory factory = expected.getFactory();
 		final IParseResult result = factory.parsePredicate(formula, null);
 		assertFalse("unexpected problem(s): " + result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
@@ -375,10 +349,7 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Type doTypeTest(String formula, Type expected) {
-		return doTypeTest(formula, expected, ff);
-	}
-	
-	private static Type doTypeTest(String formula, Type expected, FormulaFactory factory) {
+		final FormulaFactory factory = expected.getFactory();
 		final IParseResult result = parseTypeRes(formula, factory);
 		assertFalse("unexpected problems " + result.getProblems(),
 				result.hasProblem());
@@ -398,18 +369,17 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
-	private static void doTest(String formula, Formula<?> expected,
-			FormulaFactory fac) {
+	private static void doTest(String formula, Formula<?> expected) {
 		if (expected instanceof Expression) {
-			parseAndCheck(formula, (Expression) expected, fac);
+			parseAndCheck(formula, (Expression) expected);
 		} else if (expected instanceof Predicate) {
-			doPredicateTest(formula, (Predicate) expected, fac);
+			doPredicateTest(formula, (Predicate) expected);
 		}
 	}
 	
 	private static void doVersionTest(String formula, Formula<?> expectedV1, Formula<?> expectedV2) {
-		doTest(formula, expectedV1, ffV1);
-		doTest(formula, expectedV2, ff);
+		doTest(formula, expectedV1);
+		doTest(formula, expectedV2);
 	}
 
 	@Test 
@@ -576,7 +546,7 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testSourceLocation() throws Exception {
-		final Predicate pred = parsePred("(⊤∧⊥)∨⊥");
+		final Predicate pred = parsePred("(⊤∧⊥)∨⊥", ff);
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalse = ((AssociativePredicate) pred)
 				.getChildren()[1];
@@ -585,7 +555,7 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testSourceLocation2() throws Exception {
-		final Predicate pred = parsePred("⊤∧(⊥∨⊥        )");
+		final Predicate pred = parsePred("⊤∧(⊥∨⊥        )", ff);
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalseOrFalse = ((AssociativePredicate) pred)
 				.getChildren()[1];
@@ -601,7 +571,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("A", null),
 						extFac.makeFreeIdentifier("B", null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("A§B", expected, extFac);
+		doExpressionTest("A§B", expected);
 	}
 
 	@Test 
@@ -615,7 +585,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeUnaryExpression(KDOM,
 								extFac.makeFreeIdentifier("B", null), null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("dom(A)§dom(B)", expected, extFac);
+		doExpressionTest("dom(A)§dom(B)", expected);
 	}
 
 	@Test 
@@ -630,7 +600,7 @@ public class TestGenParser extends AbstractTests {
 
 		final Expression expected = extFac.makeAssociativeExpression(BUNION,
 				Arrays.<Expression> asList(prodAB, prodAB), null);
-		doExpressionTest("(A§B) ∪ (A§B)", expected, extFac);
+		doExpressionTest("(A§B) ∪ (A§B)", expected);
 	}
 
 	// verify that the newly introduced symbol cannot be an identifier
@@ -651,10 +621,10 @@ public class TestGenParser extends AbstractTests {
 				extFac.isValidIdentifierName("€"));
 		
 		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(strAEuroB, null);
-		doExpressionTest(strAEuroB, expectedDefault, ff);
+		doExpressionTest(strAEuroB, expectedDefault);
 	
 		final FreeIdentifier expectedExtended = extFac.makeFreeIdentifier(strAEuroB, null);
-		doExpressionTest(strAEuroB, expectedExtended, extFac);
+		doExpressionTest(strAEuroB, expectedExtended);
 
 		// considered an operator only if surrounded with spaces
 		final Expression expectedExtendedSpaced = extFac.makeExtendedExpression(MONEY,
@@ -662,7 +632,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("A", null),
 						extFac.makeFreeIdentifier("B", null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("A € B", expectedExtendedSpaced, extFac);
+		doExpressionTest("A € B", expectedExtendedSpaced);
 	}
 	
 	@Test 
@@ -674,7 +644,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("B", null),
 						extFac.makeFreeIdentifier("C", null)),
 				Collections.<Predicate> emptySet(), null);
-		doParseUnparseTest("A € B € C", expected, extFac);
+		doParseUnparseTest("A € B € C", expected);
 	}
 	
 	@Test 
@@ -688,7 +658,7 @@ public class TestGenParser extends AbstractTests {
 										extFac.makeFreeIdentifier("B", null)), Collections.<Predicate> emptySet(), null),
 										extFac.makeFreeIdentifier("C", null)),
 				Collections.<Predicate> emptySet(), null);
-		doParseUnparseTest("(A € B) € C", expected, extFac);
+		doParseUnparseTest("(A € B) € C", expected);
 	}
 	
 	@Test 
@@ -702,7 +672,7 @@ public class TestGenParser extends AbstractTests {
 										extFac.makeFreeIdentifier("B", null),
 										extFac.makeFreeIdentifier("C", null)), Collections.<Predicate> emptySet(), null)),
 				Collections.<Predicate> emptySet(), null);
-		doParseUnparseTest("A € (B € C)", expected, extFac);
+		doParseUnparseTest("A € (B € C)", expected);
 	}
 	
 	@Test 
@@ -718,7 +688,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeUnaryExpression(KDOM,
 								extFac.makeFreeIdentifier("C", null), null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("dom(A) € dom(B) € dom(C)", expected, extFac);
+		doExpressionTest("dom(A) € dom(B) € dom(C)", expected);
 	}
 
 	@Test 
@@ -1738,7 +1708,7 @@ public class TestGenParser extends AbstractTests {
 				extFac.isValidIdentifierName(emax));
 		
 		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(emax, null);
-		doExpressionTest(emax, expectedDefault, ff);
+		doExpressionTest(emax, expectedDefault);
 
 		final IParseResult result = extFac.parseExpression(emax, null);
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
@@ -1754,7 +1724,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("B", null),
 						extFac.makeFreeIdentifier("C", null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("emax(A, B, C)", expected, extFac);
+		doExpressionTest("emax(A, B, C)", expected);
 	}
 	
 	@Test 
@@ -2226,7 +2196,7 @@ public class TestGenParser extends AbstractTests {
 		final ExtendedPredicate expected = PRIME_FAC.makeExtendedPredicate(
 				EXT_PRIME, Arrays.<Expression> asList(ONE_PRIME),
 				Collections.<Predicate> emptySet(), null);
-		doPredicateTest("prime(1)", expected, PRIME_FAC);
+		doPredicateTest("prime(1)", expected);
 	}
 	
 	@Test 
@@ -2237,7 +2207,7 @@ public class TestGenParser extends AbstractTests {
 		final Predicate expected = PRIME_FAC.makeAssociativePredicate(LAND,
 				asList(primeOne, primeOne), null);
 		
-		doPredicateTest("prime(1) ∧ prime(1)", expected, PRIME_FAC);
+		doPredicateTest("prime(1) ∧ prime(1)", expected);
 	}
 	
 	@Test 
@@ -2266,13 +2236,13 @@ public class TestGenParser extends AbstractTests {
 		final Predicate separate = facListPrime.makeAssociativePredicate(LAND,
 				asList(primeOne, nilInListInt), null);
 
-		doPredicateTest("prime(1) ∧ nil ∈ ℙ(List(ℤ))", separate, facListPrime);
+		doPredicateTest("prime(1) ∧ nil ∈ ℙ(List(ℤ))", separate);
 		
 		final Predicate primeNil = facListPrime.makeExtendedPredicate(EXT_PRIME,
 				Arrays.<Expression> asList(nil),
 				Collections.<Predicate> emptySet(), null);
 		
-		doPredicateTest("prime(nil)", primeNil, facListPrime);
+		doPredicateTest("prime(nil)", primeNil);
 	}
 	
 	@Test 
@@ -2300,13 +2270,13 @@ public class TestGenParser extends AbstractTests {
 		final Type powListMoultType = listMoultFac.makePowerSetType(listMoultType);
 		
 		doExpressionTest("List(Moult(ℤ, BOOL))", listMoult, powListMoultType,
-				listMoultFac, false);
+				false);
 		
 		assertTrue("expected a type expression", listMoult.isATypeExpression());
 		assertEquals("unexpected type", listMoultType, listMoult.toType());
 		
-		doTypeTest("List(Moult(ℤ, BOOL))", listMoultType, listMoultFac);
-		doTypeTest("ℙ(List(Moult(ℤ, BOOL)))", powListMoultType, listMoultFac);
+		doTypeTest("List(Moult(ℤ, BOOL))", listMoultType);
+		doTypeTest("ℙ(List(Moult(ℤ, BOOL)))", powListMoultType);
 	}
 	
 	private static final IExpressionExtension COND = FormulaFactory.getCond();
@@ -2327,7 +2297,7 @@ public class TestGenParser extends AbstractTests {
 		final Expression ONE_COND = FAC_COND.makeIntegerLiteral(BigInteger.ONE, null);
 		final Type INT_TYPE_COND = FAC_COND.makeIntegerType();
 		final Expression expectedInt = makeCond(LIT_BTRUE_COND, ZERO_COND, ONE_COND, null);
-		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE_COND, FAC_COND, false);
+		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE_COND, false);
 
 		final Predicate LIT_BFALSE_COND = FAC_COND.makeLiteralPredicate(Formula.BFALSE, null);
 		final Expression ATOM_TRUE_COND = FAC_COND.makeAtomicExpression(TRUE, null);
@@ -2336,7 +2306,7 @@ public class TestGenParser extends AbstractTests {
 		// using FRID_a would fail
 		final FreeIdentifier frid_a = FAC_COND.makeFreeIdentifier("a", null);
 		final Expression expected = makeCond(LIT_BFALSE_COND, frid_a, ATOM_TRUE_COND, null);
-		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE_COND, FAC_COND, true);
+		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE_COND, true);
 	}
 	
 	@Test 
@@ -2524,9 +2494,9 @@ public class TestGenParser extends AbstractTests {
 		final Expression extended = EFF.makeExtendedExpression(barS,
 				mList(ZERO_EFF, ONE_EFF), mList(LIT_BTRUE_EFF, LIT_BTRUE_EFF), null);
 		doPredicateTest("barS(⊤, 0, ⊤, 1) = 0",
-				EFF.makeRelationalPredicate(EQUAL, extended, ZERO_EFF, null), EFF);
+				EFF.makeRelationalPredicate(EQUAL, extended, ZERO_EFF, null));
 		doPredicateTest("0 = barS(⊤, 0, ⊤, 1)",
-				EFF.makeRelationalPredicate(EQUAL, ZERO_EFF, extended, null), EFF);
+				EFF.makeRelationalPredicate(EQUAL, ZERO_EFF, extended, null));
 	}
 	
 	private static void assertIncompatible(IParseResult result) {
@@ -2586,9 +2556,9 @@ public class TestGenParser extends AbstractTests {
 	 */
 	@Test
 	public void testExtensionInCset() throws Exception {
-		doExpressionTest("{x·x = 0 ∣x asso 1}", mCSet(Form.Explicit), EFF);
-		doExpressionTest("{x asso 1 ∣  x = 0}", mCSet(Form.Implicit), EFF);
-		doExpressionTest("λx·x=0 ∣ x asso 1", mCSet(Form.Lambda), EFF);
+		doExpressionTest("{x·x = 0 ∣x asso 1}", mCSet(Form.Explicit));
+		doExpressionTest("{x asso 1 ∣  x = 0}", mCSet(Form.Implicit));
+		doExpressionTest("λx·x=0 ∣ x asso 1", mCSet(Form.Lambda));
 	}
 	
 }
