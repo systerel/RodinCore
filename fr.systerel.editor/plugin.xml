@@ -816,6 +816,20 @@
          </and>
       </definition>
       <definition
+            id="fr.systerel.editor.definition.editableOverlayMode">
+         <and>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+            <with
+                  variable="fr.systerel.editor.sourceprovider.editionMode">
+               <equals
+                     value="overlay">
+               </equals>
+            </with>
+         </and>
+      </definition>
+      <definition
             id="fr.systerel.editor.definition.isEditableMachine">
             <and>
                 <with
@@ -878,6 +892,15 @@
          <activeWhen>
             <reference
                   definitionId="fr.systerel.editor.definition.editableStructuralMode">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.SymbolInsertionHandler"
+            commandId="org.eventb.ui.edit.insert">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systerel.editor.definition.editableOverlayMode">
             </reference>
          </activeWhen>
       </handler>

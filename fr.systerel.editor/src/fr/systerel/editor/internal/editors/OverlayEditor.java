@@ -770,5 +770,15 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			}
 		}
 	}
-	
+
+	public boolean insert(String str) {
+		if (!isActive()) {
+			return false;
+		}
+		final int originalOffset = editorText.getCaretOffset();
+		editorText.insert(str);
+		editorText.setCaretOffset(originalOffset + str.length());
+		return true;
+	}
+
 }
