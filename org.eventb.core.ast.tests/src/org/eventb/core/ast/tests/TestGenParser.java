@@ -366,7 +366,8 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static void doPredicatePatternTest(String formula, Predicate expected) {
-		final IParseResult result = ff.parsePredicatePattern(formula, null);
+		final FormulaFactory fac = expected.getFactory();
+		final IParseResult result = fac.parsePredicatePattern(formula, null);
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
@@ -1503,6 +1504,13 @@ public class TestGenParser extends AbstractTests {
 		final Predicate expected = PV_P;
 		doPredicatePatternTest("$P", expected);
 		
+	}
+	
+	@Test 
+	public void testPredicateVariableReservedName() throws Exception {
+		final Predicate expected = PRIME_FAC.makePredicateVariable(
+				EXT_PRIME.getSyntaxSymbol(), null);
+		doPredicatePatternTest("prime(1)", expected);
 	}
 	
 	@Test 
