@@ -40,7 +40,9 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.ISelectionService;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
@@ -316,8 +318,17 @@ public class SelectionController implements MouseListener, VerifyListener,
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
 	
+	/**
+	 * Selects the given elements in the text and scrolls to reveal the position
+	 * of the first one. The selection is done in a best effort manner (i.e., if
+	 * the elements are valid and explicit).
+	 * 
+	 * @param selected
+	 *            array of elements to select
+	 */
 	public void selectItems(ILElement[] selected) {
 		selection.clear();
+		EditPos first = null;
 		for (ILElement e : selected) {
 			final EditorElement editorElem = mapper.findEditorElement(e);
 			if (editorElem == null)
@@ -329,10 +340,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 			if (enclosingPos == null)
 				return;
 			selection.add(element, enclosingPos);
-			// styledText.setSelection(start);
+			if (first == null) {
+				first = enclosingPos;
+			}
 			if (DEBUG)
 				System.out.println("selected " + element.getElement() + " in "
 						+ enclosingPos);
+		}
+		if (first != null) {
+			styledText.setTopIndex(styledText.getLineAtOffset(first.getStart()));
 		}
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
@@ -465,8 +481,9 @@ public class SelectionController implements MouseListener, VerifyListener,
 					.iterator();
 			while (itr.hasNext()) {
 				final Object sel = itr.next();
-				if (sel instanceof ILElement) {
-					elements.add((ILElement) sel);
+				final ILElement converted = convert(sel);
+				if (converted != null) {
+					elements.add(converted);
 				}
 			}
 			selectItems(elements.toArray(new ILElement[elements.size()]));
@@ -475,6 +492,22 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 	
+	/*
+	 * Attempts to convert the given object to a light element. Returns
+	 * <code>null</code> in case of failure.
+	 */
+	private ILElement convert(Object obj) {
+		if (obj instanceof ILElement) {
+			return (ILElement) obj;
+		}
+		if (obj instanceof IRodinElement) {
+			final IRodinElement elem = (IRodinElement) obj;
+			final ILElement root = mapper.getRoot();
+			return ILUtils.findElement(elem, root);
+		}
+		return null;
+	}
+
 	/**
 	 * Notifies any post selection listeners that a post selection event has
 	 * been received. Only listeners registered at the time this method is
