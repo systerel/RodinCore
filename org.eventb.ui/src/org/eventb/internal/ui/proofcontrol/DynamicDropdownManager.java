@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
+import static org.eventb.internal.ui.UIUtils.log;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,6 +31,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.prover.IUIDynTactic;
@@ -105,11 +111,47 @@ public class DynamicDropdownManager extends SelectionAdapter {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				final ITacticDescriptor tacDesc = (ITacticDescriptor) event.widget
-						.getData();
-				applyTactic(tacDesc.getTacticInstance(), us, null, true, null);
+				final ITacticDescriptor tacDesc;
+				tacDesc = (ITacticDescriptor) event.widget.getData();
+				try {
+					final ApplyTacticOperation op;
+					op = new ApplyTacticOperation(tacDesc, us);
+					new ProgressMonitorDialog(event.widget.getDisplay()
+							.getActiveShell()).run(true, true, op);
+				} catch (InvocationTargetException e) {
+					log(e.getCause(), "Exception while trying to apply " //
+							+ tacDesc.getTacticName());
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
 			}
 		});
+	}
+	
+	private static class ApplyTacticOperation implements IRunnableWithProgress {
+
+		private final ITacticDescriptor tacDesc;
+
+		private final IUserSupport userSupport;
+
+		public ApplyTacticOperation(ITacticDescriptor tacDesc,
+				IUserSupport userSupport) {
+			this.tacDesc = tacDesc;
+			this.userSupport = userSupport;
+		}
+
+		@Override
+		public void run(IProgressMonitor monitor) {
+			try {
+				final ITactic tacInstance = tacDesc.getTacticInstance();
+				applyTactic(tacInstance, userSupport, null, true, monitor);
+			} finally {
+				if (monitor != null) {
+					monitor.done();
+				}
+			}
+		}
+
 	}
 
 	public void update() {

@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.ui,
  org.eventb.core.seqprover,
  org.rodinp.core,
  org.eventb.core.ast,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.jface
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
  org.eventb.internal.ui.autocompletion;x-friends:="org.eventb.ui.tests",
