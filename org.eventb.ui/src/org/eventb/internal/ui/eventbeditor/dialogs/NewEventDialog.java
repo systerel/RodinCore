@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -236,7 +236,7 @@ public class NewEventDialog extends EventBDialog {
 		createSeparator();
 
 		createLabels("Guard label(s)", "Guard predicate(s)");
-
+		actionSeparator = null;
 		for (int i = 1; i <= DEFAULT_ITEM_NUMBER; i++) {
 			createParameter();
 			createGuard();
@@ -344,7 +344,7 @@ public class NewEventDialog extends EventBDialog {
 		final IEventBInputText grdPred = createContentText(parent);
 		addProposalAdapter(guard, PREDICATE_ATTRIBUTE, grdPred);
 		final Button button = createIsTheoremToogle(parent);
-		if (actionSeparator != null) {
+		if (actionSeparator != null && !actionSeparator.isDisposed()) {
 			moveAbove(grdLabel, actionSeparator);
 			separator.moveAbove(actionSeparator);
 			parent.moveAbove(actionSeparator);
