@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,16 +34,6 @@ public class PreferenceConstants {
 	 * Unique identifier of the preference page for the proving GUI.
 	 */
 	public static final String PROVING_UI_PAGE_ID = "org.eventb.ui.preferences.provingUI";
-
-	/**
-	 * Unique identifier of the preference page for appearance.
-	 */
-	public static final String APPEARANCE_PAGE_ID = "org.eventb.ui.preferences.appearance";
-
-	/**
-	 * Unique identifier of the preference page for colors and fonts.
-	 */
-	public static final String COLORS_AND_FONTS_PAGE_ID = "org.eventb.ui.colorsAndFonts";
 
 	/**
 	 * Unique identifier of the preference page for the sequent prover.
@@ -96,10 +86,20 @@ public class PreferenceConstants {
 	public static final String P_TEXT_FOREGROUND = "Text foreground"; //$NON-NLS-1$
 	
 	/**
+	 * Foreground font color definition.
+	 */
+	public static final String P_TEXT_FOREGROUND_DEFINITION = "org.eventb.ui.colorDefinition.text.foreground";
+
+	/**
 	 * Preference key for the choice of font color for comment.
 	 */
 	public static final String P_COMMENT_FOREGROUND = "Comment foreground"; //$NON-NLS-1$
 	
+	/**
+	 * Comment font color definition.
+	 */
+	public static final String P_COMMENT_FOREGROUND_DEFINITION = "org.eventb.ui.colorDefinition.comment.foreground";
+
 	/**
 	 * Preference key for the choice of required field background color
 	 */

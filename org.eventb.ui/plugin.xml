@@ -1466,18 +1466,6 @@
             name="%preferencePage.provingUIPage.name"/>
       <page
             category="org.eventb.ui.preferences.eventB"
-            class="org.eventb.internal.ui.preferences.AppearancePreferencePage"
-            id="org.eventb.ui.preferences.appearance"
-            name="%preferencePage.appearancePage.name">
-      </page>
-      <page
-            category="org.eventb.ui.preferences.appearance"
-            class="org.eventb.internal.ui.preferences.ColorsAndFontsPreferencePage"
-            id="org.eventb.ui.colorsAndFonts"
-            name="%preferencePage.colorsAndFontsPage.name">
-      </page>
-      <page
-            category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.SeqProverPreferencePage"
             id="org.eventb.ui.preferences.seqProver"
             name="%preferencePage.seqProverPage.name"/>
@@ -3315,4 +3303,26 @@
             type="org.eclipse.ui.part.FileEditorInput">
       </propertyTester>
    </extension>
+  <extension
+        point="org.eclipse.ui.themes">
+     <colorDefinition
+           categoryId="org.rodinp.keyboard.ui.presentation"
+           id="org.eventb.ui.colorDefinition.text.foreground"
+           isEditable="true"
+           label="%preferencePage.colorsAndFonts.textForeground.label"
+           value="COLOR_DARK_GREEN">
+        <description>
+           %preferencePage.colorsAndFonts.textForeground.description
+        </description>
+     </colorDefinition>
+     <colorDefinition
+           categoryId="org.rodinp.keyboard.ui.presentation"
+           id="org.eventb.ui.colorDefinition.comment.foreground"
+           label="%preferencePage.colorsAndFonts.commentForeground.label"
+           value="COLOR_DARK_GREEN">
+        <description>
+           %preferencePage.colorsAndFonts.commentForeground.description
+        </description>
+     </colorDefinition>
+  </extension>
 </plugin>

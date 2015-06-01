@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,9 @@ public class ModellingUIPreferencePage extends FieldEditorPreferencePage
 	 */
 	@Override
 	public void createFieldEditors() {
+		addField(new BooleanFieldEditor(PreferenceConstants.P_BORDER_ENABLE,
+				Messages.preferencepage_modellingui_showborders,
+				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.P_EXPAND_SECTIONS,
 				Messages.preferencepage_modellingui_expandSections,

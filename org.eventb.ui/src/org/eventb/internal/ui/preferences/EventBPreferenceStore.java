@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_COMMENT_FOREGROUND;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_COMMENT_FOREGROUND_DEFINITION;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_TEXT_FOREGROUND;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_TEXT_FOREGROUND_DEFINITION;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.ui.EventBUIPlugin;
@@ -57,7 +64,14 @@ public class EventBPreferenceStore {
 	 * @return the Color value of the desired preference.
 	 */
 	public static Color getColorPreference(String name) {
-		return EventBSharedColor.getColor(
-				PreferenceConverter.getColor(getPreferenceStore(), name));
+		final ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+		if (P_TEXT_FOREGROUND.equals(name)) {
+			return colorRegistry.get(P_TEXT_FOREGROUND_DEFINITION);
+		}
+		if (P_COMMENT_FOREGROUND.equals(name)) {
+			return colorRegistry.get(P_COMMENT_FOREGROUND_DEFINITION);
+		}
+		return EventBSharedColor.getColor(PreferenceConverter.getColor(
+				getPreferenceStore(), name));
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,6 +95,7 @@ public final class Messages {
 	public static String preferencepage_machineeditor_editorpagedescription;
 	public static String preferencepage_modellingui_description;
 	public static String preferencepage_modellingui_expandSections;
+	public static String preferencepage_modellingui_showborders;
 	
 	public static String preferencepage_pomtactic_title;
 	public static String preferencepage_pomtactic_enablementdescription;
@@ -120,11 +121,6 @@ public final class Messages {
 	public static String preferencepage_seqprover_simplify_proofs;
 	public static String preferencepage_twolistselectioneditor_availablelabel;
 	public static String preferencepage_twolistselectioneditor_selectedlabel;
-	public static String preferencepage_appearance_description;
-	public static String preferencepage_colorsandfonts_description;
-	public static String preferencepage_colorsandfonts_showborders;
-	public static String preferencepage_colorsandfonts_textForeground;
-	public static String preferencepage_colorsandfonts_commentForeground;
 	public static String preferencepage_prefixSettings_description;
 	public static String preferencepage_configureLink;
 	public static String preferencepage_prefixSettings_propIDTitle;
