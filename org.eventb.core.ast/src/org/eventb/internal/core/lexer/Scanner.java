@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -19,6 +17,7 @@ import java.util.ListIterator;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.lexer.GenLexer.LexState;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.AbstractGrammar.DefaultToken;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.ParseResult;
 
@@ -95,16 +94,17 @@ public class Scanner {
 		return lexer.getResult();
 	}
 
-	public static boolean isValidIdentifierName(
+	public static boolean isToken(
 			FormulaFactory factory,
-			String name) {
+			String name,
+			DefaultToken tokenKind) {
 		final BMath grammar = (BMath) factory.getGrammar();
 		final ParseResult result = new ParseResult(factory, name);
 		final Scanner scanner = new Scanner(name, result, grammar);
 		final Token token = scanner.Peek();
-		final int identKind = grammar.getKind(IDENT);
+		final int kind = grammar.getKind(tokenKind);
 		return (!result.hasProblem() && token != null
-				&& token.kind == identKind && token.val.equals(name));
+				&& token.kind == kind && token.val.equals(name));
 	}
 
 	public static class ScannerState {

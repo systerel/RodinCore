@@ -134,12 +134,9 @@ import org.eventb.internal.core.parser.operators.OperatorRelationship;
 import org.junit.Test;
 
 /**
- * This test class aims at supporting generic parser development. It is not part
- * of the AST project test and is intended to be removed when the development is
- * complete.
+ * This test class aims at supporting generic parser development.
  * 
  * @author Nicolas Beauger
- * TODO merge these tests with other tests (remove duplicates, add original)
  */
 public class TestGenParser extends AbstractTests {
 
@@ -1505,14 +1502,30 @@ public class TestGenParser extends AbstractTests {
 		doPredicatePatternTest("$P", expected);
 		
 	}
-	
-	@Test 
+
+	/**
+	 * Ensure that predicate variable names live in a different scope, and in
+	 * particular that they can have the same name as a reserved word.
+	 */
+	@Test
 	public void testPredicateVariableReservedName() throws Exception {
-		final Predicate expected = PRIME_FAC.makePredicateVariable(
-				EXT_PRIME.getSyntaxSymbol(), null);
-		doPredicatePatternTest("prime(1)", expected);
+		final PredicateVariable expected = PRIME_FAC.makePredicateVariable(
+				"$id", null);
+		doPredicatePatternTest(expected.getName(), expected);
 	}
-	
+
+	/**
+	 * Ensure that predicate variable names live in a different scope, and in
+	 * particular that they can have the same name as a reserved word created by
+	 * a mathematical extension.
+	 */
+	@Test
+	public void testPredicateVariableUserReservedName() throws Exception {
+		final PredicateVariable expected = PRIME_FAC.makePredicateVariable(//
+				"$" + EXT_PRIME.getSyntaxSymbol(), null);
+		doPredicatePatternTest(expected.getName(), expected);
+	}
+
 	@Test 
 	public void testPredVarInner() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(LAND, Arrays.<Predicate>asList(

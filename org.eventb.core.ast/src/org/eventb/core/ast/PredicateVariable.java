@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.GROUP_0;
-import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidPredicateName;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
@@ -79,12 +79,7 @@ public class PredicateVariable extends Predicate {
 	protected PredicateVariable(String name, SourceLocation location,
 			FormulaFactory ff) {
 		super(tag, ff, location, name.hashCode());
-		if (!name.startsWith(LEADING_SYMBOL)) {
-			throw new IllegalArgumentException("Name " + name
-					+ " does not start with " + LEADING_SYMBOL);
-		}
-		final String suffix = name.substring(LEADING_SYMBOL.length());
-		ensureValidIdentifierName(suffix, ff);
+		ensureValidPredicateName(name, ff);
 		this.name = name;
 		setPredicateVariableCache(this);
 		synthesizeType();
