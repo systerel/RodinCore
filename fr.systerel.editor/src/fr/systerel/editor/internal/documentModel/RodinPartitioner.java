@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static fr.systerel.editor.internal.editors.EditPos.computeLength;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -312,7 +313,7 @@ public class RodinPartitioner extends FastPartitioner {
 				if (isValidStartEnd(gapStart, gapEnd, false)) {
 					final int gapLength = computeLength(gapStart, gapEnd);
 					final TypedPosition gap = new TypedPosition(gapStart,
-							gapLength, RodinConfiguration.LABEL_TYPE.getName());
+							gapLength, RodinConfiguration.LABEL_TYPE);
 					fDocument.addPosition(getPositionCategory(), gap);
 				}
 				final TypedPosition position = new TypedPosition(offset,
@@ -403,7 +404,7 @@ public class RodinPartitioner extends FastPartitioner {
 					final ContentType affectedType = RodinConfiguration
 							.getContentType(affected.getType());
 					if (affectedType.isEditable()
-							&& affectedType == RodinConfiguration.IMPLICIT_COMMENT_TYPE) {
+							&& IMPLICIT_COMMENT_TYPE.equals(affectedType.getName())) {
 						if (affected.getOffset() + affected.getLength() == event
 								.getOffset()) {
 							fNewOffSet = affected.getOffset();

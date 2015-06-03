@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,16 +15,17 @@ import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.get
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getNonBasicAttributeDescs;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.getTabs;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_BOLD_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.getContentType;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.getFormulaContentType;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
@@ -239,9 +240,9 @@ public class RodinTextGenerator {
 		stream.addCommentHeaderRegion(element);
 		sizer.appendCheckForMultiline("");
 		processStringEventBAttribute(element, COMMENT_ATTRIBUTE,
-				getContentType(element, IMPLICIT_COMMENT_TYPE, COMMENT_TYPE),
-				true,
-				getTabs(stream.getLevel()) + sizer.getAllAlignementString());
+				getContentType(element.isImplicit() ? IMPLICIT_COMMENT_TYPE
+						: COMMENT_TYPE), true, getTabs(stream.getLevel())
+						+ sizer.getAllAlignementString());
 	}
 
 	private void processPredicateElement(ILElement element, TextAlignator sizer) {
@@ -267,11 +268,9 @@ public class RodinTextGenerator {
 	private void processIdentifierElement(ILElement element, TextAlignator sizer) {
 		final String identifierAttribute = element
 				.getAttribute(IDENTIFIER_ATTRIBUTE);
-		processStringEventBAttribute(
-				element,
-				IDENTIFIER_ATTRIBUTE,
-				getContentType(element, IMPLICIT_IDENTIFIER_TYPE,
-						IDENTIFIER_TYPE), false, "");
+		processStringEventBAttribute(element, IDENTIFIER_ATTRIBUTE,
+				getContentType(element.isImplicit() ? IMPLICIT_IDENTIFIER_TYPE
+						: IDENTIFIER_TYPE), false, "");
 		sizer.append(identifierAttribute);
 		if (!element.getAttributes().isEmpty()) {
 			final String s = RodinTextStream.getTabs(1);
@@ -297,11 +296,13 @@ public class RodinTextGenerator {
 	}
 
 	private ContentType getLabelType(ILElement element) {
+		final boolean isImplicit = element.isImplicit();
 		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
-				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null))
-			return getContentType(element, BOLD_IMPLICIT_LABEL_TYPE,
-					BOLD_LABEL_TYPE);
-		return getContentType(element, IMPLICIT_LABEL_TYPE, LABEL_TYPE);
+				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null)) {
+			return getContentType(isImplicit ? IMPLICIT_BOLD_LABEL_TYPE
+					: BOLD_LABEL_TYPE);
+		}
+		return getContentType(isImplicit ? IMPLICIT_LABEL_TYPE : LABEL_TYPE);
 	}
 
 	private void processElement(ILElement element) {
@@ -335,17 +336,12 @@ public class RodinTextGenerator {
 	}
 
 	private void processElementHandle(ILElement element, TextAlignator sizer) {
+		final boolean implicit = element.isImplicit();
+		final ContentType contentType = getContentType(implicit ? IMPLICIT_HANDLE_TYPE
+				: HANDLE_TYPE);
 		stream.appendElementHandle(element,
-				getContentType(element, IMPLICIT_HANDLE_TYPE, HANDLE_TYPE));
+				contentType);
 		sizer.append(RodinTextStream.ELEMENT_PREFIX);
-	}
-
-	private static ContentType getContentType(ILElement element,
-			ContentType implicitType, ContentType type) {
-		if (element.isImplicit()) {
-			return implicitType;
-		}
-		return type;
 	}
 
 	private static class TextAlignator {

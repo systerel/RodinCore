@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,13 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_PRESENTATION_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.KEYWORD_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.PRESENTATION_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.getAttributeContentType;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.getContentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,11 +84,19 @@ public class RodinTextStream {
 	}
 
 	protected void addElementRegion(String text, ILElement element,
+			String contentTypeName, IAttributeManipulation manipulation,
+			boolean multiLine, String alignmentStr) {
+		addElementRegion(text, element, getContentType(contentTypeName),
+				manipulation, multiLine, alignmentStr);
+	}
+	
+	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, String alignmentStr) {
 		final int start = builder.length();
 		final EditorRegion region = getElementRegion(start, getLevel(), text,
-				element, contentType, manipulation, multiLine, alignmentStr);
+				element, contentType, manipulation,
+				multiLine, alignmentStr);
 		builder.append(region.getText());
 		regions.add(region);
 	}
@@ -117,7 +127,9 @@ public class RodinTextStream {
 	}
 	
 	protected void addPresentationRegion(String text, ILElement element) {
-		addElementRegion(text, element, PRESENTATION_TYPE, null, false, text);
+		addElementRegion(text, element,
+				element.isImplicit() ? IMPLICIT_PRESENTATION_TYPE
+						: PRESENTATION_TYPE, null, false, text);
 	}
 
 	protected void addCommentHeaderRegion(ILElement element) {

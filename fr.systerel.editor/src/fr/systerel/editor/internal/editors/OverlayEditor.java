@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils
 import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.getPlatformHistory;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
 import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EDITION_MODE;
 import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EditionMode.OVERLAY;
 import static fr.systerel.editor.internal.sourceprovider.EditionModeProvider.EditionMode.STRUCTURAL;
@@ -91,7 +92,6 @@ import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinTextStream;
 import fr.systerel.editor.internal.presentation.IRodinColorConstant;
-import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 import fr.systerel.editor.internal.sourceprovider.EditionModeProvider;
@@ -541,7 +541,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 				.getAttributeManipulation();
 		final String original = editorText.getText();
 		final String text;
-		if (!contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
+		if (!COMMENT_TYPE.equals(contentType.getName())) {
 			// force translation
 			text = translateAllText(original);
 		} else {

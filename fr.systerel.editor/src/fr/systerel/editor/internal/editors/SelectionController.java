@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,13 +238,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private boolean handleHandleSelection(final int offset) {
 		final Interval inter = mapper.findInterval(offset);
 		final Interval interNext = mapper.findIntervalAfter(inter);
-		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+		if (inter != null
+				&& HANDLE_TYPE.equals(inter.getContentType().getName())) {
 			if (interNext != null && interNext.getOffset() != offset) {
 				toggleSelection(offset);
 				return true;
 			}
 		}
-		if (interNext != null && interNext.getContentType().equals(HANDLE_TYPE)
+		if (interNext != null
+				&& HANDLE_TYPE.equals(interNext.getContentType().getName())
 				&& interNext.getOffset() == offset) {
 			toggleSelection(offset);
 			return true;

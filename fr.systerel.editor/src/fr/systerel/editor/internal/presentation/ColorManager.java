@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,15 @@ public class ColorManager {
 			fColorTable.put(rgb, color);
 		}
 		return color;
+	}
+
+	public Color getImplicitColor(Color color) {
+		final float[] hsb = color.getRGB().getHSB();
+		final RGB rgb = new RGB(hsb[0],//
+				Math.max(0.1f, hsb[1] * 0.5f), // reduce saturation
+				Math.min(0.9f, hsb[2] + .2f) // augment brightness
+		);
+		return getColor(rgb);
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,13 @@ package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.LINESEPARATOR;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.editors.EditPos;
-import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -39,7 +40,8 @@ public class EditorRegion {
 			ILElement element, ContentType type,
 			IAttributeManipulation manipulation, boolean multiline,
 			String alignmentStr) {
-		this.addWhitespace = (type == RodinConfiguration.COMMENT_TYPE || type == RodinConfiguration.IMPLICIT_COMMENT_TYPE);
+		this.addWhitespace = (COMMENT_TYPE.equals(type.getName()) || //
+		IMPLICIT_COMMENT_TYPE.equals(type.getName()));
 		this.level = level;
 		this.elementText = RodinTextStream.processMulti(multiline,
 				alignmentStr, addWhitespace, text);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,12 @@ import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.SECTION_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +52,6 @@ import org.rodinp.core.emf.api.itf.ILUtils;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
-import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
@@ -577,28 +582,27 @@ public class DocumentMapper {
 		final IInternalElement ie = element.getElement();
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
+				final ContentType contentType = interval.getContentType();
+				if (contentType == null) {
+					return;
+				}
 				try {
-					final ContentType contentType = interval.getContentType();
-					if (contentType
-							.equals(RodinConfiguration.LEFT_PRESENTATION_TYPE)
-							|| (contentType
-									.equals(RodinConfiguration.SECTION_TYPE))) {
+					final String contentTypeName = contentType.getName();
+					if (LEFT_PRESENTATION_TYPE.equals(contentTypeName)
+							|| (SECTION_TYPE.equals(contentTypeName))) {
 						continue;
 					}
 					if (ie instanceof IIdentifierElement
-							&& (contentType
-									.equals(RodinConfiguration.IDENTIFIER_TYPE) || contentType
-									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
+							&& (IDENTIFIER_TYPE.equals(contentTypeName) || //
+							IMPLICIT_IDENTIFIER_TYPE.equals(contentTypeName))) {
 						checkIdentifier((IIdentifierElement) ie, interval);
 					} else if (ie instanceof ILabeledElement
-							&& (contentType
-									.equals(RodinConfiguration.IDENTIFIER_TYPE) || contentType
-									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
+							&& (IDENTIFIER_TYPE.equals(contentTypeName) || //
+							IMPLICIT_IDENTIFIER_TYPE.equals(contentTypeName))) {
 						checkLabeled((ILabeledElement) ie, interval);
 					} else if (ie instanceof ICommentedElement
-							&& (contentType
-									.equals(RodinConfiguration.COMMENT_TYPE) || contentType
-									.equals(RodinConfiguration.IMPLICIT_COMMENT_TYPE))) {
+							&& (COMMENT_TYPE.equals(contentTypeName) || //
+							IMPLICIT_COMMENT_TYPE.equals(contentTypeName))) {
 						checkCommented((ICommentedElement) ie, interval);
 					} else if (contentType instanceof AttributeContentType) {
 						checkAttribute(element, interval);
