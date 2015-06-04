@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eventb.core.tests.pm;
 
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -117,7 +118,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 		startDeltas();
@@ -194,7 +195,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 		startDeltas();

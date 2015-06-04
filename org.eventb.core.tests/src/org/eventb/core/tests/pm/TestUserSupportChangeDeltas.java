@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -231,7 +232,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		startDeltas();
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
@@ -267,7 +268,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		startDeltas();
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, reusablePO, originalPO);
@@ -305,7 +306,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, rebuiltPO, originalPO);
 		startDeltas();

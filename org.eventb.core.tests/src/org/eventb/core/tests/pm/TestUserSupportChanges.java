@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 
@@ -321,7 +322,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
 		assertString(
@@ -376,7 +377,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, reusablePO, originalPO);
 		assertEquals(
@@ -387,12 +388,12 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****** Proof Status for: original PO[org.eventb.core.psStatus] ******\n"
 						+ "Is dirty? true\n"
 						+ "** Proof Tree **\n"
-						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][x=1, x∈ℕ, f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), f∈ℤ ⇸ ℤ][] |- x=2		rv (1) (x=2) <>\n"
+						+ "{f=ℙ(ℤ×ℤ), x=ℤ}[][x=1, x∈ℕ, f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), f∈ℤ ⇸ ℤ][] |- x=2		rv (500) (x=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "** Cached **\n"
 						+ "** Searched **\n"
-						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][x=1, x∈ℕ, f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), f∈ℤ ⇸ ℤ][] |- x=2		rv (1) (x=2) <>\n"
+						+ "Current node: {f=ℙ(ℤ×ℤ), x=ℤ}[][x=1, x∈ℕ, f∈ℕ ⇸ ℕ, f(x)∈ℕ, x∈dom(f), f∈ℤ ⇸ ℤ][] |- x=2		rv (500) (x=2) <>\n"
 						+ "No pending subgoals!\n"
 						+ "\n"
 						+ "****************************\n"
@@ -442,7 +443,7 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		userSupport.applyTactic(Tactics.review(1), false,
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false,
 				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, rebuiltPO, originalPO);
 		assertString(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eventb.core.tests.pm;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.DEFAULT;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.junit.Assert.assertEquals;
@@ -150,7 +151,7 @@ public class TestUserSupports extends TestPM {
 
 		// Checks that all POs are discharged except the last one.
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -214,7 +215,7 @@ public class TestUserSupports extends TestPM {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 		userSupport.searchHyps("");
 		// Check delta
 
@@ -301,7 +302,7 @@ public class TestUserSupports extends TestPM {
 
 		// Checks that all POs are discharged except the last one.
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 
 		assertTrue("There are unsaved changes after applying a tactic ",
 				userSupport.hasUnsavedChanges());
@@ -331,7 +332,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Initially, there are no unsaved PO ", 0,
 				unsavedPOs.length);
 
-		userSupport.applyTactic(Tactics.review(1), false, monitor);
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
 		unsavedPOs = userSupport.getUnsavedPOs();
 		assertEquals("There are 1 unsaved changes after applying a tactic ", 1,
 				unsavedPOs.length);
