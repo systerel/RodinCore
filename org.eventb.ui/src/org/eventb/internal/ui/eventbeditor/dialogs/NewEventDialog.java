@@ -236,6 +236,8 @@ public class NewEventDialog extends EventBDialog {
 		createSeparator();
 
 		createLabels("Guard label(s)", "Guard predicate(s)");
+		parCount = 0;
+		grdCount = 0;
 		actionSeparator = null;
 		for (int i = 1; i <= DEFAULT_ITEM_NUMBER; i++) {
 			createParameter();
