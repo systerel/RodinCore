@@ -12,6 +12,7 @@ package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getAttributeDesc;
 import static fr.systerel.editor.internal.editors.CaretPositionHelper.getHelper;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.getPlatformHistory;
@@ -77,6 +78,7 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.ui.autocompletion.EventBContentProposalFactory;
 import org.eventb.ui.autocompletion.IEventBContentProposalAdapter;
 import org.eventb.ui.autocompletion.IEventBContentProposalProvider;
+import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -592,10 +594,16 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	private void modifyText(String text) {
+		final IAttributeDesc attrDesc = getAttributeDesc(interval.getElement(),
+				((AttributeContentType) interval.getContentType())
+						.getAttributeType());
+		String toSynchronize = text;
 		// force one-pass translation to avoid registering useless translation
 		// operations to the undo history
-		final String translated = translateAllText(text);
-		mapper.synchronizeInterval(interval, translated);
+		if (attrDesc.isMath()) {
+			toSynchronize = translateAllText(text);
+		}
+		mapper.synchronizeInterval(interval, toSynchronize);
 		resizeAndPositionOverlay(editorText, parent, interval);
 	}
 
