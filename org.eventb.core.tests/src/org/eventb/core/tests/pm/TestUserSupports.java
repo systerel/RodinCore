@@ -39,6 +39,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -212,7 +213,7 @@ public class TestUserSupports extends TestPM {
 
 	@Test
 	public void testPrevUndischargedPOForce() throws CoreException {
-		// Select the first undischarged PO.
+		// Select the first undischarged PO : PO7
 		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
@@ -253,6 +254,133 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
+	}
+	
+	/**
+	 * Ensures that nextUndischargedPO() without forcing correctly handles
+	 * uncertain statuses.
+	 */
+	@Test
+	public void testNextUndischargedPOUncertainUnforce() throws Exception {
+		userSupport = newUserSupport(psRoot);
+		final IPSStatus[] statuses = userSupport.getInput().getStatuses();
+		// set uncertain status for the third PO
+		statuses[2].setConfidence(IConfidence.UNCERTAIN_MAX, monitor);
+		userSupport.setCurrentPO(statuses[6], monitor); // review PO7
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
+		assertNextPO(false, statuses[0], statuses[2]);
+		assertNextPO(false, statuses[1], statuses[2]);
+		assertNextPO(false, statuses[2], statuses[2]);
+		assertNextPO(false, statuses[3], statuses[2]);
+		assertNextPO(false, statuses[4], statuses[2]);
+		assertNextPO(false, statuses[5], statuses[2]);
+		assertNextPO(false, statuses[6], statuses[2]);
+	}
+	
+	/**
+	 * Ensures that nextUndischargedPO() with forcing correctly handles
+	 * uncertain statuses.
+	 */
+	@Test
+	public void testNextUndischargedPOUncertainForce() throws Exception {
+		userSupport = newUserSupport(psRoot);
+		final IPSStatus[] statuses = userSupport.getInput().getStatuses();
+		// set uncertain status for the third PO
+		statuses[2].setConfidence(IConfidence.UNCERTAIN_MAX, monitor);
+		userSupport.setCurrentPO(statuses[6], monitor); // review PO7
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
+		// all POs are discharged but PO3 is uncertain
+		assertNextPO(true, statuses[0], statuses[2]);
+		assertNextPO(true, statuses[1], statuses[2]);
+		assertNextPO(true, statuses[2], statuses[2]);
+		assertNextPO(true, statuses[3], statuses[2]);
+		assertNextPO(true, statuses[4], statuses[2]);
+		assertNextPO(true, statuses[5], statuses[2]);
+		assertNextPO(true, statuses[6], statuses[2]);
+	}
+	
+	/**
+	 * Ensures that prevUndischargedPO() without forcing correctly handles
+	 * uncertain statuses.
+	 */
+	@Test
+	public void testPreviousUndischargedPOUncertainUnforce() throws Exception {
+		userSupport = newUserSupport(psRoot);
+		final IPSStatus[] statuses = userSupport.getInput().getStatuses();
+		// set uncertain status for the third PO
+		statuses[2].setConfidence(IConfidence.UNCERTAIN_MAX, monitor);
+		userSupport.setCurrentPO(statuses[6], monitor); // review PO7
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
+		assertPrevPO(false, statuses[0], statuses[2]);
+		assertPrevPO(false, statuses[1], statuses[2]);
+		assertPrevPO(false, statuses[2], statuses[2]);
+		assertPrevPO(false, statuses[3], statuses[2]);
+		assertPrevPO(false, statuses[4], statuses[2]);
+		assertPrevPO(false, statuses[5], statuses[2]);
+		assertPrevPO(false, statuses[6], statuses[2]);
+	}
+
+	/**
+	 * Ensures that prevUndischargedPO() with forcing correctly handles
+	 * uncertain statuses.
+	 */
+	@Test
+	public void testPreviousUndischargedPOUncertainForce() throws Exception {
+		userSupport = newUserSupport(psRoot);
+		final IPSStatus[] statuses = userSupport.getInput().getStatuses();
+		// set uncertain status for the third PO
+		statuses[2].setConfidence(IConfidence.UNCERTAIN_MAX, monitor);
+		userSupport.setCurrentPO(statuses[6], monitor); // review PO7
+		userSupport.applyTactic(Tactics.review(REVIEWED_MAX), false, monitor);
+		assertPrevPO(true, statuses[0], statuses[2]);
+		assertPrevPO(true, statuses[1], statuses[2]);
+		assertPrevPO(true, statuses[2], statuses[2]);
+		assertPrevPO(true, statuses[3], statuses[2]);
+		assertPrevPO(true, statuses[4], statuses[2]);
+		assertPrevPO(true, statuses[5], statuses[2]);
+		assertPrevPO(true, statuses[6], statuses[2]);
+	}
+	
+	/**
+	 * Ensures that a selected proof status changed after calling
+	 * nextUndischargedPO() and that the selected PO is the one expected.
+	 */
+	private void assertNextPO(boolean force, IPSStatus origin,
+			IPSStatus expectedStatus) throws RodinDBException {
+		userSupport.setCurrentPO(origin, monitor);
+		userSupport.nextUndischargedPO(force, monitor);
+		assertEquals("Current Proof State is " + expectedStatus.toString(),
+				expectedStatus, userSupport.getCurrentPO().getPSStatus());
+	}
+
+	/**
+	 * Ensures that a selected proof status changed after calling
+	 * prevUndischargedPO() and that the selected PO is the one expected.
+	 */
+	private void assertPrevPO(boolean force, IPSStatus origin,
+			IPSStatus expectedStatus) throws RodinDBException {
+		userSupport.setCurrentPO(origin, monitor);
+		userSupport.prevUndischargedPO(force, monitor);
+		assertEquals("Current Proof State is " + expectedStatus.toString(),
+				expectedStatus, userSupport.getCurrentPO().getPSStatus());
+	}
+
+	/**
+	 * Ensures that previousUndischargedPO() method selects the first PO which
+	 * is discharged, but which status is uncertain.
+	 */
+	@Test
+	public void testPreviousUndischargedPOUncertain() throws Exception {
+		userSupport = newUserSupport(psRoot);
+		final IPSStatus[] statuses = userSupport.getInput().getStatuses();
+		statuses[1].setConfidence(IConfidence.UNCERTAIN_MAX, monitor);
+		userSupport.setCurrentPO(statuses[2], monitor);
+		userSupport.prevUndischargedPO(true, monitor);
+		final IProofState currentPO = userSupport.getCurrentPO();
+		assertFalse(currentPO == null);
+		final IPSStatus psStatus = currentPO.getPSStatus();
+		assertEquals(statuses[1], psStatus);
+		assertSame(psStatus.getConfidence(), IConfidence.UNCERTAIN_MAX);
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,11 +140,11 @@ public class UserSupport implements IUserSupport {
 		IProofState newProofState = null;
 		IProofState firstOpenedProofState = null;
 		for (IProofState proofState : proofStates) {
-			if (firstOpenedProofState == null && !proofState.isClosed()) {
+			if (firstOpenedProofState == null && proofState.isPending()) {
 				firstOpenedProofState = proofState;
 			}
 			if (found) {
-				if (!proofState.isClosed()) {
+				if (proofState.isPending()) {
 					newProofState = proofState;
 					break;
 				}
@@ -207,7 +207,7 @@ public class UserSupport implements IUserSupport {
 					found = true;
 				}
 			}
-			if (!proofState.isClosed()) {
+			if (proofState.isPending()) {
 				lastOpenedProofState = proofState;
 			}
 		}

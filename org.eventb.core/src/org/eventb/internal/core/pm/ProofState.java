@@ -236,6 +236,19 @@ public class ProofState implements IProofState {
 
 		return isSequentDischarged();
 	}
+	
+	@Override
+	public boolean isPending() throws RodinDBException {
+		boolean pending = false;
+		if (pt != null) {
+			pending = pt.getConfidence() <= IConfidence.UNCERTAIN_MAX;
+		}
+		if (dirty) {
+			return pending; // dirty state we consider only the status in memory
+		} // else we consider also the status on disk
+		return pending || isUncertain(status.getConfidence())
+				|| !isSequentDischarged();
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added more getters
+ *     Systerel - add isPending()
  *******************************************************************************/
 package org.eventb.core.pm;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
@@ -69,6 +71,23 @@ public interface IProofState extends IProofTreeChangedListener {
 	 *             is some problems occurred.
 	 */
 	public abstract boolean isClosed() throws RodinDBException;
+
+	/**
+	 * Tells whether the current proof is pending. <br>
+	 * The current proof is pending if:
+	 * <ul>
+	 * <li>there is a proof tree and the proof tree confidence is lower or
+	 * equals to than {@link IConfidence#REVIEWED_MAX}</li>
+	 * <li>there is no proof tree, the status on disk of the sequent
+	 * corresponding to the proof obligation obligation is not discharged.</li>
+	 * </ul>
+	 * 
+	 * @return <code>true</code> if the current proof is pending,
+	 *         <code>false</code> otherwise.
+	 * @throws RodinDBException
+	 * @since 3.2
+	 */
+	boolean isPending() throws RodinDBException;
 
 	/**
 	 * Get the corresponding proof state status {@link IPSStatus}. This must
