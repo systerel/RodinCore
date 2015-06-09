@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -143,7 +144,8 @@ public class PostAutoTacticPreferencePage extends
 			// this page is opened from an other preference page
 			workspaceCache = page.cache;
 		} else {
-			workspaceCache = makeTacticProfileCache(node);
+			workspaceCache = makeTacticProfileCache(InstanceScope.INSTANCE
+					.getNode(node.name()));
 			workspaceCache.load();
 		}
 	}
