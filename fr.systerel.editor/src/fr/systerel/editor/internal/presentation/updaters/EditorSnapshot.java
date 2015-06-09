@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,6 +180,9 @@ public class EditorSnapshot {
 	 * </ul>
 	 */
 	public int getCaretOffset() {
+		if (caretPosition == null) {
+			return editor.getStyledText().getCharCount();
+		}
 		final EditorElement editorElement = mapper
 				.findEditorElement(caretPosition.element);
 		final StyledText text = editor.getStyledText();
@@ -239,7 +242,11 @@ public class EditorSnapshot {
 				}
 			}
 		}
-		return Math.max(0, caretLine - caretPosition.distanceFromTopLine);
+		int distanceFromTopLine = 0;
+		if (caretPosition != null) {
+			distanceFromTopLine = caretPosition.distanceFromTopLine;
+		}
+		return Math.max(0, caretLine - distanceFromTopLine);
 	}
 
 	/**
