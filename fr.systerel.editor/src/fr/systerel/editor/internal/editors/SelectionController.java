@@ -350,7 +350,10 @@ public class SelectionController implements MouseListener, VerifyListener,
 						+ enclosingPos);
 		}
 		if (first != null) {
-			styledText.setTopIndex(styledText.getLineAtOffset(first.getStart()));
+			final int start = first.getStart();
+			if (!(viewer.overlapsWithVisibleRegion(start, first.getLength()))) {
+				styledText.setTopIndex(styledText.getLineAtOffset(start));
+			}
 		}
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
