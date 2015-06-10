@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeAllPred;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.tests.DatatypeParser.parse;
+import static org.eventb.core.ast.tests.ExtensionHelper.EXT_PRIME;
 import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
-import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toIdentArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toPredArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toTypeArray;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
@@ -1389,8 +1391,10 @@ public class FormulaFactory {
 	 * {@link Formula#PREDICATE_VARIABLE}.
 	 * <p>
 	 * Predicate variables are named with a special prefix (
-	 * {@link PredicateVariable#LEADING_SYMBOL}) followed by a valid identifier
-	 * name.
+	 * {@link PredicateVariable#LEADING_SYMBOL}) followed by an identifier
+	 * name.  As predicate variables live in a scope different from regular
+	 * identifiers, their suffix can be an otherwise reserved name (e.g., the
+	 * name <code>$id</code> is valid).
 	 * </p>
 	 * 
 	 * @param name
@@ -1406,7 +1410,7 @@ public class FormulaFactory {
 	 *             {@link PredicateVariable#LEADING_SYMBOL} prefix is not a
 	 *             valid identifier
 	 * @since 1.2
-	 * @see #isValidIdentifierName(String)
+	 * @see #isValidPredicateName(String)
 	 */
 	public PredicateVariable makePredicateVariable(String name,
 			SourceLocation location) {
@@ -2143,7 +2147,21 @@ public class FormulaFactory {
 	 *         identifier
 	 */
 	public boolean isValidIdentifierName(String name) {
-		return Scanner.isValidIdentifierName(this, name);
+		return Scanner.isToken(this, name, IDENT);
+	}
+
+	/**
+	 * Returns whether the given name is a valid predicate variable name (that
+	 * is any identifier name prefixed by a <code>$</code>).
+	 * 
+	 * @param name
+	 *            the name to test
+	 * @return <code>true</code> if the given name is a valid name for a
+	 *         predicate variable
+	 * @since 3.2
+	 */
+	public boolean isValidPredicateName(String name) {
+		return Scanner.isToken(this, name, PRED_VAR);
 	}
 
 	/**

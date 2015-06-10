@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eventb.core.ast.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 
 import java.util.HashMap;
