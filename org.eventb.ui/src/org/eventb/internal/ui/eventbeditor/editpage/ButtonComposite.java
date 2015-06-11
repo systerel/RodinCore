@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2015 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - introduced read only elements
  *     Systerel - fixed Hyperlink.setImage() calls
  *     Systerel - used eclipse decorator mechanism
+ *     Systerel - now remove label listener when disposed
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -24,6 +25,8 @@ import java.util.Arrays;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Image;
@@ -47,7 +50,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
-public class ButtonComposite implements ILabelProviderListener {
+public class ButtonComposite implements ILabelProviderListener, DisposeListener {
 
 	Composite composite;
 
@@ -159,6 +162,7 @@ public class ButtonComposite implements ILabelProviderListener {
 		updateLinks();
 		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()
 				.addListener(this);
+		composite.addDisposeListener(this);
 	}
 
 	public void updateLinks() {
@@ -238,6 +242,12 @@ public class ButtonComposite implements ILabelProviderListener {
 		}
 		final IRodinElement element = elementComp.getElement();
 		setHyperlinkImage(selectHyperlink, getDecoratedImage(element));
+	}
+
+	@Override
+	public void widgetDisposed(DisposeEvent e) {
+		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()
+				.removeListener(this);
 	}
 
 }
