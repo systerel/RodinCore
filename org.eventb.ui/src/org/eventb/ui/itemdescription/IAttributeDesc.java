@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,5 +100,17 @@ public interface IAttributeDesc {
 	 * @see #isTextAttribute()
 	 */
 	boolean isMultiLine();
+
+	/**
+	 * Tells whether mathematical symbols from the attribute value should be
+	 * translated. Returns <code>false</code> if the attribute in not a text
+	 * attribute.
+	 * 
+	 * @return <code>true</code> if the mathematical symbols contained by the
+	 *         text attribute value should be translated, <code>false</code>
+	 *         otherwise
+	 * @since 3.2
+	 */
+	boolean isMath();
 
 }

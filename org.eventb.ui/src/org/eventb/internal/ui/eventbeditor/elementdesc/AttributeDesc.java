@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2015 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,4 +82,10 @@ public abstract class AttributeDesc extends ItemDesc implements IAttributeDesc {
 				+ (isHorizontalExpand ? "horizontal" : "not horizontal") + ", "
 				+ prefix + ", " + suffix;
 	}
+	
+	@Override
+	public boolean isMath() {
+		return false;
+	}
+
 }
