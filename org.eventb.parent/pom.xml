@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<www-basedir>/tmp/rodin-build/rodin-3.1</www-basedir>
+		<www-basedir>/tmp/rodin-build/rodin-3.2</www-basedir>
 
 		<!-- Plug-in versions -->
 		<tycho-version>0.21.0</tycho-version>
