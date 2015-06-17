@@ -423,7 +423,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			if (offset >= 0 && handleHandleSelection(offset)) {
 				return;
 			}
-			overlayEditor.showAtOffset(offset);
+			overlayEditor.showAtOffset(offset, true);
 		}
 	}
 
