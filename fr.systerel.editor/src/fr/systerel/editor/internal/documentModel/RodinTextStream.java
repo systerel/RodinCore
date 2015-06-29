@@ -16,6 +16,7 @@ import static fr.systerel.editor.internal.presentation.RodinConfiguration.KEYWOR
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.PRESENTATION_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.SECTION_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.getAttributeContentType;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.getContentType;
 
@@ -145,7 +146,7 @@ public class RodinTextStream {
 
 	protected void addSectionRegion(String title, ILElement element) {
 		appendPresentationTabs(element);
-		addElementRegion(title, element, KEYWORD_TYPE, null, false, title);
+		addElementRegion(title, element, SECTION_TYPE, null, false, title);
 		appendLineSeparator(element);
 	}
 

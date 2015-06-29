@@ -135,11 +135,7 @@ public class RodinTextGenerator {
 				continue;
 			}
 			start = stream.getLength();
-			if (stream.getLevel() < MIN_LEVEL) {
-				stream.addSectionRegion(desc.getPrefix(childType), e);
-			} else {
-				stream.addKeywordRegion(desc.getPrefix(childType), e);
-			}
+			addHeader(e, desc.getPrefix(childType));
 			for (ILElement in : c) {
 				if (in.isImplicit() && !showImplicitElements) {
 					continue; // do not show implicit elements
@@ -158,10 +154,19 @@ public class RodinTextGenerator {
 			}
 		}
 		final String childrenSuffix = desc.getChildrenSuffix();
-		if (!childrenSuffix.isEmpty())
-			stream.addKeywordRegion(childrenSuffix, e);
+		if (!childrenSuffix.isEmpty()) {
+			addHeader(e, childrenSuffix);
+		}
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
 			stream.decrementIndentation();
+		}
+	}
+
+	private void addHeader(ILElement e, final String header) {
+		if (stream.getLevel() <= MIN_LEVEL) {
+			stream.addSectionRegion(header, e);
+		} else {
+			stream.addKeywordRegion(header, e);
 		}
 	}
 
