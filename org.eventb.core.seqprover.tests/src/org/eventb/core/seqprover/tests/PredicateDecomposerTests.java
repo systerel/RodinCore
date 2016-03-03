@@ -7,21 +7,22 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Bug fixing
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genPredList;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.proofBuilder.PredicateDecomposer;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -60,6 +61,22 @@ public class PredicateDecomposerTests {
 				"parity∈ℤ ⇸ ℤ");
 	}
 	
+	/**
+	 * Utility test method for decomposing a predicate into sub-goals.
+	 * 
+	 * htson: This should compare the collections without order, since
+	 * {@link PredicateDecomposer#decompose(Predicate)} return a {@link List}
+	 * from some {@link Set}.
+	 * 
+	 * @param typenvImage
+	 *            the string image of the type environment for type checking the
+	 *            predicates.
+	 * @param inputImage
+	 *            the string image of the input predicate.
+	 * @param subgoals
+	 *            the array of string images of the sub-goals.
+	 * @see PredicateDecomposer#decompose(Predicate)
+	 */
 	private void predicateTest(String typenvImage, String inputImage,
 			String... subgoals) {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage);
@@ -67,8 +84,13 @@ public class PredicateDecomposerTests {
 		final ISealedTypeEnvironment stypenv = typenv.makeSnapshot();
 		final PredicateDecomposer decomposer = new PredicateDecomposer(stypenv);
 		final List<Predicate> actual = decomposer.decompose(input);
-		final Collection<Predicate> expected = genPredList(typenv, subgoals);
-		assertEquals(expected, actual);
+		final List<Predicate> expected = genPredList(typenv, subgoals);
+		// ORIGINAL: assertEquals(expected, actual);
+		Assert.assertEquals("Incorrect number of predicates", expected.size(),
+				actual.size());
+		Assert.assertTrue("Missing expected predicate",
+				actual.containsAll(expected));
+		Assert.assertTrue("Unexpected predicate", expected.containsAll(actual));
 	}
 
 }

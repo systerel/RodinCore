@@ -14,7 +14,6 @@ import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +25,7 @@ import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContradictionFinder.ContradictionInSetFinder;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ContrHypsTests extends AbstractReasonerTests {
@@ -156,7 +156,7 @@ public class ContrHypsTests extends AbstractReasonerTests {
 		// contradiction with P and ¬P' (where P' is equivalent to P)
 		successfullDeserialization(new String[]{"¬1=x","x=1"}, "¬1=x");
 		// contradiction with a strict relation
-		successfullDeserialization(new String[]{"1≥x","1<x"}, "1≥x");
+		successfullDeserialization(new String[]{"1≥x","1<x"}, "1<x");
 		successfullDeserialization(new String[]{"1<x","1>x"}, "1<x");
 		// before the normalization
 		successfullDeserialization(new String[]{"1<x","¬1≤x"}, "¬1≤x");
@@ -165,7 +165,7 @@ public class ContrHypsTests extends AbstractReasonerTests {
 	public void successfullDeserialization(String[] neededHyps, String hyp){
 		Predicate expected = genPred(hyp);
 		Predicate actual = DeserializeInput(neededHyps);
-		assertTrue(expected.equals(actual));
+		Assert.assertTrue("Incorrect predicate", expected.equals(actual));
 	}
 
 	@Test
