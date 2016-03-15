@@ -13,7 +13,6 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +20,7 @@ import java.util.Set;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -35,10 +35,10 @@ public class ContrHypsTests extends AbstractReasonerTests {
 		return "org.eventb.core.seqprover.contrHyps";
 	}
 	
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+	@Test
+	public void testSuccessfulContrHyps() throws UntranslatableException {
 		final String typEnv = "A=ℙ(ℤ); B=ℙ(ℤ)";
-		return new SuccessfullReasonerApplication[] {
+		testSuccessfulReasonerApplications("ContrHyps", new SuccessfullReasonerApplication[] {
 				// H, nP† ;; P |- G
 
 				// Simple contradiction
@@ -94,7 +94,7 @@ public class ContrHypsTests extends AbstractReasonerTests {
 				// Conjunctive negation (equivalent predicate)
 				makeSuccess(" 1=x ;; 2>x ;; 3≥x ;; ¬ (x=1 ∧ x<2 ∧ x≤3) |- 3>x ", //
 						"¬ (x=1 ∧ x<2 ∧ x≤3)"),
-		};
+		});
 	}
 
 	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
@@ -113,23 +113,25 @@ public class ContrHypsTests extends AbstractReasonerTests {
 		return new SuccessfullReasonerApplication(sequent, input);
 	}
 
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {
-				// No negation of simple contradiction
-				makeFailure("¬ 1>x |- 2>x ", //
-							"¬ 1>x", //
-							"Predicate ¬1>x is not contradicted by hypotheses"),
-				// No negation of conjunctive contradiction
-				makeFailure(" 1>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
-							"¬ (1>x ∧ 2>x)", //
-							"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
-				// Conjunctive negation and conjunctive contradiction
-				// (conjuncts will have to be split so that the rule applies)
-				makeFailure(" 1>x ∧ 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
-							"¬ (1>x ∧ 2>x)", //
-							"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
-				};
+	@Test
+	public void testUnsuccessfulContrHyps() {
+		testUnsuccessfulReasonerApplications(
+				"ContrHyps",
+				new UnsuccessfullReasonerApplication[] {
+						// No negation of simple contradiction
+						makeFailure("¬ 1>x |- 2>x ", //
+								"¬ 1>x", //
+								"Predicate ¬1>x is not contradicted by hypotheses"),
+						// No negation of conjunctive contradiction
+						makeFailure(" 1>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
+								"¬ (1>x ∧ 2>x)", //
+								"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
+						// Conjunctive negation and conjunctive contradiction
+						// (conjuncts will have to be split so that the rule
+						// applies)
+						makeFailure(" 1>x ∧ 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
+								"¬ (1>x ∧ 2>x)", //
+								"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"), });
 	}
 
 	private UnsuccessfullReasonerApplication makeFailure(String sequentImage,
@@ -178,5 +180,25 @@ public class ContrHypsTests extends AbstractReasonerTests {
 
 	public void unSuccessfullDeserialization(String[] neededHyps){
 		assertNull(DeserializeInput(neededHyps));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see AbstractReasonerTests#getSuccessfulReasonerApplications()
+	 */
+	@Override
+	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+		return new SuccessfullReasonerApplication[] {};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see AbstractReasonerTests#getUnsuccessfullReasonerApplications()
+	 */
+	@Override
+	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
+		return new UnsuccessfullReasonerApplication[] {};
 	}
 }

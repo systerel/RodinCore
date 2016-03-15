@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;

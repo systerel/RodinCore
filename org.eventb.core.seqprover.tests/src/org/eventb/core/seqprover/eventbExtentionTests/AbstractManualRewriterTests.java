@@ -14,8 +14,6 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collection;

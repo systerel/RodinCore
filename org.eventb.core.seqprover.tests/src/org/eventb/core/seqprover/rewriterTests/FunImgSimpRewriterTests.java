@@ -13,8 +13,6 @@ package org.eventb.core.seqprover.rewriterTests;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
