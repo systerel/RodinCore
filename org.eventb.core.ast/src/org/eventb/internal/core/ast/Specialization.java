@@ -45,6 +45,26 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  */
 public class Specialization extends Substitution implements ISpecialization {
 
+	private class SpecializationTypeRewriter extends TypeRewriter {
+
+		public SpecializationTypeRewriter(FormulaFactory ff) {
+			super(ff);
+		}
+
+		@Override
+		public void visit(GivenType type) {
+			final Type rewritten = getOrSetDefault(type);
+			// If the given type is not rewritten, use the super algorithm
+			// (this implements factory translation)
+			if (type.equals(rewritten)) {
+				super.visit(type);
+			} else {
+				result = rewritten;
+			}
+		}
+
+	}
+
 	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
 
@@ -57,26 +77,14 @@ public class Specialization extends Substitution implements ISpecialization {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Substitute>();
-		speTypeRewriter = new TypeRewriter(ff) {
-			@Override
-			public void visit(GivenType type) {
-				final Type rewritten = getOrSetDefault(type);
-				// If the given type is not rewritten, use the super algorithm
-				// (this implements factory translation)
-				if (type.equals(rewritten)) {
-					super.visit(type);
-				} else {
-					result = rewritten;
-				}
-			}
-		};
+		speTypeRewriter = new SpecializationTypeRewriter(ff);
 	}
 
 	public Specialization(Specialization other) {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
-		speTypeRewriter = other.speTypeRewriter;
+		speTypeRewriter = new SpecializationTypeRewriter(other.ff);
 	}
 
 	@Override

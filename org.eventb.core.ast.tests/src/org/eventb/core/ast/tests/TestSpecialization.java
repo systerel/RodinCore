@@ -410,4 +410,20 @@ public class TestSpecialization extends AbstractTests {
 		assertNull(spec.get(aS));
 	}
 
+	/**
+	 * Ensures that bug 757 has been fixed: a clone must not change the types of
+	 * the original specialization, but its types.
+	 */
+	@Test
+	public void bug757() {
+		final ISpecialization clone = spec.clone();
+		assertNull(spec.get(S));
+		assertNull(clone.get(S));
+
+		assertEquals(S, S.specialize(clone));
+
+		assertNull(spec.get(S));
+		assertEquals(S, clone.get(S));
+	}
+
 }
