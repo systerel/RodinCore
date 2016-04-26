@@ -281,7 +281,7 @@ public abstract class AbstractReasonerTests extends TestCase {
 				.<IFormulaExtension> singleton(AssocExt.getInstance()));
 	}
 	
-	protected IProverSequent translateSequent(IProverSequent sequent) {
+	protected IProverSequent translateSequent(IProverSequent sequent) throws UntranslatableException {
 		final FormulaFactory newFactory = augmentFactory(sequent
 				.getFormulaFactory());
 		return sequent.translate(newFactory);
