@@ -399,7 +399,7 @@ public class ProofBuilder {
 		
 		if (!(reuseSuccessfull || replaySuccessfull)) {
 			// force reuse
-			reuseSuccessfull = node.applyRule(reuseProofRule);
+//			reuseSuccessfull = node.applyRule(reuseProofRule);
 		}
 			
 
