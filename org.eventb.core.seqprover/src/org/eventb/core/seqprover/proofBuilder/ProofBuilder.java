@@ -137,6 +137,7 @@ public class ProofBuilder {
 		node.setComment(skeleton.getComment());
 
 		IProofRule reuseProofRule = skeleton.getRule();
+		Object origin = node.getSequent().getOrigin();
 
 		// if this is an open proof skeleton node, we are done
 		if (reuseProofRule == null) {
@@ -147,7 +148,7 @@ public class ProofBuilder {
 		if (proofMonitor != null && proofMonitor.isCanceled())
 			return false;
 
-		if (!isRuleReusable(reuseProofRule)) {
+		if (!isRuleReusable(reuseProofRule, origin)) {
 			return false;
 		}
 
@@ -453,8 +454,9 @@ public class ProofBuilder {
 
 	private static boolean tryReuse(IProofRule reuseProofRule,
 			IProofTreeNode node, ReplayHints replayHints) {
+		Object origin = node.getSequent().getOrigin();
 		// If there are replay hints or version conflict do not try a reuse
-		if (replayHints.isEmpty() && isRuleReusable(reuseProofRule)) {
+		if (replayHints.isEmpty() && isRuleReusable(reuseProofRule, origin)) {
 			// see if reuse works
 			return node.applyRule(reuseProofRule);
 		}

@@ -300,11 +300,11 @@ public class ProverLib {
 							+ sequent);
 		}
 		
-		return areContextDependentRulesReusable(skeleton);
+		return areContextDependentRulesReusable(skeleton, sequent.getOrigin());
 	}
 	
 	// traverse skeleton to check if context dependent rules are reusable
-	private static boolean areContextDependentRulesReusable(IProofSkeleton skeleton) {
+	private static boolean areContextDependentRulesReusable(IProofSkeleton skeleton, Object origin) {
 		final Deque<IProofSkeleton> nodes = new ArrayDeque<IProofSkeleton>();
 		nodes.add(skeleton);
 		
@@ -315,7 +315,7 @@ public class ProverLib {
 			
 			final IReasonerDesc reasoner = rule.getReasonerDesc();
 			if (reasoner.isContextDependent()
-					&& !isContextDependentRuleReusable(rule)) {
+					&& !isContextDependentRuleReusable(rule, origin)) {
 				return false;
 			}
 			nodes.addAll(asList(node.getChildNodes()));
@@ -336,8 +336,9 @@ public class ProverLib {
 	 * 
 	 * @param rule
 	 */
-	private static boolean isContextDependentRuleReusable(IProofRule rule) {
-		final IProverSequent sequent = ((ProofRule) rule).makeSequent();
+	private static boolean isContextDependentRuleReusable(IProofRule rule, Object origin) {
+		final IProverSequent sequent = ((ProofRule) rule).makeSequent(origin);
+		
 		final IReasoner reasoner = rule.generatedBy();
 		final IReasonerInput input = rule.generatedUsing();
 		final IReasonerOutput output = reasoner.apply(sequent, input, Util.getNullProofMonitor());
@@ -363,10 +364,10 @@ public class ProverLib {
 	 * @return <code>true</code> iff the proof rule is reusable
 	 * @since 3.0
 	 */
-	public static boolean isRuleReusable(IProofRule rule) {
+	public static boolean isRuleReusable(IProofRule rule, Object origin) {
 		final IReasonerDesc reasoner = rule.getReasonerDesc();
 		if (reasoner.isContextDependent()
-				&& !isContextDependentRuleReusable(rule)) {
+				&& !isContextDependentRuleReusable(rule, origin)) {
 			return false;
 		}
 		return reasoner.isTrusted();

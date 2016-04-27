@@ -471,13 +471,13 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		return typeEnv.makeSnapshot();
 	}
 	
-	public IProverSequent makeSequent() {
+	public IProverSequent makeSequent(Object origin) {
 		final ITypeEnvironment typenv = getTypeEnvironment();
 		final Predicate newGoal = makeGoal();
 		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
 		hyps.addAll(getNeededHyps());
 		hyps.addAll(actedHyps());
-		return ProverFactory.makeSequent(typenv, hyps, null, hyps, newGoal);
+		return ProverFactory.makeSequent(typenv, hyps, null, hyps, newGoal, origin);
 
 	}
 }
