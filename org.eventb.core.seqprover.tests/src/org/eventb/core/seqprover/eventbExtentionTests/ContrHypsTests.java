@@ -14,7 +14,7 @@ import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -142,7 +142,7 @@ public class ContrHypsTests extends AbstractReasonerTests {
 	}
 
 	public Predicate DeserializeInput(String[] neededHyps) {
-		Set<Predicate> hyps = new HashSet<Predicate>();
+		Set<Predicate> hyps = new LinkedHashSet<Predicate>();
 		for (String neededHyp : neededHyps) {
 			hyps.add(genPred(neededHyp));
 		}
@@ -158,7 +158,7 @@ public class ContrHypsTests extends AbstractReasonerTests {
 		// contradiction with P and ¬P' (where P' is equivalent to P)
 		successfullDeserialization(new String[]{"¬1=x","x=1"}, "¬1=x");
 		// contradiction with a strict relation
-		successfullDeserialization(new String[]{"1≥x","1<x"}, "1<x");
+		successfullDeserialization(new String[]{"1≥x","1<x"}, "1≥x");
 		successfullDeserialization(new String[]{"1<x","1>x"}, "1<x");
 		// before the normalization
 		successfullDeserialization(new String[]{"1<x","¬1≤x"}, "¬1≤x");
