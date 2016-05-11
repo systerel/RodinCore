@@ -162,8 +162,8 @@ public class Datatype implements IDatatype {
 	}
 
 	/**
-	 * The hash code is computed from the datatype's type constructors and
-	 * constructor extensions.
+	 * The hash code is computed from the datatype's type constructors,
+	 * constructor extensions, and the origin.
 	 */
 	@Override
 	public int hashCode() {
@@ -171,6 +171,7 @@ public class Datatype implements IDatatype {
 		int result = 1;
 		result = prime * result + typeCons.hashCode();
 		result = prime * result + constructors.hashCode();
+		result = prime * result + origin.hashCode();
 		return result;
 	}
 
@@ -190,7 +191,8 @@ public class Datatype implements IDatatype {
 		final Datatype other = (Datatype) obj;
 		return this.typeCons.isSimilarTo(other.typeCons)
 				&& areSimilarConstructors(this.constructors.values(),
-						other.constructors.values());
+						other.constructors.values()) &&
+						this.getOrigin().equals(other.getOrigin());
 	}
 
 	private static boolean areSimilarConstructors(
