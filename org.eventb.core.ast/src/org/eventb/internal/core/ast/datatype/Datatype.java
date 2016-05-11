@@ -171,14 +171,13 @@ public class Datatype implements IDatatype {
 		int result = 1;
 		result = prime * result + typeCons.hashCode();
 		result = prime * result + constructors.hashCode();
-		result = prime * result + origin.hashCode();
+		result = prime * result + (origin == null ? 0 : origin.hashCode());
 		return result;
 	}
 
 	/**
 	 * The datatypes are the same if they have the same name and "similar" type
-	 * constructors and constructor extensions. The origin of the datatype is
-	 * <strong>irrelevant</strong>.
+	 * constructors, constructor extensions, and origins.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -192,7 +191,22 @@ public class Datatype implements IDatatype {
 		return this.typeCons.isSimilarTo(other.typeCons)
 				&& areSimilarConstructors(this.constructors.values(),
 						other.constructors.values()) &&
-						this.getOrigin().equals(other.getOrigin());
+						areSimilarOrigins(this.getOrigin(), other.getOrigin());
+	}
+
+	/**
+	 * Utility method to compare the datatype origin.
+	 * 
+	 * @param mine
+	 *            mine origin
+	 * @param other
+	 *            the other's origin
+	 * @return <code>true</code> if the two origin are equal.
+	 */
+	private boolean areSimilarOrigins(Object mine, Object other) {
+		if (mine == null)
+			return (other == null);
+		return mine.equals(other);
 	}
 
 	private static boolean areSimilarConstructors(
