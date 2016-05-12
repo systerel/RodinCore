@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
 package org.eventb.internal.core.seqprover.proofBuilder;
 
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+import static org.eventb.internal.core.seqprover.proofBuilder.PredicateDecomposer.decompose;
 
-import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -246,11 +247,9 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 			final Predicate nodeGoal = sequent.goal();
 			final ISealedTypeEnvironment env = sequent.typeEnvironment();
 
-			final PredicateDecomposer decomposer = new PredicateDecomposer(env);
-			final List<Predicate> subgoalsSequent = decomposer
-					.decompose(nodeGoal);
-			final List<Predicate> subgoalsSkeleton = decomposer
-					.decompose(childSkelGoal);
+			final Set<Predicate> subgoalsSequent = decompose(env, nodeGoal);
+			final Set<Predicate> subgoalsSkeleton = decompose(env,
+					childSkelGoal);
 
 			if (subgoalsSkeleton.containsAll(subgoalsSequent)
 					&& sequent.containsHypotheses(dependencies

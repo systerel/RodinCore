@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -32,7 +30,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISimpleVisitor2;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -47,32 +44,34 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 /**
- * Visitor that decomposes a predicate into a list of subgoals. Clients shall
- * use this class with <code>new PredicateDecomposer().decompose(formula)</code>
- * .
+ * Visitor that decomposes a predicate into a set of subgoals. Clients shall
+ * use only the static method @{link #decompose}. 
  * 
  * @since 2.0
  */
 public class PredicateDecomposer implements ISimpleVisitor2 {
 
-	private final Set<Predicate> subGoals;
-	private ISealedTypeEnvironment env;
+	private final Set<Predicate> subGoals = new HashSet<Predicate>();
+	private final ISealedTypeEnvironment env;
 
-	public PredicateDecomposer(ITypeEnvironment env) {
-		this.subGoals = new HashSet<Predicate>();
-		this.env = env.makeSnapshot();
+	private PredicateDecomposer(ISealedTypeEnvironment env) {
+		this.env = env;
 	}
 
 	/**
-	 * Decompose a predicate into a list of subgoals.
+	 * Decompose a predicate into a set of subgoals.
 	 * 
+	 * @param env
+	 *            type environment
 	 * @param pred
+	 *            the predicate to decompose
 	 * @return list of the subgoals from the given predicate
 	 */
-	public List<Predicate> decompose(Predicate pred) {
-		subGoals.clear();
-		pred.accept(this);
-		return new ArrayList<Predicate>(subGoals);
+	public static Set<Predicate> decompose(ISealedTypeEnvironment env,
+			Predicate pred) {
+		final PredicateDecomposer decomposer = new PredicateDecomposer(env);
+		pred.accept(decomposer);
+		return decomposer.subGoals;
 	}
 
 	@Override

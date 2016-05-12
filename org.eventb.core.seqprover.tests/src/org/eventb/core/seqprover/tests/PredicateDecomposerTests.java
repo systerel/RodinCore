@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,22 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     University of Southampton - Bug fixing
+ *     University of Southampton - comment
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genPredList;
+import static org.eventb.core.seqprover.tests.TestLib.genPreds;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
+import static org.eventb.internal.core.seqprover.proofBuilder.PredicateDecomposer.decompose;
+import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.proofBuilder.PredicateDecomposer;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -64,17 +64,13 @@ public class PredicateDecomposerTests {
 	/**
 	 * Utility test method for decomposing a predicate into sub-goals.
 	 * 
-	 * htson: This should compare the collections without order, since
-	 * {@link PredicateDecomposer#decompose(Predicate)} return a {@link List}
-	 * from some {@link Set}.
-	 * 
 	 * @param typenvImage
 	 *            the string image of the type environment for type checking the
-	 *            predicates.
+	 *            predicates
 	 * @param inputImage
-	 *            the string image of the input predicate.
+	 *            the string image of the input predicate
 	 * @param subgoals
-	 *            the array of string images of the sub-goals.
+	 *            the string images of the expected sub-goals
 	 * @see PredicateDecomposer#decompose(Predicate)
 	 */
 	private void predicateTest(String typenvImage, String inputImage,
@@ -82,15 +78,9 @@ public class PredicateDecomposerTests {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final ISealedTypeEnvironment stypenv = typenv.makeSnapshot();
-		final PredicateDecomposer decomposer = new PredicateDecomposer(stypenv);
-		final List<Predicate> actual = decomposer.decompose(input);
-		final List<Predicate> expected = genPredList(typenv, subgoals);
-		// ORIGINAL: assertEquals(expected, actual);
-		Assert.assertEquals("Incorrect number of predicates", expected.size(),
-				actual.size());
-		Assert.assertTrue("Missing expected predicate",
-				actual.containsAll(expected));
-		Assert.assertTrue("Unexpected predicate", expected.containsAll(actual));
+		final Set<Predicate> expected = genPreds(typenv, subgoals);
+		final Set<Predicate> actual = decompose(stypenv, input);
+		assertEquals(expected, actual);
 	}
 
 }
