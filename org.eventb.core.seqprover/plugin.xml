@@ -522,6 +522,7 @@
       <autoTactic
             auto="true"
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$AutoRewriteTac"
+            description="%autoRewriteTacDesc"
             id="autoRewriteTac"
             name="%autoRewriteTacName"
             post="true"/>
