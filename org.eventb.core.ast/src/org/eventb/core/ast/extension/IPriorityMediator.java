@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,10 @@ package org.eventb.core.ast.extension;
 public interface IPriorityMediator {
 
 	/**
-	 * Adds a priority between operators of given ids.
+	 * Adds a priority between the two operators with the given ids.
+	 * <p>
+	 * Both operators must belong to the same operator group.
+	 * </p>
 	 * <p>
 	 * lowOpId operator gets a lower priority than highOpId operator.
 	 * </p>
@@ -37,6 +40,9 @@ public interface IPriorityMediator {
 	 *            an operator id
 	 * @throws CycleError
 	 *             if adding the given priority introduces a cycle
+	 * @throws IllegalArgumentException
+	 *             if the operators do not belong to the same operator group, or
+	 *             if one of the given operator ids has not been declared
 	 */
 	void addPriority(String lowOpId, String highOpId) throws CycleError;
 
@@ -56,7 +62,8 @@ public interface IPriorityMediator {
 	 *            a group id
 	 * @throws CycleError
 	 *             if adding the given priority introduces a cycle
+	 * @throws IllegalArgumentException
+	 *             if one of the given group ids has not been declared
 	 */
-	void addGroupPriority(String lowGroupId, String highGroupId)
-			throws CycleError;
+	void addGroupPriority(String lowGroupId, String highGroupId) throws CycleError;
 }
