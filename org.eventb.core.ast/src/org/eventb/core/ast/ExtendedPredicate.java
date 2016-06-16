@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.ExtensionHelper.makeParserPrinter;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
@@ -98,7 +99,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 				@Override
 				public boolean isSpaced() {
-					return false;
+					return ExtendedPredicateParsers.this.getOperatorCoverage().getNotation() == INFIX;
 				}
 				
 				@Override
