@@ -30,7 +30,7 @@ import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.PREDICATE_VARIABLE;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
-import static org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests.DT_FAC;
+import static org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests.DT_FAC;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.filterLanguage;
 import static org.junit.Assert.assertEquals;

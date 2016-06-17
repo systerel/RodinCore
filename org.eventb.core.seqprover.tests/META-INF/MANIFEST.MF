@@ -11,7 +11,7 @@ Require-Bundle: org.eventb.core.ast.tests,
  org.eventb.core.ast,
  org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
+Export-Package: org.eventb.core.seqprover.reasonerExtensionTests,
  org.eventb.core.seqprover.rewriterTests,
  org.eventb.core.seqprover.tests
 Bundle-Localization: plugin

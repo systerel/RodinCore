@@ -15,8 +15,8 @@ import static org.eventb.core.seqprover.tests.TestLib.genIdent;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.reasonerExtentionTests.RecordDatatype;
-import org.eventb.core.seqprover.reasonerExtentionTests.SimpleDatatype;
+import org.eventb.core.seqprover.reasonerExtensionTests.RecordDatatype;
+import org.eventb.core.seqprover.reasonerExtensionTests.SimpleDatatype;
 import org.junit.Test;
 
 /**

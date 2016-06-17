@@ -11,7 +11,7 @@
 package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
-import static org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests.DT_FAC;
+import static org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests.DT_FAC;
 import static org.eventb.internal.core.seqprover.ReasonerRegistry.getReasonerRegistry;
 import static org.junit.Assert.*;
 

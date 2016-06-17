@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.pfun;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.pinj;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.psur;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.rel;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.srel;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.strel;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tbij;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tfun;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tinj;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.trel;
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tsur;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.pfun;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.pinj;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.psur;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.rel;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.srel;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.strel;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.tbij;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.tfun;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.tinj;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.trel;
+import static org.eventb.core.seqprover.eventbExtensionTests.OperatorString.tsur;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.mapOvrG;
 
