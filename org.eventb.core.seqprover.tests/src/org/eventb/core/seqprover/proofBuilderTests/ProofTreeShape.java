@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
@@ -28,6 +29,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 
 /**
@@ -128,8 +130,17 @@ public abstract class ProofTreeShape {
 		};
 	}
 
-	public static final ProofTreeShape reasoner(final IReasoner r,
-			final IReasonerInput input, final ProofTreeShape... childShapes) {
+	public static final ProofTreeShape reasoner(final IReasoner r, final ProofTreeShape... childShapes) {
+		return reasoner(r, new EmptyInput(), IConfidence.DISCHARGED_MAX, childShapes);
+	}
+
+	public static final ProofTreeShape reasoner(final IReasoner r, final IReasonerInput input,
+			final ProofTreeShape... childShapes) {
+		return reasoner(r, input, IConfidence.DISCHARGED_MAX, childShapes);
+	}
+
+	public static final ProofTreeShape reasoner(final IReasoner r, final IReasonerInput input,
+			final int checkRuleConfidence, final ProofTreeShape... childShapes) {
 		return new ProofTreeShape() {
 
 			@Override
@@ -137,6 +148,7 @@ public abstract class ProofTreeShape {
 				assertReasonerID(node, r.getReasonerID());
 				final IProofRule rule = node.getRule();
 				assertEquals(input.getClass(), rule.generatedUsing().getClass());
+				assertEquals(checkRuleConfidence, node.getRuleConfidence());
 				if (r instanceof IVersionedReasoner) {
 					assertEquals(((IVersionedReasoner) r).getVersion(), rule
 							.getReasonerDesc().getVersion());
