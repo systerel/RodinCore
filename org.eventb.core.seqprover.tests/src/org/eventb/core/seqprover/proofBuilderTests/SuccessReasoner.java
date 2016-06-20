@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Systerel and others.
+ * Copyright (c) 2009, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilderTests;
-
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
  * @author "Nicolas Beauger"
@@ -26,9 +24,8 @@ public class SuccessReasoner extends AbstractFakeReasoner {
 		super(DEFAULT_VERSION, DEFAULT_SUCCESS);
 	}
 
-	public SuccessReasoner(int version, boolean success,
-			IAntecedent... antecedents) {
-		super(version, success, antecedents);
+	public SuccessReasoner(int version, boolean success) {
+		super(version, success);
 	}
 
 	public String getReasonerID() {
