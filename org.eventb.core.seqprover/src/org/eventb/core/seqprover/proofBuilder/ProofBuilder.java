@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilder;
 
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
 
 import org.eventb.core.seqprover.IConfidence;
@@ -398,14 +399,7 @@ public class ProofBuilder {
 					proofMonitor);
 		}
 		
-		if (!(reuseSuccessfull || replaySuccessfull)) {
-			// force reuse
-//			reuseSuccessfull = node.applyRule(reuseProofRule);
-		}
-			
-
 		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
-		IProofTreeNode[] nodeChildren = node.getChildNodes();
 
 		// Check if rebuild for this node was successful
 		if (!(reuseSuccessfull || replaySuccessfull)) {
@@ -413,7 +407,9 @@ public class ProofBuilder {
 				// Actually the rule was doing nothing, can be by-passed.
 				return recRebuild(node, skelChildren[0], replayHints,
 						tryReplayUncertain, proofMonitor);
-			} else {
+			}
+			final boolean appliedUncertain = tryUncertainRule(node, reuseProofRule);
+			if (!appliedUncertain) {
 				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
 						.withDependencies(skeleton);
 				if (skelDeps.applyTo(node, true, proofMonitor)) {
@@ -421,10 +417,10 @@ public class ProofBuilder {
 				}
 				return skelDeps.applyTo(node, false, proofMonitor);
 			}
+			// rule applied: proceed below
 		}
 
-		// Maybe check if the node has the same number of children as the prNode
-		// it may be smart to replay anyway, but generate a warning.
+		final IProofTreeNode[] nodeChildren = node.getChildNodes();
 		if (nodeChildren.length != skelChildren.length) {
 			// Create a skeleton with dependencies
 			ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
@@ -484,6 +480,31 @@ public class ProofBuilder {
 			return node.applyRule(replayProofRule);
 		}
 		return false;
+	}
+
+	/**
+	 * Try to apply the given uncertain rule.
+	 * <p>
+	 * Lowers its confidence to uncertain if needed.
+	 * </p>
+	 * 
+	 * @param node
+	 *            an open node
+	 * @param reuseProofRule
+	 *            an uncertain rule to apply
+	 * @return <code>true</code> if rule application succeeded,
+	 *         <code>false</code> otherwise
+	 */
+	private static boolean tryUncertainRule(IProofTreeNode node, IProofRule reuseProofRule) {
+		final IProofRule uncertainRule;
+		if (reuseProofRule.getConfidence() <= IConfidence.UNCERTAIN_MAX) {
+			uncertainRule = reuseProofRule;
+		} else {
+			uncertainRule = makeProofRule(reuseProofRule.getReasonerDesc(),
+					reuseProofRule.generatedUsing(), reuseProofRule.getGoal(), reuseProofRule.getNeededHyps(),
+					IConfidence.UNCERTAIN_MAX, reuseProofRule.getDisplayName(), reuseProofRule.getAntecedents());
+		}
+		return node.applyRule(uncertainRule);
 	}
 
 	/**
