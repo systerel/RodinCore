@@ -17,6 +17,8 @@ import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.TWO;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.NONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +69,16 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				return new SubParsers.ExtendedPredParen(kind, tag);
 			}
 
+		},
+		
+		EXTENDED_RELATIONAL_PREDICATE(INFIX, PREDICATE, TWO, NONE, TWO, false) {
+
+			@Override
+			protected IParserPrinter<ExtendedPredicate> makeParser(int kind,
+					int tag) {
+				return new SubParsers.ExtendedRelationalPredicateParser(kind, tag);
+			}
+			
 		},
 		;
 

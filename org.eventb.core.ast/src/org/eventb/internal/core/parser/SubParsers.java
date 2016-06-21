@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -958,6 +958,36 @@ public class SubParsers {
 		}
 	}
 
+	public static class ExtendedRelationalPredicateParser extends BinaryLedExprParser<ExtendedPredicate> {
+
+		public ExtendedRelationalPredicateParser(int kind, int tag) {
+			super(kind, tag);
+		}
+
+		@Override
+		protected void checkValue(ParserContext pc,
+				Expression left, Expression right)
+				throws SyntaxError {
+			EXTENDED_PRED.check(pc, tag, asList(left, right));
+		}
+
+		@Override
+		protected ExtendedPredicate makeValue(FormulaFactory factory,
+				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
+			return EXTENDED_PRED.make(factory, tag, asList(left, right), loc);
+		}
+		
+		@Override
+		protected Expression getLeft(ExtendedPredicate parent) {
+			return parent.getChildExpressions()[0];
+		}
+
+		@Override
+		protected Expression getRight(ExtendedPredicate parent) {
+			return parent.getChildExpressions()[1];
+		}
+	}
+
 	public static abstract class LedImage extends BinaryLedExprParser<BinaryExpression> {
 
 		public LedImage(int kind, int tag) {
@@ -1062,6 +1092,29 @@ public class SubParsers {
 		@Override
 		protected Predicate getRight(BinaryPredicate parent) {
 			return parent.getRight();
+		}
+	}
+
+	public static class ExtendedBinaryPredicateParser extends BinaryLedPredParser<ExtendedPredicate> {
+
+		public ExtendedBinaryPredicateParser(int kind, int tag) {
+			super(kind, tag);
+		}
+
+		@Override
+		protected ExtendedPredicate makeValue(FormulaFactory factory, Predicate left,
+				Predicate right, SourceLocation loc) throws SyntaxError {
+			return EXTENDED_PRED.make(factory, tag, asList(left, right), loc);
+		}
+		
+		@Override
+		protected Predicate getLeft(ExtendedPredicate parent) {
+			return parent.getChildPredicates()[0];
+		}
+
+		@Override
+		protected Predicate getRight(ExtendedPredicate parent) {
+			return parent.getChildPredicates()[1];
 		}
 	}
 
