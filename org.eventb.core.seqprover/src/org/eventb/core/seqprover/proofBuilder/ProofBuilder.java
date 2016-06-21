@@ -72,8 +72,8 @@ import org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependen
  */
 public class ProofBuilder {
 
-	private static IReasonerOutput getReplayOutput(IProofRule rule,
-			IProverSequent sequent, IProofMonitor proofMonitor) {
+	private static IReasonerOutput getReplayOutput(IProofRule rule, IProverSequent sequent,
+			IProofMonitor proofMonitor) {
 		final IReasoner reasoner = rule.generatedBy();
 
 		final IReasonerInput reasonerInput = rule.generatedUsing();
@@ -81,11 +81,9 @@ public class ProofBuilder {
 		return reasoner.apply(sequent, reasonerInput, proofMonitor);
 	}
 
-	private static IProofSkeleton getTranslatedSkeleton(IProofTreeNode node,
-			IProofSkeleton skeleton) {
+	private static IProofSkeleton getTranslatedSkeleton(IProofTreeNode node, IProofSkeleton skeleton) {
 		final IProofRule skelRule = skeleton.getRule();
-		if (skelRule == null
-				|| node.getFormulaFactory() == skelRule.getFormulaFactory()) {
+		if (skelRule == null || node.getFormulaFactory() == skelRule.getFormulaFactory()) {
 			return skeleton;
 		}
 		return ProverLib.translate(skeleton, node.getFormulaFactory());
@@ -127,14 +125,12 @@ public class ProofBuilder {
 	 * 
 	 *         TODO : Test this code & wrap using appropriate tactic.
 	 */
-	public static boolean reuse(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean reuse(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		skeleton = getTranslatedSkeleton(node, skeleton);
 		return recReuse(node, skeleton, proofMonitor);
 	}
 
-	private static boolean recReuse(IProofTreeNode node,
-			IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+	private static boolean recReuse(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -169,8 +165,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= recReuse(nodeChildren[i], skelChildren[i],
-					proofMonitor);
+			combinedResult &= recReuse(nodeChildren[i], skelChildren[i], proofMonitor);
 		}
 		return combinedResult;
 	}
@@ -201,14 +196,12 @@ public class ProofBuilder {
 	 * 
 	 *         TODO : Test this code & wrap using appropriate tactic.
 	 */
-	public static boolean replay(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean replay(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		skeleton = getTranslatedSkeleton(node, skeleton);
 		return recReplay(node, skeleton, proofMonitor);
 	}
 
-	private static boolean recReplay(IProofTreeNode node,
-			IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+	private static boolean recReplay(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -224,16 +217,14 @@ public class ProofBuilder {
 			return false;
 
 		// Try to replay the rule
-		final IReasonerOutput replayReasonerOutput = getReplayOutput(
-				reuseProofRule, node.getSequent(), proofMonitor);
+		final IReasonerOutput replayReasonerOutput = getReplayOutput(reuseProofRule, node.getSequent(), proofMonitor);
 
 		// Check if reasoner successfully generated a rule.
 		if (!(replayReasonerOutput instanceof IProofRule))
 			return false;
 
 		// Check if the generated rule is applicable
-		boolean replaySuccessfull = node
-				.applyRule((IProofRule) replayReasonerOutput);
+		boolean replaySuccessfull = node.applyRule((IProofRule) replayReasonerOutput);
 		if (!replaySuccessfull)
 			return false;
 
@@ -247,8 +238,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= recReplay(nodeChildren[i], skelChildren[i],
-					proofMonitor);
+			combinedResult &= recReplay(nodeChildren[i], skelChildren[i], proofMonitor);
 		}
 		return combinedResult;
 	}
@@ -298,8 +288,8 @@ public class ProofBuilder {
 	 *             {@link #rebuild(IProofTreeNode, IProofSkeleton, ReplayHints, boolean, IProofMonitor)}
 	 */
 	@Deprecated
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			ReplayHints replayHints, IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
+			IProofMonitor proofMonitor) {
 		return rebuild(node, skeleton, replayHints, true, proofMonitor);
 	}
 
@@ -359,19 +349,16 @@ public class ProofBuilder {
 	 *         </ul>
 	 * @since 3.1
 	 */
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			ReplayHints replayHints, boolean tryReplayUncertain,
-			IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
+			boolean tryReplayUncertain, IProofMonitor proofMonitor) {
 		if (replayHints == null) {
 			replayHints = new ReplayHints(node.getFormulaFactory());
 		}
 		skeleton = getTranslatedSkeleton(node, skeleton);
-		return recRebuild(node, skeleton, replayHints, tryReplayUncertain,
-				proofMonitor);
+		return recRebuild(node, skeleton, replayHints, tryReplayUncertain, proofMonitor);
 	}
 
-	private static boolean recRebuild(IProofTreeNode node,
-			IProofSkeleton skeleton, ReplayHints replayHints,
+	private static boolean recRebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
 			boolean tryReplayUncertain, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
@@ -397,8 +384,7 @@ public class ProofBuilder {
 		}
 
 		if (certain ? !reuseSuccessfull : tryReplayUncertain) {
-			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints,
-					proofMonitor);
+			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints, proofMonitor);
 		}
 
 		final IProofSkeleton[] skelChildren = skeleton.getChildNodes();
@@ -406,8 +392,7 @@ public class ProofBuilder {
 		if (!(reuseSuccessfull || replaySuccessfull)) {
 			if (ruleIsSkip(node, reuseProofRule)) {
 				// Actually the rule was doing nothing, can be by-passed.
-				return recRebuild(node, skelChildren[0], replayHints,
-						tryReplayUncertain, proofMonitor);
+				return recRebuild(node, skelChildren[0], replayHints, tryReplayUncertain, proofMonitor);
 			}
 			final boolean appliedUncertain = tryUncertainRule(node, reuseProofRule);
 			if (!appliedUncertain) {
@@ -428,17 +413,15 @@ public class ProofBuilder {
 			if (replaySuccessfull) {
 				// generate hints for continuing the proof
 				newReplayHints = replayHints.clone();
-				newReplayHints.addHints(reuseProofRule.getAntecedents()[i],
-						node.getRule().getAntecedents()[i]);
+				newReplayHints.addHints(reuseProofRule.getAntecedents()[i], node.getRule().getAntecedents()[i]);
 			}
-			combinedResult &= recRebuild(nodeChildren[i], skelChildren[i],
-					newReplayHints, tryReplayUncertain, proofMonitor);
+			combinedResult &= recRebuild(nodeChildren[i], skelChildren[i], newReplayHints, tryReplayUncertain,
+					proofMonitor);
 		}
 		return combinedResult;
 	}
 
-	private static boolean tryReuse(IProofRule reuseProofRule,
-			IProofTreeNode node, ReplayHints replayHints) {
+	private static boolean tryReuse(IProofRule reuseProofRule, IProofTreeNode node, ReplayHints replayHints) {
 		Object origin = node.getSequent().getOrigin();
 		// If there are replay hints or version conflict do not try a reuse
 		if (replayHints.isEmpty() && isRuleReusable(reuseProofRule, origin)) {
@@ -448,8 +431,7 @@ public class ProofBuilder {
 		return false;
 	}
 
-	private static boolean tryReplay(IProofRule reuseProofRule,
-			IProofTreeNode node, ReplayHints replayHints,
+	private static boolean tryReplay(IProofRule reuseProofRule, IProofTreeNode node, ReplayHints replayHints,
 			IProofMonitor proofMonitor) {
 		IReasoner reasoner = reuseProofRule.generatedBy();
 		// Check if the reasoner is installed
@@ -459,8 +441,7 @@ public class ProofBuilder {
 		IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
 		IProofRule replayProofRule = null;
 		replayHints.applyHints(reasonerInput);
-		final IReasonerOutput replayReasonerOutput = reasoner.apply(
-				node.getSequent(), reasonerInput, proofMonitor);
+		final IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(), reasonerInput, proofMonitor);
 
 		// Check if the reasoner successfully generated a proof rule.
 		if (replayReasonerOutput instanceof IProofRule) {
@@ -489,9 +470,9 @@ public class ProofBuilder {
 		if (reuseProofRule.getConfidence() <= IConfidence.UNCERTAIN_MAX) {
 			uncertainRule = reuseProofRule;
 		} else {
-			uncertainRule = makeProofRule(reuseProofRule.getReasonerDesc(),
-					reuseProofRule.generatedUsing(), reuseProofRule.getGoal(), reuseProofRule.getNeededHyps(),
-					IConfidence.UNCERTAIN_MAX, reuseProofRule.getDisplayName(), reuseProofRule.getAntecedents());
+			uncertainRule = makeProofRule(reuseProofRule.getReasonerDesc(), reuseProofRule.generatedUsing(),
+					reuseProofRule.getGoal(), reuseProofRule.getNeededHyps(), IConfidence.UNCERTAIN_MAX,
+					reuseProofRule.getDisplayName(), reuseProofRule.getAntecedents());
 		}
 		return node.applyRule(uncertainRule);
 	}
@@ -504,8 +485,7 @@ public class ProofBuilder {
 	private static boolean ruleIsSkip(IProofTreeNode node, IProofRule rule) {
 		final IProverSequent sequent = node.getSequent();
 		final IProverSequent[] newSequents = rule.apply(sequent);
-		return newSequents != null && newSequents.length == 1
-				&& newSequents[0] == sequent;
+		return newSequents != null && newSequents.length == 1 && newSequents[0] == sequent;
 	}
 
 	/**
@@ -598,8 +578,7 @@ public class ProofBuilder {
 	 *             {@link #rebuild(IProofTreeNode, IProofSkeleton, ReplayHints, boolean, IProofMonitor)}
 	 */
 	@Deprecated
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		return rebuild(node, skeleton, null, false, proofMonitor);
 	}
 
