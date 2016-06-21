@@ -15,6 +15,7 @@ package org.eventb.core.seqprover.proofBuilder;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
+import static org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependencies.withDependencies;
 
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -375,7 +376,7 @@ public class ProofBuilder {
 
 		node.setComment(skeleton.getComment());
 
-		IProofRule reuseProofRule = skeleton.getRule();
+		final IProofRule reuseProofRule = skeleton.getRule();
 
 		// if this is an open proof skeleton node, we are done
 		if (reuseProofRule == null) {
@@ -383,25 +384,25 @@ public class ProofBuilder {
 		}
 
 		// Check if replay was canceled.
-		if (proofMonitor != null && proofMonitor.isCanceled())
+		if (proofMonitor != null && proofMonitor.isCanceled()) {
 			return false;
+		}
 
 		boolean reuseSuccessfull = false;
 		boolean replaySuccessfull = false;
-		
+
 		final boolean certain = reuseProofRule.getConfidence() > IConfidence.UNCERTAIN_MAX;
 		if (certain) {
 			reuseSuccessfull = tryReuse(reuseProofRule, node, replayHints);
 		}
-		
+
 		if (certain ? !reuseSuccessfull : tryReplayUncertain) {
 			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints,
 					proofMonitor);
 		}
-		
-		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
 
-		// Check if rebuild for this node was successful
+		final IProofSkeleton[] skelChildren = skeleton.getChildNodes();
+
 		if (!(reuseSuccessfull || replaySuccessfull)) {
 			if (ruleIsSkip(node, reuseProofRule)) {
 				// Actually the rule was doing nothing, can be by-passed.
@@ -410,28 +411,16 @@ public class ProofBuilder {
 			}
 			final boolean appliedUncertain = tryUncertainRule(node, reuseProofRule);
 			if (!appliedUncertain) {
-				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
-						.withDependencies(skeleton);
-				if (skelDeps.applyTo(node, true, proofMonitor)) {
-					return true;
-				}
-				return skelDeps.applyTo(node, false, proofMonitor);
+				return tryCompatibleSubtree(node, skeleton, proofMonitor);
 			}
 			// rule applied: proceed below
 		}
 
 		final IProofTreeNode[] nodeChildren = node.getChildNodes();
 		if (nodeChildren.length != skelChildren.length) {
-			// Create a skeleton with dependencies
-			ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
-					.withDependencies(skeleton);
-			if (skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor,
-					true)) {
-				return true;
-			}
-			return skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor,
-					false);
+			return tryRebuildUnsorted(nodeChildren, skeleton, proofMonitor);
 		}
+
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
@@ -517,6 +506,64 @@ public class ProofBuilder {
 		final IProverSequent[] newSequents = rule.apply(sequent);
 		return newSequents != null && newSequents.length == 1
 				&& newSequents[0] == sequent;
+	}
+
+	/**
+	 * Try to apply a child of the given skeleton to the given node.
+	 * <p>
+	 * Returns <code>true</code> in case of success, which means that the given
+	 * node has been completely rebuilt from a subtree of the skeleton.
+	 * </p>
+	 * <p>
+	 * In case of failure, the given node remains unchanged.
+	 * </p>
+	 * 
+	 * @param node
+	 *            an open node
+	 * @param skeleton
+	 *            a skeleton to search for compatible subtrees
+	 * @param proofMonitor
+	 *            the proof monitor
+	 * @return <code>true</code> if a compatible subtree has been found and
+	 *         applied, <code>false</code> otherwise
+	 */
+	private static boolean tryCompatibleSubtree(IProofTreeNode node, IProofSkeleton skeleton,
+			IProofMonitor proofMonitor) {
+		final ProofSkeletonWithDependencies skelDeps = withDependencies(skeleton);
+
+		if (skelDeps.applyTo(node, true, proofMonitor)) {
+			return true;
+		}
+		if (skelDeps.applyTo(node, false, proofMonitor)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Try to rebuild the given unsorted children from those of the given
+	 * skeleton.
+	 * <p>
+	 * Returns <code>true</code> in case of success, which means that the given
+	 * nodes have been completely rebuilt from the skeleton.
+	 * </p>
+	 * 
+	 * @param nodeChildren
+	 *            unsorted nodes
+	 * @param skeleton
+	 *            a skeleton
+	 * @param proofMonitor
+	 *            the proof monitor
+	 * @return <code>true</code> if rebuild succeeds, <code>false</code>
+	 *         otherwise
+	 */
+	private static boolean tryRebuildUnsorted(IProofTreeNode[] nodeChildren, IProofSkeleton skeleton,
+			IProofMonitor proofMonitor) {
+		final ProofSkeletonWithDependencies skelDeps = withDependencies(skeleton);
+		if (skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor, true)) {
+			return true;
+		}
+		return skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor, false);
 	}
 
 	/**
