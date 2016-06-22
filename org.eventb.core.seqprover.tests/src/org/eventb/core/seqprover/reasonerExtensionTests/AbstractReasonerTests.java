@@ -315,7 +315,30 @@ public abstract class AbstractReasonerTests {
 				.<IFormulaExtension> singleton(AssocExt.getInstance()));
 	}
 	
-	protected IProverSequent translateSequent(IProverSequent sequent) throws UntranslatableException {
+	/**
+	 * Translates the given sequent to another formula factory.
+	 * <p>
+	 * This method is used to check that a reasoner can be re-run successfully
+	 * even if the formula factory of the sequent has changed, as far as the
+	 * change is a mere extension of the mathematical language without any
+	 * interference with the rule produced by the reasoner.
+	 * </p>
+	 * <p>
+	 * The default implementation will fulfill most needs. However, for certain
+	 * reasoners, it might not be sufficient, in which case it shall be
+	 * overridden with a specific implementation.
+	 * </p>
+	 * 
+	 * @param sequent
+	 *            the sequent to translate
+	 * @return the translated sequent
+	 * @throws UntranslatableException
+	 *             Indicates that the sequent cannot be translated to the
+	 *             augmented factory. This is never raised by the default
+	 *             implementation, but could be raised by an overriding one.
+	 */
+	protected IProverSequent translateSequent(IProverSequent sequent)
+			throws UntranslatableException {
 		final FormulaFactory newFactory = augmentFactory(sequent
 				.getFormulaFactory());
 		return sequent.translate(newFactory);
