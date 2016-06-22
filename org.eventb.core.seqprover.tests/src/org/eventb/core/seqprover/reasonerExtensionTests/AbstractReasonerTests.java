@@ -66,21 +66,43 @@ import org.junit.Test;
 //import com.b4free.rodin.core.B4freeCore;
 
 /**
- * An abstract class that can be extended in order to be used to test reasoner extensions.
+ * An abstract class that can be extended in order to be used to test reasoner
+ * extensions.
  * 
  * <p>
  * Tests performed include :
  * <ul>
- * <li> Registry entry tests</li>
- * <li> Reasoner failure tests</li>
- * <li> Reasoner success tests (including input serialization tests, replay tests, and optional logical justification tests)</li>
+ * <li>Registry entry tests</li>
+ * <li>Reasoner failure tests</li>
+ * <li>Reasoner success tests (including input serialization tests, replay
+ * tests, and optional logical justification tests)</li>
  * </ul>
+ * </p>
+ * <p>
+ * To write tests for a new reasoner, one has to use the two methods:
+ * <ul>
+ * <li>{@link #testSuccessfulReasonerApplications()}</li>
+ * <li>{@link #testUnsuccessfulReasonerApplications()}</li>
+ * </ul>
+ * passing them the appropriate test cases.
+ * </p>
+ * <p>
+ * Prior to version 3.2, the tests used to be implemented by overriding the
+ * methods:
+ * <ul>
+ * <li>{@link #getSuccessfulReasonerApplications()}</li>
+ * <li>{@link #getUnsuccessfulReasonerApplications()}</li>
+ * </ul>
+ * However, this made the tests difficult to debug as there was no indication of
+ * the location of a failing test. This is why the interface for writing tests
+ * has evolved in version 3.2. Nevertheless, we retain backward compatibility
+ * with the tests written with this old interface.
  * </p>
  * 
  * @author Farhad Mehta
  * @author htson
  * @version 1.0
- * @see
+ * @since 3.2
  */
 public abstract class AbstractReasonerTests {
 
@@ -129,23 +151,29 @@ public abstract class AbstractReasonerTests {
 	 * Returns the successful reasoner applications to test
 	 * 
 	 * @return the successful reasoner applications to test
-	 * @deprecated Use
-	 *             {@link #testUnsuccessfulReasonerApplications(String, UnsuccessfullReasonerApplication...)}
-	 *             instead.
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #testSuccessfulReasonerApplications(String, SuccessfullReasonerApplication...)}
+	 *             with your test cases instead.
 	 */
 	@Deprecated
-	public abstract SuccessfullReasonerApplication[] getSuccessfulReasonerApplications();
+	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications()
+	{
+		return new SuccessfullReasonerApplication[0];
+	}
 	
 	/**
 	 * Returns the unsuccessful reasoner applications to test
 	 * 
 	 * @return the unsuccessful reasoner applications to test
-	 * @deprecated Use
-	 *             {@link #testSuccessfulReasonerApplications(String, SuccessfullReasonerApplication...)}
-	 *             instead.
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #testUnsuccessfulReasonerApplications(String, UnsuccessfullReasonerApplication...)}
+	 *             with your test cases instead.
 	 */
 	@Deprecated
-	public abstract UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications();
+	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications()
+	{
+		return new UnsuccessfullReasonerApplication[0];
+	}
 	
 
 	/**
@@ -218,8 +246,9 @@ public abstract class AbstractReasonerTests {
 	 * @param msg
 	 *            A (prefix) message for debugging
 	 * @param reasonerApps
-	 *            An array of unsuccessful reasoner applications.
+	 *            One or more unsuccessful reasoner applications.
 	 * @see IReasonerFailure
+	 * @since 3.2
 	 */
 	protected final void testUnsuccessfulReasonerApplications(String msg,
 			UnsuccessfullReasonerApplication... reasonerApps) {
@@ -267,6 +296,7 @@ public abstract class AbstractReasonerTests {
 	 * @see AbstractReasonerTests#checkSerialization(SuccessfullReasonerApplication, IProofRule)
 	 * @see AbstractReasonerTests#checkJustification(SuccessfullReasonerApplication, IProofRule)
 	 * @see AbstractReasonerTests#checkTranslationReplay(SuccessfullReasonerApplication, IProofRule)
+	 * @since 3.2
 	 */
 	protected final void testSuccessfulReasonerApplications(String msg,
 			SuccessfullReasonerApplication... reasonerApps) throws UntranslatableException {
