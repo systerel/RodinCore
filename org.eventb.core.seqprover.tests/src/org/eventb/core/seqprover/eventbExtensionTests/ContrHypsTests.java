@@ -183,23 +183,4 @@ public class ContrHypsTests extends AbstractReasonerTests {
 		assertNull(DeserializeInput(neededHyps));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see AbstractReasonerTests#getSuccessfulReasonerApplications()
-	 */
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[] {};
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see AbstractReasonerTests#getUnsuccessfullReasonerApplications()
-	 */
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {};
-	}
 }
