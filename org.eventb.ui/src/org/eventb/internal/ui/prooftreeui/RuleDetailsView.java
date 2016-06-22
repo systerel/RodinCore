@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,11 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * The rule details view provides informations about the rule which was applied
+ * The rule details view provides information about the rule which was applied
  * on a given proof tree node.
  * 
  * @author "Thomas Muller"
  */
-
 public class RuleDetailsView extends AbstractProofNodeView {
 
 	/**

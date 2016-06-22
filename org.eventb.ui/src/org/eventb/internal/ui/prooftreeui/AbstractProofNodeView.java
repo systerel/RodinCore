@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,32 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 	private IProofTreeNode currentNode = null;
 	private Font currentFont = null;
 
+	/**
+	 * Creates the initial control of the view.
+	 * 
+	 * @param parent
+	 *            the parent control
+	 * @param font
+	 *            the mathematical font to use
+	 */
 	protected abstract void initializeControl(final Composite parent, Font font);
 
+	/**
+	 * Refreshes the control because a new proof tree node has been selected.
+	 * 
+	 * @param node
+	 *            the new proof tree node to use for the display
+	 */
 	protected abstract void refreshContents(IProofTreeNode node);
-	protected abstract void fontChanged(Font font);
 
+	/**
+	 * Refreshes the control with a new mathematical font.
+	 * 
+	 * @param font
+	 *            the mathematical font to use
+	 */
+	protected abstract void fontChanged(Font font);
+	
 	@Override
 	public void createPartControl(final Composite parent) {
 		this.parentComp = parent;

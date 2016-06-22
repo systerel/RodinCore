@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.seqprover.IProofRule;
 
 /**
- * Classes used to represent the rule displayed by the Rule Details view. It
- * stores the informations about the rules as a structure providing strings for
+ * Represents a proof rule for displaying it in the Rule Details view. It
+ * stores the information about the rule as a structure providing strings for
  * each detail to be shown.
  */
 public class RuleDetailsModel {
@@ -33,10 +33,6 @@ public class RuleDetailsModel {
 
 	public RuleModelRoot getModelRoot() {
 		return root;
-	}
-
-	public IProofRule getRule() {
-		return rule;
 	}
 
 	public static abstract class RuleDetailsElement {
