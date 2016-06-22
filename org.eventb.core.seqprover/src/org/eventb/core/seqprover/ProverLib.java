@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -363,6 +363,34 @@ public class ProverLib {
 	 *            a proof rule
 	 * @return <code>true</code> iff the proof rule is reusable
 	 * @since 3.0
+	 * @deprecated Use {@link #isRuleReusable(IProofRule, Object)} instead.
+	 */
+	@Deprecated
+	public static boolean isRuleReusable(IProofRule rule) {
+		return isRuleReusable(rule, null);
+	}
+
+	/**
+	 * Returns whether the given proof rule can be reused.
+	 * <p>
+	 * A rule is considered reusable iff the following conditions are met:
+	 * <li>the reasoner which generated the rule is (currently) registered</li>
+	 * <li>the reasoner which generated the rule has the same version as the
+	 * version it is (currently) registered with</li>
+	 * </p>
+	 * <p>
+	 * As a consequence, the returned value for a given rule might be different,
+	 * depending on the contents of the reasoner registry.
+	 * </p>
+	 * 
+	 * @param rule
+	 *            a proof rule
+	 * @param origin
+	 *            the origin to use when analyzing the rule in case it was
+	 *            produced by a context dependent reasoner (should be usable as
+	 *            the origin of a proof sequent), can be <code>null</code>
+	 * @return <code>true</code> iff the proof rule is reusable
+	 * @since 3.2
 	 */
 	public static boolean isRuleReusable(IProofRule rule, Object origin) {
 		final IReasonerDesc reasoner = rule.getReasonerDesc();
