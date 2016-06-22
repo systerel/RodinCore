@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtensionTests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -78,7 +82,7 @@ import org.junit.Test;
  * @version 1.0
  * @see
  */
-public abstract class AbstractReasonerTests extends TestCase {
+public abstract class AbstractReasonerTests {
 
 	protected static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
 
