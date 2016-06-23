@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,15 @@ import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
+import static org.eventb.core.tests.pom.ReasonerV2.OLD_VERSION;
 import static org.eventb.core.tests.pom.TestLib.genPred;
 import static org.eventb.core.tests.pom.TestLib.genSeq;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
@@ -60,21 +66,26 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Class containing unit tests to test the proper serialization and deserialization of proof trees.
+ * Class containing unit tests to test the proper serialization and
+ * deserialization of proof trees.
  * 
  * @author Farhad Mehta
  *
  */
 public class ProofSerializationTests extends BuilderTest {
-	
-	private static void checkProofTreeSerialization(IPRProof proof,
-			IProofTree proofTree, boolean hasDeps) throws CoreException {
+
+	@Before
+	public void setup() {
+		ReasonerV2.reset();
+	}
+
+	private static void checkProofTreeSerialization(IPRProof proof, IProofTree proofTree, boolean hasDeps)
+			throws CoreException {
 		checkProofTreeSerialization(proof, proofTree, proofTree, hasDeps);
 	}
-	
-	private static void checkProofTreeSerialization(IPRProof proof,
-			IProofTree proofTree, IProofTree expectedDeserialized,
-			boolean hasDeps) throws CoreException {
+
+	private static void checkProofTreeSerialization(IPRProof proof, IProofTree proofTree,
+			IProofTree expectedDeserialized, boolean hasDeps) throws CoreException {
 
 		// Store the proof tree
 		proof.setProofTree(proofTree, null);
@@ -84,25 +95,23 @@ public class ProofSerializationTests extends BuilderTest {
 		checkDeserialization(proof, proofTree, expectedDeserialized, hasDeps);
 	}
 
-	private static void checkDeserialization(IPRProof proof,
-			IProofTree proofTree, boolean hasDeps) throws CoreException {
+	private static void checkDeserialization(IPRProof proof, IProofTree proofTree, boolean hasDeps)
+			throws CoreException {
 		checkDeserialization(proof, proofTree, proofTree, hasDeps);
 	}
-	
-	private static void checkDeserialization(IPRProof proof,
-			IProofTree proofTree, IProofTree expectedDeserialized,
+
+	private static void checkDeserialization(IPRProof proof, IProofTree proofTree, IProofTree expectedDeserialized,
 			boolean hasDeps) throws CoreException {
 		final FormulaFactory fac = proof.getFormulaFactory(null);
 		IProofSkeleton skel = proof.getSkeleton(fac, null);
 		assertTrue(ProverLib.deepEquals(expectedDeserialized.getRoot(), skel));
-		
+
 		assertEquals(hasDeps, proof.getProofDependencies(fac, null).hasDeps());
 	}
 
 	private static ITactic autoRewriteL2() {
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
-		final IReasonerDesc desc = registry
-				.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2:1");
+		final IReasonerDesc desc = registry.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2:1");
 		return BasicTactics.reasonerTac(desc.getInstance(), new EmptyInput());
 	}
 
@@ -111,9 +120,9 @@ public class ProofSerializationTests extends BuilderTest {
 	}
 
 	private IPRRoot prRoot;
-	
+
 	private Predicate getFirstUnivHyp(IProverSequent seq) {
-		for (Predicate pred: seq.selectedHypIterable()) {
+		for (Predicate pred : seq.selectedHypIterable()) {
 			if (pred.getTag() == Formula.FORALL) {
 				return pred;
 			}
@@ -131,7 +140,7 @@ public class ProofSerializationTests extends BuilderTest {
 	}
 
 	@Test
-	public final void test() throws Exception{
+	public final void test() throws Exception {
 		IPRProof proof1 = prRoot.getProof("proof1");
 		proof1.create(null, null);
 
@@ -140,54 +149,51 @@ public class ProofSerializationTests extends BuilderTest {
 		assertEquals(proof1, prRoot.getProof("proof1"));
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
 		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
-		
+
 		// Test 1
-		
+
 		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
-		
+
 		(new AutoTactics.ImpGoalTac()).apply(proofTree.getRoot(), null);
 		checkProofTreeSerialization(proof1, proofTree, true);
-		
-		(new AutoTactics.TrueGoalTac()).apply(proofTree.getRoot().getFirstOpenDescendant(),null);
+
+		(new AutoTactics.TrueGoalTac()).apply(proofTree.getRoot().getFirstOpenDescendant(), null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
 		assertEquals(IConfidence.DISCHARGED_MAX, proofTree.getConfidence());
 		checkProofTreeSerialization(proof1, proofTree, true);
-		
+
 		// Test 2
-		
+
 		sequent = TestLib.genSeq(factory, "⊤ |- ⊤ ∧ ⊤");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		(new AutoTactics.ClarifyGoalTac()).apply(proofTree.getRoot(), null);
 		// The next check is to see if the prover is behaving itself.
 		assertTrue(proofTree.isClosed());
 		checkProofTreeSerialization(proof1, proofTree, true);
-		
+
 		// Test 3
-		
+
 		sequent = TestLib.genSeq(factory, "⊤ |- 0 ∈ ℕ ∧ 0 ∈ ℤ");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
-		
+
 		(new AutoTactics.ClarifyGoalTac()).apply(proofTree.getRoot(), null);
 		checkProofTreeSerialization(proof1, proofTree, true);
-		
+
 		// Test 4 ; a proof tree with no goal dependencies, open
 		sequent = TestLib.genSeq(factory, "⊥ |- ⊥");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
-		
+
 		// an identity rule that doesn't do anything.
 		// since a reasoner is used, it does have dependencies
-		Set<Predicate> unknownHyp = Collections.singleton(genPred(factory,
-				"∀ UNKNOWN_HYP · UNKNOWN_HYP=0"));
-		Tactics.mngHyp(ProverFactory.makeHideHypAction(unknownHyp)).apply(
-				proofTree.getRoot(), null);
+		Set<Predicate> unknownHyp = Collections.singleton(genPred(factory, "∀ UNKNOWN_HYP · UNKNOWN_HYP=0"));
+		Tactics.mngHyp(ProverFactory.makeHideHypAction(unknownHyp)).apply(proofTree.getRoot(), null);
 		checkProofTreeSerialization(proof1, proofTree, true);
-		
-		
+
 		// Test 4 ; a proof tree with no goal dependencies, closed
 		sequent = TestLib.genSeq(factory, "⊥ |- ⊥");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
@@ -195,21 +201,17 @@ public class ProofSerializationTests extends BuilderTest {
 		(new AutoTactics.FalseHypTac()).apply(proofTree.getRoot(), null);
 		checkProofTreeSerialization(proof1, proofTree, true);
 	}
-	
+
 	/**
 	 * Ensures that a proof tree containing a partial instantiation can be
 	 * serialized and deserialized.
 	 */
 	@Test
 	public final void testPartialInstantiation() throws Exception {
-		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null,
-				null);
+		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
 		final IProverSequent seq = TestLib.genSeq(factory,
-				"   x ∈ ℕ" +
-				";; y ∈ ℕ" +
-				";; (∀a,b· a ∈ ℕ ∧ b ∈ ℕ ⇒ a+b ∈ ℕ)" +
-				"|- x+y ∈ ℕ");
+				"   x ∈ ℕ" + ";; y ∈ ℕ" + ";; (∀a,b· a ∈ ℕ ∧ b ∈ ℕ ⇒ a+b ∈ ℕ)" + "|- x+y ∈ ℕ");
 		final IProofTree proofTree = ProverFactory.makeProofTree(seq, null);
 		final Predicate univ = getFirstUnivHyp(seq);
 		ITactic tactic;
@@ -239,50 +241,41 @@ public class ProofSerializationTests extends BuilderTest {
 
 		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
-		
+
 		checkProofTreeSerialization(proof1, proofTree, false);
-		
-		BasicTactics.reasonerTac(new ReasonerV2(), new EmptyInput())
-				.apply(proofTree.getRoot(), null);
+
+		assertNull(BasicTactics.reasonerTac(new ReasonerV2(), new EmptyInput()).apply(proofTree.getRoot(), null));
+		assertNull(new AutoTactics.TrueGoalTac().apply(proofTree.getRoot().getFirstOpenDescendant(), null));
+		assertTrue(proofTree.isClosed());
 
 		checkProofTreeSerialization(proof1, proofTree, true);
-
 	}
 
 	private static IProofTree makeVersionProof(int version, int confidence) {
 		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
-		
-		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
-		final IReasonerDesc desc = registry
-				.getReasonerDesc(new ReasonerV2().getReasonerID() + ":1");
-		final Set<Predicate> noHyps = Collections.emptySet();
-		final IProofRule rule = ProverFactory.makeProofRule(desc,
-				new EmptyInput(), sequent.goal(), noHyps,
-				confidence, desc.getName());
+
+		final IProofRule rule = ReasonerV2.makeRule(sequent, version, confidence);
 		final boolean success = proofTree.getRoot().applyRule(rule);
 		assertTrue(success);
+		assertNull(new AutoTactics.TrueGoalTac().apply(proofTree.getRoot().getFirstOpenDescendant(), null));
 		assertTrue(proofTree.isClosed());
-		
+
 		return proofTree;
 	}
-	
+
 	/**
 	 * Checks that a proof serialized with an old reasoner version is
-	 * deserialized so that the current reasoner version is attempted and used
-	 * if possible.
+	 * deserialized with its old version retained in the proof skeleton,
+	 * changing the confidence to UNCERTAIN.
 	 */
 	@Test
 	public void testReasonerVersionOld() throws Exception {
 		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
-
-		final IProofTree proofTree = makeVersionProof(1,
-				IConfidence.DISCHARGED_MAX);
-		final IProofTree expectedDeserialized = makeVersionProof(2,
-				IConfidence.UNCERTAIN_MAX);
-		checkProofTreeSerialization(proof1, proofTree, expectedDeserialized,
-				true);
+		final IProofTree proofTree = makeVersionProof(OLD_VERSION, IConfidence.DISCHARGED_MAX);
+		final IProofTree expectedDeserialized = makeVersionProof(OLD_VERSION, IConfidence.UNCERTAIN_MAX);
+		checkProofTreeSerialization(proof1, proofTree, expectedDeserialized, true);
 		// check stability for deserialized proof tree
 		checkProofTreeSerialization(proof1, expectedDeserialized, true);
 	}
@@ -332,7 +325,7 @@ public class ProofSerializationTests extends BuilderTest {
 	@Test
 	public void testReasonerStorageCompatibility() throws Exception {
 		importProofSerializationProofs();
-		
+
 		final IPRRoot prFile = getProofRoot("reasonerStorage");
 		final IPRProof proof = prFile.getProof("oldProof");
 
@@ -345,13 +338,11 @@ public class ProofSerializationTests extends BuilderTest {
 
 		checkDeserialization(proof, proofTree, true);
 	}
-	
-	// check repaired input correctly applies  
-	private static void checkReplay(final IProverSequent sequent,
-			final IPRProof proof) throws CoreException {
+
+	// check repaired input correctly applies
+	private static void checkReplay(final IProverSequent sequent, final IPRProof proof) throws CoreException {
 		final IProofSkeleton oldSkel = proof.getSkeleton(factory, null);
-		final IProofTree replayTree = ProverFactory.makeProofTree(
-				sequent, null);
+		final IProofTree replayTree = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode oldRoot = replayTree.getRoot();
 		final Object result = replayTac(oldSkel).apply(oldRoot, null);
 		assertEquals(null, result);
@@ -376,8 +367,7 @@ public class ProofSerializationTests extends BuilderTest {
 
 		Tactics.contImpHyp(hyp, IPosition.ROOT).apply(root, null);
 		autoRewriteL2().apply(root.getFirstOpenDescendant(), null);
-		new AutoTactics.FalseHypTac()
-				.apply(root.getFirstOpenDescendant(), null);
+		new AutoTactics.FalseHypTac().apply(root.getFirstOpenDescendant(), null);
 		assertTrue(proofTree.isClosed());
 
 		checkDeserialization(proof, proofTree, true);
@@ -395,10 +385,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRProof proof = prFile.getProof("cplx");
 
 		final IProverSequent sequent = TestLib.genSeq(factory,
-				"s≠(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(x⊆t⇒t=s)) ;; " +
-				"s∈ℙ(S)∧s⊆t ;; " +
-				"s≠(∅ ⦂ ℙ(S))" +
-				" |- t=s");
+				"s≠(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(x⊆t⇒t=s)) ;; " + "s∈ℙ(S)∧s⊆t ;; " + "s≠(∅ ⦂ ℙ(S))" + " |- t=s");
 
 		checkReplay(sequent, proof);
 	}
@@ -417,8 +404,7 @@ public class ProofSerializationTests extends BuilderTest {
 
 		Tactics.abstrExprThenEq("0").apply(expectedRoot, null);
 		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
-		new AutoTactics.FalseHypTac().apply(
-				expectedRoot.getFirstOpenDescendant(), null);
+		new AutoTactics.FalseHypTac().apply(expectedRoot.getFirstOpenDescendant(), null);
 		autoRewriteL2().apply(expectedRoot.getFirstOpenDescendant(), null);
 		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
 		assertTrue(expected.isClosed());
@@ -427,7 +413,7 @@ public class ProofSerializationTests extends BuilderTest {
 
 		checkReplay(expected.getSequent(), proof);
 	}
-	
+
 	@Test
 	public void testAbstrExpr_WD_Bug3370087() throws Exception {
 		importProofSerializationProofs();
@@ -436,8 +422,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("ae_WD");
 		final IPRProof proof = prFile.getProof("ae_with_wd");
 
-		final IProverSequent sequent = TestLib.genSeq(factory,
-				"s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
+		final IProverSequent sequent = TestLib.genSeq(factory, "s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
 
 		checkReplay(sequent, proof);
 	}
@@ -460,8 +445,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IProofTreeNode root = proofTree.getRoot();
 		assertFalse(root.isOpen());
 		final IProofRule rule = root.getRule();
-		assertEquals(SequentProver.PLUGIN_ID + ".partitionRewrites", rule
-				.generatedBy().getReasonerID());
+		assertEquals(SequentProver.PLUGIN_ID + ".partitionRewrites", rule.generatedBy().getReasonerID());
 		assertEquals(3, rule.getAntecedents()[0].getHypActions().size());
 	}
 
@@ -478,13 +462,12 @@ public class ProofSerializationTests extends BuilderTest {
 
 		// a IllegalStateException is thrown when the bug is present:
 		final IProofTree proofTree = proof.getProofTree(null);
-		
+
 		// ensure that the proof rule is deserialized:
 		final IProofTreeNode root = proofTree.getRoot();
 		assertFalse(root.isOpen());
 		final IProofRule rule = root.getRule();
-		assertEquals(SequentProver.PLUGIN_ID + ".exF", rule.generatedBy()
-				.getReasonerID());
+		assertEquals(SequentProver.PLUGIN_ID + ".exF", rule.generatedBy().getReasonerID());
 		assertEquals(3, rule.getAntecedents()[0].getHypActions().size());
 	}
 
@@ -509,28 +492,25 @@ public class ProofSerializationTests extends BuilderTest {
 	 */
 	@Test
 	public void testUnknownReasoner() throws Exception {
-		
+
 		// FIXME serialisation d'une preuve obtenue avec un dummy reasoner
 		// quand il y a un input: il faut conserver l'input original.
-		// FIXME ça peut être appelé au chargement d'une preuve interactive non ?
-		// dans ce cas on peut vouloir afficher la preuve avec son sous-arbre
-		// sous les noeuds UNCERTAIN, voir comment ça se passe.
 		importProofSerializationProofs();
 
 		final IPRRoot prFile = getProofRoot("unknownReasoner");
 		final IPRProof proof = prFile.getProof("unknownReasonerProof");
 
 		final IProofTree proofTree = proof.getProofTree(null);
-		
+
 		assertNotNull(proofTree);
-		
+
 		// ensure that the proof rule is deserialized:
 		final IProofTreeNode root = proofTree.getRoot();
 		assertFalse(root.isOpen());
 		final IProofRule rule = root.getRule();
 		assertEquals("unknown.reasoner.id", rule.generatedBy().getReasonerID());
 		assertEquals(IConfidence.UNCERTAIN_MAX, rule.getConfidence());
-		
+
 		// ensure that the whole proof tree has UNCERTAIN confidence:
 		assertTrue(proofTree.isClosed());
 		assertEquals(IConfidence.UNCERTAIN_MAX, proofTree.getConfidence());

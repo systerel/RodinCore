@@ -54,6 +54,11 @@
             id="contextDependentReasoner"
             name="contextDependentReasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.proofBuilderTests.UncertainReasoner"
+            id="uncertainReasoner"
+            name="Uncertain Reasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

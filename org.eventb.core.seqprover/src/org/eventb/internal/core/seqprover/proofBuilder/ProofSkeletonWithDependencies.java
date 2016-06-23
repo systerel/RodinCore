@@ -117,8 +117,11 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
 	/**
 	 * Traverses the given skeleton tree in search of a skeleton compatible with
-	 * the given proof tree node. Tries to discharge the trivial cases first
-	 * (true goal,...) and then tries to discharge the other cases.
+	 * the given proof tree node.
+	 * <p>
+	 * Tries to discharge either the trivial cases (true goal,...) or the non
+	 * trivial cases, depending on the value of dischargeTrivialCase.
+	 * </p>
 	 * 
 	 * 
 	 * @param node
@@ -141,8 +144,8 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
 	/**
 	 * For each node child, tries to find a compatible skeleton node to make a
-	 * rebuild. Tries to discharge the trivial cases first (true goal,...) and
-	 * then tries to discharge the other cases.
+	 * rebuild. Tries to discharge either the trivial cases (true goal,...) or
+	 * the non trivial cases, depending on the value of dischargeTrivialCase.
 	 * 
 	 * @param nodeChildren
 	 *            children of the open proof tree node where rebuilding should

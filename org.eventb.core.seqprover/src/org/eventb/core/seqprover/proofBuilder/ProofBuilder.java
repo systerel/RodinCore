@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilder;
 
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
+import static org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependencies.withDependencies;
 
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -70,8 +72,8 @@ import org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependen
  */
 public class ProofBuilder {
 
-	private static IReasonerOutput getReplayOutput(IProofRule rule,
-			IProverSequent sequent, IProofMonitor proofMonitor) {
+	private static IReasonerOutput getReplayOutput(IProofRule rule, IProverSequent sequent,
+			IProofMonitor proofMonitor) {
 		final IReasoner reasoner = rule.generatedBy();
 
 		final IReasonerInput reasonerInput = rule.generatedUsing();
@@ -79,11 +81,9 @@ public class ProofBuilder {
 		return reasoner.apply(sequent, reasonerInput, proofMonitor);
 	}
 
-	private static IProofSkeleton getTranslatedSkeleton(IProofTreeNode node,
-			IProofSkeleton skeleton) {
+	private static IProofSkeleton getTranslatedSkeleton(IProofTreeNode node, IProofSkeleton skeleton) {
 		final IProofRule skelRule = skeleton.getRule();
-		if (skelRule == null
-				|| node.getFormulaFactory() == skelRule.getFormulaFactory()) {
+		if (skelRule == null || node.getFormulaFactory() == skelRule.getFormulaFactory()) {
 			return skeleton;
 		}
 		return ProverLib.translate(skeleton, node.getFormulaFactory());
@@ -125,14 +125,12 @@ public class ProofBuilder {
 	 * 
 	 *         TODO : Test this code & wrap using appropriate tactic.
 	 */
-	public static boolean reuse(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean reuse(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		skeleton = getTranslatedSkeleton(node, skeleton);
 		return recReuse(node, skeleton, proofMonitor);
 	}
 
-	private static boolean recReuse(IProofTreeNode node,
-			IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+	private static boolean recReuse(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -167,8 +165,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= recReuse(nodeChildren[i], skelChildren[i],
-					proofMonitor);
+			combinedResult &= recReuse(nodeChildren[i], skelChildren[i], proofMonitor);
 		}
 		return combinedResult;
 	}
@@ -199,14 +196,12 @@ public class ProofBuilder {
 	 * 
 	 *         TODO : Test this code & wrap using appropriate tactic.
 	 */
-	public static boolean replay(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean replay(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		skeleton = getTranslatedSkeleton(node, skeleton);
 		return recReplay(node, skeleton, proofMonitor);
 	}
 
-	private static boolean recReplay(IProofTreeNode node,
-			IProofSkeleton skeleton, IProofMonitor proofMonitor) {
+	private static boolean recReplay(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
@@ -222,16 +217,14 @@ public class ProofBuilder {
 			return false;
 
 		// Try to replay the rule
-		final IReasonerOutput replayReasonerOutput = getReplayOutput(
-				reuseProofRule, node.getSequent(), proofMonitor);
+		final IReasonerOutput replayReasonerOutput = getReplayOutput(reuseProofRule, node.getSequent(), proofMonitor);
 
 		// Check if reasoner successfully generated a rule.
 		if (!(replayReasonerOutput instanceof IProofRule))
 			return false;
 
 		// Check if the generated rule is applicable
-		boolean replaySuccessfull = node
-				.applyRule((IProofRule) replayReasonerOutput);
+		boolean replaySuccessfull = node.applyRule((IProofRule) replayReasonerOutput);
 		if (!replaySuccessfull)
 			return false;
 
@@ -245,8 +238,7 @@ public class ProofBuilder {
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
-			combinedResult &= recReplay(nodeChildren[i], skelChildren[i],
-					proofMonitor);
+			combinedResult &= recReplay(nodeChildren[i], skelChildren[i], proofMonitor);
 		}
 		return combinedResult;
 	}
@@ -296,8 +288,8 @@ public class ProofBuilder {
 	 *             {@link #rebuild(IProofTreeNode, IProofSkeleton, ReplayHints, boolean, IProofMonitor)}
 	 */
 	@Deprecated
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			ReplayHints replayHints, IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
+			IProofMonitor proofMonitor) {
 		return rebuild(node, skeleton, replayHints, true, proofMonitor);
 	}
 
@@ -357,24 +349,21 @@ public class ProofBuilder {
 	 *         </ul>
 	 * @since 3.1
 	 */
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			ReplayHints replayHints, boolean tryReplayUncertain,
-			IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
+			boolean tryReplayUncertain, IProofMonitor proofMonitor) {
 		if (replayHints == null) {
 			replayHints = new ReplayHints(node.getFormulaFactory());
 		}
 		skeleton = getTranslatedSkeleton(node, skeleton);
-		return recRebuild(node, skeleton, replayHints, tryReplayUncertain,
-				proofMonitor);
+		return recRebuild(node, skeleton, replayHints, tryReplayUncertain, proofMonitor);
 	}
 
-	private static boolean recRebuild(IProofTreeNode node,
-			IProofSkeleton skeleton, ReplayHints replayHints,
+	private static boolean recRebuild(IProofTreeNode node, IProofSkeleton skeleton, ReplayHints replayHints,
 			boolean tryReplayUncertain, IProofMonitor proofMonitor) {
 
 		node.setComment(skeleton.getComment());
 
-		IProofRule reuseProofRule = skeleton.getRule();
+		final IProofRule reuseProofRule = skeleton.getRule();
 
 		// if this is an open proof skeleton node, we are done
 		if (reuseProofRule == null) {
@@ -382,60 +371,41 @@ public class ProofBuilder {
 		}
 
 		// Check if replay was canceled.
-		if (proofMonitor != null && proofMonitor.isCanceled())
+		if (proofMonitor != null && proofMonitor.isCanceled()) {
 			return false;
+		}
 
 		boolean reuseSuccessfull = false;
 		boolean replaySuccessfull = false;
-		
+
 		final boolean certain = reuseProofRule.getConfidence() > IConfidence.UNCERTAIN_MAX;
 		if (certain) {
 			reuseSuccessfull = tryReuse(reuseProofRule, node, replayHints);
 		}
-		
+
 		if (certain ? !reuseSuccessfull : tryReplayUncertain) {
-			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints,
-					proofMonitor);
+			replaySuccessfull = tryReplay(reuseProofRule, node, replayHints, proofMonitor);
 		}
-		
-		if (!(reuseSuccessfull || replaySuccessfull)) {
-			// force reuse
-//			reuseSuccessfull = node.applyRule(reuseProofRule);
-		}
-			
 
-		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
-		IProofTreeNode[] nodeChildren = node.getChildNodes();
+		final IProofSkeleton[] skelChildren = skeleton.getChildNodes();
 
-		// Check if rebuild for this node was successful
 		if (!(reuseSuccessfull || replaySuccessfull)) {
 			if (ruleIsSkip(node, reuseProofRule)) {
 				// Actually the rule was doing nothing, can be by-passed.
-				return recRebuild(node, skelChildren[0], replayHints,
-						tryReplayUncertain, proofMonitor);
-			} else {
-				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
-						.withDependencies(skeleton);
-				if (skelDeps.applyTo(node, true, proofMonitor)) {
-					return true;
-				}
-				return skelDeps.applyTo(node, false, proofMonitor);
+				return recRebuild(node, skelChildren[0], replayHints, tryReplayUncertain, proofMonitor);
 			}
+			final boolean appliedUncertain = tryUncertainRule(node, reuseProofRule);
+			if (!appliedUncertain) {
+				return tryCompatibleSubtree(node, skeleton, proofMonitor);
+			}
+			// rule applied: proceed below
 		}
 
-		// Maybe check if the node has the same number of children as the prNode
-		// it may be smart to replay anyway, but generate a warning.
+		final IProofTreeNode[] nodeChildren = node.getChildNodes();
 		if (nodeChildren.length != skelChildren.length) {
-			// Create a skeleton with dependencies
-			ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
-					.withDependencies(skeleton);
-			if (skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor,
-					true)) {
-				return true;
-			}
-			return skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor,
-					false);
+			return tryRebuildUnsorted(nodeChildren, skeleton, proofMonitor);
 		}
+
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
@@ -443,17 +413,15 @@ public class ProofBuilder {
 			if (replaySuccessfull) {
 				// generate hints for continuing the proof
 				newReplayHints = replayHints.clone();
-				newReplayHints.addHints(reuseProofRule.getAntecedents()[i],
-						node.getRule().getAntecedents()[i]);
+				newReplayHints.addHints(reuseProofRule.getAntecedents()[i], node.getRule().getAntecedents()[i]);
 			}
-			combinedResult &= recRebuild(nodeChildren[i], skelChildren[i],
-					newReplayHints, tryReplayUncertain, proofMonitor);
+			combinedResult &= recRebuild(nodeChildren[i], skelChildren[i], newReplayHints, tryReplayUncertain,
+					proofMonitor);
 		}
 		return combinedResult;
 	}
 
-	private static boolean tryReuse(IProofRule reuseProofRule,
-			IProofTreeNode node, ReplayHints replayHints) {
+	private static boolean tryReuse(IProofRule reuseProofRule, IProofTreeNode node, ReplayHints replayHints) {
 		Object origin = node.getSequent().getOrigin();
 		// If there are replay hints or version conflict do not try a reuse
 		if (replayHints.isEmpty() && isRuleReusable(reuseProofRule, origin)) {
@@ -463,8 +431,7 @@ public class ProofBuilder {
 		return false;
 	}
 
-	private static boolean tryReplay(IProofRule reuseProofRule,
-			IProofTreeNode node, ReplayHints replayHints,
+	private static boolean tryReplay(IProofRule reuseProofRule, IProofTreeNode node, ReplayHints replayHints,
 			IProofMonitor proofMonitor) {
 		IReasoner reasoner = reuseProofRule.generatedBy();
 		// Check if the reasoner is installed
@@ -474,8 +441,7 @@ public class ProofBuilder {
 		IReasonerInput reasonerInput = reuseProofRule.generatedUsing();
 		IProofRule replayProofRule = null;
 		replayHints.applyHints(reasonerInput);
-		final IReasonerOutput replayReasonerOutput = reasoner.apply(
-				node.getSequent(), reasonerInput, proofMonitor);
+		final IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(), reasonerInput, proofMonitor);
 
 		// Check if the reasoner successfully generated a proof rule.
 		if (replayReasonerOutput instanceof IProofRule) {
@@ -487,6 +453,31 @@ public class ProofBuilder {
 	}
 
 	/**
+	 * Try to apply the given uncertain rule.
+	 * <p>
+	 * Lowers its confidence to uncertain if needed.
+	 * </p>
+	 * 
+	 * @param node
+	 *            an open node
+	 * @param reuseProofRule
+	 *            an uncertain rule to apply
+	 * @return <code>true</code> if rule application succeeded,
+	 *         <code>false</code> otherwise
+	 */
+	private static boolean tryUncertainRule(IProofTreeNode node, IProofRule reuseProofRule) {
+		final IProofRule uncertainRule;
+		if (reuseProofRule.getConfidence() <= IConfidence.UNCERTAIN_MAX) {
+			uncertainRule = reuseProofRule;
+		} else {
+			uncertainRule = makeProofRule(reuseProofRule.getReasonerDesc(), reuseProofRule.generatedUsing(),
+					reuseProofRule.getGoal(), reuseProofRule.getNeededHyps(), IConfidence.UNCERTAIN_MAX,
+					reuseProofRule.getDisplayName(), reuseProofRule.getAntecedents());
+		}
+		return node.applyRule(uncertainRule);
+	}
+
+	/**
 	 * Tells whether a rule would really modify the proof tree, rather than just
 	 * producing exactly the same sequent as a subgoal. If the test succeeds,
 	 * then the rule has exactly one antecedent and can safely be skipped.
@@ -494,8 +485,65 @@ public class ProofBuilder {
 	private static boolean ruleIsSkip(IProofTreeNode node, IProofRule rule) {
 		final IProverSequent sequent = node.getSequent();
 		final IProverSequent[] newSequents = rule.apply(sequent);
-		return newSequents != null && newSequents.length == 1
-				&& newSequents[0] == sequent;
+		return newSequents != null && newSequents.length == 1 && newSequents[0] == sequent;
+	}
+
+	/**
+	 * Try to apply a child of the given skeleton to the given node.
+	 * <p>
+	 * Returns <code>true</code> in case of success, which means that the given
+	 * node has been completely rebuilt from a subtree of the skeleton.
+	 * </p>
+	 * <p>
+	 * In case of failure, the given node remains unchanged.
+	 * </p>
+	 * 
+	 * @param node
+	 *            an open node
+	 * @param skeleton
+	 *            a skeleton to search for compatible subtrees
+	 * @param proofMonitor
+	 *            the proof monitor
+	 * @return <code>true</code> if a compatible subtree has been found and
+	 *         applied, <code>false</code> otherwise
+	 */
+	private static boolean tryCompatibleSubtree(IProofTreeNode node, IProofSkeleton skeleton,
+			IProofMonitor proofMonitor) {
+		final ProofSkeletonWithDependencies skelDeps = withDependencies(skeleton);
+
+		if (skelDeps.applyTo(node, true, proofMonitor)) {
+			return true;
+		}
+		if (skelDeps.applyTo(node, false, proofMonitor)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Try to rebuild the given unsorted children from those of the given
+	 * skeleton.
+	 * <p>
+	 * Returns <code>true</code> in case of success, which means that the given
+	 * nodes have been completely rebuilt from the skeleton.
+	 * </p>
+	 * 
+	 * @param nodeChildren
+	 *            unsorted nodes
+	 * @param skeleton
+	 *            a skeleton
+	 * @param proofMonitor
+	 *            the proof monitor
+	 * @return <code>true</code> if rebuild succeeds, <code>false</code>
+	 *         otherwise
+	 */
+	private static boolean tryRebuildUnsorted(IProofTreeNode[] nodeChildren, IProofSkeleton skeleton,
+			IProofMonitor proofMonitor) {
+		final ProofSkeletonWithDependencies skelDeps = withDependencies(skeleton);
+		if (skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor, true)) {
+			return true;
+		}
+		return skelDeps.rebuildUnsortedChildren(nodeChildren, proofMonitor, false);
 	}
 
 	/**
@@ -530,8 +578,7 @@ public class ProofBuilder {
 	 *             {@link #rebuild(IProofTreeNode, IProofSkeleton, ReplayHints, boolean, IProofMonitor)}
 	 */
 	@Deprecated
-	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton,
-			IProofMonitor proofMonitor) {
+	public static boolean rebuild(IProofTreeNode node, IProofSkeleton skeleton, IProofMonitor proofMonitor) {
 		return rebuild(node, skeleton, null, false, proofMonitor);
 	}
 

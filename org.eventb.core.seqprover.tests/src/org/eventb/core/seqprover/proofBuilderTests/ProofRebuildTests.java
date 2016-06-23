@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilderTests;
 
-import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.proofBuilderTests.Factory.P;
 import static org.eventb.core.seqprover.proofBuilderTests.Factory.Q;
 import static org.eventb.core.seqprover.proofBuilderTests.Factory.R;
@@ -26,18 +25,22 @@ import static org.eventb.core.seqprover.proofBuilderTests.ProofTreeShape.splitIm
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.internal.core.seqprover.ReasonerDesc;
-import org.eventb.internal.core.seqprover.ReasonerRegistry;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ProofRebuildTests {
 
+	@Before
+	public void resetUncertain()
+	{
+		UncertainReasoner.reset();
+	}
+	
 	private static void assertRebuild(IProofTreeNode node,
 			IProofSkeleton skeleton) {
 		assertRebuild(node, skeleton, false);
@@ -236,48 +239,35 @@ public class ProofRebuildTests {
 		hyp(P).check(nodeSimplified);
 	}
 
-	private static IAntecedent antecedent(Predicate goal) {
-		return makeAntecedent(goal, null,
-				Q.getFreeIdentifiers(), null);
+	private static ProofTreeShape certain() {
+		return reasoner(new UncertainReasoner(), new EmptyInput(), IConfidence.DISCHARGED_MAX,
+				reasoner(new SuccessReasoner()));
 	}
 
-	private static ProofTreeShape oldShape() {
-		return reasoner(
-				new SuccessReasoner(1, true, antecedent(Q)),
-				new EmptyInput(),
-				reasoner(
-						new SuccessReasoner(1, true, antecedent(R)),
-						new EmptyInput()));
-	}
-
-	private static ProofTreeShape newShape() {
-		return reasoner(
-				new SuccessReasoner(2, true, antecedent(Q)),
-				new EmptyInput(),
-				reasoner(
-						new SuccessReasoner(2, true, antecedent(R)),
-						new EmptyInput()));
+	private static ProofTreeShape uncertain() {
+		return reasoner(new UncertainReasoner(), new EmptyInput(), IConfidence.UNCERTAIN_MAX,
+				reasoner(new SuccessReasoner()));
 	}
 
 	/**
-	 * Ensures that a rebuild with uncertain rules replays with new reasoners.
+	 * Ensures that a rebuild with uncertain rules replays the reasoners.
 	 */
 	@Test
 	public void rebuildTryReplayUncertainSuccess() throws Exception {
 		IProofTreeNode node = makeProofTreeNode(P);
 		IProofTreeNode proof = makeProofTreeNode(P);
-		
-		oldShape().create(proof);
+		uncertain().create(proof);
+		UncertainReasoner.certain = true;
 		assertRebuild(node, proof, true);
-		newShape().check(node);
+		certain().check(node);
 	}
 
 	/**
 	 * Ensures that a rebuild with uncertain rules maintains them if replay
 	 * fails, and processes the subtree.
 	 * <p>
-	 * Here old reasonerQ is setup to fail upon replay, so the rule must be
-	 * reused as is in the resulting proof tree.
+	 * The rule must be reused as is in the resulting proof tree, with an
+	 * uncertain confidence.
 	 * </p>
 	 */
 	@Test
@@ -285,42 +275,29 @@ public class ProofRebuildTests {
 		IProofTreeNode node = makeProofTreeNode(P);
 		IProofTreeNode proof = makeProofTreeNode(P);
 
-		reasoner(
-				new FailureReasoner(1, true, antecedent(Q)),
-				new EmptyInput(),
-				reasoner(new SuccessReasoner(1, true, antecedent(R)),
-						new EmptyInput())).create(proof);
-
-		// forcing reasoner instance in descriptor cache to fail upon replay
-		final ReasonerDesc desc = ReasonerRegistry.getReasonerRegistry()
-				.getReasonerDesc(FailureReasoner.REASONER_ID);
-		final FailureReasoner reasoner = (FailureReasoner) desc.getInstance();
-		reasoner.setSuccess(false);
-		
+		final ProofTreeShape uncertain = uncertain();
+		uncertain.create(proof);
+		UncertainReasoner.fail = true;
 		assertRebuild(node, proof, true);
-		reasoner(
-				new FailureReasoner(1, true, antecedent(Q)),
-				new EmptyInput(),
-				reasoner(new SuccessReasoner(2, true, antecedent(R)),
-						new EmptyInput())).check(node);
+		uncertain.check(node);
 	}
 	
 	/**
 	 * Ensures that tryReplayUncertain is taken into account when false.
 	 * <p>
-	 * Generates a shape with old reasoners, rebuilds it without replaying
-	 * uncertain rules, then checks that the rebuilt proof tree still contains
-	 * the old reasoners.
+	 * Rebuilds it without replaying uncertain rules, then checks that the
+	 * rebuilt proof tree still is still uncertain.
 	 * </p>
 	 */
 	@Test
 	public void rebuildNoTryReplayUncertain() throws Exception {
 		IProofTreeNode node = makeProofTreeNode(P);
 		IProofTreeNode proof = makeProofTreeNode(P);
-
-		final ProofTreeShape shape = oldShape();
-		shape.create(proof);
+		
+		final ProofTreeShape uncertain = uncertain();
+		uncertain.create(proof);
+		UncertainReasoner.certain = true;
 		assertRebuild(node, proof, false);
-		shape.check(node);
+		uncertain.check(node);
 	}
 }

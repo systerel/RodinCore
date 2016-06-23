@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasoner;
@@ -28,6 +29,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 
 /**
@@ -97,11 +99,7 @@ public abstract class ProofTreeShape {
 			@Override
 			public void check(IProofTreeNode node) {
 				assertReasonerID(node, SequentProver.PLUGIN_ID + ".conj");
-				final IProofTreeNode[] childNodes = node.getChildNodes();
-				assertEquals(childShapes.length, childNodes.length);
-				for (int i = 0; i < childShapes.length; i++) {
-					childShapes[i].check(childNodes[i]);
-				}
+				checkChildShapes(node, childShapes);
 			}
 
 			@Override
@@ -120,11 +118,7 @@ public abstract class ProofTreeShape {
 			@Override
 			public void check(IProofTreeNode node) {
 				assertReasonerID(node, SequentProver.PLUGIN_ID + ".impI");
-				final IProofTreeNode[] childNodes = node.getChildNodes();
-				assertEquals(childShapes.length, childNodes.length);
-				for (int i = 0; i < childShapes.length; i++) {
-					childShapes[i].check(childNodes[i]);
-				}
+				checkChildShapes(node, childShapes);
 			}
 
 			@Override
@@ -136,8 +130,17 @@ public abstract class ProofTreeShape {
 		};
 	}
 
-	public static final ProofTreeShape reasoner(final IReasoner r,
-			final IReasonerInput input, final ProofTreeShape... childShapes) {
+	public static final ProofTreeShape reasoner(final IReasoner r, final ProofTreeShape... childShapes) {
+		return reasoner(r, new EmptyInput(), IConfidence.DISCHARGED_MAX, childShapes);
+	}
+
+	public static final ProofTreeShape reasoner(final IReasoner r, final IReasonerInput input,
+			final ProofTreeShape... childShapes) {
+		return reasoner(r, input, IConfidence.DISCHARGED_MAX, childShapes);
+	}
+
+	public static final ProofTreeShape reasoner(final IReasoner r, final IReasonerInput input,
+			final int checkRuleConfidence, final ProofTreeShape... childShapes) {
 		return new ProofTreeShape() {
 
 			@Override
@@ -145,10 +148,12 @@ public abstract class ProofTreeShape {
 				assertReasonerID(node, r.getReasonerID());
 				final IProofRule rule = node.getRule();
 				assertEquals(input.getClass(), rule.generatedUsing().getClass());
+				assertEquals(checkRuleConfidence, node.getRuleConfidence());
 				if (r instanceof IVersionedReasoner) {
 					assertEquals(((IVersionedReasoner) r).getVersion(), rule
 							.getReasonerDesc().getVersion());
 				}
+				checkChildShapes(node, childShapes);
 			}
 
 			@Override
@@ -171,8 +176,16 @@ public abstract class ProofTreeShape {
 		}
 	}
 
+	private static void checkChildShapes(IProofTreeNode node, ProofTreeShape... childShapes) {
+		final IProofTreeNode[] childNodes = node.getChildNodes();
+		assertEquals(childShapes.length, childNodes.length);
+		for (int i = 0; i < childShapes.length; i++) {
+			childShapes[i].check(childNodes[i]);
+		}
+	}
+
 	/**
-	 * Ensures that the proof tree below the given proof tree node as the shape
+	 * Ensures that the proof tree below the given proof tree node has the shape
 	 * defined by this instance.
 	 * 
 	 * @param node
