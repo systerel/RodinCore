@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer.tests;
 
+import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.tests.DatatypeParser.parse;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.translateExtensions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.DefaultSimpleVisitor;
@@ -38,7 +39,6 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.tests.DatatypeParser;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
@@ -53,41 +53,37 @@ import org.junit.Test;
  */
 public class ExtensionTranslationTests extends AbstractTransformerTests {
 
-	private static final String LIST__DT = "List[S] ::="
-			+ " nil || cons[head: S; tail: List]";
+	private static final String LIST_SPEC = //
+			"List[S] ::= nil || cons[head: S; tail: List]";
 
-	private static final IDatatype datatype = DatatypeParser
-			.parse(ff, LIST__DT);
+	private static final IDatatype LIST_DT = parse(ff, LIST_SPEC);
 
-	private static final String msgAxioms //
-	= "	List∈ℤ  List_Type ;;" + "cons∈ℤ × List_Type ↣ List_Type ;;"
-			+ "head∈ran(cons) ↠ ℤ ;;" + "tail∈ran(cons) ↠ List_Type ;;"
-			+ "head ⊗ tail=cons∼ ;;"
-			+ "partition(List_Type,{nil},ran(cons)) ;;"
-			+ "∀S·partition(List[S],{nil},cons[S × List[S]])";
+	private static final String LIST_AXIOMS = //
+			"List∈ℤ  List_Type ;;" //
+					+ "cons∈ℤ × List_Type ↣ List_Type ;;"
+					+ "head∈ran(cons) ↠ ℤ ;;" //
+					+ "tail∈ran(cons) ↠ List_Type ;;" + "head ⊗ tail=cons∼ ;;"
+					+ "partition(List_Type,{nil},ran(cons)) ;;"
+					+ "∀S·partition(List[S],{nil},cons[S × List[S]])";
 
 	@Test
-	public void testSimpleSequent() {
-		testSequentTranslation("", "a = empty |- 2 = 1",//
-				msgAxioms + ";; a = empty |- 2 = 1");
+	public void simpleSequent() {
+		assertSequentTranslation("", //
+				"a = empty |- 2 = 1", //
+				LIST_AXIOMS + ";; a = empty |- 2 = 1");
 	}
 
 	@Test
-	public void testConstructorInHyp() {
-		testSequentTranslation("", "cons(1, nil) = b |- 2 = 1",//
-				msgAxioms + ";; cons(1 ↦ nil) = b |- 2 = 1");
+	public void constructorInHyp() {
+		assertSequentTranslation("", //
+				"cons(1, nil) = b |- 2 = 1", //
+				LIST_AXIOMS + ";; cons(1 ↦ nil) = b |- 2 = 1");
 	}
 
-	private void testSequentTranslation(String typeEnvStr, String sequentImage,
-			String expectedImage) {
+	private void assertSequentTranslation(String typeEnvStr,
+			String sequentImage, String expectedImage) {
 
-		final Set<IFormulaExtension> extensions = datatype.getFactory()
-				.getExtensions();
-		extensions.add(Empty.INSTANCE);
-		final FormulaFactory srcFac = FormulaFactory.getInstance(extensions);
-		final ITypeEnvironmentBuilder srcTypenv = mTypeEnvironment(typeEnvStr,
-				srcFac);
-		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
+		final ISimpleSequent srcSequent = makeSrcSequent(typeEnvStr,
 				sequentImage);
 		final ISimpleSequent actual = translateExtensions(srcSequent);
 		final FormulaFactory trgFac = actual.getFormulaFactory();
@@ -106,6 +102,20 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		assertEquals(expected, actual);
 	}
 
+	/*
+	 * Builds the sequent with a factory containing the <code>List</code>
+	 * datatype and the <code>empty</code> operator.
+	 */
+	private ISimpleSequent makeSrcSequent(String typeEnvStr, String seqImage) {
+		final Set<IFormulaExtension> extensions;
+		extensions = LIST_DT.getFactory().getExtensions();
+		extensions.add(Empty.INSTANCE);
+		final FormulaFactory srcFac = FormulaFactory.getInstance(extensions);
+		final ITypeEnvironmentBuilder srcTypenv;
+		srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
+		return getSimpleSequent(srcTypenv, seqImage);
+	}
+
 	/**
 	 * Checks that the given predicate does not contain any extended expression
 	 * or extended predicate.
@@ -115,17 +125,22 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 
 			@Override
 			public void visitExtendedExpression(ExtendedExpression expression) {
-				Assert.fail("The sequent should not contain any extended expression");
+				Assert.fail(
+						"The sequent should not contain any extended expression");
 			}
 
 			@Override
 			public void visitExtendedPredicate(ExtendedPredicate predicate) {
-				Assert.fail("The sequent should not contain any extended predicate");
+				Assert.fail(
+						"The sequent should not contain any extended predicate");
 			}
 
 		});
 	}
 
+	/**
+	 * Denotes an empty list of integers.
+	 */
 	private static class Empty implements IExpressionExtension {
 
 		public static final Empty INSTANCE = new Empty();
@@ -185,8 +200,8 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		@Override
 		public Type synthesizeType(Expression[] childExprs,
 				Predicate[] childPreds, ITypeMediator mediator) {
-			return mediator.makeParametricType(datatype.getTypeConstructor(),
-					Arrays.<Type> asList(mediator.makeIntegerType()));
+			return mediator.makeParametricType(LIST_DT.getTypeConstructor(),
+					singletonList((Type) mediator.makeIntegerType()));
 		}
 
 		@Override
@@ -208,8 +223,8 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
-			return tcMediator.makeParametricType(datatype.getTypeConstructor(),
-					Arrays.<Type> asList(tcMediator.makeIntegerType()));
+			return tcMediator.makeParametricType(LIST_DT.getTypeConstructor(),
+					singletonList((Type) tcMediator.makeIntegerType()));
 		}
 
 		@Override
