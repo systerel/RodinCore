@@ -711,6 +711,8 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	void selectCurrentNode(IProofTreeNode node) {
 		final ISelection selection = viewer.getSelection();
 		if (node != null) {
+			ProofRuleSelectionService.getInstance().ruleChanged(node.getRule());
+			
 			// Select the new current node if not null.
 			if (selection.isEmpty()) {
 				viewer.setSelection(new StructuredSelection(node), true);

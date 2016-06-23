@@ -26,7 +26,7 @@ import org.eventb.ui.EventBUIPlugin;
  * 
  * @author "Thomas Muller"
  */
-public class RuleDetailsView extends AbstractProofNodeView {
+public class RuleDetailsView extends AbstractProofNodeView implements IProofRuleSelectionListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -50,11 +50,20 @@ public class RuleDetailsView extends AbstractProofNodeView {
 		sc.setExpandVertical(true);
 		sc.setExpandHorizontal(true);
 		rdp = new RuleDetailsProvider(sc, font);
+		
+		final ProofRuleSelectionService ruleSelService = ProofRuleSelectionService.getInstance();
+		ruleSelService.addListener(this);
+		ruleChanged(ruleSelService.getCurrentRule());
 	}
 
 	@Override
 	protected void refreshContents(IProofTreeNode node) {
 		final IProofRule rule = node.getRule();
+		ruleChanged(rule);
+	}
+
+	@Override
+	public void ruleChanged(IProofRule rule) {
 		if (rule == null) {
 			sc.setVisible(false);
 			return;
