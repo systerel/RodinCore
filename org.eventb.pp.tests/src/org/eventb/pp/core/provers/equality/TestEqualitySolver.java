@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -449,7 +449,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		solver.addFactEquality(E(b, c, R2L0));
 		assertEquals(mSet(
 				"a,b[R1]",
-				"a,c[R2, R1]",
+				"a,c[R1, R2]",
 				"b,c[R2]"
 		),solver.getSourceTable().dump());
 	}
@@ -463,7 +463,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 				"a,b[R1]",
 				"c,d[R2]",
 				"b,d[R3]",
-				"a,c[R2, R3, R1]"
+				"a,c[R1, R2, R3]"
 		),solver.getSourceTable().dump());
 	}
 	
@@ -746,7 +746,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		solver.addFactEquality(E(a, c, R3L1));
 		assertEquals(mSet(
 				"a,b[R1]",
-				"a,c[R2, R1]",
+				"a,c[R1, R2]",
 				"b,c[R2]"
 		),solver.getSourceTable().dump());
 	}
@@ -781,7 +781,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 				"a,c[R3]",
 				"d,e[R4]",
 				"a,d[R2, R3]",
-				"a,e[R4, R2, R3]"
+				"a,e[R2, R3, R4]"
 		),solver.getSourceTable().dump());
 	}
 	
