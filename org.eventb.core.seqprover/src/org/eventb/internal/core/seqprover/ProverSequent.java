@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static java.util.Collections.sort;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -412,13 +416,30 @@ public final class ProverSequent implements IInternalProverSequent{
 	@Override
 	public String toString(){
 		return (
-				typeEnvironment.toString() +
+				typenvToString(typeEnvironment) +
 				iterablePredToString(hiddenHypIterable()) +
 				iterablePredToString(visibleMinusSelectedIterable()) +
 				iterablePredToString(selectedHypIterable()) + " |- " +
 				goal.toString());
 	}
-	
+
+	// Ensures that the string image of a type environment is predictable.
+	private static String typenvToString(ISealedTypeEnvironment typenv) {
+		final StringBuilder sb = new StringBuilder("{");
+		final List<String> names = new ArrayList<String>(typenv.getNames());
+		sort(names);
+		String sep = "";
+		for (String name : names) {
+			sb.append(sep);
+			sep = ", ";
+			sb.append(name);
+			sb.append("=");
+			sb.append(typenv.getType(name));
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
 	private static String iterablePredToString(Iterable<Predicate> iterable){
 		StringBuilder str = new StringBuilder("[");
 		Iterator<Predicate> iterator = iterable.iterator();
