@@ -18,7 +18,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
-import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
  * Abstract class for views that display information about currently selected
@@ -27,7 +26,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
  * @author Nicolas Beauger
  * 
  */
-public abstract class AbstractProofNodeView extends ViewPart implements IPropertyChangeListener, IProofTreeSelectionListener {
+public abstract class AbstractProofNodeView extends ViewPart implements IPropertyChangeListener {
 
 	private Composite parentComp = null;
 	private Font currentFont = null;
@@ -41,14 +40,6 @@ public abstract class AbstractProofNodeView extends ViewPart implements IPropert
 	 *            the mathematical font to use
 	 */
 	protected abstract void initializeControl(final Composite parent, Font font);
-
-	/**
-	 * Refreshes the control because a new proof tree node has been selected.
-	 * 
-	 * @param node
-	 *            the new proof tree node to use for the display
-	 */
-	protected abstract void refreshContents(IProofTreeNode node);
 
 	/**
 	 * Refreshes the control with a new mathematical font.
@@ -67,13 +58,6 @@ public abstract class AbstractProofNodeView extends ViewPart implements IPropert
 		initializeControl(parent, currentFont);
 
 		JFaceResources.getFontRegistry().addListener(this);
-		final ProofTreeSelectionService treeSelService = ProofTreeSelectionService.getInstance();
-		treeSelService.addListener(this);
-		// prime the selection to display contents
-		final IProofTreeNode currentNode = treeSelService.getCurrent();
-		if (currentNode != null) {
-			refreshOnSelectionChanged(currentNode);
-		}
 	}
 
 	@Override
@@ -81,16 +65,8 @@ public abstract class AbstractProofNodeView extends ViewPart implements IPropert
 		// Nothing to do.
 	}
 
-	private void refreshOnSelectionChanged(IProofTreeNode newNode) {
-		if (parentComp == null || parentComp.isDisposed()) {
-			return;
-		}
-		refreshContents(newNode);
-	}
-
-	@Override
-	public void nodeChanged(IProofTreeNode newNode) {
-		refreshOnSelectionChanged(newNode);
+	protected boolean isDisposed() {
+		return parentComp == null || parentComp.isDisposed();
 	}
 	
 	@Override

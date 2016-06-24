@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author Nicolas Beauger
  * 
  */
-public class TypeEnvView extends AbstractProofNodeView {
+public class TypeEnvView extends AbstractProofNodeView implements IProofTreeSelectionListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -259,8 +259,16 @@ public class TypeEnvView extends AbstractProofNodeView {
 		tableViewer.setLabelProvider(new TypeEnvLabelProvider());
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
 		initColumnSorting(comparator);
+
+		final ProofTreeSelectionService treeSelService = ProofTreeSelectionService.getInstance();
+		treeSelService.addListener(this);
+		// prime the selection to display contents
+		final IProofTreeNode currentNode = treeSelService.getCurrent();
+		if (currentNode != null) {
+			nodeChanged(currentNode);
+		}
 	}
-	
+
 	private void createColumns(Font font) {
 		final Table table = tableViewer.getTable();
 		table.setFont(font);
@@ -302,8 +310,11 @@ public class TypeEnvView extends AbstractProofNodeView {
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node) {
-		final ITypeEnvironment typeEnv = node.getSequent().typeEnvironment();
+	public void nodeChanged(IProofTreeNode newNode) {
+		if (isDisposed()) {
+			return;
+		}
+		final ITypeEnvironment typeEnv = newNode.getSequent().typeEnvironment();
 		tableViewer.setInput(typeEnv);
 	}
 

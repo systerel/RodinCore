@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -57,13 +56,10 @@ public class RuleDetailsView extends AbstractProofNodeView implements IProofRule
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node) {
-		final IProofRule rule = node.getRule();
-		ruleChanged(rule);
-	}
-
-	@Override
 	public void ruleChanged(IProofRule rule) {
+		if (isDisposed()) {
+			return;
+		}
 		if (rule == null) {
 			sc.setVisible(false);
 			return;
