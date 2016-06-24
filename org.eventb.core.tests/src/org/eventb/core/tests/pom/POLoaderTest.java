@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 ETH Zurich and others.
+ * Copyright (c) 2008, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,9 +107,9 @@ public class POLoaderTest extends BuilderTest {
 				
 		String[] expectedSequents = {
 				"{x=ℤ}[][1=1, 2=2, x∈ℕ][] |- x≠0",
-				"{z=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, z=3][] |- x≠0",
+				"{x=ℤ, z=ℤ}[][1=1, 2=2, x∈ℕ, z=3][] |- x≠0",
 				"{x=ℤ}[][1=1, 2=2, x∈ℕ, x≠0][] |- x ÷ x=1",
-				"{y=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, y∈ℕ, x ÷ x=1, x≠0, y ÷ y=1, y≠0,"
+				"{x=ℤ, y=ℤ}[][1=1, 2=2, x∈ℕ, y∈ℕ, x ÷ x=1, x≠0, y ÷ y=1, y≠0,"
 						+ " x+y≠0, x ÷ (x+y)=1⇒y+x≠0][] |- x ÷ (x+y)=1∧x ÷ (y+x)=1",
 				"{c=BOOL, x=ℤ}[][1=1, 2=2, x∈ℕ, ∀y·3 ÷ y=1,"
 						+ " c=TRUE⇒(∀z·5 ÷ z=1)][]"

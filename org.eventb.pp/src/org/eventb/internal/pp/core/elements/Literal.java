@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eventb.internal.pp.core.elements;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,8 +140,8 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 	 */
 	public S getCopyWithNewVariables(VariableContext context, 
 			HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
-		Set<Variable> variables = new HashSet<Variable>();
-		Set<LocalVariable> localVariables = new HashSet<LocalVariable>();
+		Set<Variable> variables = new LinkedHashSet<Variable>();
+		Set<LocalVariable> localVariables = new LinkedHashSet<LocalVariable>();
 		for (Term term : terms) {
 			term.collectVariables(variables);
 			term.collectLocalVariables(localVariables);

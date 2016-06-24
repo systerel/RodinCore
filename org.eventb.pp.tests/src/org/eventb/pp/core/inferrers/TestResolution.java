@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public class TestResolution extends AbstractInferrerTests {
 		doTest(
 				cClause(cPred(d0AA,evar0,evar1),cPred(d1A,var0)),
 				cClause(cNotPred(d0AA,var1,var1)),
-				cClause(mList(cPred(d1A,var0)),cNEqual(evar1, evar1), cNEqual(evar0, evar1))
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar0, evar0), cNEqual(evar0, evar1))
 		);
 		
 	}

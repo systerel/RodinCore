@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.pp.core.provers.equality.unionfind;
 
+import static java.util.Collections.sort;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -137,10 +141,22 @@ public final class SourceTable {
 		Set<String> result = new HashSet<String>();
 		for (Entry<Node, Hashtable<Node, Set<FactSource>>> table1 : table.entrySet()) {
 			for (Entry<Node, Set<FactSource>> entry : table1.getValue().entrySet()) {
-				result.add(table1.getKey()+","+entry.getKey()+entry.getValue());
+				result.add(table1.getKey()+","+entry.getKey()
+						+dumpSetOfFactSources(entry.getValue()));
 			}
 		}
 		return result;
 	}
-	
+
+	// Ensure that the order of the fact sources is always consistent:
+	// sort the facts alphabetically.
+	private static String dumpSetOfFactSources(Set<FactSource> set) {
+		final List<String> result = new ArrayList<String>(set.size());
+		for (final FactSource src : set) {
+			result.add(src.toString());
+		}
+		sort(result);
+		return result.toString();
+	}
+
 }
