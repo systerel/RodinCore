@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.seqprover.IProofRule;
 
 /**
  * Represents a proof rule for displaying it in the Rule Details view. It
@@ -23,11 +22,9 @@ import org.eventb.core.seqprover.IProofRule;
  */
 public class RuleDetailsModel {
 
-	private final IProofRule rule;
 	private RuleModelRoot root;
 
-	public RuleDetailsModel(IProofRule rule, RuleModelRoot root) {
-		this.rule = rule;
+	public RuleDetailsModel(RuleModelRoot root) {
 		this.root = root;
 	}
 

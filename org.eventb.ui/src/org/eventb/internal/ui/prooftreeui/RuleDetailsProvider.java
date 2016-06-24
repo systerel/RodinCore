@@ -123,7 +123,7 @@ public class RuleDetailsProvider {
 			return;
 		}
 		rule = handledRule;
-		model = new RuleDetailsModel(rule, computeRuleModelRoot());
+		model = new RuleDetailsModel(computeRuleModelRoot());
 	}
 
 	private RuleModelRoot computeRuleModelRoot() {
