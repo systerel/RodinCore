@@ -23,23 +23,23 @@ import org.eventb.core.seqprover.IProofTreeNode;
  * Service that maintains a current selection of proof tree node.
  * <p>
  * Classes that want to be notified shall implement
- * {@link IProofTreeSelectionListener} and call
- * {@link #addListener(IProofTreeSelectionListener)}.
+ * {@link IProofNodeSelectionListener} and call
+ * {@link #addListener(IProofNodeSelectionListener)}.
  * </p>
  * 
  * @author beauger
- * @see IProofTreeSelectionListener
+ * @see IProofNodeSelectionListener
  */
-public class ProofTreeSelectionService extends AbstractSelectionService<IProofTreeNode, IProofTreeSelectionListener>
+public class ProofNodeSelectionService extends AbstractSelectionService<IProofTreeNode, IProofNodeSelectionListener>
 		implements ISelectionListener {
 
-	private ProofTreeSelectionService() {
+	private ProofNodeSelectionService() {
 		// singleton
 	}
 
-	private static final ProofTreeSelectionService INSTANCE = new ProofTreeSelectionService();
+	private static final ProofNodeSelectionService INSTANCE = new ProofNodeSelectionService();
 
-	public static ProofTreeSelectionService getInstance() {
+	public static ProofNodeSelectionService getInstance() {
 		return INSTANCE;
 	}
 	
@@ -73,7 +73,7 @@ public class ProofTreeSelectionService extends AbstractSelectionService<IProofTr
 	}
 
 	@Override
-	protected void notifyChange(IProofTreeSelectionListener listener, IProofTreeNode newNode) {
+	protected void notifyChange(IProofNodeSelectionListener listener, IProofTreeNode newNode) {
 		listener.nodeChanged(newNode);
 	}
 

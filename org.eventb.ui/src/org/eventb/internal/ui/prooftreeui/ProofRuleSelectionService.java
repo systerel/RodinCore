@@ -24,7 +24,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
  * @author beauger
  * @see IProofRuleSelectionListener
  */
-public class ProofRuleSelectionService extends AbstractSelectionService<IProofRule, IProofRuleSelectionListener> implements IProofTreeSelectionListener {
+public class ProofRuleSelectionService extends AbstractSelectionService<IProofRule, IProofRuleSelectionListener> implements IProofNodeSelectionListener {
 
 	private ProofRuleSelectionService() {
 		// singleton
@@ -38,12 +38,12 @@ public class ProofRuleSelectionService extends AbstractSelectionService<IProofRu
 
 	@Override
 	protected void startListening() {
-		ProofTreeSelectionService.getInstance().addListener(INSTANCE);
+		ProofNodeSelectionService.getInstance().addListener(INSTANCE);
 	}
 
 	@Override
 	protected void stopListening() {
-		ProofTreeSelectionService.getInstance().removeListener(INSTANCE);
+		ProofNodeSelectionService.getInstance().removeListener(INSTANCE);
 	}
 
 	@Override

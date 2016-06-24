@@ -43,7 +43,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author Nicolas Beauger
  * 
  */
-public class TypeEnvView extends AbstractProofNodeView implements IProofTreeSelectionListener {
+public class TypeEnvView extends AbstractProofNodeView implements IProofNodeSelectionListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -260,7 +260,7 @@ public class TypeEnvView extends AbstractProofNodeView implements IProofTreeSele
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
 		initColumnSorting(comparator);
 
-		final ProofTreeSelectionService treeSelService = ProofTreeSelectionService.getInstance();
+		final ProofNodeSelectionService treeSelService = ProofNodeSelectionService.getInstance();
 		treeSelService.addListener(this);
 		// prime the selection to display contents
 		final IProofTreeNode currentNode = treeSelService.getCurrent();

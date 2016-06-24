@@ -15,13 +15,13 @@ import org.eventb.core.seqprover.IProofTreeNode;
 /**
  * Common protocol for classes that react when the selected proof node changes.
  * <p>
- * Such classes shall register with the {@link ProofTreeSelectionService}.
+ * Such classes shall register with the {@link ProofNodeSelectionService}.
  * </p>
  * 
  * @author beauger
- * @see ProofTreeSelectionService
+ * @see ProofNodeSelectionService
  */
-public interface IProofTreeSelectionListener {
+public interface IProofNodeSelectionListener {
 
 	/**
 	 * Notification that the current proof node has changed.
