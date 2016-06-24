@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -29,7 +30,15 @@ import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.util.Util;
 
 public abstract class AbstractBuilderTest extends ModifyingResourceTests {
-	
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+
+		SCTool.RUN_SC = false;
+		POTool.RUN_PO = false;
+	}
+
 	protected void runBuilder(IRodinProject project, String... expectedTrace) throws CoreException {
 		project.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		if (expectedTrace != null && expectedTrace.length > 0)
