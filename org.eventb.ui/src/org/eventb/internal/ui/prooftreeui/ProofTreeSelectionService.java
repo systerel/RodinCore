@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -31,7 +30,8 @@ import org.eventb.core.seqprover.IProofTreeNode;
  * @author beauger
  * @see IProofTreeSelectionListener
  */
-public class ProofTreeSelectionService implements ISelectionListener {
+public class ProofTreeSelectionService extends AbstractSelectionService<IProofTreeNode, IProofTreeSelectionListener>
+		implements ISelectionListener {
 
 	private ProofTreeSelectionService() {
 		// singleton
@@ -47,7 +47,8 @@ public class ProofTreeSelectionService implements ISelectionListener {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService();
 	}
 
-	private static void init() {
+	@Override
+	protected void startListening() {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -61,7 +62,8 @@ public class ProofTreeSelectionService implements ISelectionListener {
 		});
 	}
 
-	private static void uninit() {
+	@Override
+	protected void stopListening() {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -70,25 +72,9 @@ public class ProofTreeSelectionService implements ISelectionListener {
 		});
 	}
 
-	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
-	private IProofTreeNode currentNode;
-
-	public IProofTreeNode getCurrentNode() {
-		return currentNode;
-	}
-
-	public synchronized void addListener(IProofTreeSelectionListener listener) {
-		if (listeners.isEmpty()) {
-			init();
-		}
-		listeners.add(listener);
-	}
-
-	public synchronized void removeListener(IProofTreeSelectionListener listener) {
-		listeners.remove(listener);
-		if (listeners.isEmpty()) {
-			uninit();
-		}
+	@Override
+	protected void notifyChange(IProofTreeSelectionListener listener, IProofTreeNode newNode) {
+		listener.nodeChanged(newNode);
 	}
 
 	@Override
@@ -96,21 +82,9 @@ public class ProofTreeSelectionService implements ISelectionListener {
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = ((IStructuredSelection) selection);
 			final Object element = ssel.getFirstElement();
-			if (currentNode == element) {
-				return;
-			}
 			if (element instanceof IProofTreeNode) {
-				currentNode = (IProofTreeNode) element;
-				fireChange();
+				currentChanged((IProofTreeNode) element);
 			}
-		}
-	}
-
-	private void fireChange() {
-		// following code recommendation from ListenerList
-		final Object[] listenerArray = listeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IProofTreeSelectionListener) listenerArray[i]).nodeChanged(currentNode);
 		}
 	}
 

@@ -53,7 +53,7 @@ public class RuleDetailsView extends AbstractProofNodeView implements IProofRule
 		
 		final ProofRuleSelectionService ruleSelService = ProofRuleSelectionService.getInstance();
 		ruleSelService.addListener(this);
-		ruleChanged(ruleSelService.getCurrentRule());
+		ruleChanged(ruleSelService.getCurrent());
 	}
 
 	@Override

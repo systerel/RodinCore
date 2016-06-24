@@ -70,7 +70,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements IPropert
 		final ProofTreeSelectionService treeSelService = ProofTreeSelectionService.getInstance();
 		treeSelService.addListener(this);
 		// prime the selection to display contents
-		final IProofTreeNode currentNode = treeSelService.getCurrentNode();
+		final IProofTreeNode currentNode = treeSelService.getCurrent();
 		if (currentNode != null) {
 			refreshOnSelectionChanged(currentNode);
 		}
