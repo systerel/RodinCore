@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.prooftreeui;
+package org.eventb.internal.ui.prooftreeui.services;
 
 import org.eventb.core.seqprover.IProofRule;
 

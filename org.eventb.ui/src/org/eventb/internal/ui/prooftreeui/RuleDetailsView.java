@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.internal.ui.prooftreeui.services.IProofRuleSelectionListener;
+import org.eventb.internal.ui.prooftreeui.services.ProofRuleSelectionService;
 import org.eventb.ui.EventBUIPlugin;
 
 /**

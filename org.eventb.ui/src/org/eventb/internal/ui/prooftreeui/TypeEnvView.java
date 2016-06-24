@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.prooftreeui.services.IProofNodeSelectionListener;
+import org.eventb.internal.ui.prooftreeui.services.ProofNodeSelectionService;
 import org.eventb.ui.EventBUIPlugin;
 
 /**

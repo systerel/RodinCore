@@ -64,6 +64,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prooftreeui.services.ProofRuleSelectionService;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
