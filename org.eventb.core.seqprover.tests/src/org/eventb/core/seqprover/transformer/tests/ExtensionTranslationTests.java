@@ -80,6 +80,28 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 				LIST_AXIOMS + ";; cons(1 ↦ nil) = b |- 2 = 1");
 	}
 
+	/**
+	 * Ensures that a hypothesis which contains a non-translatable operator gets
+	 * removed by the translation to the plain mathematical language.
+	 */
+	@Test
+	public void untranslatableInHyp() {
+		assertSequentTranslation("", //
+				"(1 weird 2) = nil |- 3 = 4", //
+				"|- 3 = 4");
+	}
+
+	/**
+	 * Ensures that a goal which contains a non-translatable operator gets
+	 * removed by the translation to the plain mathematical language.
+	 */
+	@Test
+	public void untranslatableInGoal() {
+		assertSequentTranslation("", //
+				"1 = 2 |- (3 weird 4) = nil", //
+				"1 = 2 |- ⊥");
+	}
+
 	private void assertSequentTranslation(String typeEnvStr,
 			String sequentImage, String expectedImage) {
 
@@ -110,6 +132,7 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		final Set<IFormulaExtension> extensions;
 		extensions = LIST_DT.getFactory().getExtensions();
 		extensions.add(Empty.INSTANCE);
+		extensions.add(Weird.INSTANCE);
 		final FormulaFactory srcFac = FormulaFactory.getInstance(extensions);
 		final ITypeEnvironmentBuilder srcTypenv;
 		srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
@@ -218,6 +241,113 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 				}
 			}
 			return true;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			return tcMediator.makeParametricType(LIST_DT.getTypeConstructor(),
+					singletonList((Type) tcMediator.makeIntegerType()));
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
+	}
+
+	/**
+	 * Denotes a weird operator that is not WD-strict and takes two integers and
+	 * produces a list of integers.
+	 * 
+	 * The fact that this operator is not WD-strict entails that it cannot be
+	 * translated and that it would maintain a dependency on the List datatype.
+	 * Consequently, any hypothesis or goal that contain it shall be voided.
+	 */
+	private static class Weird implements IExpressionExtension {
+
+		public static final Weird INSTANCE = new Weird();
+
+		private Weird() {
+			// singleton
+		}
+
+		private final String symbol = "weird";
+
+		@Override
+		public String getSyntaxSymbol() {
+			return symbol;
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			// non strict operator
+			return false;
+		}
+
+		@Override
+		public String getId() {
+			return symbol;
+		}
+
+		@Override
+		public String getGroupId() {
+			return symbol;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// no compatibility
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// no priority
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return BINARY_INFIX_EXPRESSION;
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return mediator.makeParametricType(LIST_DT.getTypeConstructor(),
+					singletonList((Type) mediator.makeIntegerType()));
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			if (!(childExprs[0].getType() instanceof IntegerType)) {
+				return false;
+			}
+			if (!(childExprs[1].getType() instanceof IntegerType)) {
+				return false;
+			}
+
+			if (!(proposedType instanceof ParametricType)) {
+				return false;
+			}
+			final ParametricType type = (ParametricType) proposedType;
+			final Type[] typeParams = type.getTypeParameters();
+			if (typeParams.length != 1) {
+				return false;
+			}
+			return typeParams[0] instanceof IntegerType;
 		}
 
 		@Override

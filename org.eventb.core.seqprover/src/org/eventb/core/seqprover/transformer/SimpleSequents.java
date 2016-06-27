@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.transformer.LanguageFilter;
 import org.eventb.internal.core.seqprover.transformer.SequentDatatypeTranslator;
+import org.eventb.internal.core.seqprover.transformer.SequentExtensionRemover;
 import org.eventb.internal.core.seqprover.transformer.SequentExtensionTranslator;
 import org.eventb.internal.core.seqprover.transformer.SequentSimplifier;
 import org.eventb.internal.core.seqprover.transformer.SimpleSequent;
@@ -304,17 +305,35 @@ public class SimpleSequents {
 	 * original sequent after all operator and datatype extensions have been
 	 * removed.
 	 * </p>
+	 * <p>
+	 * The WD-strict operators are translated to functions, the datatype
+	 * definitions are expanded. Any predicate containing a non WD-strict
+	 * operator is simply removed (hypotheses become true, and the goal becomes
+	 * false).
+	 * </p>
 	 * 
 	 * @param sequent
 	 *            sequent to translate
-	 * @return a sequent equivalent to the given one, where all operators and
-	 *         datatypes have been translated to pure set theory
+	 * @return a sequent stronger than the given one, where all operators and
+	 *         datatypes have been translated to pure set theory or removed if
+	 *         untranslatable
 	 * @since 3.1
 	 */
 	public static ISimpleSequent translateExtensions(ISimpleSequent sequent) {
+		// First remove all non WD-strict operators
+		final FormulaFactory initFac = sequent.getFormulaFactory();
+		final SequentExtensionRemover remover;
+		remover = new SequentExtensionRemover(initFac);
+		if (remover.needsTranslation()) {
+			sequent = sequent.apply(remover);
+		}
+
+		// Then translate non-datatype operators
 		final ITypeEnvironment typenv = sequent.getTypeEnvironment();
 		final ISimpleSequent newSequent = sequent
 				.apply(new SequentExtensionTranslator(typenv));
+
+		// Then translate datatypes.
 		return translateDatatypes(newSequent);
 	}
 
