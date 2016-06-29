@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.prooftreeui.services.IProofNodeSelectionListener;
+import org.eventb.internal.ui.prooftreeui.services.ProofNodeSelectionService;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -43,7 +45,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author Nicolas Beauger
  * 
  */
-public class TypeEnvView extends AbstractProofNodeView {
+public class TypeEnvView extends AbstractProofNodeView implements IProofNodeSelectionListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -259,8 +261,16 @@ public class TypeEnvView extends AbstractProofNodeView {
 		tableViewer.setLabelProvider(new TypeEnvLabelProvider());
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
 		initColumnSorting(comparator);
+
+		final ProofNodeSelectionService treeSelService = ProofNodeSelectionService.getInstance();
+		treeSelService.addListener(this);
+		// prime the selection to display contents
+		final IProofTreeNode currentNode = treeSelService.getCurrent();
+		if (currentNode != null) {
+			nodeChanged(currentNode);
+		}
 	}
-	
+
 	private void createColumns(Font font) {
 		final Table table = tableViewer.getTable();
 		table.setFont(font);
@@ -302,8 +312,11 @@ public class TypeEnvView extends AbstractProofNodeView {
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node) {
-		final ITypeEnvironment typeEnv = node.getSequent().typeEnvironment();
+	public void nodeChanged(IProofTreeNode newNode) {
+		if (isDisposed()) {
+			return;
+		}
+		final ITypeEnvironment typeEnv = newNode.getSequent().typeEnvironment();
 		tableViewer.setInput(typeEnv);
 	}
 

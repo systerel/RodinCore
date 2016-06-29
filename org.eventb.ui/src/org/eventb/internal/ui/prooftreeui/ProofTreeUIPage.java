@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prooftreeui.services.ProofRuleSelectionService;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
@@ -709,28 +710,27 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	void selectCurrentNode(IProofTreeNode node) {
-		ISelection selection = viewer.getSelection();
+		final ISelection selection = viewer.getSelection();
 		if (node != null) {
+			ProofRuleSelectionService.getInstance().ruleChanged(node.getRule());
+			
 			// Select the new current node if not null.
 			if (selection.isEmpty()) {
-				viewer.setSelection(new StructuredSelection(node),
-						true);
+				viewer.setSelection(new StructuredSelection(node), true);
 				return;
 			}
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				Object firstElement = ssel.getFirstElement();
-				if (!firstElement.equals(node))
-					viewer.setSelection(new StructuredSelection(node),
-							true);
+				if (!firstElement.equals(node)) {
+					viewer.setSelection(new StructuredSelection(node), true);
+				}
 			}
-		}									
-		else {
+		} else {
 			// Set the selection to empty otherwise.
 			if (!selection.isEmpty())
-				viewer.setSelection(new StructuredSelection(),
-					true);
-		}					
+				viewer.setSelection(new StructuredSelection(), true);
+		}
 	}
 	
 	public Object[] getFilters() {

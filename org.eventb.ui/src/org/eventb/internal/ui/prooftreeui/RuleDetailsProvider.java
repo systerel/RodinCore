@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ import org.eventb.internal.ui.prooftreeui.RuleDetailsModel.RuleModelAntecedent;
 import org.eventb.internal.ui.prooftreeui.RuleDetailsModel.RuleModelRoot;
 
 /**
- * Class used to compute rule informations to be displayed and traverse them in
+ * Class used to compute rule information to be displayed and traverse them in
  * order to display them.
  */
 public class RuleDetailsProvider {
@@ -92,7 +92,7 @@ public class RuleDetailsProvider {
 	 * 
 	 * @param parent
 	 *            the composite that will hold the styled text to print rule
-	 *            informations
+	 *            information
 	 */
 	public RuleDetailsProvider(Composite parent, Font font) {
 		sText = new StyledText(parent, MULTI | FULL_SELECTION);
@@ -123,7 +123,7 @@ public class RuleDetailsProvider {
 			return;
 		}
 		rule = handledRule;
-		model = new RuleDetailsModel(rule, computeRuleModelRoot());
+		model = new RuleDetailsModel(computeRuleModelRoot());
 	}
 
 	private RuleModelRoot computeRuleModelRoot() {

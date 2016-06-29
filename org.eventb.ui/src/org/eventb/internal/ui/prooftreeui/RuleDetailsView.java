@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,17 +17,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.prooftreeui.services.IProofRuleSelectionListener;
+import org.eventb.internal.ui.prooftreeui.services.ProofRuleSelectionService;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * The rule details view provides informations about the rule which was applied
+ * The rule details view provides information about the rule which was applied
  * on a given proof tree node.
  * 
  * @author "Thomas Muller"
  */
-
-public class RuleDetailsView extends AbstractProofNodeView {
+public class RuleDetailsView extends AbstractProofNodeView implements IProofRuleSelectionListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -51,11 +51,17 @@ public class RuleDetailsView extends AbstractProofNodeView {
 		sc.setExpandVertical(true);
 		sc.setExpandHorizontal(true);
 		rdp = new RuleDetailsProvider(sc, font);
+		
+		final ProofRuleSelectionService ruleSelService = ProofRuleSelectionService.getInstance();
+		ruleSelService.addListener(this);
+		ruleChanged(ruleSelService.getCurrent());
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node) {
-		final IProofRule rule = node.getRule();
+	public void ruleChanged(IProofRule rule) {
+		if (isDisposed()) {
+			return;
+		}
 		if (rule == null) {
 			sc.setVisible(false);
 			return;
