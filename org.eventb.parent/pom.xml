@@ -5,12 +5,12 @@
 
 	<groupId>org.eventb</groupId>
 	<artifactId>parent</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<www-basedir>/tmp/rodin-build/rodin-3.2</www-basedir>
+		<www-basedir>/tmp/rodin-build/rodin-3.3</www-basedir>
 
 		<!-- Plug-in versions -->
 		<tycho-version>0.21.0</tycho-version>
