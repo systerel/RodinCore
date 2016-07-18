@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Systerel and others.
+ * Copyright (c) 2012, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - added tests for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -56,6 +57,7 @@ import org.junit.Test;
  * 
  * @author Thomas Muller
  * @author Laurent Voisin
+ * @author htson - Added tests for specializing predicate variables
  */
 public class TestFormulaSpecialization extends AbstractTests {
 
@@ -114,6 +116,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"a ∈ A ∧ b ∈ B ∧ c ∈ C", //
 				"S := T || a := x",//
 				"x ∈ A ∧ b ∈ B ∧ c ∈ C");
+		assertPredicateSpecialization(te, //
+				"a ∈ A ∧ b ∈ B ∧ $P", //
+				"S := T || a := x || $P := c ∈ C",//
+				"x ∈ A ∧ b ∈ B ∧ c ∈ C");
 	}
 
 	/**
@@ -146,6 +152,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"a ∈ A ⇒ b ∈ B",//
 				"S := T || a := c",//
 				"c ∈ A ⇒ b ∈ B");
+		assertPredicateSpecialization(te,//
+				"a ∈ A ⇒ $P",//
+				"S := T || a := c || $P := b ∈ B",//
+				"c ∈ A ⇒ b ∈ B");
 	}
 
 	/**
@@ -156,6 +166,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(te,//
 				"bool(a ∈ A)",//
 				"S := T || a := c",//
+				"bool(c ∈ A)");
+		assertExpressionSpecialization(te,//
+				"bool($P)",//
+				"$P := c ∈ A",//
 				"bool(c ∈ A)");
 	}
 
@@ -206,6 +220,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"α(a∈A, a)",//
 				"S := T || a := b",//
 				"α(b∈A, b)");
+		assertPredicateSpecialization(te,//
+				"α($P, a)",//
+				"S := T || a := b || $P := b∈A",//
+				"α(b∈A, b)");
 	}
 
 	/**
@@ -245,6 +263,19 @@ public class TestFormulaSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that an predicate variables gets specialized.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPredicateVariable() {
+		assertPredicateSpecialization(te,//
+				"$P", "$P := $Q", "$Q");
+		assertPredicateSpecialization(te,//
+				"$P", "$P := x∈A", "x∈A");
+	}
+
+	/**
 	 * Ensures that quantified expressions get specialized.
 	 */
 	@Test 
@@ -255,6 +286,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"{x∣x∈A}", "S := T || A := B", "{x∣x∈B}");
 		assertExpressionSpecialization(te,//
 				"{a∣a∈A}", "S := ℤ || a := 5 || A := {2}", "{a∣a∈{2}}");
+		assertExpressionSpecialization(te, "{x∣x∈A}", "S := T", "{x∣x∈A}");
 	}
 
 	/**

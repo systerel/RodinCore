@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - added support for predicate variables.
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static java.util.regex.Pattern.compile;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
+import static org.eventb.core.ast.tests.AbstractTests.parsePredicate;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.AbstractTests.typeCheck;
 import static org.junit.Assert.fail;
@@ -26,6 +28,8 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 
 /**
@@ -34,6 +38,7 @@ import org.eventb.core.ast.Type;
  * separated by double bars (<code>||</code>).
  * 
  * @author Laurent Voisin
+ * @author htson - added support for predicate variables.
  */
 public class SpecializationBuilder {
 
@@ -70,6 +75,8 @@ public class SpecializationBuilder {
 			final String dstImage = images[1];
 			if (isGivenType(srcImage)) {
 				addTypeSpecialization(srcImage, dstImage);
+			} else if (isPredicateVariable(srcImage)) {
+				addPredicateSpecialization(srcImage, dstImage);
 			} else {
 				addIdentSpecialization(srcImage, dstImage);
 			}
@@ -89,6 +96,21 @@ public class SpecializationBuilder {
 		return false;
 	}
 
+	/**
+	 * Utility method to check if a string source image is a predicate variable.
+	 * 
+	 * @param srcImage
+	 *            the input source image.
+	 * @return <code>true</code> if the input source image is a predicate
+	 *         variable.
+	 * @author htson
+	 */
+	private boolean isPredicateVariable(String srcImage) {
+		if (srcImage.startsWith(PredicateVariable.LEADING_SYMBOL))
+			return true;
+		return false;
+	}
+	
 	public void addTypeSpecializations(String list) {
 		final String[] pairImages = splitList(list);
 		for (final String pairImage : pairImages) {
@@ -101,6 +123,30 @@ public class SpecializationBuilder {
 		final GivenType src = srcFac.makeGivenType(srcImage);
 		final Type dst = parseType(dstImage, dstFac);
 		result.put(src, dst);
+	}
+
+	/**
+	 * Utility method to add a predicate specialization.
+	 * 
+	 * @param srcImage
+	 *            the string source image
+	 * @param dstImage
+	 *            the image corresponding to the predicate for instantiation.
+	 * @htson
+	 */
+	private void addPredicateSpecialization(String srcImage, String dstImage) {
+		final PredicateVariable predVar = srcFac.makePredicateVariable(
+				srcImage, null);
+		Predicate pred = parsePredicate(dstImage, dstFac);
+		final ISpecialization temp = result.clone();
+		final ITypeEnvironment dstTypenv = srcTypenv.specialize(temp);
+		final ITypeCheckResult tcResult = pred.typeCheck(dstTypenv);
+		if (tcResult.hasProblem()) {
+			fail("Typecheck failed for predicate " + dstImage + "\n"
+					+ "Type environment is " + dstTypenv + "\n"
+					+ tcResult.getProblems());
+		}
+		result.put(predVar, pred);
 	}
 
 	private void addIdentSpecialization(String srcImage, String dstImage) {

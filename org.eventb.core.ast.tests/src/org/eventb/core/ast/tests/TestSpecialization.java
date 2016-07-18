@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - added tests related to predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -16,15 +17,21 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 import org.junit.Test;
 
@@ -33,6 +40,7 @@ import org.junit.Test;
  * precondition of specialization methods are indeed implemented.
  * 
  * @author Laurent Voisin
+ * @author htson - added tests related to predicate variables
  */
 public class TestSpecialization extends AbstractTests {
 
@@ -50,6 +58,10 @@ public class TestSpecialization extends AbstractTests {
 	private static final Expression expTrue = mBoolExpression(mLiteralPredicate(BTRUE));
 	private static final FreeIdentifier untyped = mFreeIdentifier("untyped");
 
+	private static final PredicateVariable P = ff.makePredicateVariable("$P", null);
+	private static final PredicateVariable Q = ff.makePredicateVariable("$Q", null);
+	private static final Predicate untypedPred = ff.makeRelationalPredicate(Predicate.EQUAL, untyped, one, null);
+	
 	private final ISpecialization spec = ff.makeSpecialization();
 
 	/**
@@ -424,6 +436,563 @@ public class TestSpecialization extends AbstractTests {
 
 		assertNull(spec.get(S));
 		assertEquals(S, clone.get(S));
+	}
+
+	/**
+	 * Ensures that a null given type is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testCanPut_NullGivenType() {
+		try {
+			spec.canPut(null, Z);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that a null type value is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_NullTypeValue() {
+		try {
+			spec.canPut(S, null);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that a type value from another factory is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_WrongFactoryTypeValue() {
+		try {
+			spec.canPut(S, LIST_FAC.makeIntegerType());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that a type substitution which is overridden is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_OverriddenType() {
+		spec.put(S, Z);
+		boolean ok = spec.canPut(S, T);
+		assertFalse("Should reject overriding type substitution", ok);
+	}
+
+	/**
+	 * Ensures that a inserting a type substitution identical to one already
+	 * registered is accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_OverridenSameType() {
+		spec.put(S, Z);
+		boolean ok = spec.canPut(S, Z);
+		assertTrue(
+				"Should accept overriding type substitution with the same identical substitution",
+				ok);
+	}
+
+	/**
+	 * Ensures that a type substitution which is not compatible with the
+	 * identifier substitutions is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_IncompatibleTypeSubstitution() {
+		spec.put(aS, bS);
+		boolean ok = spec.canPut(S, Z);
+		assertFalse("Should reject incompatible type substitution", ok);
+	}
+
+	/**
+	 * Ensures that types can be swapped in a specialization.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_TypeSwap() {
+		spec.put(S, T);
+		boolean ok = spec.canPut(T, S);
+		assertTrue("Should accept instantiations that swapping types", ok);
+	}
+
+	/**
+	 * Ensures that a null identifier is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_NullIdentifier() {
+		try {
+			spec.canPut(null, one);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an untyped identifier is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_UntypedIdentifier() {
+		try {
+			spec.canPut(untyped, one);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an identifier that denotes a given type is rejected, if not
+	 * already registered as a type substitution.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_GivenTypeIdentifier() {
+		boolean ok = spec.canPut(S.toExpression(), Z.toExpression());
+		assertFalse(
+				"Should reject instantiation for an identifier denoting a given type if it is NOT yet registered",
+				ok);
+	}
+
+	/**
+	 * Ensures that an identifier that denotes a given type is accepted, if it
+	 * has already been registered as a type substitution.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_GivenTypeIdentifierAlready() {
+		spec.put(S, Z);
+		boolean ok = spec.canPut(S.toExpression(), Z.toExpression());
+		assertTrue("Should accept instantiation for an identifier denoting a given type if it is registered", ok);
+	}
+
+	/**
+	 * Ensures that a null expression is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_NullExpression() {
+		try {
+			spec.canPut(aS, null);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an expression from another factory is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_WrongFactoryExpression() {
+		spec.put(S, Z);
+		try {
+			spec.canPut(aS, LIST_FAC.makeIntegerLiteral(ZERO, null));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an untyped expression is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_UntypedExpression() {
+		try {
+			spec.canPut(aS, untyped);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that an identifier substitution which changes type when no type
+	 * substitution has been registered is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_IncompatibleTypeNoTypeSubstitution() {
+		boolean ok = spec.canPut(aS, one);
+		assertFalse("Should reject the proposed free identifier instantiation",
+				ok);
+	}
+
+	/**
+	 * Ensures that an identifier substitution which is not compatible with the
+	 * type substitution is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_IncompatibleTypeWithTypeSubstitution() {
+		spec.put(S, Z);
+		boolean ok = spec.canPut(aS, expTrue);
+		assertFalse("Should reject the proposed free identifier instantiation",
+				ok);
+	}
+
+
+	/**
+	 * Ensures that the type of the expression is checked within complex
+	 * replacement types.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_IncompatibleComplexType() {
+		spec.put(S, ff.makePowerSetType(Z));
+		boolean ok = spec.canPut(aS, ff.makeSetExtension(expTrue, null));
+		assertFalse(
+				"Should reject free identifier substitution with incompatible complex type",
+				ok);
+	}
+
+	/**
+	 * Ensures that an identifier substitution for which the replacement
+	 * expression is of same type as the given identifier is accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_SameTypeIdentSubstitution() {
+		boolean ok = spec.canPut(aS, bS);
+		assertTrue(
+				"Should accept free identifier substitution with the same type",
+				ok);
+	}
+
+	/**
+	 * Ensures that registering two substitution for the same identifier but
+	 * with different expressions is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_OverridenExpression() {
+		spec.put(S, Z);
+		spec.put(aS, one);
+		boolean ok = spec.canPut(aS, two);
+		assertFalse(
+				"Should reject substitution for the same identifier with a different expression value",
+				ok);
+	}
+
+	/**
+	 * Ensures that registering twice the same identifier substitution is
+	 * accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_OverridenSameExpression() {
+		spec.put(S, Z);
+		spec.put(aS, one);
+		boolean ok = spec.canPut(aS, one);
+		assertTrue(
+				"Should accept substitution for the same identifier with the same expression value",
+				ok);
+	}
+
+	/**
+	 * Ensures that an identifier substitution which contains an ill-formed
+	 * expression is accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testCanPut_IllFormedExpression() {
+		boolean ok = spec.canPut(aS, ff.makeBoundIdentifier(0, null, S));
+		assertTrue(
+				"Should accept identifier substitution with an ill-formed expression",
+				ok);
+	}
+
+	/**
+	 * Ensures that identifiers can be swapped in a specialization.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_IdentSwap() {
+		spec.put(S, T);
+		spec.put(aS, bT);
+		boolean ok = spec.canPut(bS, aT);
+		assertTrue("Should accept substitution that swapping identifiers", ok);
+	}
+
+	/**
+	 * Ensures that both types and identifiers can be swapped in a
+	 * specialization.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_BothSwap() {
+		spec.put(S, T);
+		spec.put(T, S);
+		spec.put(aS, bT);
+		boolean ok = spec.canPut(bT, aS);
+		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
+	}
+
+	/**
+	 * Ensures that both types and identifiers can be swapped in a
+	 * specialization, entering substitutions alternatively.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testCanPut_BothSwapMixed() {
+		spec.put(S, T);
+		spec.put(aS, bT);
+		spec.put(T, S);
+		boolean ok = spec.canPut(bT, aS);
+		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
+	}
+
+	/**
+	 * Ensures that a null predicate variable is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testPut_NullPredicateVariable() {
+		try {
+			spec.put(null, Q);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}		
+	}
+
+	/**
+	 * Ensures that a null predicate value is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testPut_NullPredicateValue() {
+		try {
+			spec.put(P, null);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}		
+	}
+
+	/**
+	 * Ensures that an untyped predicate is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPut_UntypedPredicate() {
+		try {
+			spec.put(P, untypedPred);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+	
+	/**
+	 * Ensures that a typed-predicate from another factory is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPut_WrongFactoryPredicateValue() {
+		try {
+			spec.put(P, LIST_FAC.makeLiteralPredicate(BTRUE, null));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that registering two substitution for the same predicate variable
+	 * but with different predicates is rejected.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPut_OverridenPredicate() {
+		spec.put(P, Q);
+		boolean ok = spec.put(P,
+				ff.makeRelationalPredicate(Predicate.EQUAL, aT, bT, null));
+		assertFalse(
+				"Should reject substitution for the same predicate variable with a different predicate value",
+				ok);
+	}
+
+	/**
+	 * Ensures that registering twice the same predicate variable substitution
+	 * is accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPut_OverridenSamePredicate() {
+		spec.put(P, Q);
+		boolean ok = spec.put(P, Q);
+		assertTrue(
+				"Should accept substitution for the same predicate variable with the same predicate value",
+				ok);
+	}
+
+	/**
+	 * Ensures that a predicate variable substitution which contains an ill-formed
+	 * predicate is accepted.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testPut_IllFormedPredicate() {
+		BoundIdentifier boundIdent = ff.makeBoundIdentifier(0, null, Z);
+		Predicate value = ff.makeRelationalPredicate(Predicate.EQUAL,
+				boundIdent, one, null);
+
+		boolean ok = spec.put(
+				P,
+				value);
+		assertTrue(
+				"Should accept predicate variable substitution with an ill-formed predicate",
+				ok);
+	}
+
+	/**
+	 * Ensures that identifiers can be swapped in a specialization.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPut_PredVarSwap() {
+		spec.put(P, Q);
+		boolean ok = spec.put(Q, P);
+		assertTrue("Should accept substitution that swapping predicate variables", ok);
+	}
+
+	/**
+	 * Ensures that one can retrieve a predicate varialbe substitution.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testGet_PredicateVariableWithSubstitution() {
+		spec.put(P, Q);
+		assertEquals("Incorrect subsititution for $P", Q, spec.get(P));
+	}
+
+
+	/**
+	 * Ensures that one gets null if there is no substitution and that no
+	 * substitution is created as a side-effect.
+	 * 
+	 * @author htson
+	 */
+	@Test
+	public void testGet_PredicateVariableWithoutSubstitution() {
+		assertNull("There should be no substitution for $P", spec.get(P));
+		assertNull("There should be still no substitution for $P", spec.get(P));
+	}
+	
+	/**
+	 * Ensures that types, free identifiers, and predicate variable are
+	 * correctly put into the specialization.
+	 * 
+	 * @author htson
+	 */
+	public void testGets() {
+		GivenType[] types;
+		FreeIdentifier[] idents;
+		PredicateVariable[] predVars;
+		
+		spec.put(S, T);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+		
+		spec.put(aS, bT);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+		
+		spec.put(T, S);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+
+		spec.put(P, Q);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P}, predVars);
+
+		spec.put(aT, bS);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS, aT}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P}, predVars);
+
+		spec.put(Q, P);
+		types = spec.getTypes();
+		idents = spec.getFreeIdentifiers();
+		predVars = spec.getPredicateVariables();
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
+		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
+		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
+		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P, Q}, predVars);
 	}
 
 }
