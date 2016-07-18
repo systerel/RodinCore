@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southamtpon - added support for predicate varialbes.
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
+import static org.eventb.internal.core.ast.PredicateSubstitute.makeSubstitute;
 import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -28,6 +31,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -42,6 +46,7 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * doubled as an identifier substitution.
  * 
  * @author Laurent Voisin
+ * @author htson - added support for predicate variables.
  */
 public class Specialization extends Substitution implements ISpecialization {
 
@@ -71,12 +76,16 @@ public class Specialization extends Substitution implements ISpecialization {
 	// Identifier substitutions
 	private final Map<FreeIdentifier, Substitute> identSubst;
 	
+	// Predicate variable substitutions
+	private final Map<PredicateVariable, PredicateSubstitute> predSubst;
+	
 	private final TypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Substitute>();
+		predSubst = new HashMap<PredicateVariable, PredicateSubstitute>();
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
 	}
 
@@ -84,6 +93,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
+		predSubst = new HashMap<PredicateVariable, PredicateSubstitute>(other.predSubst);
 		speTypeRewriter = new SpecializationTypeRewriter(other.ff);
 	}
 
@@ -211,6 +221,14 @@ public class Specialization extends Substitution implements ISpecialization {
 		return result;
 	}
 
+	private Predicate getOrSetDefault(PredicateVariable predVar) {
+		final PredicateSubstitute subst = predSubst.get(predVar);
+		if (subst != null) {
+			return subst.getSubstitute(predVar, getBindingDepth());
+		}
+		return super.rewrite(predVar);
+	}
+
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
 		final Expression newIdent = getOrSetDefault(identifier);
@@ -218,6 +236,20 @@ public class Specialization extends Substitution implements ISpecialization {
 			return super.rewrite(identifier);
 		}
 		return newIdent;
+	}
+
+	/**
+	 * Rewrite the predicate variable.
+	 * 
+	 * @author htson
+	 */
+	@Override
+	public Predicate rewrite(PredicateVariable predVar) {
+		final Predicate newPred = getOrSetDefault(predVar);
+		if (newPred.equals(predVar)) {
+			return super.rewrite(predVar);
+		}
+		return newPred;
 	}
 
 	@Override
@@ -304,7 +336,106 @@ public class Specialization extends Substitution implements ISpecialization {
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
+		for (Entry<PredicateVariable, PredicateSubstitute> entry : predSubst.entrySet()) {
+			sb.append(sep);
+			sep = " || ";
+			sb.append(entry.getKey());
+			sb.append("=");
+			sb.append(entry.getValue());
+		}
 		return sb.toString();
+	}
+
+	@Override
+	public boolean canPut(GivenType type, Type value) {
+		if (type == null)
+			throw new NullPointerException("Null given type");
+		if (value == null)
+			throw new NullPointerException("Null type");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
+		Type oldValue = typeSubst.get(type);
+		if (oldValue != null && !oldValue.equals(value)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean canPut(FreeIdentifier ident, Expression value) {
+		if (ident == null)
+			throw new NullPointerException("Null identifier");
+		if (!ident.isTypeChecked())
+			throw new IllegalArgumentException("Untyped identifier");
+		if (value == null)
+			throw new NullPointerException("Null value");
+		if (!value.isTypeChecked())
+			throw new IllegalArgumentException("Untyped value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
+		try {
+			// @htson This is an awkward way to reuse verify(..) method 
+			verify(ident, value);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+		final Substitute subst = makeSubstitute(value);
+		final Substitute oldSubst = identSubst.get(ident);
+		if (oldSubst != null && !oldSubst.equals(subst)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean put(PredicateVariable predVar, Predicate value) {
+		if (predVar == null)
+			throw new NullPointerException("Null predicate variable");
+		if (value == null)
+			throw new NullPointerException("Null value");
+		if (!value.isTypeChecked())
+			throw new IllegalArgumentException("Untyped value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
+		
+		final PredicateSubstitute subst = makeSubstitute(value);
+		final PredicateSubstitute oldSubst = predSubst.put(predVar, subst);
+		if (oldSubst != null && !oldSubst.equals(subst)) {
+			predSubst.put(predVar, oldSubst);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public Predicate get(PredicateVariable predVar) {
+		final PredicateSubstitute subst = predSubst.get(predVar);
+		return subst == null ? null : subst.getSubstitute(predVar, 0);
+	}
+
+	@Override
+	public GivenType[] getTypes() {
+		Set<GivenType> keySet = typeSubst.keySet();
+		return keySet.toArray(new GivenType[keySet.size()]);
+	}
+
+	@Override
+	public FreeIdentifier[] getFreeIdentifiers() {
+		Set<FreeIdentifier> keySet = identSubst.keySet();
+		return keySet.toArray(new FreeIdentifier[keySet.size()]);
+	}
+
+	@Override
+	public PredicateVariable[] getPredicateVariables() {
+		Set<PredicateVariable> keySet = predSubst.keySet();
+		return keySet.toArray(new PredicateVariable[keySet.size()]);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,22 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
+
 /**
- * Common protocol for describing a specialization, which groups together a type
- * substitution and a free identifier substitution in one object. It allows to
- * specialize a formula by applying both substitutions at once.
+ * Common protocol for describing a specialization, which groups together type
+ * substitutions, free-identifier substitutions, and predicate-variable
+ * substitutions in one object. It allows to specialize a formula by applying
+ * these substitutions at once.
  * <p>
- * Instances of this class can be created only through a formula factory. Type
- * and free identifier substitutions are then added one by one using
- * <code>put()</code> methods. Finally, the instance is passed as argument to a
- * <code>specialize()</code> method on a type, type environment or formula.
+ * Instances of this class can be created only through a formula factory. Type,
+ * free-identifier and predicate-variable substitutions are then added one by
+ * one using <code>put()</code> methods. Finally, the instance is passed as
+ * argument to a <code>specialize()</code> method on a type, type environment or
+ * formula.
  * </p>
  * <p>
  * The substitutions can also change the formula factory. Consequently, all
@@ -26,9 +30,9 @@ package org.eventb.core.ast;
  * specialization.
  * </p>
  * <p>
- * Both substitutions must be compatible, that is the expression to be
+ * These substitutions must be compatible, that is the expression to be
  * substituted for an identifier must bear a type which is the result of
- * applying the type substitution to the type of the identifier.
+ * applying the type substitutions to the type of the identifier.
  * </p>
  * <p>
  * This condition must hold after every method call. This implies that a type
@@ -65,6 +69,7 @@ package org.eventb.core.ast;
  * </p>
  * 
  * @author Laurent Voisin
+ * @author htson - added support for predicate variables.
  * 
  * @see FormulaFactory#makeSpecialization()
  * @see Type#specialize(ISpecialization)
@@ -161,5 +166,124 @@ public interface ISpecialization {
 	 * @since 3.1
 	 */
 	Expression get(FreeIdentifier ident);
+
+	/**
+	 * Check if the proposed type substitution is compatible with already
+	 * registered substitutions (for given types, free identifiers, and
+	 * predicate variables), i.e., if the precondition for
+	 * {@link #put(GivenType, Type)} is satisfied. The type must not be
+	 * <code>null</code>. The value must not be <code>null</code> and have been
+	 * created by the same formula factory as this instance. This method does
+	 * NOT modify the specialization instance.
+	 * 
+	 * @param type
+	 *            given type to specialize
+	 * @param value
+	 *            replacement for the given type
+	 * @return <code>true</code> if the proposed type substitution is compatible
+	 *         with already registered substitutions. Return <code>false</code>
+	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             if either parameter is <code>null</code> or the
+	 *             value has been created by another formula factory
+	 * @author htson
+	 * @since 3.3
+	 */
+	boolean canPut(GivenType type, Type value);
+	
+	/**
+	 * Check if the proposed free-identifier substitution is compatible with
+	 * already registered substitutions (for given types, free identifiers, and
+	 * predicate variables), i.e., if the precondition of
+	 * {@link #put(FreeIdentifier, Expression)} is satisfied. Both the type and
+	 * the value must not be <code>null</code> and type-checked. The value
+	 * expression must have been created by the same formula factory as this
+	 * instance. This method does NOT modify the specialization instance.
+	 * 
+	 * @param ident
+	 *            a typed identifier to substitute
+	 * @param value
+	 *            a typed expression to substitute for the given identifier
+	 * @return <code>true</code> if the proposed free identifier substitution is
+	 *         compatible with already registered substitutions. Return
+	 *         <code>false</code> otherwise.
+	 * @throws IllegalArgumentException
+	 *             if either parameter is <code>null</code> or not typed, or the
+	 *             value has been created by another formula factory
+	 * @author htson
+	 * @since 3.3
+	 */
+	boolean canPut(FreeIdentifier ident, Expression value);
+
+	/**
+	 * Adds a new predicate variable substitution to this specialization. All
+	 * substitutions will be applied in parallel when specializing a formula.
+	 * Both parameters must be not <code>null</code>. The given predicate must
+	 * be typed. The added substitution must be compatible with already
+	 * registered substitutions (for both given types and free identifiers). The
+	 * given predicate value needs not be well-formed. In case the predicate
+	 * contains bound identifiers, it is up to the caller to manage that they do
+	 * not escape their scope. The given predicate value must have been created
+	 * by the same formula factory as this instance.
+	 * 
+	 * @param predVar
+	 *            a predicate variable to substitute
+	 * @param value
+	 *            a typed predicate to substitute for the given predicate
+	 *            variable.
+	 * @return <code>true</code> if the proposed predicate variable substitution
+	 *         is compatible with already registered substitutions, and this
+	 *         specialization instance is changed accordingly. Return
+	 *         <code>false</code> otherwise and this specialization instance is
+	 *         unchanged.
+	 * @throws IllegalArgumentException
+	 *             if the value is not typed or has been created by another
+	 *             formula factory
+	 * @see Formula#isTypeChecked()
+	 * @see Formula#getFactory()
+	 * @author htson
+	 * @since 3.3
+	 */
+	boolean put(PredicateVariable predVar, Predicate value);
+
+	/**
+	 * Returns the predicate to be substituted for the given predicate variable.
+	 * 
+	 * @param predVar
+	 *            a predicate variable.
+	 * @return the predicate to be substituted for the given predicate variable
+	 *         or <code>null</code> if no substitution has been defined for the
+	 *         given predicate variable.
+	 * @author htson
+	 * @since 3.3
+	 */
+	Predicate get(PredicateVariable predVar);
+
+	/**
+	 * Returns the set of given types to be instantiated.
+	 * 
+	 * @return the set of given types to be instantiated.
+	 * @author htson
+	 * @since 3.3
+	 */
+	GivenType[] getTypes();
+
+	/**
+	 * Returns the set of free identifiers to be instantiated.
+	 * 
+	 * @return the set of free identifiers to be instantiated.
+	 * @author htson
+	 * @since 3.3
+	 */
+	FreeIdentifier[] getFreeIdentifiers();
+
+	/**
+	 * Returns the set of predicate variables to be instantiated.
+	 * 
+	 * @return the set of predicate variables to be instantiated.
+	 * @author htson
+	 * @since 3.3
+	 */
+	PredicateVariable[] getPredicateVariables();
 
 }
