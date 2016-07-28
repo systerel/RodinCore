@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.rodinp.core.basis.InternalElement;
  */
 public class PRPredRef extends InternalElement implements IPRPredRef{
 
+	private static final Predicate[] NO_PREDICATE = new Predicate[0];
+
 	public PRPredRef(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -43,6 +45,9 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 			throws CoreException {
 
 		final String value = getAttributeValue(STORE_REF_ATTRIBUTE);
+		if (value.isEmpty()) {
+			return NO_PREDICATE;
+		}
 		final String[] refs = value.split(",", -1);
 		final int length = refs.length;
 		final Predicate[] preds = new Predicate[length];

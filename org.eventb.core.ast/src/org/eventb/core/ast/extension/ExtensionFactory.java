@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,14 @@ import static org.eventb.core.ast.extension.IOperatorProperties.MULTARY_2;
 import static org.eventb.core.ast.extension.IOperatorProperties.UNARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
 
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.internal.core.ast.extension.Arity;
-import org.eventb.internal.core.ast.extension.TypeDistribs.MixedTypes;
-import org.eventb.internal.core.ast.extension.TypeDistribs.AllSameType;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
+import org.eventb.internal.core.ast.extension.TypeDistribs.AllSameType;
+import org.eventb.internal.core.ast.extension.TypeDistribs.MixedTypes;
 
 /**
  * @author Nicolas Beauger
@@ -82,6 +83,24 @@ public class ExtensionFactory {
 	public static IExtensionKind makePrefixKind(FormulaType formulaType,
 			ITypeDistribution childTypes) {
 		return new ExtensionKind(PREFIX, formulaType, childTypes, false);
+	}
+
+	/**
+	 * Make an infix extension kind.
+	 * 
+	 * @param formulaType
+	 *            type of the resulting formula
+	 * @param childTypes
+	 *            type distribution of child formulae
+	 * @param isAssociative
+	 *            <code>true</code> for associative kind, <code>false</code>
+	 *            otherwise
+	 * @return a new extension kind
+	 * @since 3.3
+	 */
+	public static IExtensionKind makeInfixKind(FormulaType formulaType,
+			ITypeDistribution childTypes, boolean isAssociative) {
+		return new ExtensionKind(INFIX, formulaType, childTypes, isAssociative);
 	}
 
 	public static IArity makeArity(int min, int max) {

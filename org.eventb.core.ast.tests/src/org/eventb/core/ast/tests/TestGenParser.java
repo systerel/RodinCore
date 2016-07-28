@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Systerel and others.
+ * Copyright (c) 2010, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PRED
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.asso;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIFFERENT;
 import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.ExtensionHelper.EMAX;
 import static org.eventb.core.ast.tests.ExtensionHelper.EXT_PRIME;
@@ -2561,4 +2562,13 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λx·x=0 ∣ x asso 1", mCSet(Form.Lambda));
 	}
 	
+	@Test
+	public void testExtendedRelationalPredicate() throws Exception {
+		final FormulaFactory ffDiff = FormulaFactory.getInstance(DIFFERENT);
+		doPredicateTest("1 <> 0",
+				ffDiff.makeExtendedPredicate(DIFFERENT,
+						Arrays.<Expression> asList(ffDiff.makeIntegerLiteral(BigInteger.ONE, null),
+								ffDiff.makeIntegerLiteral(BigInteger.ZERO, null)),
+						Collections.<Predicate> emptyList(), null));
+	}
 }

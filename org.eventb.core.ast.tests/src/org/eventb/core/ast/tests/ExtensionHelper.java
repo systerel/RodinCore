@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Systerel and others.
+ * Copyright (c) 2012, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,11 @@ import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
+import static org.eventb.core.ast.extension.ExtensionFactory.TWO_EXPRS;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeChildTypes;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeInfixKind;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
@@ -598,5 +600,63 @@ public class ExtensionHelper {
 	}
 
 	public static final IExpressionExtension MONEY = new Money(true);
+
+	
+	public static final IPredicateExtension DIFFERENT = new IPredicateExtension() {
+
+		@Override
+		public IExtensionKind getKind() {
+			return makeInfixKind(PREDICATE, TWO_EXPRS, false);
+		}
+
+		@Override
+		public void typeCheck(ExtendedPredicate predicate, ITypeCheckMediator tcMediator) {
+			final Expression[] childExprs = predicate.getChildExpressions();
+			final Type alpha = tcMediator.newTypeVariable();
+			tcMediator.sameType(alpha, childExprs[0].getType());
+			tcMediator.sameType(alpha, childExprs[1].getType());
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			return "<>";
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
+		@Override
+		public String getId() {
+			return "different";
+		}
+
+		@Override
+		public String getGroupId() {
+			return getId();
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// none
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// none
+		}
+
+	};
 
 }
