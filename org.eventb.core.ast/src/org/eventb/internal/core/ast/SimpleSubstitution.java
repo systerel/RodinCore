@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eventb.core.ast.FreeIdentifier;
  */
 public class SimpleSubstitution extends Substitution {
 	
-	protected Map<FreeIdentifier, Substitute> map;
+	protected Map<FreeIdentifier, Substitute<Expression>> map;
 
 	// Constructor for sub-classes that build directly the map.
 	protected SimpleSubstitution(FormulaFactory ff) {
@@ -43,7 +43,7 @@ public class SimpleSubstitution extends Substitution {
 	 */
 	public SimpleSubstitution(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
 		super(ff);
-		this.map = new HashMap<FreeIdentifier, Substitute>(map.size() * 4/3 + 1);
+		this.map = new HashMap<FreeIdentifier, Substitute<Expression>>(map.size() * 4/3 + 1);
 		for (Map.Entry<FreeIdentifier, Expression> entry : map.entrySet()) {
 			FreeIdentifier ident = entry.getKey();
 			Expression expr = entry.getValue();
@@ -59,7 +59,7 @@ public class SimpleSubstitution extends Substitution {
 
 	@Override
 	public Expression rewrite(FreeIdentifier ident) {
-		Substitute repl = map.get(ident);
+		Substitute<Expression> repl = map.get(ident);
 		if (repl == null) {
 			return super.rewrite(ident);
 		}

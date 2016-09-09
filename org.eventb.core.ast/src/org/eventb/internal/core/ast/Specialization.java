@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
-import static org.eventb.internal.core.ast.PredicateSubstitute.makeSubstitute;
 import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
 
 import java.util.HashMap;
@@ -74,26 +73,28 @@ public class Specialization extends Substitution implements ISpecialization {
 	private final Map<GivenType, Type> typeSubst;
 
 	// Identifier substitutions
-	private final Map<FreeIdentifier, Substitute> identSubst;
+	private final Map<FreeIdentifier, Substitute<Expression>> identSubst;
 	
 	// Predicate variable substitutions
-	private final Map<PredicateVariable, PredicateSubstitute> predSubst;
+	private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
 	
 	private final TypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
-		identSubst = new HashMap<FreeIdentifier, Substitute>();
-		predSubst = new HashMap<PredicateVariable, PredicateSubstitute>();
+		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
+		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
 	}
 
 	public Specialization(Specialization other) {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
-		identSubst = new HashMap<FreeIdentifier, Substitute>(other.identSubst);
-		predSubst = new HashMap<PredicateVariable, PredicateSubstitute>(other.predSubst);
+		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>(
+				other.identSubst);
+		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
+				other.predSubst);
 		speTypeRewriter = new SpecializationTypeRewriter(other.ff);
 	}
 
@@ -118,7 +119,7 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Type substitution for " + type
 					+ " already registered");
 		}
-		final Substitute subst = makeSubstitute(value.toExpression());
+		final Substitute<Expression> subst = makeSubstitute(value.toExpression());
 		identSubst.put(type.toExpression(), subst);
 	}
 
@@ -151,8 +152,8 @@ public class Specialization extends Substitution implements ISpecialization {
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
-		final Substitute subst = makeSubstitute(value);
-		final Substitute oldSubst = identSubst.put(ident, subst);
+		final Substitute<Expression> subst = makeSubstitute(value);
+		final Substitute<Expression> oldSubst = identSubst.put(ident, subst);
 		if (oldSubst != null && !oldSubst.equals(subst)) {
 			identSubst.put(ident, oldSubst); // repair
 			throw new IllegalArgumentException("Identifier substitution for "
@@ -199,12 +200,12 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public Expression get(FreeIdentifier ident) {
-		final Substitute subst = identSubst.get(ident);
+		final Substitute<Expression> subst = identSubst.get(ident);
 		return subst == null ? null : subst.getSubstitute(ident, 0);
 	}
 
 	private Expression getOrSetDefault(FreeIdentifier ident) {
-		final Substitute subst = identSubst.get(ident);
+		final Substitute<Expression> subst = identSubst.get(ident);
 		if (subst != null) {
 			return subst.getSubstitute(ident, getBindingDepth());
 		}
@@ -222,7 +223,7 @@ public class Specialization extends Substitution implements ISpecialization {
 	}
 
 	private Predicate getOrSetDefault(PredicateVariable predVar) {
-		final PredicateSubstitute subst = predSubst.get(predVar);
+		final Substitute<Predicate> subst = predSubst.get(predVar);
 		if (subst != null) {
 			return subst.getSubstitute(predVar, getBindingDepth());
 		}
@@ -329,14 +330,14 @@ public class Specialization extends Substitution implements ISpecialization {
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
-		for (Entry<FreeIdentifier, Substitute> entry : identSubst.entrySet()) {
+		for (Entry<FreeIdentifier, Substitute<Expression>> entry : identSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
 			sb.append(entry.getKey());
 			sb.append("=");
 			sb.append(entry.getValue());
 		}
-		for (Entry<PredicateVariable, PredicateSubstitute> entry : predSubst.entrySet()) {
+		for (Entry<PredicateVariable, Substitute<Predicate>> entry : predSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
 			sb.append(entry.getKey());
@@ -384,8 +385,8 @@ public class Specialization extends Substitution implements ISpecialization {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
-		final Substitute subst = makeSubstitute(value);
-		final Substitute oldSubst = identSubst.get(ident);
+		final Substitute<Expression> subst = makeSubstitute(value);
+		final Substitute<Expression> oldSubst = identSubst.get(ident);
 		if (oldSubst != null && !oldSubst.equals(subst)) {
 			return false;
 		}
@@ -405,8 +406,8 @@ public class Specialization extends Substitution implements ISpecialization {
 					+ value.getFactory() + ", should be " + ff);
 		}
 		
-		final PredicateSubstitute subst = makeSubstitute(value);
-		final PredicateSubstitute oldSubst = predSubst.put(predVar, subst);
+		final Substitute<Predicate> subst = makeSubstitute(value);
+		final Substitute<Predicate> oldSubst = predSubst.put(predVar, subst);
 		if (oldSubst != null && !oldSubst.equals(subst)) {
 			predSubst.put(predVar, oldSubst);
 			return false;
@@ -416,7 +417,7 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public Predicate get(PredicateVariable predVar) {
-		final PredicateSubstitute subst = predSubst.get(predVar);
+		final Substitute<Predicate> subst = predSubst.get(predVar);
 		return subst == null ? null : subst.getSubstitute(predVar, 0);
 	}
 
