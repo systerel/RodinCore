@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,6 +191,9 @@ public abstract class ExtensionSignature {
 
 		public ExpressionExtSignature(ExtendedExpression src) {
 			super(src);
+			if (src.getType() == null) {
+				throw new NullPointerException();
+			}
 			this.returnType = src.getType();
 		}
 
@@ -199,6 +202,9 @@ public abstract class ExtensionSignature {
 				IFormulaExtension extension, Type returnType,
 				int numberOfPredicates, Type[] childTypes) {
 			super(factory, extension, numberOfPredicates, childTypes);
+			if (returnType == null) {
+				throw new NullPointerException();
+			}
 			this.returnType = returnType;
 		}
 
