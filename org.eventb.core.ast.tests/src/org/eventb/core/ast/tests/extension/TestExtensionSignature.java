@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.core.ast.tests.extension;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parsePredicate;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
+import static org.eventb.core.ast.tests.AbstractTests.typeCheck;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.eventb.internal.core.ast.extension.ExtensionSignature.getSignature;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +24,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.tests.extension.Extensions.Real;
 import org.eventb.internal.core.ast.extension.ExtensionSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
@@ -39,6 +41,9 @@ public class TestExtensionSignature {
 	private static final Type PINT = EXTS_FAC.makePowerSetType(INT);
 	private static final Type BOOL = EXTS_FAC.makeBooleanType();
 	private static final Type PBOOL = EXTS_FAC.makePowerSetType(BOOL);
+	private static final Type REAL = EXTS_FAC.makeParametricType(Real.EXT,
+			Real.NO_PARAMS);
+	private static final Type PREAL = EXTS_FAC.makePowerSetType(REAL);
 
 	/**
 	 * Ensures that signature are correctly computed for the ∧∧ operator.
@@ -91,6 +96,30 @@ public class TestExtensionSignature {
 				BOOL);
 	}
 
+	/**
+	 * Ensures that signature are correctly computed for the real type.
+	 */
+	@Test
+	public void testReal() {
+		checkExpr("ℝ", "ℙ(ℝ)", PREAL, 0);
+	}
+
+	/**
+	 * Ensures that signature are correctly computed for the real zero.
+	 */
+	@Test
+	public void testRealZero() {
+		checkExpr("zero", "ℝ", REAL, 0);
+	}
+
+	/**
+	 * Ensures that signature are correctly computed for the real addition.
+	 */
+	@Test
+	public void testRealPlus() {
+		checkExpr("r +. s", "ℝ×ℝ↔ℝ", REAL, 0, REAL, REAL);
+	}
+
 	private void checkPred(String image, String functionalTypeImage,
 			int nbOfPred, Type... types) {
 		final Predicate pred = parsePredicate(image, EXTS_FAC);
@@ -104,6 +133,7 @@ public class TestExtensionSignature {
 	private void checkExpr(String image, String functionalTypeImage,
 			Type resultType, int nbOfPred, Type... types) {
 		final Expression expr = parseExpression(image, EXTS_FAC);
+		typeCheck(expr);
 		final ExtendedExpression extExpr = (ExtendedExpression) expr;
 		final ExtensionSignature expected = new ExpressionExtSignature(
 				extExpr.getFactory(), extExpr.getExtension(), resultType,
