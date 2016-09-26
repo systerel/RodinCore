@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.ast.extension;
 
 import static org.eventb.internal.core.ast.extension.ExtensionSignature.getSignature;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -67,8 +68,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
 		super(srcTypenv);
 		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
+		final Set<String> usedNames = new HashSet<String>(srcTypenv.getNames());
+		this.nameSolver = new FreshNameSolver(usedNames, trgFactory);
 		this.trgTypenv = srcTypenv.translate(trgFactory).makeBuilder();
-		this.nameSolver = new FreshNameSolver(trgTypenv);
 		this.rewriter = new ExtensionRewriter(trgFactory, this);
 	}
 
@@ -116,7 +118,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
 		final String baseName = makeBaseName(signature);
-		final String name = nameSolver.solve(baseName);
+		final String name = nameSolver.solveAndAdd(baseName);
 		final Type type = signature.getFunctionalType().translate(trgFactory);
 		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
 				type);
