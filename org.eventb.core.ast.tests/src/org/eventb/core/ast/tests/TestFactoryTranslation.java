@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -87,6 +88,9 @@ public class TestFactoryTranslation extends AbstractTests {
 		final Formula<?> actual = f.translate(to);
 		assertEquals(to, actual.getFactory());
 		assertEquals(f, actual);
+
+		// Also check for identical translation
+		assertSameTranslation(f);
 	}
 
 	/**
@@ -101,6 +105,20 @@ public class TestFactoryTranslation extends AbstractTests {
 		} catch (IllegalArgumentException exc) {
 			// pass
 		}
+
+		// Also check for identical translation
+		assertSameTranslation(f);
+	}
+
+	/**
+	 * Verifies that the same formula is returned if there is no need to
+	 * translate anything.
+	 */
+	private static void assertSameTranslation(Formula<?> f) {
+		final FormulaFactory fac = f.getFactory();
+		assertTrue(f.isTranslatable(fac));
+		final Formula<?> actual = f.translate(fac);
+		assertSame(f, actual);
 	}
 
 	/**
@@ -183,6 +201,22 @@ public class TestFactoryTranslation extends AbstractTests {
 		assertEquals("prime0", actual.getName());
 		assertEquals(decl.getSourceLocation(), actual.getSourceLocation());
 		assertEquals(decl.getType(), actual.getType());
+	}
+
+	/**
+	 * Compatible translation of a bound identifier declaration when the name
+	 * does not become reserved.
+	 */
+	@Test
+	public void testExactTranslationOnBoundIdDeclName() {
+		final BoundIdentDecl decl = mBoundIdentDecl("not_reserved");
+		assertTrue(decl.isTranslatable(ff_extns));
+		final BoundIdentDecl actual = decl.translate(ff_extns);
+		assertEquals(ff_extns, actual.getFactory());
+		assertEquals(decl, actual);
+
+		// Also check for identical translation
+		assertSameTranslation(decl);
 	}
 
 	/**
