@@ -10,16 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
 
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
@@ -46,67 +39,6 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	}
 
 	@Override
-	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		final Type type = decl.getType();
-		final Type newType = translation.translate(type);
-		if (newType == type) {
-			return super.rewrite(decl);
-		}
-		final String name = decl.getName();
-		final SourceLocation sLoc = decl.getSourceLocation();
-		return ff.makeBoundIdentDecl(name, sLoc, newType);
-	}
-
-	@Override
-	public Expression rewrite(AtomicExpression expression) {
-		final Type type = expression.getType();
-		final Type newType = translation.translate(type);
-		if (newType == type) {
-			return super.rewrite(expression);
-		}
-		final SourceLocation sLoc = expression.getSourceLocation();
-		return ff.makeAtomicExpression(expression.getTag(), sLoc, newType);
-	}
-
-	@Override
-	public Expression rewrite(BoundIdentifier identifier) {
-		final Type type = identifier.getType();
-		final Type newType = translation.translate(type);
-		if (newType == type) {
-			return super.rewrite(identifier);
-		}
-		final SourceLocation sLoc = identifier.getSourceLocation();
-		final int index = identifier.getBoundIndex();
-		return ff.makeBoundIdentifier(index, sLoc, newType);
-	}
-
-	@Override
-	public Expression rewrite(FreeIdentifier ident) {
-		final Type type = ident.getType();
-		final Type newType = translation.translate(type);
-		if (newType == type) {
-			return super.rewrite(ident);
-		}
-		final SourceLocation sLoc = ident.getSourceLocation();
-		final String name = ident.getName();
-		return ff.makeFreeIdentifier(name, sLoc, newType);
-	}
-
-	@Override
-	public Expression rewrite(SetExtension src, SetExtension expr) {
-		if (expr.getChildCount() != 0) {
-			return expr;
-		}
-		final Type type = expr.getType();
-		final Type newType = translation.translate(type);
-		if (newType == type) {
-			return expr;
-		}
-		final SourceLocation sLoc = expr.getSourceLocation();
-		return ff.makeEmptySetExtension(newType, sLoc);
-	}
-
-	@Override
 	public Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
 		final IExpressionExtension extension = src.getExtension();
@@ -117,10 +49,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 			return translation.translate(src, newChildExprs);
 		} else {
 			// Not a datatype operator, just translate the type
-			final SourceLocation sLoc = src.getSourceLocation();
-			final Type type = translation.translate(src.getType());
-			return ff.makeExtendedExpression(extension, newChildExprs,
-					newChildPreds, sLoc, type);
+			return super.rewrite(src, changed, newChildExprs, newChildPreds);
 		}
 	}
 
