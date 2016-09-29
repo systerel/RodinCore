@@ -23,6 +23,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IExtensionTranslation;
 import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -43,6 +44,7 @@ import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeExtTransla
 import org.eventb.internal.core.ast.extension.TranslatorRegistry.ExprTranslatorRegistry;
 import org.eventb.internal.core.ast.extension.TranslatorRegistry.PredTranslatorRegistry;
 import org.eventb.internal.core.ast.extension.TranslatorRegistry.TypeTranslatorRegistry;
+import org.eventb.internal.core.typecheck.TypeEnvironmentBuilder;
 
 /**
  * Translation of operator extensions to function applications. We do not
@@ -69,18 +71,19 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	private final PredTranslatorRegistry predTranslators //
 	= new PredTranslatorRegistry(this);
 
-	private ITypeCheckingRewriter rewriter;
-
 	private TypeRewriter typeRewriter;
+
+	private ITypeCheckingRewriter rewriter;
 
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
 		super(srcTypenv);
 		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
 		final Set<String> usedNames = new HashSet<String>(srcTypenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, trgFactory);
-		this.trgTypenv = srcTypenv.translate(trgFactory).makeBuilder();
-		this.rewriter = new ExtensionRewriter(trgFactory, this);
 		this.typeRewriter = new ExtensionTypeRewriter(trgFactory, this);
+		this.rewriter = new ExtensionRewriter(typeRewriter, this);
+		this.trgTypenv = new TypeEnvironmentBuilder(trgFactory);
+		populateTargetTypenv();
 	}
 
 	private static FormulaFactory computeTargetFactory(FormulaFactory fac) {
@@ -98,6 +101,17 @@ public class ExtensionTranslation extends AbstractTranslation implements
 			}
 		}
 		return FormulaFactory.getInstance(keptExtensions);
+	}
+
+	private void populateTargetTypenv() {
+		final IIterator iter = srcTypenv.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			final String name = iter.getName();
+			final Type srcType = iter.getType();
+			final Type trgType = typeRewriter.rewrite(srcType);
+			trgTypenv.addName(name, trgType);
+		}
 	}
 
 	public FormulaFactory getTargetFactory() {
@@ -201,9 +215,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 		private ExtensionTranslation translation;
 
-		public ExtensionRewriter(FormulaFactory targetFactory,
+		public ExtensionRewriter(TypeRewriter typeRewriter,
 				ExtensionTranslation translation) {
-			super(targetFactory);
+			super(typeRewriter.getFactory(), typeRewriter);
 			this.translation = translation;
 		}
 

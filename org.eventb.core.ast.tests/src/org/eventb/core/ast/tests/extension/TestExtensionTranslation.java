@@ -213,6 +213,23 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertExprTranslation("ℝ", "ℝ", "ℝ=ℙ(ℝ)");
 	}
 
+	/**
+	 * Ensures that the real zero gets translated.
+	 */
+	@Test
+	public void RealZero() {
+		assertExprTranslation("zero", "zero", "zero=ℝ");
+	}
+
+	/**
+	 * Ensures that real addition gets translated.
+	 */
+	@Test
+	public void RealPlus() {
+		setUp("r=ℝ;s=ℝ", "r=ℝ;s=ℝ");
+		assertExprTranslation("r +. s", "ext(r ↦ s)", "ext=ℝ×ℝ↔ℝ");
+	}
+
 	private FormulaFactory extendFactory() {
 		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
 		extensions.addAll(EXTS_FAC.getExtensions());
