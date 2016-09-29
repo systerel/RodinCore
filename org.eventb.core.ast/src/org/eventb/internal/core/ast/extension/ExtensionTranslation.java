@@ -132,10 +132,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	 * fresh name solver will loop forever.
 	 */
 	private String makeBaseName(ExtensionSignature signature) {
-		final IFormulaExtension extension = signature.getExtension();
-		final String id = extension.getId();
-		if (trgFactory.isValidIdentifierName(id)) {
-			return id;
+		final String symbol = signature.getSymbol();
+		if (trgFactory.isValidIdentifierName(symbol)) {
+			return symbol;
 		}
 		// Use some arbitrary name which can be used for identifiers
 		return "ext";

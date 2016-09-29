@@ -95,12 +95,13 @@ public abstract class ExtensionSignature {
 	}
 
 	/**
-	 * Returns the formula extension definition associated to this signature
+	 * Returns the symbol associated to this signature. This symbol might not be
+	 * a valid identifier.
 	 * 
-	 * @return the IFormulaExtension associated to this signature
+	 * @return the symbol associated to this signature
 	 */
-	public IFormulaExtension getExtension() {
-		return extension;
+	public String getSymbol() {
+		return extension.getSyntaxSymbol();
 	}
 
 	/**
