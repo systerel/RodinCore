@@ -18,6 +18,7 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -69,7 +70,7 @@ public abstract class ExtensionSignature {
 	protected final FormulaFactory factory;
 
 	// The extension definition corresponding to this signature
-	private final IFormulaExtension extension;
+	protected final IFormulaExtension extension;
 
 	// Number of child predicates
 	private final int numberOfPredicates;
@@ -103,6 +104,13 @@ public abstract class ExtensionSignature {
 	public String getSymbol() {
 		return extension.getSyntaxSymbol();
 	}
+
+	/**
+	 * Returns whether the extension with this signature is a type constructor.
+	 * 
+	 * @return whether this signature corresponds to a type constructor
+	 */
+	public abstract boolean isATypeConstructor();
 
 	/**
 	 * Returns the type of a function that could be used to replace an
@@ -159,6 +167,11 @@ public abstract class ExtensionSignature {
 			return factory.makeBooleanType();
 		}
 
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
 	}
 
 	public static class ExpressionExtSignature extends ExtensionSignature {
@@ -204,6 +217,11 @@ public abstract class ExtensionSignature {
 			int result = super.hashCode();
 			result = PRIME * result + returnType.hashCode();
 			return result;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return ((IExpressionExtension) extension).isATypeConstructor();
 		}
 
 	}
