@@ -110,8 +110,13 @@ public abstract class ExtensionSignature {
 	 * 
 	 * @return the type of a replacement function
 	 */
-	public abstract Type getFunctionalType();
+	public Type getFunctionalType() {
+		return makeRelationalType(makeDomainType(), getReturnType());
+	}
 
+	// What is the range type of the operator ?
+	protected abstract Type getReturnType();
+	
 	@Override
 	public int hashCode() {
 		int result = 1;
@@ -180,8 +185,8 @@ public abstract class ExtensionSignature {
 		}
 
 		@Override
-		public Type getFunctionalType() {
-			return makeRelationalType(makeDomainType(), makeBooleanType());
+		protected Type getReturnType() {
+			return factory.makeBooleanType();
 		}
 
 	}
@@ -211,8 +216,8 @@ public abstract class ExtensionSignature {
 		}
 
 		@Override
-		public Type getFunctionalType() {
-			return makeRelationalType(makeDomainType(), returnType);
+		protected Type getReturnType() {
+			return returnType;
 		}
 
 		@Override
