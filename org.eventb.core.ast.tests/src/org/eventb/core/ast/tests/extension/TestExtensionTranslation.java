@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,26 +56,26 @@ public class TestExtensionTranslation extends AbstractTests {
 	 */
 	@Before
 	public void setUp() {
-		setUp("");
+		setUp("", "");
 	}
 
 	/**
 	 * Starts a translation with the given initial type environment.
 	 */
-	private void setUp(String typenvImage) {
-		srcTypeEnv = mTypeEnvironment(typenvImage, EXTS_FAC);
-		trgTypeEnv = srcTypeEnv.translate(COND_FAC);
+	private void setUp(String srcTypenvImage, String trgTypenvImage) {
+		srcTypeEnv = mTypeEnvironment(srcTypenvImage, EXTS_FAC);
+		trgTypeEnv = mTypeEnvironment(trgTypenvImage, COND_FAC);
 		translation = srcTypeEnv.makeExtensionTranslation();
 	}
 
 	/**
 	 * Starts a translation with the given initial type environment.
 	 */
-	private void setUp(String typenvImage, FormulaFactory fac) {
-		srcTypeEnv = mTypeEnvironment(typenvImage, fac);
+	private void setUp(String srcTypenvImage, FormulaFactory srcFactory,
+			String trgTypenvImage, FormulaFactory trgFactory) {
+		srcTypeEnv = mTypeEnvironment(srcTypenvImage, srcFactory);
+		trgTypeEnv = mTypeEnvironment(trgTypenvImage, trgFactory);
 		translation = srcTypeEnv.makeExtensionTranslation();
-		trgTypeEnv = srcTypeEnv.translate(translation
-				.getTargetTypeEnvironment().getFormulaFactory());
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class TestExtensionTranslation extends AbstractTests {
 	 */
 	@Test
 	public void namesAreFresh() {
-		setUp("belongs0=ℙ(BOOL)");
+		setUp("belongs0=ℙ(BOOL)", "belongs0=ℙ(BOOL)");
 
 		assertPredTranslation("belongs(1, ⊤, ∅)", //
 				"belongs(1↦∅↦bool(⊤)) = TRUE", //
@@ -198,7 +198,7 @@ public class TestExtensionTranslation extends AbstractTests {
 	@Test
 	public void noDatatypeTranslation() {
 		final FormulaFactory ffExtended = extendFactory();
-		setUp("a=List(ℤ)", ffExtended);
+		setUp("a=List(ℤ)", ffExtended, "a=List(ℤ)", LIST_FAC);
 		assertPredTranslation("a = nil", "a = nil", "");
 		assertPredTranslation("a = cons(1, nil)", "a = cons(1, nil)", "");
 		assertPredTranslation("1 = head(a)", "1 = head(a)", "");
