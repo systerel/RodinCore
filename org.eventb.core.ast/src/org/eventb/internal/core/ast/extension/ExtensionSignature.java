@@ -110,9 +110,7 @@ public abstract class ExtensionSignature {
 	 * 
 	 * @return the type of a replacement function
 	 */
-	public Type getFunctionalType() {
-		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(factory);
+	public Type getFunctionalType(FunctionalTypeBuilder builder) {
 		return builder.makeFunctionalType(childTypes, numberOfPredicates,
 				getReturnType());
 	}
@@ -206,45 +204,6 @@ public abstract class ExtensionSignature {
 			int result = super.hashCode();
 			result = PRIME * result + returnType.hashCode();
 			return result;
-		}
-
-	}
-
-	private static class FunctionalTypeBuilder {
-
-		private final FormulaFactory factory;
-
-		public FunctionalTypeBuilder(FormulaFactory factory) {
-			this.factory = factory;
-		}
-
-		public Type makeFunctionalType(Type[] children, int numberOfPredicates,
-				Type range) {
-			final Type domain = makeDomainType(children, numberOfPredicates);
-			if (domain == null) {
-				// Atomic operator
-				return range;
-			}
-			return factory.makeRelationalType(domain, range);
-		}
-
-		private Type makeDomainType(Type[] children, int numberOfPredicates) {
-			Type result = null;
-			for (Type child : children) {
-				result = join(result, child);
-			}
-			final Type boolType = factory.makeBooleanType();
-			for (int i = 0; i < numberOfPredicates; i++) {
-				result = join(result, boolType);
-			}
-			return result;
-		}
-
-		private Type join(Type left, Type right) {
-			if (left == null) {
-				return right;
-			}
-			return factory.makeProductType(left, right);
 		}
 
 	}

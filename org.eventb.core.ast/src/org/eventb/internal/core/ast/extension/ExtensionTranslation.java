@@ -119,7 +119,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
 		final String baseName = makeBaseName(signature);
 		final String name = nameSolver.solveAndAdd(baseName);
-		final Type type = signature.getFunctionalType().translate(trgFactory);
+		final FunctionalTypeBuilder builder;
+		builder = new FunctionalTypeBuilder(signature.factory);
+		final Type type = signature.getFunctionalType(builder).translate(trgFactory);
 		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
 				type);
 		trgTypenv.add(ident);

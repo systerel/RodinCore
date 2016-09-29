@@ -28,6 +28,7 @@ import org.eventb.core.ast.tests.extension.Extensions.Real;
 import org.eventb.internal.core.ast.extension.ExtensionSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
+import org.eventb.internal.core.ast.extension.FunctionalTypeBuilder;
 import org.junit.Test;
 
 /**
@@ -146,7 +147,9 @@ public class TestExtensionSignature {
 			ExtensionSignature actual, String functionalTypeImage) {
 		assertEquals(expected, actual);
 		final Type functionalType = parseType(functionalTypeImage, EXTS_FAC);
-		assertEquals(functionalType, actual.getFunctionalType());
+		final FunctionalTypeBuilder builder;
+		builder = new FunctionalTypeBuilder(EXTS_FAC);
+		assertEquals(functionalType, actual.getFunctionalType(builder));
 	}
 
 	/**
