@@ -22,6 +22,7 @@ import org.eventb.core.ast.Type;
  */
 public class FunctionalTypeBuilder {
 
+	// The formula factory of the target language
 	private final FormulaFactory factory;
 
 	public FunctionalTypeBuilder(FormulaFactory factory) {
@@ -30,18 +31,20 @@ public class FunctionalTypeBuilder {
 
 	public Type makeFunctionalType(Type[] children, int numberOfPredicates,
 			Type range) {
-		final Type domain = makeDomainType(children, numberOfPredicates);
-		if (domain == null) {
+		final Type trgDomain = makeDomainType(children, numberOfPredicates);
+		final Type trgRange = range.translate(factory);
+		if (trgDomain == null) {
 			// Atomic operator
-			return range;
+			return trgRange;
 		}
-		return factory.makeRelationalType(domain, range);
+		return factory.makeRelationalType(trgDomain, trgRange);
 	}
 
 	private Type makeDomainType(Type[] children, int numberOfPredicates) {
 		Type result = null;
 		for (Type child : children) {
-			result = join(result, child);
+			final Type trgChild = child.translate(factory);
+			result = join(result, trgChild);
 		}
 		final Type boolType = factory.makeBooleanType();
 		for (int i = 0; i < numberOfPredicates; i++) {
