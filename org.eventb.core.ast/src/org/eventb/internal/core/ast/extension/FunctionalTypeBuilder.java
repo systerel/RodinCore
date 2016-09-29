@@ -12,6 +12,7 @@ package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.TypeRewriter;
 
 /**
  * A class which allows to build the type of a function or constant that
@@ -21,18 +22,22 @@ import org.eventb.core.ast.Type;
  * @author Laurent Voisin
  */
 public class FunctionalTypeBuilder {
+	
+	// How to rewrite the types coming from the source language.
+	private final TypeRewriter rewriter;
 
 	// The formula factory of the target language
 	private final FormulaFactory factory;
 
-	public FunctionalTypeBuilder(FormulaFactory factory) {
-		this.factory = factory;
+	public FunctionalTypeBuilder(TypeRewriter rewriter) {
+		this.rewriter = rewriter;
+		this.factory = rewriter.getFactory();
 	}
 
 	public Type makeFunctionalType(Type[] children, int numberOfPredicates,
 			Type range) {
 		final Type trgDomain = makeDomainType(children, numberOfPredicates);
-		final Type trgRange = range.translate(factory);
+		final Type trgRange = rewriter.rewrite(range);
 		if (trgDomain == null) {
 			// Atomic operator
 			return trgRange;
@@ -43,7 +48,7 @@ public class FunctionalTypeBuilder {
 	private Type makeDomainType(Type[] children, int numberOfPredicates) {
 		Type result = null;
 		for (Type child : children) {
-			final Type trgChild = child.translate(factory);
+			final Type trgChild = rewriter.rewrite(child);
 			result = join(result, trgChild);
 		}
 		final Type boolType = factory.makeBooleanType();

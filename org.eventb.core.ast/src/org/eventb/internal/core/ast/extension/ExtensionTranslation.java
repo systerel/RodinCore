@@ -32,6 +32,7 @@ import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FreshNameSolver;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
@@ -119,8 +120,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
 		final String baseName = makeBaseName(signature);
 		final String name = nameSolver.solveAndAdd(baseName);
+		final TypeRewriter typeRewriter = new TypeRewriter(trgFactory);
 		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(trgFactory);
+		builder = new FunctionalTypeBuilder(typeRewriter);
 		final Type type = signature.getFunctionalType(builder);
 		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
 				type);

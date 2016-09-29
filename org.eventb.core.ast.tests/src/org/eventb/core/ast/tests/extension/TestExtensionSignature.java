@@ -14,6 +14,7 @@ import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parsePredicate;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.AbstractTests.typeCheck;
+import static org.eventb.core.ast.tests.FastFactory.ff;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.eventb.internal.core.ast.extension.ExtensionSignature.getSignature;
 import static org.junit.Assert.assertEquals;
@@ -22,9 +23,11 @@ import static org.junit.Assert.assertFalse;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.tests.extension.Extensions.Real;
+import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.extension.ExtensionSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
@@ -46,6 +49,21 @@ public class TestExtensionSignature {
 			Real.NO_PARAMS);
 	private static final Type PREAL = EXTS_FAC.makePowerSetType(REAL);
 
+	/**
+	 * A type rewriter that just rewrites the axiomatic real type to a given
+	 * type of the same name.
+	 */
+	private static final TypeRewriter REWRITER = new TypeRewriter(ff) {
+		@Override
+		public void visit(ParametricType type) {
+			if (type.getExprExtension() != Real.EXT) {
+				super.visit(type);
+				return;
+			}
+			result = ff.makeGivenType(Real.EXT.getSyntaxSymbol());
+		}
+	};
+	
 	/**
 	 * Ensures that signature are correctly computed for the ∧∧ operator.
 	 */
@@ -148,7 +166,7 @@ public class TestExtensionSignature {
 		assertEquals(expected, actual);
 		final Type functionalType = parseType(functionalTypeImage, EXTS_FAC);
 		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(EXTS_FAC);
+		builder = new FunctionalTypeBuilder(new TypeRewriter(EXTS_FAC));
 		assertEquals(functionalType, actual.getFunctionalType(builder));
 	}
 
