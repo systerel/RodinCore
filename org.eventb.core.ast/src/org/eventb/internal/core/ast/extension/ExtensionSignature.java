@@ -111,7 +111,10 @@ public abstract class ExtensionSignature {
 	 * @return the type of a replacement function
 	 */
 	public Type getFunctionalType() {
-		return makeRelationalType(makeDomainType(), getReturnType());
+		final FunctionalTypeBuilder builder;
+		builder = new FunctionalTypeBuilder(factory);
+		return builder.makeFunctionalType(childTypes, numberOfPredicates,
+				getReturnType());
 	}
 
 	// What is the range type of the operator ?
@@ -138,37 +141,6 @@ public abstract class ExtensionSignature {
 		return this.extension.equals(other.extension)
 				&& this.numberOfPredicates == other.numberOfPredicates
 				&& Arrays.equals(this.childTypes, other.childTypes);
-	}
-
-	protected Type makeDomainType() {
-		Type result = null;
-		for (Type childType : childTypes) {
-			result = join(result, childType);
-		}
-		final Type boolType = makeBooleanType();
-		for (int i = 0; i < numberOfPredicates; i++) {
-			result = join(result, boolType);
-		}
-		return result;
-	}
-
-	private Type join(Type left, Type right) {
-		if (left == null) {
-			return right;
-		}
-		return factory.makeProductType(left, right);
-	}
-
-	protected Type makeBooleanType() {
-		return factory.makeBooleanType();
-	}
-
-	protected Type makeRelationalType(Type left, Type right) {
-		if (left == null) {
-			// Atomic operator
-			return right;
-		}
-		return factory.makeRelationalType(left, right);
 	}
 
 	public static class PredicateExtSignature extends ExtensionSignature {
@@ -234,6 +206,45 @@ public abstract class ExtensionSignature {
 			int result = super.hashCode();
 			result = PRIME * result + returnType.hashCode();
 			return result;
+		}
+
+	}
+
+	private static class FunctionalTypeBuilder {
+
+		private final FormulaFactory factory;
+
+		public FunctionalTypeBuilder(FormulaFactory factory) {
+			this.factory = factory;
+		}
+
+		public Type makeFunctionalType(Type[] children, int numberOfPredicates,
+				Type range) {
+			final Type domain = makeDomainType(children, numberOfPredicates);
+			if (domain == null) {
+				// Atomic operator
+				return range;
+			}
+			return factory.makeRelationalType(domain, range);
+		}
+
+		private Type makeDomainType(Type[] children, int numberOfPredicates) {
+			Type result = null;
+			for (Type child : children) {
+				result = join(result, child);
+			}
+			final Type boolType = factory.makeBooleanType();
+			for (int i = 0; i < numberOfPredicates; i++) {
+				result = join(result, boolType);
+			}
+			return result;
+		}
+
+		private Type join(Type left, Type right) {
+			if (left == null) {
+				return right;
+			}
+			return factory.makeProductType(left, right);
 		}
 
 	}
