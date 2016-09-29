@@ -205,6 +205,14 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertPredTranslation("a ∈ List({1})", "a ∈ List({1})", "");
 	}
 
+	/**
+	 * Ensures that the set of real numbers gets translated.
+	 */
+	@Test
+	public void Real() {
+		assertExprTranslation("ℝ", "ℝ", "ℝ=ℙ(ℝ)");
+	}
+
 	private FormulaFactory extendFactory() {
 		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
 		extensions.addAll(EXTS_FAC.getExtensions());

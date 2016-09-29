@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSi
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.ExpressionExtTranslator;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.PredicateExtTranslator;
+import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeExtTranslator;
 
 /**
  * Maintains a map between extension signatures and extension translations. Two
@@ -72,6 +73,21 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		@Override
 		protected ExpressionExtTranslator newTranslator(FreeIdentifier function) {
 			return new ExpressionExtTranslator(function);
+		}
+
+	}
+
+
+	public static class TypeTranslatorRegistry extends
+			TranslatorRegistry<ExpressionExtSignature, TypeExtTranslator> {
+
+		public TypeTranslatorRegistry(ExtensionTranslation translation) {
+			super(translation);
+		}
+
+		@Override
+		protected TypeExtTranslator newTranslator(FreeIdentifier typeName) {
+			return new TypeExtTranslator(typeName);
 		}
 
 	}

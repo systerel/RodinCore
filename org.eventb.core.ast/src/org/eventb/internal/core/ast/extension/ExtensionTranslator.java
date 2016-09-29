@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.Type;
 
 /**
  * Common implementation of a translator for an extension instance. Instances
@@ -106,6 +107,26 @@ public abstract class ExtensionTranslator {
 		public Expression translate(Expression[] newChildExprs,
 				Predicate[] newChildPreds) {
 			return makeFunApp(newChildExprs, newChildPreds);
+		}
+
+	}
+
+	/**
+	 * Translator for a parametric type. The translation class has allocated a
+	 * given type that corresponds to the parametric type instance and we just
+	 * return this given type (there are no type polymorphism in plain Event-B).
+	 */
+	public static class TypeExtTranslator extends ExtensionTranslator {
+
+		private final Type type;
+
+		public TypeExtTranslator(FreeIdentifier typeName) {
+			super(typeName);
+			this.type = typeName.getType().getBaseType();
+		}
+
+		public Type translate() {
+			return type;
 		}
 
 	}

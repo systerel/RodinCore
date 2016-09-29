@@ -24,6 +24,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IExtensionTranslation;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
@@ -38,8 +39,10 @@ import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSi
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.ExpressionExtTranslator;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.PredicateExtTranslator;
+import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeExtTranslator;
 import org.eventb.internal.core.ast.extension.TranslatorRegistry.ExprTranslatorRegistry;
 import org.eventb.internal.core.ast.extension.TranslatorRegistry.PredTranslatorRegistry;
+import org.eventb.internal.core.ast.extension.TranslatorRegistry.TypeTranslatorRegistry;
 
 /**
  * Translation of operator extensions to function applications. We do not
@@ -59,12 +62,16 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	private final ITypeEnvironmentBuilder trgTypenv;
 	private final FreshNameSolver nameSolver;
 
+	private final TypeTranslatorRegistry typeTranslators //
+	= new TypeTranslatorRegistry(this);
 	private final ExprTranslatorRegistry exprTranslators //
 	= new ExprTranslatorRegistry(this);
 	private final PredTranslatorRegistry predTranslators //
 	= new PredTranslatorRegistry(this);
 
 	private ITypeCheckingRewriter rewriter;
+
+	private TypeRewriter typeRewriter;
 
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
 		super(srcTypenv);
@@ -73,6 +80,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 		this.nameSolver = new FreshNameSolver(usedNames, trgFactory);
 		this.trgTypenv = srcTypenv.translate(trgFactory).makeBuilder();
 		this.rewriter = new ExtensionRewriter(trgFactory, this);
+		this.typeRewriter = new ExtensionTypeRewriter(trgFactory, this);
 	}
 
 	private static FormulaFactory computeTargetFactory(FormulaFactory fac) {
@@ -120,12 +128,17 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
 		final String baseName = makeBaseName(signature);
 		final String name = nameSolver.solveAndAdd(baseName);
-		final TypeRewriter typeRewriter = new TypeRewriter(trgFactory);
-		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(typeRewriter);
-		final Type type = signature.getFunctionalType(builder);
-		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
-				type);
+
+		final FreeIdentifier ident;
+		if (signature.isATypeConstructor()) {
+			ident = trgFactory.makeGivenType(name).toExpression();
+		} else {
+			final FunctionalTypeBuilder builder;
+			builder = new FunctionalTypeBuilder(typeRewriter);
+			final Type type = signature.getFunctionalType(builder);
+			ident = trgFactory.makeFreeIdentifier(name, null, type);
+		}
+
 		trgTypenv.add(ident);
 		return ident;
 	}
@@ -155,7 +168,35 @@ public class ExtensionTranslation extends AbstractTranslation implements
 				+ srcTypenv.getFormulaFactory() + " in type environment: "
 				+ srcTypenv;
 	}
-	
+
+	private static class ExtensionTypeRewriter extends TypeRewriter {
+
+		private ExtensionTranslation translation;
+
+		public ExtensionTypeRewriter(FormulaFactory targetFactory,
+				ExtensionTranslation translation) {
+			super(targetFactory);
+			this.translation = translation;
+		}
+
+		@Override
+		public void visit(ParametricType type) {
+			if (type.getExprExtension().getOrigin() instanceof IDatatype) {
+				super.visit(type);
+				return;
+			}
+
+			// FIXME refactor
+			final ExtendedExpression src = (ExtendedExpression) type
+					.toExpression();
+			final ExpressionExtSignature signature = getSignature(src);
+			final TypeExtTranslator translator = translation.typeTranslators
+					.get(signature);
+			result = translator.translate();
+		}
+
+	}
+
 	private static class ExtensionRewriter extends DefaultTypeCheckingRewriter {
 
 		private ExtensionTranslation translation;
