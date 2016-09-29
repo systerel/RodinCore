@@ -64,7 +64,8 @@ public abstract class ExtensionSignature {
 
 	private static final int PRIME = 31;
 
-	// The formula factory for this signature
+	// The formula factory for this signature, i.e., the factory containing the
+	// extension.
 	protected final FormulaFactory factory;
 
 	// The extension definition corresponding to this signature
