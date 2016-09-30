@@ -53,17 +53,18 @@ public class TestExtensionSignature {
 	 * A type rewriter that just rewrites the axiomatic real type to a given
 	 * type of the same name.
 	 */
-	private static final TypeRewriter REWRITER = new TypeRewriter(ff) {
-		@Override
-		public void visit(ParametricType type) {
-			if (type.getExprExtension() != Real.EXT) {
-				super.visit(type);
-				return;
-			}
-			result = ff.makeGivenType(Real.EXT.getSyntaxSymbol());
-		}
-	};
-	
+	private static final FunctionalTypeBuilder BUILDER = new FunctionalTypeBuilder(
+			new TypeRewriter(ff) {
+				@Override
+				public void visit(ParametricType type) {
+					if (type.getExprExtension() != Real.EXT) {
+						super.visit(type);
+						return;
+					}
+					result = ff.makeGivenType(Real.EXT.getSyntaxSymbol());
+				}
+			});
+
 	/**
 	 * Ensures that signature are correctly computed for the ∧∧ operator.
 	 */
@@ -164,10 +165,8 @@ public class TestExtensionSignature {
 	private void assertCorrectSignature(ExtensionSignature expected,
 			ExtensionSignature actual, String functionalTypeImage) {
 		assertEquals(expected, actual);
-		final Type functionalType = parseType(functionalTypeImage, EXTS_FAC);
-		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(new TypeRewriter(EXTS_FAC));
-		assertEquals(functionalType, actual.getFunctionalType(builder));
+		final Type functionalType = parseType(functionalTypeImage, ff);
+		assertEquals(functionalType, actual.getFunctionalType(BUILDER));
 	}
 
 	/**
