@@ -123,6 +123,12 @@ public class ExtensionTranslation extends AbstractTranslation implements
 		return trgTypenv.makeSnapshot();
 	}
 
+	public Type translate(ParametricType src) {
+		final ExpressionExtSignature signature = getSignature(src);
+		final TypeExtTranslator translator = typeTranslators.get(signature);
+		return translator.translate();
+	}
+
 	public Expression translate(ExtendedExpression src,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
 		final ExpressionExtSignature signature = getSignature(src);
@@ -200,13 +206,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 				return;
 			}
 
-			// FIXME refactor
-			final ExtendedExpression src = (ExtendedExpression) type
-					.toExpression();
-			final ExpressionExtSignature signature = getSignature(src);
-			final TypeExtTranslator translator = translation.typeTranslators
-					.get(signature);
-			result = translator.translate();
+			result = translation.translate(type);
 		}
 
 	}

@@ -17,6 +17,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -30,6 +31,17 @@ import org.eventb.core.ast.extension.IFormulaExtension;
  * @author Laurent Voisin
  */
 public abstract class ExtensionSignature {
+
+	/**
+	 * Returns the signature of a parametric type occurrence.
+	 * 
+	 * @param src
+	 *            some parametric type
+	 * @return the signature of the parametric type
+	 */
+	public static ExpressionExtSignature getSignature(ParametricType src) {
+		return new ExpressionExtSignature(src);
+	}
 
 	/**
 	 * Returns the signature of an expression extension occurrence.
@@ -63,6 +75,18 @@ public abstract class ExtensionSignature {
 		return childTypes;
 	}
 
+	private static Type[] makePowerSetTypes(Type[] src) {
+		if (src.length == 0) {
+			return src;
+		}
+		final FormulaFactory fac = src[0].getFactory();
+		final Type[] result = new Type[src.length];
+		for (int i = 0; i < src.length; i++) {
+			result[i] = fac.makePowerSetType(src[i]);
+		}
+		return result;
+	}
+
 	private static final int PRIME = 31;
 
 	// The formula factory for this signature, i.e., the factory containing the
@@ -83,6 +107,13 @@ public abstract class ExtensionSignature {
 		this.extension = src.getExtension();
 		this.numberOfPredicates = src.getChildPredicates().length;
 		this.childTypes = getChildTypes(src);
+	}
+
+	protected ExtensionSignature(ParametricType src) {
+		this.factory = src.getFactory();
+		this.extension = src.getExprExtension();
+		this.numberOfPredicates = 0;
+		this.childTypes = makePowerSetTypes(src.getTypeParameters());
 	}
 
 	// For testing purposes
@@ -185,6 +216,11 @@ public abstract class ExtensionSignature {
 				throw new NullPointerException();
 			}
 			this.returnType = src.getType();
+		}
+
+		public ExpressionExtSignature(ParametricType src) {
+			super(src);
+			this.returnType = factory.makePowerSetType(src);
 		}
 
 		// For testing purposes
