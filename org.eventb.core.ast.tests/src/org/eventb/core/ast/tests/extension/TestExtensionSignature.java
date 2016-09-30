@@ -140,6 +140,14 @@ public class TestExtensionSignature {
 		checkExpr("r +. s", "ℝ×ℝ↔ℝ", REAL, 0, REAL, REAL);
 	}
 
+	/**
+	 * Ensures that signature are correctly computed for the real empty set.
+	 */
+	@Test
+	public void testRealEmpty() {
+		checkExpr("emptyR", "ℙ(ℝ)", PREAL, 0);
+	}
+
 	private void checkPred(String image, String functionalTypeImage,
 			int nbOfPred, Type... types) {
 		final Predicate pred = parsePredicate(image, EXTS_FAC);

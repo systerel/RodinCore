@@ -64,7 +64,7 @@ public class Extensions {
 
 	public static final FormulaFactory EXTS_FAC = FormulaFactory.getInstance(
 			new And(), new Belongs(), new Union2(), new Union3(), new Empty(),
-			getCond(), Real.EXT, RealZero.EXT, RealPlus.EXT);
+			getCond(), Real.EXT, RealZero.EXT, RealPlus.EXT, RealEmpty.EXT);
 
 	/*
 	 * Common implementation for extensions in this class.
@@ -436,6 +436,52 @@ public class Extensions {
 				tcMediator.sameType(childExpr.getType(), result);
 			}
 			return result;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
+	}
+
+	/**
+	 * An extension representing the empty set of real numbers, simulating an
+	 * axiomatic operator defined by the Theory plug-in whose type is not
+	 * directly an axiomatic type.
+	 */
+	private static class RealEmpty extends AbstractRealExtension
+			implements IExpressionExtension {
+
+		public static RealEmpty EXT = new RealEmpty();
+
+		private RealEmpty() {
+			super("emptyR");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return ATOMIC_EXPRESSION;
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			assert (childExprs.length == 0 && childPreds.length == 0);
+			return mediator.makePowerSetType(realType(mediator));
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			assert (childExprs.length == 0 && childPreds.length == 0);
+			return isRealType(proposedType.getBaseType());
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			return tcMediator.makePowerSetType(realType(tcMediator));
 		}
 
 		@Override

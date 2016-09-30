@@ -230,6 +230,14 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertExprTranslation("r +. s", "ext(r ↦ s)", "ext=ℝ×ℝ↔ℝ");
 	}
 
+	/**
+	 * Ensures that real empty set gets translated.
+	 */
+	@Test
+	public void RealEmpty() {
+		assertExprTranslation("emptyR", "emptyR", "emptyR=ℙ(ℝ)");
+	}
+
 	private FormulaFactory extendFactory() {
 		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
 		extensions.addAll(EXTS_FAC.getExtensions());
