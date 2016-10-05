@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
+import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.RELIMAGE;
 import static org.eventb.core.ast.Formula.TRUE;
 
 import org.eventb.core.ast.Expression;
@@ -111,6 +113,49 @@ public abstract class ExtensionTranslator {
 		public Expression translate(Expression[] newChildExprs,
 				Predicate[] newChildPreds) {
 			return makeFunApp(newChildExprs, newChildPreds);
+		}
+
+	}
+
+	public static class TypeConstructorTranslator extends ExpressionExtTranslator {
+
+		public TypeConstructorTranslator(FreeIdentifier relation) {
+			super(relation);
+		}
+
+		@Override
+		public Expression translate(Expression[] newChildExprs,
+				Predicate[] newChildPreds) {
+			return makeRelApp(newChildExprs, newChildPreds);
+		}
+
+		private Expression makeRelApp(Expression[] newChildExprs,
+				Predicate[] newChildPreds) {
+			Expression param = null;
+			for (final Expression expr : newChildExprs) {
+				param = joinProd(param, expr);
+			}
+			assert newChildPreds.length == 0;
+			if (param == null) {
+				// Atomic extension
+				return function;
+			}
+			if (param.isATypeExpression()) {
+				return function.getType().getTarget().toExpression();
+			}
+			return factory.makeBinaryExpression(RELIMAGE, function, param,
+					null);
+		}
+
+		/*
+		 * Joins the given expressions with a Cartesian product, unless the
+		 * first is null.
+		 */
+		private Expression joinProd(Expression left, Expression right) {
+			if (left == null) {
+				return right;
+			}
+			return factory.makeBinaryExpression(CPROD, left, right, null);
 		}
 
 	}

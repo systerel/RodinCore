@@ -156,20 +156,26 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	}
 
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
-		if (signature.isATypeConstructor()) {
-			final Type srcType = signature.getReturnType();
-			final Type srcBaseType = srcType.getBaseType();
-			final Type trgType = typeRewriter.rewrite(srcBaseType);
-			return ((GivenType) trgType).toExpression();
-		}
-
-		final String baseName = makeBaseName(signature);
-		final String name = nameSolver.solveAndAdd(baseName);
+		String baseName = makeBaseName(signature);
 		final FunctionalTypeBuilder builder;
 		builder = new FunctionalTypeBuilder(typeRewriter);
-		final Type type = signature.getFunctionalType(builder);
-		final FreeIdentifier ident;
-		ident = trgFactory.makeFreeIdentifier(name, null, type);
+
+		final Type type;
+		if (signature.isATypeConstructor()) {
+			type = signature.getRelationalType(builder);
+			if (signature.isAtomic()) {
+				final GivenType givenType = (GivenType) type.getBaseType();
+				return givenType.toExpression();
+			}
+			baseName += "_constr";
+		} else {
+			type = signature.getFunctionalType(builder);
+		}
+
+		final String name = nameSolver.solveAndAdd(baseName);
+		final FreeIdentifier ident = trgFactory.makeFreeIdentifier(name, null,
+				type);
+
 		trgTypenv.add(ident);
 		return ident;
 	}

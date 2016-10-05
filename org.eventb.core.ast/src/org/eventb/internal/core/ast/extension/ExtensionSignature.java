@@ -144,6 +144,16 @@ public abstract class ExtensionSignature {
 	public abstract boolean isATypeConstructor();
 
 	/**
+	 * Returns whether this signature is atomic, that is denotes an operator
+	 * that does not have any child.
+	 * 
+	 * @return whether this signature is atomic
+	 */
+	public boolean isAtomic() {
+		return numberOfPredicates == 0 && childTypes.length == 0;
+	}
+
+	/**
 	 * Returns the type of a function that could be used to replace an
 	 * occurrence of the extension with this signature.
 	 * 
@@ -152,6 +162,18 @@ public abstract class ExtensionSignature {
 	public Type getFunctionalType(FunctionalTypeBuilder builder) {
 		return builder.makeFunctionalType(childTypes, numberOfPredicates,
 				getReturnType());
+	}
+
+	/**
+	 * Returns the type of a relation that could be used to replace an
+	 * occurrence of the extension with this signature. To be used in the
+	 * special case of type constructors.
+	 * 
+	 * @return the type of a replacement relation
+	 */
+	public Type getRelationalType(FunctionalTypeBuilder builder) {
+		assert isATypeConstructor();
+		return builder.makeRelationalType(childTypes, getReturnType());
 	}
 
 	// What is the range type of the operator ?

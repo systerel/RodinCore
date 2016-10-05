@@ -19,6 +19,7 @@ import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSi
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.ExpressionExtTranslator;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.PredicateExtTranslator;
+import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeConstructorTranslator;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeExtTranslator;
 
 /**
@@ -76,6 +77,9 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		protected ExpressionExtTranslator newTranslator(
 				ExpressionExtSignature signature) {
 			final FreeIdentifier function = translation.makeFunction(signature);
+			if (signature.isATypeConstructor()) {
+				return new TypeConstructorTranslator(function);
+			}
 			return new ExpressionExtTranslator(function);
 		}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests.extension;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.FormulaFactory.getCond;
 import static org.eventb.core.ast.extension.ExtensionFactory.TWO_OR_MORE_EXPRS;
@@ -21,6 +22,7 @@ import static org.eventb.core.ast.extension.IArity.MAX_ARITY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
@@ -64,7 +66,8 @@ public class Extensions {
 
 	public static final FormulaFactory EXTS_FAC = FormulaFactory.getInstance(
 			new And(), new Belongs(), new Union2(), new Union3(), new Empty(),
-			getCond(), Real.EXT, RealZero.EXT, RealPlus.EXT, RealEmpty.EXT);
+			getCond(), Real.EXT, RealZero.EXT, RealPlus.EXT, RealEmpty.EXT,
+			FSet.EXT, CProd.EXT);
 
 	/*
 	 * Common implementation for extensions in this class.
@@ -487,6 +490,172 @@ public class Extensions {
 		@Override
 		public boolean isATypeConstructor() {
 			return false;
+		}
+
+	}
+
+	/**
+	 * An extension representing finite sets, simulating an axiomatic type
+	 * defined by the Theory plug-in. The purpose of this operator is two have a
+	 * type constructor taking one type parameter.
+	 */
+	public static class FSet extends AbstractExtension
+			implements IExpressionExtension {
+
+		public static FSet EXT = new FSet();
+
+		private FSet() {
+			super("FIN");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return PARENTHESIZED_UNARY_EXPRESSION;
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			assert (childExprs.length == 1 && childPreds.length == 0);
+			final List<Type> params = getParamTypes(childExprs);
+			final Type ptype = mediator.makeParametricType(this, params);
+			return mediator.makePowerSetType(ptype);
+		}
+
+		private List<Type> getParamTypes(Expression[] childExprs) {
+			final List<Type> params = new ArrayList<Type>(childExprs.length);
+			for (final Expression child : childExprs) {
+				final Type childType = child.getType();
+				if (childType == null) {
+					return null;
+				}
+				final Type paramType = childType.getBaseType();
+				if (paramType == null) {
+					return null;
+				}
+				params.add(paramType);
+			}
+			return params;
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			assert (childExprs.length == 1 && childPreds.length == 0);
+			final Type baseType = proposedType.getBaseType();
+			if (!(baseType instanceof ParametricType)) {
+				return false;
+			}
+			final ParametricType pType = (ParametricType) baseType;
+			if (pType.getExprExtension() != this) {
+				return false;
+			}
+			final Type[] typeParameters = pType.getTypeParameters();
+			final List<Type> expectedParams = getParamTypes(childExprs);
+			return asList(typeParameters).equals(expectedParams);
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			final Expression[] childExprs = expression.getChildExpressions();
+			// Children must be sets
+			for (final Expression child : childExprs) {
+				final Type alpha = tcMediator.newTypeVariable();
+				final Type powType = tcMediator.makePowerSetType(alpha);
+				tcMediator.sameType(powType, child.getType());
+			}
+			final List<Type> params = getParamTypes(childExprs);
+			final Type ptype = tcMediator.makeParametricType(this, params);
+			return tcMediator.makePowerSetType(ptype);
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return true;
+		}
+
+	}
+
+	/**
+	 * An extension representing a Cartesian product, simulating an axiomatic
+	 * type defined by the Theory plug-in. The purpose of this operator is two
+	 * have a type constructor taking two type parameters.
+	 */
+	public static class CProd extends AbstractExtension
+			implements IExpressionExtension {
+
+		public static CProd EXT = new CProd();
+
+		private CProd() {
+			super("**");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return BINARY_INFIX_EXPRESSION;
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			assert (childExprs.length == 2 && childPreds.length == 0);
+			final List<Type> params = getParamTypes(childExprs);
+			final Type ptype = mediator.makeParametricType(this, params);
+			return mediator.makePowerSetType(ptype);
+		}
+
+		private List<Type> getParamTypes(Expression[] childExprs) {
+			final List<Type> params = new ArrayList<Type>(childExprs.length);
+			for (final Expression child : childExprs) {
+				final Type childType = child.getType();
+				if (childType == null) {
+					return null;
+				}
+				final Type paramType = childType.getBaseType();
+				if (paramType == null) {
+					return null;
+				}
+				params.add(paramType);
+			}
+			return params;
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			assert (childExprs.length == 2 && childPreds.length == 0);
+			final Type baseType = proposedType.getBaseType();
+			if (!(baseType instanceof ParametricType)) {
+				return false;
+			}
+			final ParametricType pType = (ParametricType) baseType;
+			if (pType.getExprExtension() != this) {
+				return false;
+			}
+			final Type[] typeParameters = pType.getTypeParameters();
+			final List<Type> expectedParams = getParamTypes(childExprs);
+			return asList(typeParameters).equals(expectedParams);
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			final Expression[] childExprs = expression.getChildExpressions();
+			// Children must be sets
+			for (final Expression child : childExprs) {
+				final Type alpha = tcMediator.newTypeVariable();
+				final Type powType = tcMediator.makePowerSetType(alpha);
+				tcMediator.sameType(powType, child.getType());
+			}
+			final List<Type> params = getParamTypes(childExprs);
+			final Type ptype = tcMediator.makeParametricType(this, params);
+			return tcMediator.makePowerSetType(ptype);
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return true;
 		}
 
 	}

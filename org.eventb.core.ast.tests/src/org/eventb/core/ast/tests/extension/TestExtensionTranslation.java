@@ -239,6 +239,53 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertExprTranslation("emptyR", "emptyR", "emptyR=ℙ(ℝ)");
 	}
 
+	/**
+	 * Ensures that parametric type constructors get translated.
+	 */
+	@Test
+	public void FSet() {
+		assertExprTranslation("FIN(BOOL)", "FIN",
+				"FIN=ℙ(FIN);FIN_constr=BOOL↔FIN");
+		assertExprTranslation("FIN({TRUE})", "FIN_constr[{TRUE}]", "");
+		assertExprTranslation("FIN(1‥2)", "FIN_constr0[1‥2]",
+				"FIN0=ℙ(FIN0);FIN_constr0=ℤ↔FIN0");
+		assertExprTranslation("FIN(ℤ)", "FIN0", "");
+		assertExprTranslation("FIN(emptyR)", "FIN_constr1[emptyR]",
+				"emptyR=ℙ(ℝ);FIN1=ℙ(FIN1);FIN_constr1=ℝ↔FIN1");
+		assertExprTranslation("FIN({zero})", "FIN_constr1[{zero}]",
+				"zero=ℝ");
+		assertExprTranslation("FIN(ℝ)", "FIN1", "");
+		assertExprTranslation("FIN(FIN(ℝ))", "FIN2",
+				"FIN2=ℙ(FIN2);FIN_constr2=FIN1↔FIN2");
+		assertExprTranslation("FIN(FIN({zero}))",
+				"FIN_constr2[FIN_constr1[{zero}]]", "");
+	}
+
+	/**
+	 * Ensures that parametric type constructors get translated (with two type
+	 * parameters).
+	 */
+	@Test
+	public void CProd() {
+		assertExprTranslation("BOOL**ℝ", "ext",
+				"ext=ℙ(ext);ext_constr=BOOL×ℝ↔ext");
+		assertExprTranslation("{TRUE}**emptyR", "ext_constr[{TRUE} × emptyR]",
+				"emptyR=ℙ(ℝ)");
+	}
+
+	/**
+	 * Ensures that a mix of parametric type constructors gets translated.
+	 */
+	@Test
+	public void mixedParametricTypes() {
+		assertExprTranslation("(FIN(ℝ)**emptyR)**{1}",
+				"ext_constr0[ext_constr[FIN × emptyR] × {1}]",
+				"ℝ=ℙ(ℝ);FIN=ℙ(FIN);FIN_constr=ℝ↔FIN;"
+						+ "emptyR=ℙ(ℝ);ext=ℙ(ext);ext_constr=FIN×ℝ↔ext;"
+						+ "ext0=ℙ(ext0);ext_constr0=ext×ℤ↔ext0");
+
+	}
+
 	private FormulaFactory extendFactory() {
 		final Set<IFormulaExtension> extensions = LIST_FAC.getExtensions();
 		extensions.addAll(EXTS_FAC.getExtensions());

@@ -45,6 +45,18 @@ public class FunctionalTypeBuilder {
 		return factory.makeRelationalType(trgDomain, trgRange);
 	}
 
+	public Type makeRelationalType(Type[] children, Type range) {
+		final Type trgDomain = makeRelDomainType(children);
+		final Type trgRange = rewriter.rewrite(range);
+		if (trgDomain == null) {
+			// Atomic operator
+			return trgRange;
+		}
+		final Type trgBase = trgRange.getBaseType();
+		assert trgBase != null;
+		return factory.makeRelationalType(trgDomain, trgBase);
+	}
+
 	private Type makeDomainType(Type[] children, int numberOfPredicates) {
 		Type result = null;
 		for (Type child : children) {
@@ -54,6 +66,17 @@ public class FunctionalTypeBuilder {
 		final Type boolType = factory.makeBooleanType();
 		for (int i = 0; i < numberOfPredicates; i++) {
 			result = join(result, boolType);
+		}
+		return result;
+	}
+
+	private Type makeRelDomainType(Type[] children) {
+		Type result = null;
+		for (final Type child : children) {
+			final Type base = child.getBaseType();
+			assert base != null;
+			final Type trgChild = rewriter.rewrite(base);
+			result = join(result, trgChild);
 		}
 		return result;
 	}
