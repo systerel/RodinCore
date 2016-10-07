@@ -32,53 +32,57 @@ import org.eventb.core.ast.Type;
  */
 public abstract class ExtensionTranslator {
 
-	protected final FreeIdentifier function;
-	protected final FormulaFactory factory;
+	public static class IdentExtTranslator extends ExtensionTranslator {
 
-	public ExtensionTranslator(FreeIdentifier function) {
-		this.function = function;
-		this.factory = function.getFactory();
-	}
+		protected final FreeIdentifier function;
+		protected final FormulaFactory factory;
 
-	protected Expression makeFunApp(Expression[] newChildExprs,
-			Predicate[] newChildPreds) {
-		Expression param = null;
-		for (final Expression expr : newChildExprs) {
-			param = join(param, expr);
+		public IdentExtTranslator(FreeIdentifier function) {
+			this.function = function;
+			this.factory = function.getFactory();
 		}
-		for (final Predicate pred : newChildPreds) {
-			param = join(param, makeExprOfPred(pred));
-		}
-		if (param == null) {
-			// Atomic extension
-			return function;
-		}
-		return factory.makeBinaryExpression(FUNIMAGE, function, param, null);
 
-	}
-
-	private Expression makeExprOfPred(Predicate pred) {
-		if (pred.getTag() == Formula.EQUAL) {
-			final RelationalPredicate relPred = (RelationalPredicate) pred;
-			if (relPred.getRight().getTag() == Formula.TRUE) {
-				return relPred.getLeft();
+		protected Expression makeFunApp(Expression[] newChildExprs,
+				Predicate[] newChildPreds) {
+			Expression param = null;
+			for (final Expression expr : newChildExprs) {
+				param = join(param, expr);
 			}
+			for (final Predicate pred : newChildPreds) {
+				param = join(param, makeExprOfPred(pred));
+			}
+			if (param == null) {
+				// Atomic extension
+				return function;
+			}
+			return factory.makeBinaryExpression(FUNIMAGE, function, param,
+					null);
+
 		}
-		return factory.makeBoolExpression(pred, null);
+
+		private Expression makeExprOfPred(Predicate pred) {
+			if (pred.getTag() == Formula.EQUAL) {
+				final RelationalPredicate relPred = (RelationalPredicate) pred;
+				if (relPred.getRight().getTag() == Formula.TRUE) {
+					return relPred.getLeft();
+				}
+			}
+			return factory.makeBoolExpression(pred, null);
+		}
+
+		/*
+		 * Joins the given expressions with a maplet, unless the first is null.
+		 */
+		private Expression join(Expression left, Expression right) {
+			if (left == null) {
+				return right;
+			}
+			return factory.makeBinaryExpression(MAPSTO, left, right, null);
+		}
+
 	}
 
-	/*
-	 * Joins the given expressions with a maplet, unless the first is null.
-	 */
-	private Expression join(Expression left, Expression right) {
-		if (left == null) {
-			return right;
-		}
-		return factory.makeBinaryExpression(MAPSTO, left, right, null);
-	}
-
-	public static class PredicateExtTranslator extends
-			ExtensionTranslator {
+	public static class PredicateExtTranslator extends IdentExtTranslator {
 
 		private final Expression btrue;
 
@@ -98,8 +102,7 @@ public abstract class ExtensionTranslator {
 
 	}
 
-	public static class ExpressionExtTranslator extends
-			ExtensionTranslator {
+	public static class ExpressionExtTranslator extends IdentExtTranslator {
 
 		public ExpressionExtTranslator(FreeIdentifier function) {
 			super(function);
@@ -122,7 +125,6 @@ public abstract class ExtensionTranslator {
 		private final Type type;
 
 		public TypeExtTranslator(GivenType type) {
-			super(type.toExpression());
 			this.type = type;
 		}
 
