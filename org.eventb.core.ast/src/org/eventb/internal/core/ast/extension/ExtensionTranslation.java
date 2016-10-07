@@ -147,7 +147,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	}
 
 	public GivenType makeType(ExtensionSignature signature) {
-		assert(signature.isATypeConstructor());
+		assert signature.isATypeConstructor();
 		final String baseName = makeBaseName(signature);
 		final String name = nameSolver.solveAndAdd(baseName);
 		final GivenType trgType = trgFactory.makeGivenType(name);
