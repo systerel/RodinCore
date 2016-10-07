@@ -29,7 +29,7 @@ import org.eventb.internal.core.ast.extension.ExtensionTranslator.TypeExtTransla
  */
 public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends ExtensionTranslator> {
 
-	private final ExtensionTranslation translation;
+	protected final ExtensionTranslation translation;
 
 	private final Map<S, T> translators = new HashMap<S, T>();
 
@@ -40,14 +40,13 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 	public T get(S signature) {
 		T result = translators.get(signature);
 		if (result == null) {
-			final FreeIdentifier function = translation.makeFunction(signature);
-			result = newTranslator(function);
+			result = newTranslator(signature);
 			translators.put(signature, result);
 		}
 		return result;
 	}
 
-	protected abstract T newTranslator(FreeIdentifier function);
+	protected abstract T newTranslator(S signature);
 
 	public static class PredTranslatorRegistry extends
 			TranslatorRegistry<PredicateExtSignature, PredicateExtTranslator> {
@@ -57,7 +56,9 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		}
 
 		@Override
-		protected PredicateExtTranslator newTranslator(FreeIdentifier function) {
+		protected PredicateExtTranslator newTranslator(
+				PredicateExtSignature signature) {
+			final FreeIdentifier function = translation.makeFunction(signature);
 			return new PredicateExtTranslator(function);
 		}
 
@@ -71,12 +72,13 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		}
 
 		@Override
-		protected ExpressionExtTranslator newTranslator(FreeIdentifier function) {
+		protected ExpressionExtTranslator newTranslator(
+				ExpressionExtSignature signature) {
+			final FreeIdentifier function = translation.makeFunction(signature);
 			return new ExpressionExtTranslator(function);
 		}
 
 	}
-
 
 	public static class TypeTranslatorRegistry extends
 			TranslatorRegistry<ExpressionExtSignature, TypeExtTranslator> {
@@ -86,7 +88,10 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		}
 
 		@Override
-		protected TypeExtTranslator newTranslator(FreeIdentifier typeName) {
+		protected TypeExtTranslator newTranslator(
+				ExpressionExtSignature signature) {
+			assert (signature.isATypeConstructor());
+			final FreeIdentifier typeName = translation.makeFunction(signature);
 			return new TypeExtTranslator(typeName);
 		}
 
