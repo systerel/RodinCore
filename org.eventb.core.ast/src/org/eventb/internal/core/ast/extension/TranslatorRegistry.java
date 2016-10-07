@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.ExpressionExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionSignature.PredicateExtSignature;
 import org.eventb.internal.core.ast.extension.ExtensionTranslator.ExpressionExtTranslator;
@@ -91,8 +92,8 @@ public abstract class TranslatorRegistry<S extends ExtensionSignature, T extends
 		protected TypeExtTranslator newTranslator(
 				ExpressionExtSignature signature) {
 			assert (signature.isATypeConstructor());
-			final FreeIdentifier typeName = translation.makeFunction(signature);
-			return new TypeExtTranslator(typeName);
+			final GivenType type = translation.makeType(signature);
+			return new TypeExtTranslator(type);
 		}
 
 	}

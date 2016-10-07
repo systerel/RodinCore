@@ -19,6 +19,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
@@ -120,9 +121,9 @@ public abstract class ExtensionTranslator {
 
 		private final Type type;
 
-		public TypeExtTranslator(FreeIdentifier typeName) {
-			super(typeName);
-			this.type = typeName.getType().getBaseType();
+		public TypeExtTranslator(GivenType type) {
+			super(type.toExpression());
+			this.type = type;
 		}
 
 		public Type translate() {

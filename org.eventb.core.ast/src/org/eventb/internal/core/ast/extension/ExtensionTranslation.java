@@ -21,6 +21,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IExtensionTranslation;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
@@ -143,6 +144,15 @@ public class ExtensionTranslation extends AbstractTranslation implements
 		final PredicateExtTranslator translator = predTranslators
 				.get(signature);
 		return translator.translate(newChildExprs, newChildPreds);
+	}
+
+	public GivenType makeType(ExtensionSignature signature) {
+		assert(signature.isATypeConstructor());
+		final String baseName = makeBaseName(signature);
+		final String name = nameSolver.solveAndAdd(baseName);
+		final GivenType trgType = trgFactory.makeGivenType(name);
+		trgTypenv.add(trgType.toExpression());
+		return trgType;
 	}
 
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {

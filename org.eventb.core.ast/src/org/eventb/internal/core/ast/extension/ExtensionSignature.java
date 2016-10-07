@@ -156,7 +156,7 @@ public abstract class ExtensionSignature {
 
 	// What is the range type of the operator ?
 	protected abstract Type getReturnType();
-	
+
 	@Override
 	public int hashCode() {
 		int result = 1;

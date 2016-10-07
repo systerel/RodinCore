@@ -22,7 +22,7 @@ import org.eventb.internal.core.ast.TypeRewriter;
  * @author Laurent Voisin
  */
 public class FunctionalTypeBuilder {
-	
+
 	// How to rewrite the types coming from the source language.
 	private final TypeRewriter rewriter;
 
