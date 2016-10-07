@@ -211,6 +211,7 @@ public class TestExtensionTranslation extends AbstractTests {
 	@Test
 	public void Real() {
 		assertExprTranslation("ℝ", "ℝ", "ℝ=ℙ(ℝ)");
+		assertExprTranslation("ℙ(ℝ)", "ℙ(ℝ)", "");
 	}
 
 	/**
