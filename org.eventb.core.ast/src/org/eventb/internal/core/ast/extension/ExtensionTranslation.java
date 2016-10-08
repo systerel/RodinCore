@@ -72,19 +72,22 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	private final PredTranslatorRegistry predTranslators //
 	= new PredTranslatorRegistry(this);
 
-	private TypeRewriter typeRewriter;
+	private final FunctionalTypeBuilder typeBuilder;
 
-	private ITypeCheckingRewriter rewriter;
+	private final ITypeCheckingRewriter rewriter;
 
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
 		super(srcTypenv);
 		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
 		final Set<String> usedNames = new HashSet<String>(srcTypenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, trgFactory);
-		this.typeRewriter = new ExtensionTypeRewriter(trgFactory, this);
+
+		final TypeRewriter typeRewriter;
+		typeRewriter = new ExtensionTypeRewriter(trgFactory, this);
+		this.typeBuilder = new FunctionalTypeBuilder(typeRewriter);
 		this.rewriter = new ExtensionRewriter(typeRewriter, this);
 		this.trgTypenv = new TypeEnvironmentBuilder(trgFactory);
-		populateTargetTypenv();
+		populateTargetTypenv(typeRewriter);
 	}
 
 	private static FormulaFactory computeTargetFactory(FormulaFactory fac) {
@@ -104,7 +107,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 		return FormulaFactory.getInstance(keptExtensions);
 	}
 
-	private void populateTargetTypenv() {
+	private void populateTargetTypenv(TypeRewriter typeRewriter) {
 		final IIterator iter = srcTypenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
@@ -157,19 +160,17 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 	public FreeIdentifier makeFunction(ExtensionSignature signature) {
 		String baseName = makeBaseName(signature);
-		final FunctionalTypeBuilder builder;
-		builder = new FunctionalTypeBuilder(typeRewriter);
 
 		final Type type;
 		if (signature.isATypeConstructor()) {
-			type = signature.getRelationalType(builder);
+			type = signature.getRelationalType(typeBuilder);
 			if (signature.isAtomic()) {
 				final GivenType givenType = (GivenType) type.getBaseType();
 				return givenType.toExpression();
 			}
 			baseName += "_constr";
 		} else {
-			type = signature.getFunctionalType(builder);
+			type = signature.getFunctionalType(typeBuilder);
 		}
 
 		final String name = nameSolver.solveAndAdd(baseName);
