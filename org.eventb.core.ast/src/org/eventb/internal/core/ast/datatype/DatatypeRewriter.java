@@ -33,8 +33,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	private final DatatypeTranslation translation;
 
 	public DatatypeRewriter(DatatypeTranslation translation) {
-		super(translation.getTargetFormulaFactory(),
-				translation.getTypeRewriter());
+		super(translation.getTypeRewriter());
 		this.translation = translation;
 	}
 

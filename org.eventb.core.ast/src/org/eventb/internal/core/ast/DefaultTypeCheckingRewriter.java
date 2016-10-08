@@ -104,9 +104,8 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	// Version with a type rewriter provided by the caller and which therefore
 	// allows to also modify the types at the same time.
-	public DefaultTypeCheckingRewriter(FormulaFactory ff,
-			TypeRewriter typeRewriter) {
-		this.ff = ff;
+	public DefaultTypeCheckingRewriter(TypeRewriter typeRewriter) {
+		this.ff = typeRewriter.getFactory();
 		this.typeRewriter = typeRewriter;
 	}
 

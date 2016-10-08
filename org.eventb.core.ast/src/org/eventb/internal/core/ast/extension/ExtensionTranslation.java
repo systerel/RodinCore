@@ -235,7 +235,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 		public ExtensionRewriter(TypeRewriter typeRewriter,
 				ExtensionTranslation translation) {
-			super(typeRewriter.getFactory(), typeRewriter);
+			super(typeRewriter);
 			this.translation = translation;
 		}
 
