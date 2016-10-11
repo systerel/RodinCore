@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,26 +56,26 @@ public class TestExtensionTranslation extends AbstractTests {
 	 */
 	@Before
 	public void setUp() {
-		setUp("");
+		setUp("", "");
 	}
 
 	/**
 	 * Starts a translation with the given initial type environment.
 	 */
-	private void setUp(String typenvImage) {
-		srcTypeEnv = mTypeEnvironment(typenvImage, EXTS_FAC);
-		trgTypeEnv = srcTypeEnv.translate(COND_FAC);
+	private void setUp(String srcTypenvImage, String trgTypenvImage) {
+		srcTypeEnv = mTypeEnvironment(srcTypenvImage, EXTS_FAC);
+		trgTypeEnv = mTypeEnvironment(trgTypenvImage, COND_FAC);
 		translation = srcTypeEnv.makeExtensionTranslation();
 	}
 
 	/**
 	 * Starts a translation with the given initial type environment.
 	 */
-	private void setUp(String typenvImage, FormulaFactory fac) {
-		srcTypeEnv = mTypeEnvironment(typenvImage, fac);
+	private void setUp(String srcTypenvImage, FormulaFactory srcFactory,
+			String trgTypenvImage, FormulaFactory trgFactory) {
+		srcTypeEnv = mTypeEnvironment(srcTypenvImage, srcFactory);
+		trgTypeEnv = mTypeEnvironment(trgTypenvImage, trgFactory);
 		translation = srcTypeEnv.makeExtensionTranslation();
-		trgTypeEnv = srcTypeEnv.translate(translation
-				.getTargetTypeEnvironment().getFormulaFactory());
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class TestExtensionTranslation extends AbstractTests {
 	 */
 	@Test
 	public void namesAreFresh() {
-		setUp("belongs0=ℙ(BOOL)");
+		setUp("belongs0=ℙ(BOOL)", "belongs0=ℙ(BOOL)");
 
 		assertPredTranslation("belongs(1, ⊤, ∅)", //
 				"belongs(1↦∅↦bool(⊤)) = TRUE", //
@@ -198,11 +198,92 @@ public class TestExtensionTranslation extends AbstractTests {
 	@Test
 	public void noDatatypeTranslation() {
 		final FormulaFactory ffExtended = extendFactory();
-		setUp("a=List(ℤ)", ffExtended);
+		setUp("a=List(ℤ)", ffExtended, "a=List(ℤ)", LIST_FAC);
 		assertPredTranslation("a = nil", "a = nil", "");
 		assertPredTranslation("a = cons(1, nil)", "a = cons(1, nil)", "");
 		assertPredTranslation("1 = head(a)", "1 = head(a)", "");
 		assertPredTranslation("a ∈ List({1})", "a ∈ List({1})", "");
+	}
+
+	/**
+	 * Ensures that the set of real numbers gets translated.
+	 */
+	@Test
+	public void Real() {
+		assertExprTranslation("ℝ", "ℝ", "ℝ=ℙ(ℝ)");
+		assertExprTranslation("ℙ(ℝ)", "ℙ(ℝ)", "");
+	}
+
+	/**
+	 * Ensures that the real zero gets translated.
+	 */
+	@Test
+	public void RealZero() {
+		assertExprTranslation("zero", "zero", "zero=ℝ");
+	}
+
+	/**
+	 * Ensures that real addition gets translated.
+	 */
+	@Test
+	public void RealPlus() {
+		setUp("r=ℝ;s=ℝ", "r=ℝ;s=ℝ");
+		assertExprTranslation("r +. s", "ext(r ↦ s)", "ext=ℝ×ℝ↔ℝ");
+	}
+
+	/**
+	 * Ensures that real empty set gets translated.
+	 */
+	@Test
+	public void RealEmpty() {
+		assertExprTranslation("emptyR", "emptyR", "emptyR=ℙ(ℝ)");
+	}
+
+	/**
+	 * Ensures that parametric type constructors get translated.
+	 */
+	@Test
+	public void FSet() {
+		assertExprTranslation("FIN(BOOL)", "FIN",
+				"FIN=ℙ(FIN);FIN_constr=BOOL↔FIN");
+		assertExprTranslation("FIN({TRUE})", "FIN_constr[{TRUE}]", "");
+		assertExprTranslation("FIN(1‥2)", "FIN_constr0[1‥2]",
+				"FIN0=ℙ(FIN0);FIN_constr0=ℤ↔FIN0");
+		assertExprTranslation("FIN(ℤ)", "FIN0", "");
+		assertExprTranslation("FIN(emptyR)", "FIN_constr1[emptyR]",
+				"emptyR=ℙ(ℝ);FIN1=ℙ(FIN1);FIN_constr1=ℝ↔FIN1");
+		assertExprTranslation("FIN({zero})", "FIN_constr1[{zero}]",
+				"zero=ℝ");
+		assertExprTranslation("FIN(ℝ)", "FIN1", "");
+		assertExprTranslation("FIN(FIN(ℝ))", "FIN2",
+				"FIN2=ℙ(FIN2);FIN_constr2=FIN1↔FIN2");
+		assertExprTranslation("FIN(FIN({zero}))",
+				"FIN_constr2[FIN_constr1[{zero}]]", "");
+	}
+
+	/**
+	 * Ensures that parametric type constructors get translated (with two type
+	 * parameters).
+	 */
+	@Test
+	public void CProd() {
+		assertExprTranslation("BOOL**ℝ", "ext",
+				"ext=ℙ(ext);ext_constr=BOOL×ℝ↔ext");
+		assertExprTranslation("{TRUE}**emptyR", "ext_constr[{TRUE} × emptyR]",
+				"emptyR=ℙ(ℝ)");
+	}
+
+	/**
+	 * Ensures that a mix of parametric type constructors gets translated.
+	 */
+	@Test
+	public void mixedParametricTypes() {
+		assertExprTranslation("(FIN(ℝ)**emptyR)**{1}",
+				"ext_constr0[ext_constr[FIN × emptyR] × {1}]",
+				"ℝ=ℙ(ℝ);FIN=ℙ(FIN);FIN_constr=ℝ↔FIN;"
+						+ "emptyR=ℙ(ℝ);ext=ℙ(ext);ext_constr=FIN×ℝ↔ext;"
+						+ "ext0=ℙ(ext0);ext_constr0=ext×ℤ↔ext0");
+
 	}
 
 	private FormulaFactory extendFactory() {

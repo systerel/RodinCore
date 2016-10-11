@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2016 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,19 @@ import org.eventb.core.ast.UnaryPredicate;
 
 /**
  * Default implementation of a type-checking rewriter that does not perform any
- * rewrite. In this class, we do not use the <code>checkReplacement()</code>
- * methods because the result bears the same type by construction. However,
- * these methods must be used by sub-classes that actually perform a rewrite
- * when it cannot be proven that the rewrite is always type-checked.
+ * rewrite by default. In this class, we do not use the
+ * <code>checkReplacement()</code> methods because the result bears the expected
+ * type by construction. However, these methods must be used by sub-classes that
+ * actually perform a rewrite when it cannot be proven that the rewrite is
+ * always type-checked. Note that these methods cannot be used in the case where
+ * types are also rewritten (it checks that the types did not change).
  * 
+ * <p>
+ * If a type rewriter is given to the constructor, then this class will
+ * implement type rewriting for all nodes. It is then expected to be sub-classed
+ * so that free identifiers (among others) are also rewritten to conform to the
+ * new type.
+ * </p>
  * <p>
  * This implementation guarantees that a leaf node is rebuilt with the rewriter
  * factory if the factory of the node is different as required by
@@ -94,6 +102,13 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 		this.typeRewriter = new TypeRewriter(ff);
 	}
 
+	// Version with a type rewriter provided by the caller and which therefore
+	// allows to also modify the types at the same time.
+	public DefaultTypeCheckingRewriter(TypeRewriter typeRewriter) {
+		this.ff = typeRewriter.getFactory();
+		this.typeRewriter = typeRewriter;
+	}
+
 	@Override
 	public boolean autoFlatteningMode() {
 		return false;
@@ -126,11 +141,13 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl src) {
-		if (ff == src.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && ff == src.getFactory()) {
 			return src;
 		}
 		return ff.makeBoundIdentDecl(src.getName(), src.getSourceLocation(),
-				typeRewriter.rewrite(src.getType()));
+				trgType);
 	}
 
 	@Override
@@ -146,11 +163,13 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(AtomicExpression src) {
-		if (ff == src.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && ff == src.getFactory()) {
 			return src;
 		}
 		return ff.makeAtomicExpression(src.getTag(), src.getSourceLocation(),
-				typeRewriter.rewrite(src.getType()));
+				trgType);
 	}
 
 	@Override
@@ -170,22 +189,26 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(BoundIdentifier src) {
-		if (ff == src.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && ff == src.getFactory()) {
 			return src;
 		}
 		return ff.makeBoundIdentifier(src.getBoundIndex(),
-				src.getSourceLocation(), typeRewriter.rewrite(src.getType()));
+				src.getSourceLocation(), trgType);
 	}
 
 	@Override
 	public Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed && ff == src.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && !changed && ff == src.getFactory()) {
 			return src;
 		}
 		return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
 				newChildPreds, src.getSourceLocation(),
-				typeRewriter.rewrite(src.getType()));
+				trgType);
 	}
 
 	@Override
@@ -200,11 +223,13 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(FreeIdentifier src) {
-		if (ff == src.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && ff == src.getFactory()) {
 			return src;
 		}
 		return ff.makeFreeIdentifier(src.getName(), src.getSourceLocation(),
-				typeRewriter.rewrite(src.getType()));
+				trgType);
 	}
 
 	@Override
@@ -254,13 +279,13 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(SetExtension src, SetExtension expr) {
-		if (ff == expr.getFactory()) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && ff == expr.getFactory()) {
 			return expr;
 		}
 		if (expr.getMembers().length == 0) {
-			return ff.makeEmptySetExtension(
-					typeRewriter.rewrite(expr.getType()),
-					expr.getSourceLocation());
+			return ff.makeEmptySetExtension(trgType, expr.getSourceLocation());
 		}
 		return ff.makeSetExtension(expr.getMembers(), expr.getSourceLocation());
 	}
@@ -279,7 +304,9 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	@Override
 	public Expression rewrite(UnaryExpression src, boolean changed,
 			Expression newChild) {
-		if (!changed) {
+		final Type srcType = src.getType();
+		final Type trgType = typeRewriter.rewrite(srcType);
+		if (trgType == srcType && !changed) {
 			assert ff == src.getFactory();
 			return src;
 		}
