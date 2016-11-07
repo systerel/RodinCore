@@ -38,7 +38,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 public class TypeRewriter implements ITypeVisitor {
 
 	// Formula factory to use for building the rewritten types
-	private final FormulaFactory ff;
+	protected final FormulaFactory ff;
 
 	// Result of the last call to visit()
 	protected Type result;
