@@ -14,7 +14,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xmx512m
+      <vmArgs>-Xmx1024m
 -Dosgi.requiredJavaVersion=1.8</vmArgs>
    </launcherArgs>
 
