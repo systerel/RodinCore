@@ -1,0 +1,9 @@
+Exporting splash.bmp:
+Open splash.xcf with Gimp
+1/ scale the image to 454*300 px
+2/ export to splash.bmp with:
+   - NO color space information
+   - 24 bit RGB
+
+This is required since Rodin 3.3 (Eclipse Neon) to avoid splash screen display issues on Linux and Windows.
+
