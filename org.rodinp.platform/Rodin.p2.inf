@@ -15,16 +15,14 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
   addRepository(type:0,location:http${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
   addRepository(type:1,location:http${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
-  addRepository(type:0,location:http${#58}//www.stups.hhu.de/pror_updates/rodin,name:ProR (Requirements));\
-  addRepository(type:1,location:http${#58}//www.stups.hhu.de/pror_updates/rodin,name:ProR (Requirements));\
   addRepository(type:0,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:0,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
   addRepository(type:1,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
-  addRepository(type:0,location:http${#58}//subclipse.tigris.org/update_1.10.x,name:Subclipse);\
-  addRepository(type:1,location:http${#58}//subclipse.tigris.org/update_1.10.x,name:Subclipse);\
-  addRepository(type:0,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
-  addRepository(type:1,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
+  addRepository(type:0,location:http${#58}//dl.bintray.com/subclipse/releases/subclipse/latest,name:Subclipse);\
+  addRepository(type:1,location:http${#58}//dl.bintray.com/subclipse/releases/subclipse/latest,name:Subclipse);\
+  addRepository(type:0,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
+  addRepository(type:1,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:0,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);\
   addRepository(type:1,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);\
   addRepository(type:0,location:http${#58}//idir.aitsadoune.free.fr/tools/updatesite,name:BPEL2B);\
