@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,18 +137,18 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = true;	
 		
 		runBuilder(
-				"CSC run /P/z.csc",
-				"CPO run /P/z.po",
 				"CSC run /P/x.csc",
 				"CPO run /P/x.po",
-				"CSC run /P/y.csc",
-				"CPO run /P/y.po",
 				"MSC run /P/a.msc",
 				"MPO run /P/a.po",
+				"CSC run /P/y.csc",
+				"CPO run /P/y.po",
 				"MSC run /P/b.msc",
 				"MPO run /P/b.po",
 				"MSC run /P/c.msc",
 				"MPO run /P/c.po",
+				"CSC run /P/z.csc",
+				"CPO run /P/z.po",
 				"MSC run /P/d.msc",
 				"MPO run /P/d.po"		);
 		
@@ -179,18 +179,18 @@ public class MBuilderTest extends AbstractBuilderTest {
 		cleanBuilder();
 		ToolTrace.flush();
 		runBuilder(
-				"CSC run /P/z.csc",
-				"CPO run /P/z.po",
 				"CSC run /P/x.csc",
 				"CPO run /P/x.po",
-				"CSC run /P/y.csc",
-				"CPO run /P/y.po",
 				"MSC run /P/a.msc",
 				"MPO run /P/a.po",
+				"CSC run /P/y.csc",
+				"CPO run /P/y.po",
 				"MSC run /P/b.msc",
 				"MPO run /P/b.po",
 				"MSC run /P/c.msc",
 				"MPO run /P/c.po",
+				"CSC run /P/z.csc",
+				"CPO run /P/z.po",
 				"MSC run /P/d.msc",
 				"MPO run /P/d.po"
 		);
@@ -217,8 +217,8 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = false;	
 		
 		runBuilder(qProject,
-				"CSC extract /Q/x.ctx",
 				"MSC extract /Q/a.mch", 
+				"CSC extract /Q/x.ctx",
 				"CSC run /Q/x.csc",
 				"MSC run /Q/a.msc"
 			);
