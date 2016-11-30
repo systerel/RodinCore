@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.rodinproblems;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.views.markers.internal.ProblemView;
+import org.eclipse.ui.internal.views.markers.ProblemsView;
 import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
@@ -35,21 +35,19 @@ import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
  * @author Laurent Voisin
  */
 @SuppressWarnings("restriction")
-public class RodinProblemView extends ProblemView {
+public class RodinProblemView extends ProblemsView {
 	
-	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
-
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		final Tree tree = getViewer().getTree();
-		final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
-		tree.setFont(font);
-	}
-
-	@Override
-	protected String[] getRootTypes() {
-		return ROOT_TYPES;
+		final Control[] children = parent.getChildren();
+		for (Control control : children) {
+			if (control instanceof Tree) {
+				final Tree tree = (Tree) control;
+				final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+				tree.setFont(font);
+			}
+		}
 	}
 
 }

@@ -12,10 +12,5 @@ In the windows version it may be necessary to extract the
 font Brave Sans Mono Roman contained in the directory "fonts"
 of the jar file org.eventb.ui located in the plugins directory.
 
-Make sure you are running the Java virtual machine 1.5 or later
-from Sun.
+Make sure you are running the Java virtual machine 1.8 or later.
 
-Important Note: p2.inf MUST NOT END WITH A BACKSLASH ('\')
- (a backslash followed by a new line is OK).
- Else, exported products contain no executable.
-  
