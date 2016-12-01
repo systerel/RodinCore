@@ -17,13 +17,16 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -937,62 +940,47 @@ public class TestSpecialization extends AbstractTests {
 	 * 
 	 * @author htson
 	 */
+	@Test
 	public void testGets() {
-		GivenType[] types;
-		FreeIdentifier[] idents;
-		PredicateVariable[] predVars;
+		// Identifiers associated to given types
+		final FreeIdentifier Sx = S.toExpression();
+		final FreeIdentifier Tx = T.toExpression();
 		
 		spec.put(S, T);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+		assertSet(spec.getTypes(), S);
+		assertSet(spec.getFreeIdentifiers(), Sx);
+		assertSet(spec.getPredicateVariables());
 		
 		spec.put(aS, bT);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+		assertSet(spec.getTypes(), S);
+		assertSet(spec.getFreeIdentifiers(), Sx, aS);
+		assertSet(spec.getPredicateVariables());
 		
 		spec.put(T, S);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{}, predVars);
+		assertSet(spec.getTypes(), S, T);
+		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx);
+		assertSet(spec.getPredicateVariables());
 
 		spec.put(P, Q);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P}, predVars);
+		assertSet(spec.getTypes(), S, T);
+		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx);
+		assertSet(spec.getPredicateVariables(), P);
 
-		spec.put(aT, bS);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS, aT}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P}, predVars);
+		spec.put(bT, aS);
+		assertSet(spec.getTypes(), S, T);
+		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx, bT);
+		assertSet(spec.getPredicateVariables(), P);
 
 		spec.put(Q, P);
-		types = spec.getTypes();
-		idents = spec.getFreeIdentifiers();
-		predVars = spec.getPredicateVariables();
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S, T}, types);
-		assertArrayEquals("Incorrect instantiated types", new GivenType[]{S}, types);
-		assertArrayEquals("Incorrect instantiated free identifiers", new FreeIdentifier[]{aS}, idents);
-		assertArrayEquals("Incorrect instantiated predicate variables", new PredicateVariable[]{P, Q}, predVars);
+		assertSet(spec.getTypes(), S, T);
+		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx, bT);
+		assertSet(spec.getPredicateVariables(), P, Q);
 	}
 
+	private <T extends Object> void assertSet(T[] actuals, T...expected) {
+		final Set<T> exp = new HashSet<T>(Arrays.asList(expected));
+		final Set<T> act = new HashSet<T>(Arrays.asList(actuals));
+		assertEquals("Incorrect sets", exp, act);
+	}
+	
 }
