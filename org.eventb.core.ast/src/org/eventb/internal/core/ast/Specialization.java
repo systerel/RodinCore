@@ -333,7 +333,7 @@ public class Specialization implements ISpecialization {
 	 */
 	private void verify(FreeIdentifier ident, Expression value) {
 		final Type identType = ident.getType();
-		final Type newType = identType.specialize(this);
+		final Type newType = speTypeRewriter.rewrite(identType);
 		if (!value.getType().equals(newType)) {
 			throw new IllegalArgumentException("Incompatible types for "
 					+ ident);
@@ -412,7 +412,7 @@ public class Specialization implements ISpecialization {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
-		final Expression oldValue = get(ident);
+		final Expression oldValue = formRewriter.get(ident);
 		return oldValue == null || oldValue.equals(value);
 	}
 
