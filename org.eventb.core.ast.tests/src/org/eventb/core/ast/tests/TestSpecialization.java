@@ -118,6 +118,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSet(spec.getTypes(), S);
 	}
 
 	/**
@@ -222,7 +223,8 @@ public class TestSpecialization extends AbstractTests {
 
 	/**
 	 * Ensures that an identifier substitution which changes type when no type
-	 * substitution has been registered is rejected.
+	 * substitution has been registered is rejected. Moreover, there is no
+	 * side-effect performed during the check.
 	 */
 	@Test 
 	public void testIncompatibleTypeNoTypeSubstitution() {
@@ -232,6 +234,9 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		// No side-effect
+		assertSet(spec.getTypes());
 	}
 
 	/**
@@ -247,6 +252,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSet(spec.getTypes(), S);
 	}
 
 	/**
@@ -313,6 +319,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSet(spec.getTypes(), S);
 	}
 
 	/**
@@ -785,6 +792,70 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(T, S);
 		boolean ok = spec.canPut(bT, aS);
 		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
+	}
+
+	/**
+	 * Ensures that if the canPut test fails, then no substitution has been
+	 * added as a side-effect.
+	 */
+	@Test 
+	public void testCanPutFailure_NoSideEffect() {
+		boolean ok = spec.canPut(aS, one);
+		assertFalse("Should have failed", ok);
+
+		// No substitution has been added
+		assertSet(spec.getTypes());
+		assertSet(spec.getFreeIdentifiers());
+		assertSet(spec.getPredicateVariables());
+	}
+
+	/**
+	 * Ensures that if the canPut test fails, then no substitution has been
+	 * added as a side-effect.
+	 */
+	@Test 
+	public void testCanPutFailure_NoSideEffectComplexType() {
+		final FreeIdentifier aST = mFreeIdentifier("a", REL(S, POW(T)));
+		boolean ok = spec.canPut(aST, one);
+		assertFalse("Should have failed", ok);
+
+		// No substitution has been added
+		assertSet(spec.getTypes());
+		assertSet(spec.getFreeIdentifiers());
+		assertSet(spec.getPredicateVariables());
+	}
+
+
+	/**
+	 * Ensures that if the canPut test succeeds, then no substitution has been
+	 * added as a side-effect.
+	 */
+	@Test 
+	public void testCanPutSuccess_NoSideEffect() {
+		boolean ok = spec.canPut(aS, bS);
+		assertTrue("Should have succeeded", ok);
+
+		// No substitution has been added
+		assertSet(spec.getTypes());
+		assertSet(spec.getFreeIdentifiers());
+		assertSet(spec.getPredicateVariables());
+	}
+
+	/**
+	 * Ensures that if the canPut test succeeds, then no substitution has been
+	 * added as a side-effect.
+	 */
+	@Test 
+	public void testCanPutSuccess_NoSideEffectComplexType() {
+		final FreeIdentifier aST = mFreeIdentifier("a", REL(S, POW(T)));
+		final FreeIdentifier bST = mFreeIdentifier("b", REL(S, POW(T)));
+		boolean ok = spec.canPut(aST, bST);
+		assertTrue("Should have succeeded", ok);
+
+		// No substitution has been added
+		assertSet(spec.getTypes());
+		assertSet(spec.getFreeIdentifiers());
+		assertSet(spec.getPredicateVariables());
 	}
 
 	/**
