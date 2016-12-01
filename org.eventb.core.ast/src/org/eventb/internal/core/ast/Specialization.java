@@ -116,7 +116,7 @@ public class Specialization implements ISpecialization {
 		}
 	}
 
-	private class SpecializationFormulaRewriter extends Substitution {
+	private static class SpecializationFormulaRewriter extends Substitution {
 
 		// Identifier substitutions
 		private final Map<FreeIdentifier, Substitute<Expression>> identSubst;
@@ -156,7 +156,7 @@ public class Specialization implements ISpecialization {
 				return subst.getSubstitute(ident, getBindingDepth());
 			}
 			final Type type = ident.getType();
-			final Type newType = type.specialize(Specialization.this);
+			final Type newType = typeRewriter.rewrite(type);
 			final Expression result;
 			if (newType == type) {
 				result = super.rewrite(ident);
