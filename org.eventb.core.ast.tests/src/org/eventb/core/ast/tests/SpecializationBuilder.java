@@ -106,9 +106,7 @@ public class SpecializationBuilder {
 	 * @author htson
 	 */
 	private boolean isPredicateVariable(String srcImage) {
-		if (srcImage.startsWith(PredicateVariable.LEADING_SYMBOL))
-			return true;
-		return false;
+		return srcImage.startsWith(PredicateVariable.LEADING_SYMBOL);
 	}
 	
 	public void addTypeSpecializations(String list) {
