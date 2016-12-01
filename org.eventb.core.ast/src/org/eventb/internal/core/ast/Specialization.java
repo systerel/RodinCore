@@ -18,11 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -31,10 +27,7 @@ import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
@@ -131,15 +124,16 @@ public class Specialization implements ISpecialization {
 		// Predicate variable substitutions
 		private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
 
-		public SpecializationFormulaRewriter(FormulaFactory ff) {
-			super(ff);
+		public SpecializationFormulaRewriter(SpecializationTypeRewriter typeRewriter) {
+			super(typeRewriter);
 			identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
 			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
 		}
 
 		public SpecializationFormulaRewriter(
-				SpecializationFormulaRewriter other) {
-			super(other.ff);
+				SpecializationFormulaRewriter other,
+				SpecializationTypeRewriter otherTypeRewriter) {
+			super(otherTypeRewriter);
 			identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>(
 					other.identSubst);
 			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
@@ -224,11 +218,6 @@ public class Specialization implements ISpecialization {
 			return newIdent;
 		}
 
-		/**
-		 * Rewrite the predicate variable.
-		 * 
-		 * @author htson
-		 */
 		@Override
 		public Predicate rewrite(PredicateVariable predVar) {
 			final Predicate newPred = getOrSetDefault(predVar);
@@ -236,72 +225,6 @@ public class Specialization implements ISpecialization {
 				return super.rewrite(predVar);
 			}
 			return newPred;
-		}
-
-		@Override
-		public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-			final Type type = decl.getType();
-			final Type newType = type.specialize(Specialization.this);
-			if (newType == type) {
-				return super.rewrite(decl);
-			}
-			final String name = decl.getName();
-			final SourceLocation sloc = decl.getSourceLocation();
-			return ff.makeBoundIdentDecl(name, sloc, newType);
-		}
-
-		@Override
-		public Expression rewrite(BoundIdentifier identifier) {
-			final Type type = identifier.getType();
-			final Type newType = type.specialize(Specialization.this);
-			if (newType == type) {
-				return super.rewrite(identifier);
-			}
-			return ff.makeBoundIdentifier(identifier.getBoundIndex(),
-					identifier.getSourceLocation(), newType);
-		}
-
-		@Override
-		public Expression rewrite(AtomicExpression expression) {
-			final Type type = expression.getType();
-			final Type newType = type.specialize(Specialization.this);
-			if (newType == type) {
-				return super.rewrite(expression);
-			}
-			final SourceLocation loc = expression.getSourceLocation();
-			return ff.makeAtomicExpression(expression.getTag(), loc, newType);
-		}
-
-		@Override
-		public Expression rewrite(ExtendedExpression expr, boolean changed,
-				Expression[] newChildExprs, Predicate[] newChildPreds) {
-			final Type type = expr.getType();
-			final Type newType = type.specialize(Specialization.this);
-			if (!changed && newType == type) {
-				return super.rewrite(expr, changed, newChildExprs,
-						newChildPreds);
-			}
-			final IExpressionExtension extension = expr.getExtension();
-			final SourceLocation loc = expr.getSourceLocation();
-			return ff.makeExtendedExpression(extension, newChildExprs,
-					newChildPreds, loc, newType);
-		}
-
-		/*
-		 * For a set extension, the only special case is that of an empty
-		 * extension, where we have to specialize the type.
-		 */
-		@Override
-		public Expression rewrite(SetExtension src, SetExtension expr) {
-			if (expr.getChildCount() != 0) {
-				return expr;
-			}
-			final Type type = expr.getType();
-			final Type newType = type.specialize(Specialization.this);
-			if (newType == type) {
-				return super.rewrite(src, expr);
-			}
-			return ff.makeEmptySetExtension(newType, expr.getSourceLocation());
 		}
 
 		// For debugging purpose
@@ -343,13 +266,14 @@ public class Specialization implements ISpecialization {
 	public Specialization(FormulaFactory ff) {
 		this.ff = ff;
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
-		formRewriter = new SpecializationFormulaRewriter(ff);
+		formRewriter = new SpecializationFormulaRewriter(speTypeRewriter);
 	}
 
 	public Specialization(Specialization other) {
 		this.ff = other.ff;
 		speTypeRewriter = new SpecializationTypeRewriter(other.speTypeRewriter);
-		formRewriter = new SpecializationFormulaRewriter(other.formRewriter);
+		formRewriter = new SpecializationFormulaRewriter(other.formRewriter,
+				speTypeRewriter);
 	}
 
 	@Override
