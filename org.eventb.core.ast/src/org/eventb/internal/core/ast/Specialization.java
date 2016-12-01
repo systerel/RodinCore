@@ -329,21 +329,22 @@ public class Specialization implements ISpecialization {
 		}
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
-		verify(ident, value);
+		if (!verify(ident, value)) {
+			throw new IllegalArgumentException(
+					"Incompatible types for " + ident);
+		}
 		formRewriter.put(ident, value);
 	}
 
 	/*
-	 * Checks that a new substitution is compatible. We also save the given sets
-	 * that are now frozen and must not change afterwards.
+	 * Tells whether the new substitution is compatible with existing ones. We
+	 * also save the given sets that are now frozen and must not change
+	 * afterwards.
 	 */
-	private void verify(FreeIdentifier ident, Expression value) {
+	private boolean verify(FreeIdentifier ident, Expression value) {
 		final Type identType = ident.getType();
 		final Type newType = speTypeRewriter.rewrite(identType);
-		if (!value.getType().equals(newType)) {
-			throw new IllegalArgumentException("Incompatible types for "
-					+ ident);
-		}
+		return value.getType().equals(newType);
 	}
 
 	public Type specialize(Type type) {
@@ -413,12 +414,11 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		try {
-			// @htson This is an awkward way to reuse verify(..) method 
-			verify(ident, value);
-		} catch (IllegalArgumentException e) {
+
+		if (!verify(ident, value)) {
 			return false;
 		}
+
 		final Expression oldValue = formRewriter.get(ident);
 		return oldValue == null || oldValue.equals(value);
 	}
