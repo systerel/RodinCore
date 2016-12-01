@@ -234,6 +234,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(te, "a", "S := T", "a");
 		assertExpressionSpecialization(te, "a", "S := T || b := d", "a");
 		assertExpressionSpecialization(te, "a", "S := T || a := c", "c");
+		assertExpressionSpecialization(te, "S", "S := T || a := c", "T");
 	}
 
 	/**
