@@ -47,7 +47,7 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * @author Laurent Voisin
  * @author htson - added support for predicate variables.
  */
-public class Specialization extends Substitution implements ISpecialization {
+public class Specialization implements ISpecialization {
 
 	private static class SpecializationTypeRewriter extends TypeRewriter {
 
@@ -123,28 +123,233 @@ public class Specialization extends Substitution implements ISpecialization {
 		}
 	}
 
-	// Identifier substitutions
-	private final Map<FreeIdentifier, Substitute<Expression>> identSubst;
-	
-	// Predicate variable substitutions
-	private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
-	
+	private class SpecializationFormulaRewriter extends Substitution {
+
+		// Identifier substitutions
+		private final Map<FreeIdentifier, Substitute<Expression>> identSubst;
+
+		// Predicate variable substitutions
+		private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
+
+		public SpecializationFormulaRewriter(FormulaFactory ff) {
+			super(ff);
+			identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
+			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
+		}
+
+		public SpecializationFormulaRewriter(
+				SpecializationFormulaRewriter other) {
+			super(other.ff);
+			identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>(
+					other.identSubst);
+			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
+					other.predSubst);
+		}
+
+		public Expression get(FreeIdentifier ident) {
+			final Substitute<Expression> subst = identSubst.get(ident);
+			return subst == null ? null : subst.getSubstitute(ident, 0);
+		}
+
+		public Predicate get(PredicateVariable predVar) {
+			final Substitute<Predicate> subst = predSubst.get(predVar);
+			return subst == null ? null : subst.getSubstitute(predVar, 0);
+		}
+
+		public Expression getOrSetDefault(FreeIdentifier ident) {
+			final Substitute<Expression> subst = identSubst.get(ident);
+			if (subst != null) {
+				return subst.getSubstitute(ident, getBindingDepth());
+			}
+			final Type type = ident.getType();
+			final Type newType = type.specialize(Specialization.this);
+			final Expression result;
+			if (newType == type) {
+				result = super.rewrite(ident);
+			} else {
+				result = ff.makeFreeIdentifier(ident.getName(),
+						ident.getSourceLocation(), newType);
+			}
+			identSubst.put(ident, makeSubstitute(result));
+			return result;
+		}
+
+		public Predicate getOrSetDefault(PredicateVariable predVar) {
+			final Substitute<Predicate> subst = predSubst.get(predVar);
+			if (subst != null) {
+				return subst.getSubstitute(predVar, getBindingDepth());
+			}
+			return super.rewrite(predVar);
+		}
+
+		public FreeIdentifier[] getFreeIdentifiers() {
+			final Set<FreeIdentifier> keySet = identSubst.keySet();
+			return keySet.toArray(new FreeIdentifier[keySet.size()]);
+		}
+
+		public PredicateVariable[] getPredicateVariables() {
+			final Set<PredicateVariable> keySet = predSubst.keySet();
+			return keySet.toArray(new PredicateVariable[keySet.size()]);
+		}
+
+		public void put(FreeIdentifier ident, Expression value) {
+			final Substitute<Expression> subst = makeSubstitute(value);
+			final Substitute<Expression> oldSubst = identSubst.put(ident,
+					subst);
+			if (oldSubst != null && !oldSubst.equals(subst)) {
+				identSubst.put(ident, oldSubst); // repair
+				throw new IllegalArgumentException(
+						"Identifier substitution for " + ident
+								+ " already registered");
+			}
+		}
+
+		public boolean put(PredicateVariable predVar, Predicate value) {
+			final Substitute<Predicate> subst = makeSubstitute(value);
+			final Substitute<Predicate> oldSubst = predSubst.put(predVar,
+					subst);
+			if (oldSubst != null && !oldSubst.equals(subst)) {
+				predSubst.put(predVar, oldSubst);
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public Expression rewrite(FreeIdentifier identifier) {
+			final Expression newIdent = getOrSetDefault(identifier);
+			if (newIdent.equals(identifier)) {
+				return super.rewrite(identifier);
+			}
+			return newIdent;
+		}
+
+		/**
+		 * Rewrite the predicate variable.
+		 * 
+		 * @author htson
+		 */
+		@Override
+		public Predicate rewrite(PredicateVariable predVar) {
+			final Predicate newPred = getOrSetDefault(predVar);
+			if (newPred.equals(predVar)) {
+				return super.rewrite(predVar);
+			}
+			return newPred;
+		}
+
+		@Override
+		public BoundIdentDecl rewrite(BoundIdentDecl decl) {
+			final Type type = decl.getType();
+			final Type newType = type.specialize(Specialization.this);
+			if (newType == type) {
+				return super.rewrite(decl);
+			}
+			final String name = decl.getName();
+			final SourceLocation sloc = decl.getSourceLocation();
+			return ff.makeBoundIdentDecl(name, sloc, newType);
+		}
+
+		@Override
+		public Expression rewrite(BoundIdentifier identifier) {
+			final Type type = identifier.getType();
+			final Type newType = type.specialize(Specialization.this);
+			if (newType == type) {
+				return super.rewrite(identifier);
+			}
+			return ff.makeBoundIdentifier(identifier.getBoundIndex(),
+					identifier.getSourceLocation(), newType);
+		}
+
+		@Override
+		public Expression rewrite(AtomicExpression expression) {
+			final Type type = expression.getType();
+			final Type newType = type.specialize(Specialization.this);
+			if (newType == type) {
+				return super.rewrite(expression);
+			}
+			final SourceLocation loc = expression.getSourceLocation();
+			return ff.makeAtomicExpression(expression.getTag(), loc, newType);
+		}
+
+		@Override
+		public Expression rewrite(ExtendedExpression expr, boolean changed,
+				Expression[] newChildExprs, Predicate[] newChildPreds) {
+			final Type type = expr.getType();
+			final Type newType = type.specialize(Specialization.this);
+			if (!changed && newType == type) {
+				return super.rewrite(expr, changed, newChildExprs,
+						newChildPreds);
+			}
+			final IExpressionExtension extension = expr.getExtension();
+			final SourceLocation loc = expr.getSourceLocation();
+			return ff.makeExtendedExpression(extension, newChildExprs,
+					newChildPreds, loc, newType);
+		}
+
+		/*
+		 * For a set extension, the only special case is that of an empty
+		 * extension, where we have to specialize the type.
+		 */
+		@Override
+		public Expression rewrite(SetExtension src, SetExtension expr) {
+			if (expr.getChildCount() != 0) {
+				return expr;
+			}
+			final Type type = expr.getType();
+			final Type newType = type.specialize(Specialization.this);
+			if (newType == type) {
+				return super.rewrite(src, expr);
+			}
+			return ff.makeEmptySetExtension(newType, expr.getSourceLocation());
+		}
+
+		// For debugging purpose
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder();
+			toString(sb);
+			return sb.toString();
+		}
+
+		public void toString(StringBuilder sb) {
+			String sep = sb.length() == 0 ? "" : " || ";
+			for (Entry<FreeIdentifier, Substitute<Expression>> entry : identSubst
+					.entrySet()) {
+				sb.append(sep);
+				sep = " || ";
+				sb.append(entry.getKey());
+				sb.append("=");
+				sb.append(entry.getValue());
+			}
+			for (Entry<PredicateVariable, Substitute<Predicate>> entry : predSubst
+					.entrySet()) {
+				sb.append(sep);
+				sep = " || ";
+				sb.append(entry.getKey());
+				sb.append("=");
+				sb.append(entry.getValue());
+			}
+		}
+	}
+
+	// The language of the right-hand sides of substitutions
+	private final FormulaFactory ff;
+
 	private final SpecializationTypeRewriter speTypeRewriter;
 
+	private final SpecializationFormulaRewriter formRewriter;
+
 	public Specialization(FormulaFactory ff) {
-		super(ff);
-		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
-		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
+		this.ff = ff;
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
+		formRewriter = new SpecializationFormulaRewriter(ff);
 	}
 
 	public Specialization(Specialization other) {
-		super(other.ff);
-		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>(
-				other.identSubst);
-		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
-				other.predSubst);
+		this.ff = other.ff;
 		speTypeRewriter = new SpecializationTypeRewriter(other.speTypeRewriter);
+		formRewriter = new SpecializationFormulaRewriter(other.formRewriter);
 	}
 
 	@Override
@@ -152,8 +357,13 @@ public class Specialization extends Substitution implements ISpecialization {
 		return new Specialization(this);
 	}
 
+	@Override
+	public FormulaFactory getFactory() {
+		return ff;
+	}
+
 	public ITypeCheckingRewriter getFormulaRewriter() {
-		return this;
+		return formRewriter;
 	}
 
 	@Override
@@ -167,8 +377,7 @@ public class Specialization extends Substitution implements ISpecialization {
 					+ value.getFactory() + ", should be " + ff);
 		}
 		speTypeRewriter.put(type, value);
-		final Substitute<Expression> subst = makeSubstitute(value.toExpression());
-		identSubst.put(type.toExpression(), subst);
+		formRewriter.put(type.toExpression(), value.toExpression());
 	}
 
 	@Override
@@ -191,13 +400,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
-		final Substitute<Expression> subst = makeSubstitute(value);
-		final Substitute<Expression> oldSubst = identSubst.put(ident, subst);
-		if (oldSubst != null && !oldSubst.equals(subst)) {
-			identSubst.put(ident, oldSubst); // repair
-			throw new IllegalArgumentException("Identifier substitution for "
-					+ ident + " already registered");
-		}
+		formRewriter.put(ident, value);
 	}
 
 	/*
@@ -229,7 +432,7 @@ public class Specialization extends Substitution implements ISpecialization {
 		while (iter.hasNext()) {
 			iter.advance();
 			final FreeIdentifier ident = iter.asFreeIdentifier();
-			final Expression expr = this.getOrSetDefault(ident);
+			final Expression expr = formRewriter.getOrSetDefault(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
@@ -239,122 +442,7 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public Expression get(FreeIdentifier ident) {
-		final Substitute<Expression> subst = identSubst.get(ident);
-		return subst == null ? null : subst.getSubstitute(ident, 0);
-	}
-
-	private Expression getOrSetDefault(FreeIdentifier ident) {
-		final Substitute<Expression> subst = identSubst.get(ident);
-		if (subst != null) {
-			return subst.getSubstitute(ident, getBindingDepth());
-		}
-		final Type type = ident.getType();
-		final Type newType = type.specialize(this);
-		final Expression result;
-		if (newType == type) {
-			result = super.rewrite(ident);
-		} else {
-			result = ff.makeFreeIdentifier(ident.getName(),
-					ident.getSourceLocation(), newType);
-		}
-		identSubst.put(ident, makeSubstitute(result));
-		return result;
-	}
-
-	private Predicate getOrSetDefault(PredicateVariable predVar) {
-		final Substitute<Predicate> subst = predSubst.get(predVar);
-		if (subst != null) {
-			return subst.getSubstitute(predVar, getBindingDepth());
-		}
-		return super.rewrite(predVar);
-	}
-
-	@Override
-	public Expression rewrite(FreeIdentifier identifier) {
-		final Expression newIdent = getOrSetDefault(identifier);
-		if (newIdent.equals(identifier)) {
-			return super.rewrite(identifier);
-		}
-		return newIdent;
-	}
-
-	/**
-	 * Rewrite the predicate variable.
-	 * 
-	 * @author htson
-	 */
-	@Override
-	public Predicate rewrite(PredicateVariable predVar) {
-		final Predicate newPred = getOrSetDefault(predVar);
-		if (newPred.equals(predVar)) {
-			return super.rewrite(predVar);
-		}
-		return newPred;
-	}
-
-	@Override
-	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		final Type type = decl.getType();
-		final Type newType = type.specialize(this);
-		if (newType == type) {
-			return super.rewrite(decl);
-		}
-		final String name = decl.getName();
-		final SourceLocation sloc = decl.getSourceLocation();
-		return ff.makeBoundIdentDecl(name, sloc, newType);
-	}
-
-	@Override
-	public Expression rewrite(BoundIdentifier identifier) {
-		final Type type = identifier.getType();
-		final Type newType = type.specialize(this);
-		if (newType == type) {
-			return super.rewrite(identifier);
-		}
-		return ff.makeBoundIdentifier(identifier.getBoundIndex(),
-				identifier.getSourceLocation(), newType);
-	}
-
-	@Override
-	public Expression rewrite(AtomicExpression expression) {
-		final Type type = expression.getType();
-		final Type newType = type.specialize(this);
-		if (newType == type) {
-			return super.rewrite(expression);
-		}
-		final SourceLocation loc = expression.getSourceLocation();
-		return ff.makeAtomicExpression(expression.getTag(), loc, newType);
-	}
-
-	@Override
-	public Expression rewrite(ExtendedExpression expr, boolean changed,
-			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		final Type type = expr.getType();
-		final Type newType = type.specialize(this);
-		if (!changed && newType == type) {
-			return super.rewrite(expr, changed, newChildExprs, newChildPreds);
-		}
-		final IExpressionExtension extension = expr.getExtension();
-		final SourceLocation loc = expr.getSourceLocation();
-		return ff.makeExtendedExpression(extension, newChildExprs,
-				newChildPreds, loc, newType);
-	}
-
-	/*
-	 * For a set extension, the only special case is that of an empty extension,
-	 * where we have to specialize the type.
-	 */
-	@Override
-	public Expression rewrite(SetExtension src, SetExtension expr) {
-		if (expr.getChildCount() != 0) {
-			return expr;
-		}
-		final Type type = expr.getType();
-		final Type newType = type.specialize(this);
-		if (newType == type) {
-			return super.rewrite(src, expr);
-		}
-		return ff.makeEmptySetExtension(newType, expr.getSourceLocation());
+		return formRewriter.get(ident);
 	}
 
 	// For debugging purposes
@@ -362,21 +450,7 @@ public class Specialization extends Substitution implements ISpecialization {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		speTypeRewriter.toString(sb);
-		String sep = sb.length() == 0 ? "" : " || ";
-		for (Entry<FreeIdentifier, Substitute<Expression>> entry : identSubst.entrySet()) {
-			sb.append(sep);
-			sep = " || ";
-			sb.append(entry.getKey());
-			sb.append("=");
-			sb.append(entry.getValue());
-		}
-		for (Entry<PredicateVariable, Substitute<Predicate>> entry : predSubst.entrySet()) {
-			sb.append(sep);
-			sep = " || ";
-			sb.append(entry.getKey());
-			sb.append("=");
-			sb.append(entry.getValue());
-		}
+		formRewriter.toString(sb);
 		return sb.toString();
 	}
 
@@ -430,20 +504,13 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		
-		final Substitute<Predicate> subst = makeSubstitute(value);
-		final Substitute<Predicate> oldSubst = predSubst.put(predVar, subst);
-		if (oldSubst != null && !oldSubst.equals(subst)) {
-			predSubst.put(predVar, oldSubst);
-			return false;
-		}
-		return true;
+
+		return formRewriter.put(predVar, value);
 	}
 
 	@Override
 	public Predicate get(PredicateVariable predVar) {
-		final Substitute<Predicate> subst = predSubst.get(predVar);
-		return subst == null ? null : subst.getSubstitute(predVar, 0);
+		return formRewriter.get(predVar);
 	}
 
 	@Override
@@ -453,14 +520,12 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public FreeIdentifier[] getFreeIdentifiers() {
-		Set<FreeIdentifier> keySet = identSubst.keySet();
-		return keySet.toArray(new FreeIdentifier[keySet.size()]);
+		return formRewriter.getFreeIdentifiers();
 	}
 
 	@Override
 	public PredicateVariable[] getPredicateVariables() {
-		Set<PredicateVariable> keySet = predSubst.keySet();
-		return keySet.toArray(new PredicateVariable[keySet.size()]);
+		return formRewriter.getPredicateVariables();
 	}
 
 }
