@@ -152,6 +152,10 @@ public class Specialization extends Substitution implements ISpecialization {
 		return new Specialization(this);
 	}
 
+	public ITypeCheckingRewriter getFormulaRewriter() {
+		return this;
+	}
+
 	@Override
 	public void put(GivenType type, Type value) {
 		if (type == null)
