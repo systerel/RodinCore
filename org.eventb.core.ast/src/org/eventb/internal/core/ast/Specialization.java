@@ -386,12 +386,8 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		Type oldValue = speTypeRewriter.get(type);
-		if (oldValue != null && !oldValue.equals(value)) {
-			return false;
-		} else {
-			return true;
-		}
+		final Type oldValue = speTypeRewriter.get(type);
+		return oldValue == null || oldValue.equals(value);
 	}
 
 	@Override
@@ -414,12 +410,8 @@ public class Specialization extends Substitution implements ISpecialization {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
-		final Substitute<Expression> subst = makeSubstitute(value);
-		final Substitute<Expression> oldSubst = identSubst.get(ident);
-		if (oldSubst != null && !oldSubst.equals(subst)) {
-			return false;
-		}
-		return true;
+		final Expression oldValue = get(ident);
+		return oldValue == null || oldValue.equals(value);
 	}
 
 	@Override
