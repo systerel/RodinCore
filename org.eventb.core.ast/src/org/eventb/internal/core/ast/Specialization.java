@@ -105,6 +105,7 @@ public class Specialization implements ISpecialization {
 		}
 
 		public void toString(StringBuilder sb) {
+			sb.append("{");
 			String sep = "";
 			for (Entry<GivenType, Type> entry : typeSubst.entrySet()) {
 				sb.append(sep);
@@ -113,6 +114,7 @@ public class Specialization implements ISpecialization {
 				sb.append("=");
 				sb.append(entry.getValue());
 			}
+			sb.append("}");
 		}
 	}
 
@@ -236,7 +238,8 @@ public class Specialization implements ISpecialization {
 		}
 
 		public void toString(StringBuilder sb) {
-			String sep = sb.length() == 0 ? "" : " || ";
+			sb.append("{");
+			String sep = "";
 			for (Entry<FreeIdentifier, Substitute<Expression>> entry : identSubst
 					.entrySet()) {
 				sb.append(sep);
@@ -245,6 +248,8 @@ public class Specialization implements ISpecialization {
 				sb.append("=");
 				sb.append(entry.getValue());
 			}
+			sb.append("} + {");
+			sep = "";
 			for (Entry<PredicateVariable, Substitute<Predicate>> entry : predSubst
 					.entrySet()) {
 				sb.append(sep);
@@ -253,6 +258,7 @@ public class Specialization implements ISpecialization {
 				sb.append("=");
 				sb.append(entry.getValue());
 			}
+			sb.append("}");
 		}
 	}
 
@@ -374,6 +380,7 @@ public class Specialization implements ISpecialization {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		speTypeRewriter.toString(sb);
+		sb.append(" + ");
 		formRewriter.toString(sb);
 		return sb.toString();
 	}
