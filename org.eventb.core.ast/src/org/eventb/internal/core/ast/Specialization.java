@@ -49,10 +49,46 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  */
 public class Specialization extends Substitution implements ISpecialization {
 
-	private class SpecializationTypeRewriter extends TypeRewriter {
+	private static class SpecializationTypeRewriter extends TypeRewriter {
+
+		// Type substitutions
+		private final Map<GivenType, Type> typeSubst;
 
 		public SpecializationTypeRewriter(FormulaFactory ff) {
 			super(ff);
+			typeSubst = new HashMap<GivenType, Type>();
+		}
+
+		public SpecializationTypeRewriter(SpecializationTypeRewriter other) {
+			super(other.ff);
+			typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
+		}
+
+		public Type get(GivenType key) {
+			return typeSubst.get(key);
+		}
+
+		public Type getOrSetDefault(GivenType key) {
+			Type value = typeSubst.get(key);
+			if (value == null) {
+				value = key.translate(ff);
+				typeSubst.put(key, value);
+			}
+			return value;
+		}
+
+		public GivenType[] getTypes() {
+			final Set<GivenType> keySet = typeSubst.keySet();
+			return keySet.toArray(new GivenType[keySet.size()]);
+		}
+
+		public void put(GivenType type, Type value) {
+			final Type oldValue = typeSubst.put(type, value);
+			if (oldValue != null && !oldValue.equals(value)) {
+				typeSubst.put(type, oldValue); // repair
+				throw new IllegalArgumentException("Type substitution for "
+						+ type + " already registered");
+			}
 		}
 
 		@Override
@@ -67,10 +103,25 @@ public class Specialization extends Substitution implements ISpecialization {
 			}
 		}
 
-	}
+		// For debugging purpose
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder();
+			toString(sb);
+			return sb.toString();
+		}
 
-	// Type substitutions
-	private final Map<GivenType, Type> typeSubst;
+		public void toString(StringBuilder sb) {
+			String sep = "";
+			for (Entry<GivenType, Type> entry : typeSubst.entrySet()) {
+				sb.append(sep);
+				sep = " || ";
+				sb.append(entry.getKey());
+				sb.append("=");
+				sb.append(entry.getValue());
+			}
+		}
+	}
 
 	// Identifier substitutions
 	private final Map<FreeIdentifier, Substitute<Expression>> identSubst;
@@ -78,11 +129,10 @@ public class Specialization extends Substitution implements ISpecialization {
 	// Predicate variable substitutions
 	private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
 	
-	private final TypeRewriter speTypeRewriter;
+	private final SpecializationTypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
-		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
 		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
@@ -90,12 +140,11 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	public Specialization(Specialization other) {
 		super(other.ff);
-		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>(
 				other.identSubst);
 		predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
 				other.predSubst);
-		speTypeRewriter = new SpecializationTypeRewriter(other.ff);
+		speTypeRewriter = new SpecializationTypeRewriter(other.speTypeRewriter);
 	}
 
 	@Override
@@ -113,28 +162,14 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		final Type oldValue = typeSubst.put(type, value);
-		if (oldValue != null && !oldValue.equals(value)) {
-			typeSubst.put(type, oldValue); // repair
-			throw new IllegalArgumentException("Type substitution for " + type
-					+ " already registered");
-		}
+		speTypeRewriter.put(type, value);
 		final Substitute<Expression> subst = makeSubstitute(value.toExpression());
 		identSubst.put(type.toExpression(), subst);
 	}
 
 	@Override
 	public Type get(GivenType key) {
-		return typeSubst.get(key);
-	}
-
-	public Type getOrSetDefault(GivenType key) {
-		Type value = get(key);
-		if (value == null) {
-			value = key.translate(ff);
-			put(key,  value);
-		}
-		return value;
+		return speTypeRewriter.get(key);
 	}
 
 	@Override
@@ -322,14 +357,8 @@ public class Specialization extends Substitution implements ISpecialization {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		String sep = "";
-		for (Entry<GivenType, Type> entry : typeSubst.entrySet()) {
-			sb.append(sep);
-			sep = " || ";
-			sb.append(entry.getKey());
-			sb.append("=");
-			sb.append(entry.getValue());
-		}
+		speTypeRewriter.toString(sb);
+		String sep = sb.length() == 0 ? "" : " || ";
 		for (Entry<FreeIdentifier, Substitute<Expression>> entry : identSubst.entrySet()) {
 			sb.append(sep);
 			sep = " || ";
@@ -357,7 +386,7 @@ public class Specialization extends Substitution implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		Type oldValue = typeSubst.get(type);
+		Type oldValue = speTypeRewriter.get(type);
 		if (oldValue != null && !oldValue.equals(value)) {
 			return false;
 		} else {
@@ -423,8 +452,7 @@ public class Specialization extends Substitution implements ISpecialization {
 
 	@Override
 	public GivenType[] getTypes() {
-		Set<GivenType> keySet = typeSubst.keySet();
-		return keySet.toArray(new GivenType[keySet.size()]);
+		return speTypeRewriter.getTypes();
 	}
 
 	@Override
