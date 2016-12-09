@@ -285,9 +285,9 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return expr;
 		}
 		if (expr.getMembers().length == 0) {
-			return ff.makeEmptySetExtension(trgType, expr.getSourceLocation());
+			return ff.makeEmptySetExtension(trgType, src.getSourceLocation());
 		}
-		return ff.makeSetExtension(expr.getMembers(), expr.getSourceLocation());
+		return ff.makeSetExtension(expr.getMembers(), src.getSourceLocation());
 	}
 
 	@Override
