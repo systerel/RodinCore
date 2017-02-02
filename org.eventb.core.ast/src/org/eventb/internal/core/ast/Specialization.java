@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -286,6 +287,10 @@ public class Specialization implements ISpecialization {
 		}
 	}
 
+	// The type environment of the source language (quasi-final field to be
+	// set once at the first use and never changed after).
+	private ITypeEnvironmentBuilder srcTypenv;
+	
 	// The language of the right-hand sides of substitutions
 	private final FormulaFactory ff;
 
@@ -294,12 +299,15 @@ public class Specialization implements ISpecialization {
 	private final SpecializationFormulaRewriter formRewriter;
 
 	public Specialization(FormulaFactory ff) {
+		this.srcTypenv = null;
 		this.ff = ff;
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
 		formRewriter = new SpecializationFormulaRewriter(speTypeRewriter);
 	}
 
 	public Specialization(Specialization other) {
+		this.srcTypenv = other.srcTypenv == null ? null
+				: other.srcTypenv.makeBuilder();
 		this.ff = other.ff;
 		speTypeRewriter = new SpecializationTypeRewriter(other.speTypeRewriter);
 		formRewriter = new SpecializationFormulaRewriter(other.formRewriter,
@@ -330,6 +338,11 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
+		if (!verifySrcTypenv(type.toExpression())) {
+			throw new IllegalArgumentException("Identifier " + type
+					+ " already entered with a different type");
+		}
+		srcTypenv.add(type.toExpression());
 		speTypeRewriter.put(type, value);
 		formRewriter.put(type.toExpression(), value.toExpression());
 	}
@@ -353,9 +366,19 @@ public class Specialization implements ISpecialization {
 		}
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
+		if (!verifySrcTypenv(ident)) {
+			throw new IllegalArgumentException(
+					"Incompatible types for " + ident);
+		}
 		if (!verify(ident, value, true)) {
 			throw new IllegalArgumentException(
 					"Incompatible types for " + ident);
+		}
+		srcTypenv.add(ident);
+		for (final GivenType given : ident.getGivenTypes()) {
+			srcTypenv.add(given.toExpression());
+			formRewriter.put(given.toExpression(),
+					speTypeRewriter.get(given).toExpression());
 		}
 		formRewriter.put(ident, value);
 	}
@@ -378,7 +401,37 @@ public class Specialization implements ISpecialization {
 	}
 
 	public Type specialize(Type type) {
+		prepare(type);
 		return speTypeRewriter.rewrite(type);
+	}
+
+	/*
+	 * Prepares the specialization of a type.
+	 * 
+	 * We check here that the specialization will not encounter a typing error
+	 * and perform the side-effects for types not yet registered with this
+	 * specialization.
+	 */
+	public void prepare(Type type) {
+		final Set<GivenType> givens = type.getGivenTypes();
+
+		// Ensure that type environments are compatible
+		for (final GivenType given : givens) {
+			if (!verifySrcTypenv(given.toExpression())) {
+				throw new IllegalArgumentException("Type " + given
+						+ " already entered with a different type");
+			}
+		}
+
+		// Then insert the identity substitutions not already there
+		for (final GivenType given : givens) {
+			if (srcTypenv.getType(given.getName()) == null) {
+				final FreeIdentifier ident = given.toExpression();
+				srcTypenv.add(ident);
+				speTypeRewriter.put(given, given.translate(ff));
+				formRewriter.put(ident, ident.translate(ff));
+			}
+		}
 	}
 
 	/*
@@ -388,6 +441,7 @@ public class Specialization implements ISpecialization {
 	 * environment.
 	 */
 	public ITypeEnvironmentBuilder specialize(TypeEnvironment typenv) {
+		prepare(typenv);
 		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
@@ -399,6 +453,71 @@ public class Specialization implements ISpecialization {
 			}
 		}
 		return result;
+	}
+
+	/*
+	 * Prepares the specialization of a type environment.
+	 * 
+	 * We check here that the specialization will not encounter a typing error
+	 * and perform the side-effects for identifiers not yet registered with this
+	 * specialization.
+	 */
+	public void prepare(TypeEnvironment typenv) {
+		// Ensure that type environments are compatible
+		final IIterator iter = typenv.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			final FreeIdentifier ident = iter.asFreeIdentifier();
+			if (!verifySrcTypenv(ident)) {
+				throw new IllegalArgumentException("Identifier " + ident
+						+ " already entered with a different type");
+			}
+		}
+
+		// Then protect the identity substitutions not already there
+		srcTypenv.addAll(typenv);
+	}
+
+	/*
+	 * Prepares the specialization of an arbitrary formula. The specialization
+	 * itself cannot be performed here, as it must use the non-API rewrite
+	 * method of class Formula.
+	 * 
+	 * We check here that the specialization will not encounter a typing error
+	 * and perform the side-effects for identifiers and predicate variables not
+	 * yet registered with this specialization.
+	 */
+	public <T extends Formula<T>> void prepare(Formula<T> formula) {
+		final FreeIdentifier[] localEnv = formula.getFreeIdentifiers();
+		
+		// Ensure that type environments are compatible
+		for (final FreeIdentifier ident : localEnv) {
+			if (!verifySrcTypenv(ident)) {
+				throw new IllegalArgumentException("Identifier " + ident
+						+ " already entered with a different type");
+			}
+		}
+		
+		// Then protect the identity substitutions not already there
+		for (final FreeIdentifier ident : localEnv) {
+			if (srcTypenv.getType(ident.getName()) == null) {
+				srcTypenv.add(ident);
+				if (ident.isATypeExpression()) {
+					final GivenType given = ident.toType();
+					speTypeRewriter.put(given, given.translate(ff));
+				}
+				formRewriter.put(ident, ident.translate(ff));
+			}
+		}
+
+		// Also add identity substitutions for the predicate variables that do
+		// not have a substitution yet.
+		final PredicateVariable[] predVars = formula.getPredicateVariables();
+		for (final PredicateVariable predVar : predVars) {
+			if (formRewriter.get(predVar) == null) {
+				formRewriter.put(predVar, predVar.translate(ff));
+			}
+		}
 	}
 
 	@Override
@@ -426,10 +545,25 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
+
+		if (!verifySrcTypenv(type.toExpression())) {
+			return false;
+		}
+
 		final Type oldValue = speTypeRewriter.get(type);
 		return oldValue == null || oldValue.equals(value);
 	}
 
+	// Tells whether the given name could be added with the given type in
+	// the source type environment.
+	private boolean verifySrcTypenv(FreeIdentifier ident) {
+		if (srcTypenv == null) {
+			srcTypenv = ident.getFactory().makeTypeEnvironment();
+		}
+		final Type knownType = srcTypenv.getType(ident.getName());
+		return knownType == null || knownType.equals(ident.getType());
+	}
+	
 	@Override
 	public boolean canPut(FreeIdentifier ident, Expression value) {
 		if (ident == null)
@@ -445,6 +579,9 @@ public class Specialization implements ISpecialization {
 					+ value.getFactory() + ", should be " + ff);
 		}
 
+		if (!verifySrcTypenv(ident)) {
+			return false;
+		}
 		if (!verify(ident, value, false)) {
 			return false;
 		}

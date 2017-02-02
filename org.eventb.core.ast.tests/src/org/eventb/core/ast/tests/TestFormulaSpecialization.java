@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
@@ -386,6 +387,62 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"∀x⦂S·x↦1 ∈ y",//
 				"S := T || y := {x↦z∣x∈A ∧ z∈B}",//
 				"∀x⦂T·x↦1 ∈ {x↦z∣x∈A ∧ z∈B}");
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on a given type with the same name.
+	 */
+	@Test
+	public void identBlocksType() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(ff.makeGivenType(src.getName()), INT_TYPE);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on the same identifier.
+	 */
+	@Test
+	public void identBlocksIdent() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(src, mFreeIdentifier("T", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on an identifier with the same name,
+	 * but a different type.
+	 */
+	@Test
+	public void identBlocksIdentDifferentType() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(mFreeIdentifier(src.getName(), BOOL_TYPE),
+					mFreeIdentifier("T", BOOL_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
 	}
 
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -272,11 +272,15 @@ public class TestSpecialization extends AbstractTests {
 
 	/**
 	 * Ensures that an identifier substitution for which the replacement
-	 * expression is of same type as the given identifier is accepted.
+	 * expression is of the same type as the given identifier is accepted.
+	 * Moreover, the given sets occurring in the type shall also be added.
 	 */
 	@Test 
 	public void testSameTypeIdentSubstitution() {
 		spec.put(aS, bS);
+
+		assertSet(spec.getTypes(), S);
+		assertSet(spec.getFreeIdentifiers(), aS, S.toExpression());
 	}
 
 	/**

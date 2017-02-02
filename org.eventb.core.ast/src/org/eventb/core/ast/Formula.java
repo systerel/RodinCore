@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2399,6 +2399,7 @@ public abstract class Formula<T extends Formula<T>> {
 	public T specialize(ISpecialization specialization) {
 		ensureTypeChecked();
 		final Specialization spec = (Specialization) specialization;
+		spec.prepare(this);
 		return rewrite(spec.getFormulaRewriter());
 	}
 

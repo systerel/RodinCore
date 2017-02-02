@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,20 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Test;
 
 /**
@@ -168,6 +171,71 @@ public class TestTypenvSpecialization extends AbstractTests {
 				"S=ℙ(S); T=ℙ(T); a=S; b=T",//
 				spe,//
 				"S=ℙ(S); T=ℙ(T); a=S; b=T");
+	}
+
+	/**
+	 * Ensures that specializing a type environment prevents adding later a
+	 * substitution on a type occurring in the environment.
+	 */
+	@Test
+	public void typenvBlocksType() {
+		final GivenType src = ff.makeGivenType("S");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment();
+		typenv.addGivenSet(src.getName());
+
+		final ISpecialization spe = ff.makeSpecialization();
+		typenv.specialize(spe);
+
+		try {
+			spe.put(src, INT_TYPE);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that specializing a type environment prevents adding later a
+	 * substitution on an identifier occurring in the environment.
+	 */
+	@Test
+	public void typenvBlocksIdent() {
+		final FreeIdentifier src = mFreeIdentifier("a", INT_TYPE);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment();
+		typenv.add(src);
+
+		final ISpecialization spe = ff.makeSpecialization();
+		typenv.specialize(spe);
+
+		try {
+			spe.put(src, mIntegerLiteral());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that specializing a type environment prevents adding later a
+	 * substitution on an identifier with the same name as one occurring in the
+	 * environment but with a different type.
+	 */
+	@Test
+	public void typenvBlocksIdentDifferentType() {
+		final GivenType src = ff.makeGivenType("S");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment();
+		typenv.addGivenSet(src.getName());
+
+		final ISpecialization spe = ff.makeSpecialization();
+		typenv.specialize(spe);
+
+		try {
+			spe.put(mFreeIdentifier(src.getName(), INT_TYPE),
+					mIntegerLiteral());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
 	}
 
 	private static void assertSpecialization(String srcTypenvImage,
