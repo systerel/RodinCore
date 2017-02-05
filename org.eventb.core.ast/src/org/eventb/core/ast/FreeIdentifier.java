@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,10 +297,25 @@ public class FreeIdentifier extends Identifier {
 		return false;
 	}
 
+	/**
+	 * Returns the given type corresponding to this type-checked identifier.
+	 * <p>
+	 * The returned type is <em>not</em> the type of this identifier.
+	 * </p>
+	 * 
+	 * @return the given type represented by this identifier
+	 * @throws IllegalStateException
+	 *             when this identifier is not a given type or is not
+	 *             type-checked
+	 * @see Type#toExpression()
+	 * @see #isATypeExpression()
+	 * @since 3.3 change return type to GivenType
+	 */
 	@Override
-	public Type toType() {
+	public GivenType toType() {
 		if (!isATypeExpression()) {
-			return super.toType();
+			throw new IllegalStateException(
+					"Identifier does not denote a type: " + toString());
 		}
 		return getFactory().makeGivenType(this);
 	}
