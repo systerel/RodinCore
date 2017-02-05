@@ -152,33 +152,26 @@ public class Specialization implements ISpecialization {
 			return subst == null ? null : subst.getSubstitute(predVar, 0);
 		}
 
-		public Expression getOrSetDefault(FreeIdentifier ident) {
+		public Expression getWithDefault(FreeIdentifier ident) {
 			final Substitute<Expression> subst = identSubst.get(ident);
 			if (subst != null) {
 				return subst.getSubstitute(ident, getBindingDepth());
 			}
 			final Type type = ident.getType();
 			final Type newType = typeRewriter.rewrite(type);
-			final Expression result;
 			if (newType == type) {
-				result = super.rewrite(ident);
-			} else {
-				result = ff.makeFreeIdentifier(ident.getName(),
-						ident.getSourceLocation(), newType);
+				return super.rewrite(ident);
 			}
-			identSubst.put(ident, makeSubstitute(result));
-			return result;
+			return ff.makeFreeIdentifier(ident.getName(),
+					ident.getSourceLocation(), newType);
 		}
 
-		public Predicate getOrSetDefault(PredicateVariable predVar) {
+		public Predicate getWithDefault(PredicateVariable predVar) {
 			Substitute<Predicate> subst = predSubst.get(predVar);
 			if (subst != null) {
 				return subst.getSubstitute(predVar, getBindingDepth());
 			}
-			final Predicate result = super.rewrite(predVar);
-			subst = makeSubstitute(result);
-			predSubst.put(predVar, subst);
-			return result;
+			return super.rewrite(predVar);
 		}
 
 		public FreeIdentifier[] getFreeIdentifiers() {
@@ -216,7 +209,7 @@ public class Specialization implements ISpecialization {
 
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
-			final Expression newIdent = getOrSetDefault(identifier);
+			final Expression newIdent = getWithDefault(identifier);
 			if (newIdent.equals(identifier)) {
 				return super.rewrite(identifier);
 			}
@@ -225,7 +218,7 @@ public class Specialization implements ISpecialization {
 
 		@Override
 		public Predicate rewrite(PredicateVariable predVar) {
-			final Predicate newPred = getOrSetDefault(predVar);
+			final Predicate newPred = getWithDefault(predVar);
 			if (newPred.equals(predVar)) {
 				return super.rewrite(predVar);
 			}
@@ -438,7 +431,7 @@ public class Specialization implements ISpecialization {
 		while (iter.hasNext()) {
 			iter.advance();
 			final FreeIdentifier ident = iter.asFreeIdentifier();
-			final Expression expr = formRewriter.getOrSetDefault(ident);
+			final Expression expr = formRewriter.rewrite(ident);
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
