@@ -305,6 +305,25 @@ public class Specialization implements ISpecialization {
 	}
 
 	@Override
+	public boolean canPut(GivenType type, Type value) {
+		if (type == null)
+			throw new NullPointerException("Null given type");
+		if (value == null)
+			throw new NullPointerException("Null type");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
+
+		if (!verifySrcTypenv(type.toExpression())) {
+			return false;
+		}
+
+		final Type oldValue = speTypeRewriter.get(type);
+		return oldValue == null || oldValue.equals(value);
+	}
+
+	@Override
 	public void put(GivenType type, Type value) {
 		if (type == null)
 			throw new NullPointerException("Null given type");
@@ -337,6 +356,32 @@ public class Specialization implements ISpecialization {
 	@Override
 	public Type get(GivenType key) {
 		return speTypeRewriter.get(key);
+	}
+
+	@Override
+	public boolean canPut(FreeIdentifier ident, Expression value) {
+		if (ident == null)
+			throw new NullPointerException("Null identifier");
+		if (!ident.isTypeChecked())
+			throw new IllegalArgumentException("Untyped identifier");
+		if (value == null)
+			throw new NullPointerException("Null value");
+		if (!value.isTypeChecked())
+			throw new IllegalArgumentException("Untyped value");
+		if (ff != value.getFactory()) {
+			throw new IllegalArgumentException("Wrong factory for value: "
+					+ value.getFactory() + ", should be " + ff);
+		}
+
+		if (!verifySrcTypenv(ident)) {
+			return false;
+		}
+		if (!verify(ident, value)) {
+			return false;
+		}
+
+		final Expression oldValue = formRewriter.get(ident);
+		return oldValue == null || oldValue.equals(value);
 	}
 
 	@Override
@@ -517,25 +562,6 @@ public class Specialization implements ISpecialization {
 		return sb.toString();
 	}
 
-	@Override
-	public boolean canPut(GivenType type, Type value) {
-		if (type == null)
-			throw new NullPointerException("Null given type");
-		if (value == null)
-			throw new NullPointerException("Null type");
-		if (ff != value.getFactory()) {
-			throw new IllegalArgumentException("Wrong factory for value: "
-					+ value.getFactory() + ", should be " + ff);
-		}
-
-		if (!verifySrcTypenv(type.toExpression())) {
-			return false;
-		}
-
-		final Type oldValue = speTypeRewriter.get(type);
-		return oldValue == null || oldValue.equals(value);
-	}
-
 	/*
 	 * Tells whether the given identifier is compatible with the source type
 	 * environment.
@@ -548,32 +574,6 @@ public class Specialization implements ISpecialization {
 		return knownType == null || knownType.equals(ident.getType());
 	}
 	
-	@Override
-	public boolean canPut(FreeIdentifier ident, Expression value) {
-		if (ident == null)
-			throw new NullPointerException("Null identifier");
-		if (!ident.isTypeChecked())
-			throw new IllegalArgumentException("Untyped identifier");
-		if (value == null)
-			throw new NullPointerException("Null value");
-		if (!value.isTypeChecked())
-			throw new IllegalArgumentException("Untyped value");
-		if (ff != value.getFactory()) {
-			throw new IllegalArgumentException("Wrong factory for value: "
-					+ value.getFactory() + ", should be " + ff);
-		}
-
-		if (!verifySrcTypenv(ident)) {
-			return false;
-		}
-		if (!verify(ident, value)) {
-			return false;
-		}
-
-		final Expression oldValue = formRewriter.get(ident);
-		return oldValue == null || oldValue.equals(value);
-	}
-
 	@Override
 	public boolean put(PredicateVariable predVar, Predicate value) {
 		if (predVar == null)
