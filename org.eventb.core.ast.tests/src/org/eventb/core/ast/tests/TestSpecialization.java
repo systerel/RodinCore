@@ -78,6 +78,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -91,6 +92,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -104,6 +106,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -118,7 +121,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
-		assertSet(spec.getTypes(), S);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -129,6 +132,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testOverridenSameType() {
 		spec.put(S, Z);
 		spec.put(S, Z);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -142,6 +146,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -155,6 +160,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -169,6 +175,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -179,6 +186,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGivenTypeIdentifierAlready() {
 		spec.put(S, Z);
 		spec.put(S.toExpression(), Z.toExpression());
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -192,6 +200,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -206,6 +215,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -219,6 +229,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -234,9 +245,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
-
-		// No side-effect
-		assertSet(spec.getTypes());
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -252,7 +261,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
-		assertSet(spec.getTypes(), S);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -268,6 +277,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSpecialization("S=ℙ(S)", "S := ℙ(ℤ)", "");
 	}
 
 	/**
@@ -278,9 +288,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testSameTypeIdentSubstitution() {
 		spec.put(aS, bS);
-
-		assertSet(spec.getTypes(), S);
-		assertSet(spec.getFreeIdentifiers(), aS, S.toExpression());
+		assertSpecialization("a=S", "a := b", "b=S");
 	}
 
 	/**
@@ -297,6 +305,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSpecialization("a=S", "S := ℤ || a := 1", "");
 	}
 
 	/**
@@ -308,6 +317,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, Z);
 		spec.put(aS, one);
 		spec.put(aS, one);
+		assertSpecialization("a=S", "S := ℤ || a := 1", "");
 	}
 
 	/**
@@ -323,7 +333,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
-		assertSet(spec.getTypes(), S);
+		assertSpecialization("a=S", "a := b", "b=S");
 	}
 
 	/**
@@ -333,6 +343,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test
 	public void testIllFormedExpression() {
 		spec.put(aS, ff.makeBoundIdentifier(0, null, S));
+		// Cannot check the specialization with the current framework
 	}
 
 	/**
@@ -342,6 +353,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testTypeSwap() {
 		spec.put(S, T);
 		spec.put(T, S);
+		assertSpecialization("S=ℙ(S); T=ℙ(T)", "S := T || T := S", "");
 	}
 
 	/**
@@ -352,6 +364,9 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, T);
 		spec.put(aS, bT);
 		spec.put(bS, aT);
+		assertSpecialization("a=S; b=S", //
+				"S := T || a := b || b := a", //
+				"a=T; b=T");
 	}
 
 	/**
@@ -364,6 +379,9 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(T, S);
 		spec.put(aS, bT);
 		spec.put(bT, aS);
+		assertSpecialization("a=S; b=T", //
+				"S := T || T := S || a := b || b := a", //
+				"a=S; b=T");
 	}
 
 	/**
@@ -376,6 +394,9 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bT);
 		spec.put(T, S);
 		spec.put(bT, aS);
+		assertSpecialization("a=S; b=T", //
+				"S := T || T := S || a := b || b := a", //
+				"a=S; b=T");
 	}
 
 	/**
@@ -386,6 +407,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetFactory() {
 		assertSame(ff, spec.getFactory());
 		assertSame(LIST_FAC, LIST_FAC.makeSpecialization().getFactory());
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -395,6 +417,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetForTypeWithSubstitution() {
 		spec.put(S, T);
 		assertEquals(T, spec.get(S));
+		assertSpecialization("S=ℙ(S)", "S := T", "T=ℙ(T)");
 	}
 
 	/**
@@ -405,6 +428,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetForTypeWithoutSubstitution() {
 		assertNull(spec.get(S));
 		assertNull(spec.get(S));
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -414,6 +438,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetForIdentWithSubstitution() {
 		spec.put(aS, bS);
 		assertEquals(bS, spec.get(aS));
+		assertSpecialization("a=S", "a := b", "b=S");
 	}
 
 	/**
@@ -424,6 +449,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetForIdentWithTypeSubstitution() {
 		spec.put(S, T);
 		assertEquals(T.toExpression(), spec.get(S.toExpression()));
+		assertSpecialization("S=ℙ(S)", "S := T", "T=ℙ(T)");
 	}
 
 	/**
@@ -434,6 +460,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGetForIdentWithoutSubstitution() {
 		assertNull(spec.get(aS));
 		assertNull(spec.get(aS));
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -448,8 +475,8 @@ public class TestSpecialization extends AbstractTests {
 
 		assertEquals(S, S.specialize(clone));
 
-		assertNull(spec.get(S));
-		assertEquals(S, clone.get(S));
+		assertEmptySpecialization();
+		assertSpecialization(clone, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
 	/**
@@ -465,6 +492,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -480,6 +508,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -495,6 +524,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -507,6 +537,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, Z);
 		boolean ok = spec.canPut(S, T);
 		assertFalse("Should reject overriding type substitution", ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -522,6 +553,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept overriding type substitution with the same identical substitution",
 				ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -535,6 +567,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bS);
 		boolean ok = spec.canPut(S, Z);
 		assertFalse("Should reject incompatible type substitution", ok);
+		assertSpecialization("a=S", "a := b", "b=S");
 	}
 
 	/**
@@ -547,6 +580,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, T);
 		boolean ok = spec.canPut(T, S);
 		assertTrue("Should accept instantiations that swapping types", ok);
+		assertSpecialization("S=ℙ(S)", "S := T", "T=ℙ(T)");
 	}
 
 	/**
@@ -562,6 +596,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -577,6 +612,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -591,6 +627,7 @@ public class TestSpecialization extends AbstractTests {
 		assertFalse(
 				"Should reject instantiation for an identifier denoting a given type if it is NOT yet registered",
 				ok);
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -604,6 +641,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, Z);
 		boolean ok = spec.canPut(S.toExpression(), Z.toExpression());
 		assertTrue("Should accept instantiation for an identifier denoting a given type if it is registered", ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -619,6 +657,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -635,6 +674,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 	/**
@@ -650,6 +690,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -663,6 +704,7 @@ public class TestSpecialization extends AbstractTests {
 		boolean ok = spec.canPut(aS, one);
 		assertFalse("Should reject the proposed free identifier instantiation",
 				ok);
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -677,6 +719,7 @@ public class TestSpecialization extends AbstractTests {
 		boolean ok = spec.canPut(aS, expTrue);
 		assertFalse("Should reject the proposed free identifier instantiation",
 				ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
 
@@ -693,6 +736,7 @@ public class TestSpecialization extends AbstractTests {
 		assertFalse(
 				"Should reject free identifier substitution with incompatible complex type",
 				ok);
+		assertSpecialization("S=ℙ(S)", "S := ℙ(ℤ)", "");
 	}
 
 	/**
@@ -707,6 +751,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept free identifier substitution with the same type",
 				ok);
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -723,6 +768,7 @@ public class TestSpecialization extends AbstractTests {
 		assertFalse(
 				"Should reject substitution for the same identifier with a different expression value",
 				ok);
+		assertSpecialization("a=S", "S := ℤ || a := 1", "");
 	}
 
 	/**
@@ -739,6 +785,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept substitution for the same identifier with the same expression value",
 				ok);
+		assertSpecialization("a=S", "S := ℤ || a := 1", "");
 	}
 
 	/**
@@ -753,6 +800,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept identifier substitution with an ill-formed expression",
 				ok);
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -766,6 +814,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bT);
 		boolean ok = spec.canPut(bS, aT);
 		assertTrue("Should accept substitution that swapping identifiers", ok);
+		assertSpecialization("a=S", "S := T || a := b", "b=T");
 	}
 
 	/**
@@ -781,6 +830,9 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(aS, bT);
 		boolean ok = spec.canPut(bT, aS);
 		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
+		assertSpecialization("a=S; T=ℙ(T)", //
+				"S := T || T := S || a := b", //
+				"b=T");
 	}
 
 	/**
@@ -796,6 +848,9 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(T, S);
 		boolean ok = spec.canPut(bT, aS);
 		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
+		assertSpecialization("a=S; T=ℙ(T)", //
+				"S := T || T := S || a := b", //
+				"b=T");
 	}
 
 	/**
@@ -806,11 +861,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testCanPutFailure_NoSideEffect() {
 		boolean ok = spec.canPut(aS, one);
 		assertFalse("Should have failed", ok);
-
-		// No substitution has been added
-		assertSet(spec.getTypes());
-		assertSet(spec.getFreeIdentifiers());
-		assertSet(spec.getPredicateVariables());
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -822,11 +873,7 @@ public class TestSpecialization extends AbstractTests {
 		final FreeIdentifier aST = mFreeIdentifier("a", REL(S, POW(T)));
 		boolean ok = spec.canPut(aST, one);
 		assertFalse("Should have failed", ok);
-
-		// No substitution has been added
-		assertSet(spec.getTypes());
-		assertSet(spec.getFreeIdentifiers());
-		assertSet(spec.getPredicateVariables());
+		assertEmptySpecialization();
 	}
 
 
@@ -838,11 +885,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testCanPutSuccess_NoSideEffect() {
 		boolean ok = spec.canPut(aS, bS);
 		assertTrue("Should have succeeded", ok);
-
-		// No substitution has been added
-		assertSet(spec.getTypes());
-		assertSet(spec.getFreeIdentifiers());
-		assertSet(spec.getPredicateVariables());
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -855,11 +898,7 @@ public class TestSpecialization extends AbstractTests {
 		final FreeIdentifier bST = mFreeIdentifier("b", REL(S, POW(T)));
 		boolean ok = spec.canPut(aST, bST);
 		assertTrue("Should have succeeded", ok);
-
-		// No substitution has been added
-		assertSet(spec.getTypes());
-		assertSet(spec.getFreeIdentifiers());
-		assertSet(spec.getPredicateVariables());
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -875,6 +914,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}		
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -890,6 +930,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (NullPointerException e) {
 			// pass
 		}		
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -905,6 +946,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 	
 	/**
@@ -920,6 +962,7 @@ public class TestSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -936,6 +979,7 @@ public class TestSpecialization extends AbstractTests {
 		assertFalse(
 				"Should reject substitution for the same predicate variable with a different predicate value",
 				ok);
+		assertSpecialization("", "$P := $Q", "");
 	}
 
 	/**
@@ -951,6 +995,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept substitution for the same predicate variable with the same predicate value",
 				ok);
+		assertSpecialization("", "$P := $Q", "");
 	}
 
 	/**
@@ -971,6 +1016,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue(
 				"Should accept predicate variable substitution with an ill-formed predicate",
 				ok);
+		// Cannot check the specialization with the current framework
 	}
 
 	/**
@@ -983,6 +1029,7 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(P, Q);
 		boolean ok = spec.put(Q, P);
 		assertTrue("Should accept substitution that swapping predicate variables", ok);
+		assertSpecialization("", "$P := $Q || $Q := $P", "");
 	}
 
 	/**
@@ -994,6 +1041,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGet_PredicateVariableWithSubstitution() {
 		spec.put(P, Q);
 		assertEquals("Incorrect subsititution for $P", Q, spec.get(P));
+		assertSpecialization("", "$P := $Q", "");
 	}
 
 
@@ -1007,6 +1055,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testGet_PredicateVariableWithoutSubstitution() {
 		assertNull("There should be no substitution for $P", spec.get(P));
 		assertNull("There should be still no substitution for $P", spec.get(P));
+		assertEmptySpecialization();
 	}
 	
 	/**
@@ -1017,39 +1066,31 @@ public class TestSpecialization extends AbstractTests {
 	 */
 	@Test
 	public void testGets() {
-		// Identifiers associated to given types
-		final FreeIdentifier Sx = S.toExpression();
-		final FreeIdentifier Tx = T.toExpression();
-		
 		spec.put(S, T);
-		assertSet(spec.getTypes(), S);
-		assertSet(spec.getFreeIdentifiers(), Sx);
-		assertSet(spec.getPredicateVariables());
+		assertSpecialization("S=ℙ(S)", "S := T", "T=ℙ(T)");
 		
 		spec.put(aS, bT);
-		assertSet(spec.getTypes(), S);
-		assertSet(spec.getFreeIdentifiers(), Sx, aS);
-		assertSet(spec.getPredicateVariables());
+		assertSpecialization("a=S", "S := T || a := b", "b=T");
 		
 		spec.put(T, S);
-		assertSet(spec.getTypes(), S, T);
-		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx);
-		assertSet(spec.getPredicateVariables());
+		assertSpecialization("a=S; T=ℙ(T)", //
+				"S := T || a := b || T := S", //
+				"b=T");
 
 		spec.put(P, Q);
-		assertSet(spec.getTypes(), S, T);
-		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx);
-		assertSet(spec.getPredicateVariables(), P);
+		assertSpecialization("a=S; T=ℙ(T)", //
+				"S := T || a := b || T := S || $P := $Q", //
+				"b=T");
 
 		spec.put(bT, aS);
-		assertSet(spec.getTypes(), S, T);
-		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx, bT);
-		assertSet(spec.getPredicateVariables(), P);
+		assertSpecialization("a=S; b=T", //
+				"S := T || a := b || T := S || $P := $Q || b := a", //
+				"b=T; a=S");
 
 		spec.put(Q, P);
-		assertSet(spec.getTypes(), S, T);
-		assertSet(spec.getFreeIdentifiers(), Sx, aS, Tx, bT);
-		assertSet(spec.getPredicateVariables(), P, Q);
+		assertSpecialization("a=S; b=T", //
+				"S := T || a := b || T := S || $P := $Q || b := a || $Q := $P", //
+				"b=T; a=S");
 	}
 
 	private <T extends Object> void assertSet(T[] actuals, T...expected) {
@@ -1057,5 +1098,25 @@ public class TestSpecialization extends AbstractTests {
 		final Set<T> act = new HashSet<T>(Arrays.asList(actuals));
 		assertEquals("Incorrect sets", exp, act);
 	}
-	
+
+	// Verifies that the specialization is empty
+	private void assertEmptySpecialization() {
+		assertSet(spec.getTypes());
+		assertSet(spec.getFreeIdentifiers());
+		assertSet(spec.getPredicateVariables());
+	}
+
+	// Verifies that the specialization contains the expected substitutions
+	private void assertSpecialization(String srcTypenvImage, String specImage,
+			String dstTypenvImage) {
+		assertSpecialization(spec, srcTypenvImage, specImage, dstTypenvImage);
+	}
+
+	// Verifies that a specialization contains the expected substitutions
+	private void assertSpecialization(ISpecialization spe,
+			String srcTypenvImage, String specImage, String dstTypenvImage) {
+		SpecializationChecker.verify(spe, srcTypenvImage, specImage,
+				dstTypenvImage);
+	}
+
 }

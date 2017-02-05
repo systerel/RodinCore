@@ -409,6 +409,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
 	}
 
 	/**
@@ -427,6 +429,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
 	}
 
 	/**
@@ -447,6 +451,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
 	}
 
 	/**
@@ -460,6 +466,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertSame(P, P.specialize(spe));
 
 		assertFalse(spe.put(P, mLiteralPredicate()));
+		SpecializationChecker.verify(spe, "", "$P := $P", "");
 	}
 
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,

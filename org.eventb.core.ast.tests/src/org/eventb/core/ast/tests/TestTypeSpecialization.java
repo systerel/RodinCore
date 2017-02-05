@@ -168,6 +168,8 @@ public class TestTypeSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
 	/**
@@ -186,6 +188,8 @@ public class TestTypeSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
 	/**
@@ -205,6 +209,8 @@ public class TestTypeSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
 	private static void assertSpecialization(String typeImage,

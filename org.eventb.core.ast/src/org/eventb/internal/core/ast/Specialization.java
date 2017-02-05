@@ -322,6 +322,11 @@ public class Specialization implements ISpecialization {
 		return new Specialization(this);
 	}
 
+	// For testing purpose, do not publish.
+	public ITypeEnvironmentBuilder getSourceTypenv() {
+		return srcTypenv;
+	}
+
 	@Override
 	public FormulaFactory getFactory() {
 		return ff;
