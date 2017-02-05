@@ -196,11 +196,14 @@ public class Specialization implements ISpecialization {
 		}
 
 		public Predicate getOrSetDefault(PredicateVariable predVar) {
-			final Substitute<Predicate> subst = predSubst.get(predVar);
+			Substitute<Predicate> subst = predSubst.get(predVar);
 			if (subst != null) {
 				return subst.getSubstitute(predVar, getBindingDepth());
 			}
-			return super.rewrite(predVar);
+			final Predicate result = super.rewrite(predVar);
+			subst = makeSubstitute(result);
+			predSubst.put(predVar, subst);
+			return result;
 		}
 
 		public FreeIdentifier[] getFreeIdentifiers() {

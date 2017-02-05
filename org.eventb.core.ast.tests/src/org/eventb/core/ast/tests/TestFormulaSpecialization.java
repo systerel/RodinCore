@@ -11,17 +11,20 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +42,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.junit.Test;
@@ -443,6 +447,19 @@ public class TestFormulaSpecialization extends AbstractTests {
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+	}
+
+	/**
+	 * Ensures that specializing a predicate variable which has no substitution
+	 * prevents adding later a substitution on the same predicate variable.
+	 */
+	@Test
+	public void predBlocksPred() {
+		final PredicateVariable P = mPredicateVariable("$P");
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(P, P.specialize(spe));
+
+		assertFalse(spe.put(P, mLiteralPredicate()));
 	}
 
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,

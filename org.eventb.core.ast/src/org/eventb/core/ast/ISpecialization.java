@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,13 @@ package org.eventb.core.ast;
  * environment, then the specialized formula also type-checks with the
  * specialized type environment, under the condition that both specialization
  * are performed with the same instance of this class.
+ * </p>
+ * <p>
+ * Similarly, when specializing a formula, an instance of this class can change
+ * by side-effect in the following manner: For each predicate variable, not
+ * already part of the predicate variable substitution and which occurs in the
+ * formula, a new predicate variable substitution is added to this
+ * specialization. It maps that predicate variable to itself.
  * </p>
  * <p>
  * In the rare cases where the side-effects are not wanted, one can always clone
