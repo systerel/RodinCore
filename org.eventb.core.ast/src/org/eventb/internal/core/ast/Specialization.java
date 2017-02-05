@@ -14,7 +14,6 @@ package org.eventb.internal.core.ast;
 import static org.eventb.internal.core.ast.Substitute.makeSubstitute;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -49,32 +48,24 @@ public class Specialization implements ISpecialization {
 		// Type substitutions
 		private final Map<GivenType, Type> typeSubst;
 		
-		// Log for rollback: contains the types that have been added to the
-		// substitution but not yet committed
-		private final Set<GivenType> typeLog;
-
 		public SpecializationTypeRewriter(FormulaFactory ff) {
 			super(ff);
 			typeSubst = new HashMap<GivenType, Type>();
-			typeLog = new HashSet<GivenType>();
 		}
 
 		public SpecializationTypeRewriter(SpecializationTypeRewriter other) {
 			super(other.ff);
 			typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
-			typeLog = new HashSet<GivenType>();
 		}
 
 		public Type get(GivenType key) {
 			return typeSubst.get(key);
 		}
 
-		public Type getOrSetDefault(GivenType key) {
+		public Type getWithDefault(GivenType key) {
 			Type value = typeSubst.get(key);
 			if (value == null) {
 				value = key.translate(ff);
-				typeSubst.put(key, value);
-				typeLog.add(key);
 			}
 			return value;
 		}
@@ -86,32 +77,16 @@ public class Specialization implements ISpecialization {
 
 		public void put(GivenType type, Type value) {
 			final Type oldValue = typeSubst.put(type, value);
-			if (oldValue == null) {
-				typeLog.add(type);
-				return;
-			}
-			if (!oldValue.equals(value)) {
+			if (oldValue != null && !oldValue.equals(value)) {
 				typeSubst.put(type, oldValue); // repair
 				throw new IllegalArgumentException("Type substitution for "
 						+ type + " already registered");
 			}
 		}
 
-		public void startTransaction() {
-			typeLog.clear();
-		}
-
-		public void endTransaction(boolean commit) {
-			if (!commit) {
-				for (final GivenType type : typeLog) {
-					typeSubst.remove(type);
-				}
-			}
-		}
-
 		@Override
 		public void visit(GivenType type) {
-			final Type rewritten = getOrSetDefault(type);
+			final Type rewritten = getWithDefault(type);
 			// If the given type is not rewritten, use the super algorithm
 			// (this implements factory translation)
 			if (type.equals(rewritten)) {
@@ -389,7 +364,7 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException(
 					"Incompatible types for " + ident);
 		}
-		if (!verify(ident, value, false)) {
+		if (!verify(ident, value)) {
 			throw new IllegalArgumentException(
 					"Incompatible types for " + ident);
 		}
@@ -401,16 +376,10 @@ public class Specialization implements ISpecialization {
 	 * commit is true, we also save the given sets that are now frozen and must
 	 * not change afterwards.
 	 */
-	private boolean verify(FreeIdentifier ident, Expression value,
-			boolean commit) {
+	private boolean verify(FreeIdentifier ident, Expression value) {
 		final Type identType = ident.getType();
-
-		speTypeRewriter.startTransaction();
 		final Type newType = speTypeRewriter.rewrite(identType);
-		final boolean result = value.getType().equals(newType);
-		speTypeRewriter.endTransaction(commit && result);
-
-		return result;
+		return value.getType().equals(newType);
 	}
 
 	private void addIdentSubstitution(FreeIdentifier ident, Expression value) {
@@ -604,7 +573,7 @@ public class Specialization implements ISpecialization {
 		if (!verifySrcTypenv(ident)) {
 			return false;
 		}
-		if (!verify(ident, value, false)) {
+		if (!verify(ident, value)) {
 			return false;
 		}
 
