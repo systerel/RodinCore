@@ -350,11 +350,22 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException("Identifier " + type
 					+ " already entered with a different type");
 		}
-		srcTypenv.add(type.toExpression());
-		speTypeRewriter.put(type, value);
-		formRewriter.put(type.toExpression(), value.toExpression());
+		addTypeSubstitution(type, value);
 	}
 
+	private void addTypeSubstitution(GivenType type, Type value) {
+		final FreeIdentifier ident = type.toExpression();
+		srcTypenv.add(ident);
+		speTypeRewriter.put(type, value);
+		formRewriter.put(ident, value.toExpression());
+	}
+
+	private void maybeAddTypeIdentitySubstitution(GivenType type) {
+		if (!srcTypenv.contains(type.getName())) {
+			addTypeSubstitution(type, type.translate(ff));
+		}
+	}
+	
 	@Override
 	public Type get(GivenType key) {
 		return speTypeRewriter.get(key);
@@ -378,17 +389,11 @@ public class Specialization implements ISpecialization {
 			throw new IllegalArgumentException(
 					"Incompatible types for " + ident);
 		}
-		if (!verify(ident, value, true)) {
+		if (!verify(ident, value, false)) {
 			throw new IllegalArgumentException(
 					"Incompatible types for " + ident);
 		}
-		srcTypenv.add(ident);
-		for (final GivenType given : ident.getGivenTypes()) {
-			srcTypenv.add(given.toExpression());
-			formRewriter.put(given.toExpression(),
-					speTypeRewriter.get(given).toExpression());
-		}
-		formRewriter.put(ident, value);
+		addIdentSubstitution(ident, value);
 	}
 
 	/*
@@ -408,6 +413,20 @@ public class Specialization implements ISpecialization {
 		return result;
 	}
 
+	private void addIdentSubstitution(FreeIdentifier ident, Expression value) {
+		for (final GivenType given : ident.getGivenTypes()) {
+			maybeAddTypeIdentitySubstitution(given);
+		}
+		srcTypenv.add(ident);
+		formRewriter.put(ident, value);
+	}
+
+	private void maybeAddIdentIdentitySubstitution(FreeIdentifier ident) {
+		if (!srcTypenv.contains(ident.getName())) {
+			addIdentSubstitution(ident, formRewriter.rewrite(ident));
+		}
+	}
+	
 	public Type specialize(Type type) {
 		prepare(type);
 		return speTypeRewriter.rewrite(type);
@@ -433,12 +452,7 @@ public class Specialization implements ISpecialization {
 
 		// Then insert the identity substitutions not already there
 		for (final GivenType given : givens) {
-			if (srcTypenv.getType(given.getName()) == null) {
-				final FreeIdentifier ident = given.toExpression();
-				srcTypenv.add(ident);
-				speTypeRewriter.put(given, given.translate(ff));
-				formRewriter.put(ident, ident.translate(ff));
-			}
+			maybeAddTypeIdentitySubstitution(given);
 		}
 	}
 
@@ -482,8 +496,13 @@ public class Specialization implements ISpecialization {
 			}
 		}
 
-		// Then protect the identity substitutions not already there
-		srcTypenv.addAll(typenv);
+		// Then insert the identity substitutions not yet there
+		final IIterator iter2 = typenv.getIterator();
+		while (iter2.hasNext()) {
+			iter2.advance();
+			final FreeIdentifier ident = iter2.asFreeIdentifier();
+			maybeAddIdentIdentitySubstitution(ident);
+		}
 	}
 
 	/*
@@ -508,14 +527,7 @@ public class Specialization implements ISpecialization {
 		
 		// Then protect the identity substitutions not already there
 		for (final FreeIdentifier ident : localEnv) {
-			if (srcTypenv.getType(ident.getName()) == null) {
-				srcTypenv.add(ident);
-				if (ident.isATypeExpression()) {
-					final GivenType given = ident.toType();
-					speTypeRewriter.put(given, given.translate(ff));
-				}
-				formRewriter.put(ident, ident.translate(ff));
-			}
+			maybeAddIdentIdentitySubstitution(ident);
 		}
 
 		// Also add identity substitutions for the predicate variables that do
@@ -562,8 +574,10 @@ public class Specialization implements ISpecialization {
 		return oldValue == null || oldValue.equals(value);
 	}
 
-	// Tells whether the given name could be added with the given type in
-	// the source type environment.
+	/*
+	 * Tells whether the given identifier is compatible with the source type
+	 * environment.
+	 */
 	private boolean verifySrcTypenv(FreeIdentifier ident) {
 		if (srcTypenv == null) {
 			srcTypenv = ident.getFactory().makeTypeEnvironment();
