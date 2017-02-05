@@ -306,25 +306,19 @@ public class Specialization implements ISpecialization {
 
 	@Override
 	public boolean canPut(GivenType type, Type value) {
-		if (type == null)
-			throw new NullPointerException("Null given type");
-		if (value == null)
-			throw new NullPointerException("Null type");
-		if (ff != value.getFactory()) {
-			throw new IllegalArgumentException("Wrong factory for value: "
-					+ value.getFactory() + ", should be " + ff);
-		}
-
-		if (!verifySrcTypenv(type.toExpression())) {
-			return false;
-		}
-
-		final Type oldValue = speTypeRewriter.get(type);
-		return oldValue == null || oldValue.equals(value);
+		return canPutInternal(type, value) == null;
 	}
 
 	@Override
 	public void put(GivenType type, Type value) {
+		final String errorMessage = canPutInternal(type, value);
+		if (errorMessage != null) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+		addTypeSubstitution(type, value);
+	}
+
+	private String canPutInternal(GivenType type, Type value) {
 		if (type == null)
 			throw new NullPointerException("Null given type");
 		if (value == null)
@@ -334,10 +328,14 @@ public class Specialization implements ISpecialization {
 					+ value.getFactory() + ", should be " + ff);
 		}
 		if (!verifySrcTypenv(type.toExpression())) {
-			throw new IllegalArgumentException("Identifier " + type
-					+ " already entered with a different type");
+			return "Identifier " + type
+					+ " already entered with a different type";
 		}
-		addTypeSubstitution(type, value);
+		final Type oldValue = speTypeRewriter.get(type);
+		if (oldValue != null && !oldValue.equals(value)) {
+			return "Type substitution for " + type + " already registered";
+		}
+		return null;
 	}
 
 	private void addTypeSubstitution(GivenType type, Type value) {
@@ -360,53 +358,43 @@ public class Specialization implements ISpecialization {
 
 	@Override
 	public boolean canPut(FreeIdentifier ident, Expression value) {
-		if (ident == null)
-			throw new NullPointerException("Null identifier");
-		if (!ident.isTypeChecked())
-			throw new IllegalArgumentException("Untyped identifier");
-		if (value == null)
-			throw new NullPointerException("Null value");
-		if (!value.isTypeChecked())
-			throw new IllegalArgumentException("Untyped value");
-		if (ff != value.getFactory()) {
-			throw new IllegalArgumentException("Wrong factory for value: "
-					+ value.getFactory() + ", should be " + ff);
-		}
-
-		if (!verifySrcTypenv(ident)) {
-			return false;
-		}
-		if (!verify(ident, value)) {
-			return false;
-		}
-
-		final Expression oldValue = formRewriter.get(ident);
-		return oldValue == null || oldValue.equals(value);
+		return canPutInternal(ident, value) == null;
 	}
 
 	@Override
 	public void put(FreeIdentifier ident, Expression value) {
+		final String errorMessage = canPutInternal(ident, value);
+		if (errorMessage != null) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+		addIdentSubstitution(ident, value);
+	}
+
+	private String canPutInternal(FreeIdentifier ident, Expression value) {
 		if (ident == null)
 			throw new NullPointerException("Null identifier");
 		if (!ident.isTypeChecked())
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
+		if (!value.isTypeChecked())
+			throw new IllegalArgumentException("Untyped value");
 		if (ff != value.getFactory()) {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
-		if (!value.isTypeChecked())
-			throw new IllegalArgumentException("Untyped value");
 		if (!verifySrcTypenv(ident)) {
-			throw new IllegalArgumentException(
-					"Incompatible types for " + ident);
+			return "Incompatible types for " + ident;
 		}
 		if (!verify(ident, value)) {
-			throw new IllegalArgumentException(
-					"Incompatible types for " + ident);
+			return "Incompatible types for " + ident;
 		}
-		addIdentSubstitution(ident, value);
+		final Expression oldValue = formRewriter.get(ident);
+		if (oldValue != null && !oldValue.equals(value)) {
+			return "Identifier substitution for " + ident
+					+ " already registered";
+		}
+		return null;
 	}
 
 	/*
