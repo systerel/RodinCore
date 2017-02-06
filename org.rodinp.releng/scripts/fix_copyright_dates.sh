@@ -46,7 +46,7 @@ process_commit() {
     git cherry-pick --ff $commit
 
     # Get the commit date
-    local year=$(git --no-pager show --no-patch --pretty=format:%ci $commit |
+    local year=$(git --no-pager show --no-patch --pretty=format:%ai $commit |
 	    cut -c1-4)
 
     # Fix all changed files
