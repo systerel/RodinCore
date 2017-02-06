@@ -24,6 +24,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
@@ -341,6 +342,11 @@ public class Specialization implements ISpecialization {
 			return "Identifier " + type
 					+ " already entered with a different type";
 		}
+		final String error = isCompatibleFormula(dstTypenv,
+				value.toExpression());
+		if (error != null) {
+			return error;
+		}
 		final Type oldValue = speTypeRewriter.get(type);
 		if (oldValue != null && !oldValue.equals(value)) {
 			return "Type substitution for " + type + " already registered";
@@ -402,6 +408,10 @@ public class Specialization implements ISpecialization {
 		if (!verify(ident, value)) {
 			return "Incompatible types for " + ident;
 		}
+		final String error = isCompatibleFormula(dstTypenv, value);
+		if (error != null) {
+			return error;
+		}
 		final Expression oldValue = formRewriter.get(ident);
 		if (oldValue != null && !oldValue.equals(value)) {
 			return "Identifier substitution for " + ident
@@ -457,6 +467,11 @@ public class Specialization implements ISpecialization {
 				throw new IllegalArgumentException("Type " + given
 						+ " already entered with a different type");
 			}
+			if (speTypeRewriter.get(given) == null
+					&& !isCompatible(dstTypenv, given)) {
+				throw new IllegalArgumentException("Destination name " + given
+						+ " already used with a different type");
+			}
 		}
 
 		// Then insert the identity substitutions not already there
@@ -503,6 +518,7 @@ public class Specialization implements ISpecialization {
 				throw new IllegalArgumentException("Identifier " + ident
 						+ " already entered with a different type");
 			}
+			verifyDstTypenv(ident);
 		}
 
 		// Then insert the identity substitutions not yet there
@@ -532,6 +548,7 @@ public class Specialization implements ISpecialization {
 				throw new IllegalArgumentException("Identifier " + ident
 						+ " already entered with a different type");
 			}
+			verifyDstTypenv(ident);
 		}
 		
 		// Then protect the identity substitutions not already there
@@ -546,6 +563,22 @@ public class Specialization implements ISpecialization {
 			if (formRewriter.get(predVar) == null) {
 				formRewriter.put(predVar, predVar.translate(ff));
 			}
+		}
+	}
+
+	/*
+	 * Ensures that the specialization of srcIdent will be compatible with the
+	 * destination environment.
+	 */
+	private void verifyDstTypenv(FreeIdentifier srcIdent) {
+		if (formRewriter.get(srcIdent) != null) {
+			return;
+		}
+		final Expression dstExpr = formRewriter.rewrite(srcIdent);
+		final FreeIdentifier dstIdent = (FreeIdentifier) dstExpr;
+		if (!isCompatible(dstTypenv, dstIdent)) {
+			throw new IllegalArgumentException("Destination name " + dstIdent
+					+ " already used with a different type");
 		}
 	}
 
@@ -572,10 +605,31 @@ public class Specialization implements ISpecialization {
 		if (srcTypenv == null) {
 			srcTypenv = ident.getFactory().makeTypeEnvironment();
 		}
-		final Type knownType = srcTypenv.getType(ident.getName());
+		return isCompatible(srcTypenv, ident);
+	}
+
+	private <T extends Formula<T>> String isCompatibleFormula(
+			ITypeEnvironment typenv, T value) {
+		for (final FreeIdentifier ident : value.getFreeIdentifiers()) {
+			if (!isCompatible(typenv, ident)) {
+				return "Destination name " + ident
+						+ " already used with a different type";
+			}
+		}
+		return null;
+	}
+
+	private boolean isCompatible(ITypeEnvironment typenv,
+			FreeIdentifier ident) {
+		final Type knownType = typenv.getType(ident.getName());
 		return knownType == null || knownType.equals(ident.getType());
 	}
-	
+
+	private boolean isCompatible(ITypeEnvironment typenv, GivenType type) {
+		final Type knownType = typenv.getType(type.getName());
+		return knownType == null || type.equals(knownType.getBaseType());
+	}
+
 	@Override
 	public boolean put(PredicateVariable predVar, Predicate value) {
 		if (predVar == null)
@@ -587,6 +641,10 @@ public class Specialization implements ISpecialization {
 		if (ff != value.getFactory()) {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
+		}
+
+		if (isCompatibleFormula(dstTypenv, value) != null) {
+			return false;
 		}
 
 		final boolean result = formRewriter.put(predVar, value);

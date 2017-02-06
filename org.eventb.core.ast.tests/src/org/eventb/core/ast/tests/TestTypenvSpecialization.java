@@ -319,6 +319,96 @@ public class TestTypenvSpecialization extends AbstractTests {
 				"b=S; a=ℤ");
 	}
 
+	/**
+	 * Ensures that specializing a type environment prevents adding later a type
+	 * substitution using a given type in its replacement which conflicts with
+	 * an identifier of the specialized type environment.
+	 */
+	@Test
+	public void typenvBlocksDstType() {
+		final GivenType src = ff.makeGivenType("S");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=T", ff);
+
+		final ISpecialization spe = ff.makeSpecialization();
+		typenv.specialize(spe);
+
+		try {
+			spe.put(src, src);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=T", "S := S || T := T", "S=T");
+	}
+
+	/**
+	 * Ensures that specializing a type environment prevents adding later an
+	 * identifier substitution using an identifier in its replacement which
+	 * conflicts with an identifier of the specialized type environment.
+	 */
+	@Test
+	public void typenvBlocksDstIdent() {
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S", ff);
+
+		final ISpecialization spe = ff.makeSpecialization();
+		typenv.specialize(spe);
+
+		try {
+			spe.put(mFreeIdentifier("b", INT_TYPE),
+					mFreeIdentifier("a", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=S", "S := S || a := a", "a=S");
+	}
+
+	/**
+	 * Ensures that specializing a type environment containing a given type
+	 * which has no substitution raises an exception if the name of the given
+	 * type is already used with a different type in the right-hand side of some
+	 * substitution.
+	 */
+	@Test
+	public void dstTypeBlocksTypenv() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		final ITypeEnvironment src = mTypeEnvironment("b=S", ff);
+		try {
+			src.specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := S", "S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a type environment containing an identifier
+	 * which has no substitution raises an exception if the identifier is
+	 * already used with a different type in the right-hand side of some
+	 * substitution.
+	 */
+	@Test
+	public void dstIdentBlocksTypenv() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("b", INT_TYPE));
+
+		final ITypeEnvironment src = mTypeEnvironment("b=S", ff);
+		try {
+			src.specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := b", "b=ℤ");
+	}
+
 	private static void assertSpecialization(String srcTypenvImage,
 			String specImage, String expectedImage) {
 		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);

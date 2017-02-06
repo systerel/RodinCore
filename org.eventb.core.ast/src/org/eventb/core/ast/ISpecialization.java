@@ -55,8 +55,16 @@ package org.eventb.core.ast;
  * <code>T</code> for <code>x</code> of type <code>S</code>.
  * </p>
  * <p>
- * This side-effect is made on purpose to ensure that successive applications of
- * a specialization to several type environments or formulas are all compatible.
+ * When defining substitutions, a specialization also maintains a destination
+ * type environment. It contains all the identifiers that have been used in the
+ * right-hand sides of substitutions, as well as all identifiers that have
+ * occurred in a formula passed to <code>specialize()</code> methods and that
+ * have not been substituted.
+ * </p>
+ * <p>
+ * The purpose of this destination type environment, together with the automatic
+ * completion of substitutions ensures that successive applications of a
+ * specialization to several type environments or formulas are all compatible.
  * In particular, if a formula type-checks with respect to some type
  * environment, then the specialized formula also type-checks with the
  * specialized type environment, under the condition that both specialization

@@ -17,6 +17,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -136,6 +137,34 @@ public class TestSpecialization extends AbstractTests {
 		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
 
+	/**
+	 * Ensures that a type substitute cannot conflict with the destination type
+	 * environment.
+	 */
+	@Test
+	public void testDstTypeConflict() {
+		spec.put(aT, mFreeIdentifier("S", T));
+		try {
+			spec.put(S, S);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertSpecialization("a=T", "a := S", "S=T");
+	}
+	
+	/**
+	 * Ensures that a type substitute can conflict with the source type
+	 * environment.
+	 */
+	@Test
+	public void testDstTypeNoConflict() {
+		spec.put(mFreeIdentifier("T", INT_TYPE),
+				mFreeIdentifier("S", INT_TYPE));
+		spec.put(S, T);
+		assertSpecialization("T=ℤ; S=ℙ(S)", "T := S || S := T", "S=ℤ; T=ℙ(T)");
+	}
+	
 	/**
 	 * Ensures that a null identifier is rejected.
 	 */
@@ -401,6 +430,34 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that an expression substitute cannot conflict with the
+	 * destination type environment.
+	 */
+	@Test
+	public void testDstNameConflict() {
+		spec.put(aS, bS);
+		try {
+			spec.put(bT, bT);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertSpecialization("a=S", "a := b", "b=S");
+	}
+
+	/**
+	 * Ensures that an expression substitute can conflict with the source type
+	 * environment.
+	 */
+	@Test
+	public void testDstNameNoConflict() {
+		spec.put(aS, bS);
+		spec.put(bT, aT);
+		assertSpecialization("a=S; b=T", "a := b || b := a", "b=S; a=T");
+	}
+
+
+	/**
 	 * Ensures that {@link ISpecialization#getFactory()} returns the right
 	 * factory.
 	 */
@@ -568,6 +625,29 @@ public class TestSpecialization extends AbstractTests {
 		assertSpecialization("S=ℙ(S)", "S := T", "T=ℙ(T)");
 	}
 
+	/**
+	 * Ensures that a type substitute cannot conflict with the destination type
+	 * environment.
+	 */
+	@Test
+	public void testCanPut_DstTypeConflict() {
+		spec.put(aT, mFreeIdentifier("S", T));
+		assertFalse(spec.canPut(S, S));
+		assertSpecialization("a=T", "a := S", "S=T");
+	}
+
+	/**
+	 * Ensures that a type substitute can conflict with the source type
+	 * environment.
+	 */
+	@Test
+	public void testCanPut_DstTypeNoConflict() {
+		spec.put(mFreeIdentifier("T", INT_TYPE),
+				mFreeIdentifier("S", INT_TYPE));
+		spec.put(S, T);
+		assertSpecialization("T=ℤ; S=ℙ(S)", "T := S || S := T", "S=ℤ; T=ℙ(T)");
+	}
+	
 	/**
 	 * Ensures that a null identifier is rejected.
 	 * 
@@ -887,6 +967,28 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that an expression substitute cannot conflict with the
+	 * destination type environment.
+	 */
+	@Test
+	public void testCanPut_DstNameConflict() {
+		spec.put(aS, bS);
+		assertFalse(spec.canPut(bT, bT));
+		assertSpecialization("a=S", "a := b", "b=S");
+	}
+
+	/**
+	 * Ensures that an expression substitute can conflict with the source type
+	 * environment.
+	 */
+	@Test
+	public void testCanPut_DstNameNoConflict() {
+		spec.put(aS, bS);
+		assertTrue(spec.canPut(bT, aT));
+		assertSpecialization("a=S", "a := b", "b=S");
+	}
+
+	/**
 	 * Ensures that a null predicate variable is rejected.
 	 * 
 	 * @author htson
@@ -1027,6 +1129,30 @@ public class TestSpecialization extends AbstractTests {
 				mTypeEnvironment("a=ℤ", ff));
 		assertTrue(spec.put(P, value));
 		assertSpecialization("", "$P := a = 1", "a=ℤ");
+	}
+
+	/**
+	 * Ensures that a predicate substitute cannot conflict with the destination
+	 * type environment.
+	 */
+	@Test
+	public void testPut_PredVarDstNameConflict() {
+		spec.put(aS, bS);
+		final Predicate value = mRelationalPredicate(bT, bT);
+		assertFalse(spec.put(P, value));
+		assertSpecialization("a=S", "a := b", "b=S");
+	}
+
+	/**
+	 * Ensures that a predicate substitute can conflict with the source type
+	 * environment.
+	 */
+	@Test
+	public void testPut_PredVarDstNameNoConflict() {
+		spec.put(aS, bS);
+		final Predicate value = mRelationalPredicate(aT, aT);
+		assertTrue(spec.put(P, value));
+		assertSpecialization("a=S", "a := b || $P := a=a", "b=S; a=T");
 	}
 
 	/**
