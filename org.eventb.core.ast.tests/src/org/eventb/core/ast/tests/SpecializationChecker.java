@@ -134,6 +134,7 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		assertSame(spe.getFactory(), dstTypenv.getFormulaFactory());
 
 		verifySourceTypenv(spe);
+		verifyDestinationTypenv(spe);
 		verifyTypeSubstitutions(spe);
 		verifyIdentSubstitutions(spe);
 		verifyPredSubstitutions(spe);
@@ -146,6 +147,11 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		} else {
 			assertEquals(srcTypenv.makeBuilder(), actual);
 		}
+	}
+
+	private void verifyDestinationTypenv(Specialization spe) {
+		final ITypeEnvironmentBuilder actual = spe.getDestinationTypenv();
+			assertEquals(dstTypenv.makeBuilder(), actual);
 	}
 
 	private void verifyTypeSubstitutions(ISpecialization spe) {

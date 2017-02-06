@@ -17,6 +17,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -1014,6 +1015,18 @@ public class TestSpecialization extends AbstractTests {
 		boolean ok = spec.put(Q, P);
 		assertTrue("Should accept substitution that swapping predicate variables", ok);
 		assertSpecialization("", "$P := $Q || $Q := $P", "");
+	}
+
+	/**
+	 * Ensures that adding a predicate variable substitution to a specialization
+	 * adds the destination identifiers in the destination type environment.
+	 */
+	@Test 
+	public void testPut_PredVarDstTypenv() {
+		final Predicate value = parsePredicate("a = 1",
+				mTypeEnvironment("a=ℤ", ff));
+		assertTrue(spec.put(P, value));
+		assertSpecialization("", "$P := a = 1", "a=ℤ");
 	}
 
 	/**

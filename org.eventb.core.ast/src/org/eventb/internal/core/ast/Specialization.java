@@ -262,6 +262,9 @@ public class Specialization implements ISpecialization {
 	// set once at the first use and never changed after).
 	private ITypeEnvironmentBuilder srcTypenv;
 	
+	// The type environment of the destination language.
+	private ITypeEnvironmentBuilder dstTypenv;
+	
 	// The language of the right-hand sides of substitutions
 	private final FormulaFactory ff;
 
@@ -271,6 +274,7 @@ public class Specialization implements ISpecialization {
 
 	public Specialization(FormulaFactory ff) {
 		this.srcTypenv = null;
+		this.dstTypenv = ff.makeTypeEnvironment();
 		this.ff = ff;
 		speTypeRewriter = new SpecializationTypeRewriter(ff);
 		formRewriter = new SpecializationFormulaRewriter(speTypeRewriter);
@@ -279,6 +283,7 @@ public class Specialization implements ISpecialization {
 	public Specialization(Specialization other) {
 		this.srcTypenv = other.srcTypenv == null ? null
 				: other.srcTypenv.makeBuilder();
+		this.dstTypenv = other.dstTypenv.makeBuilder();
 		this.ff = other.ff;
 		speTypeRewriter = new SpecializationTypeRewriter(other.speTypeRewriter);
 		formRewriter = new SpecializationFormulaRewriter(other.formRewriter,
@@ -298,6 +303,11 @@ public class Specialization implements ISpecialization {
 	@Override
 	public FormulaFactory getFactory() {
 		return ff;
+	}
+
+	// For testing purpose
+	public ITypeEnvironmentBuilder getDestinationTypenv() {
+		return dstTypenv;
 	}
 
 	public ITypeCheckingRewriter getFormulaRewriter() {
@@ -343,6 +353,9 @@ public class Specialization implements ISpecialization {
 		srcTypenv.add(ident);
 		speTypeRewriter.put(type, value);
 		formRewriter.put(ident, value.toExpression());
+		for (final GivenType given : value.getGivenTypes()) {
+			dstTypenv.addGivenSet(given.getName());
+		}
 	}
 
 	private void maybeAddTypeIdentitySubstitution(GivenType type) {
@@ -414,6 +427,7 @@ public class Specialization implements ISpecialization {
 		}
 		srcTypenv.add(ident);
 		formRewriter.put(ident, value);
+		dstTypenv.addAll(value.getFreeIdentifiers());
 	}
 
 	private void maybeAddIdentIdentitySubstitution(FreeIdentifier ident) {
@@ -575,7 +589,11 @@ public class Specialization implements ISpecialization {
 					+ value.getFactory() + ", should be " + ff);
 		}
 
-		return formRewriter.put(predVar, value);
+		final boolean result = formRewriter.put(predVar, value);
+		if (result) {
+			dstTypenv.addAll(value.getFreeIdentifiers());
+		}
+		return result;
 	}
 
 	@Override
