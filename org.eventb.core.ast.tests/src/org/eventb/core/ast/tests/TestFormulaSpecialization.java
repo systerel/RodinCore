@@ -16,6 +16,7 @@ import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
@@ -467,6 +468,81 @@ public class TestFormulaSpecialization extends AbstractTests {
 
 		assertFalse(spe.put(P, mLiteralPredicate()));
 		SpecializationChecker.verify(spe, "", "$P := $P", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which has no
+	 * substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void typeBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which gets
+	 * substituted does not conflict with a substituted identifier.
+	 */
+	@Test
+	public void typeDoesNotBlockFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(ff.makeGivenType("S"), ff.makeGivenType("T"));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		assertEquals(mFreeIdentifier("a", ff.makeGivenType("T")),
+				mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"b=ℤ; a=S", "S := T || b := S || a := a", "S=ℤ; a=T");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which gets
+	 * substituted cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identDoesNotBlockFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", ff.makeGivenType("S")),
+				mFreeIdentifier("b", ff.makeGivenType("S")));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("a", INT_TYPE));
+
+		assertEquals(mFreeIdentifier("b", ff.makeGivenType("S")),
+				mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"a=S; b=ℤ", //
+				"a := b || b := a || S := S", //
+				"b=S; a=ℤ");
 	}
 
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,

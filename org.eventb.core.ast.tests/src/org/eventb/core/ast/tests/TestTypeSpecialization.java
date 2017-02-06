@@ -213,6 +213,25 @@ public class TestTypeSpecialization extends AbstractTests {
 		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
+	/**
+	 * Ensures that specializing a given type which has no substitution cannot
+	 * conflict with an existing substitution.
+	 */
+	@Test
+	public void identBlocksTypeSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			ff.makeGivenType("S").specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := 0", "");
+	}
+
 	private static void assertSpecialization(String typeImage,
 			String typeSpecializationImage, String expectedImage) {
 		assertSpecialization(typeImage, typeSpecializationImage, expectedImage,

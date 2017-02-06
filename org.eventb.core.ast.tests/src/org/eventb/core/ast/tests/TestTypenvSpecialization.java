@@ -244,6 +244,81 @@ public class TestTypenvSpecialization extends AbstractTests {
 		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
 	}
 
+	/**
+	 * Ensures that specializing a type environment containing a given type
+	 * which has no substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void typeBlocksTypenvSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mTypeEnvironment("a=S", ff).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a type environment containing an identifier
+	 * which has no substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identBlocksTypenvSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mTypeEnvironment("a=S", ff).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a type environment containing a given type
+	 * which gets substituted does not conflict with a substituted identifier.
+	 */
+	@Test
+	public void typeDoesNotBlockTypenvSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(ff.makeGivenType("S"), ff.makeGivenType("T"));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		assertEquals(mTypeEnvironment("a=T", ff),
+				mTypeEnvironment("a=S", ff).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"b=ℤ; a=S", "S := T || b := S || a := a", "S=ℤ; a=T");
+	}
+
+	/**
+	 * Ensures that specializing a type environment containing an identifier
+	 * which gets substituted cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identDoesNotBlockTypenvSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", ff.makeGivenType("S")),
+				mFreeIdentifier("b", ff.makeGivenType("S")));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("a", INT_TYPE));
+
+		assertEquals(mTypeEnvironment("b=S", ff),
+				mTypeEnvironment("a=S", ff).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"a=S; b=ℤ", //
+				"a := b || b := a || S := S", //
+				"b=S; a=ℤ");
+	}
+
 	private static void assertSpecialization(String srcTypenvImage,
 			String specImage, String expectedImage) {
 		final ITypeEnvironment typenv = mTypeEnvironment(srcTypenvImage, ff);

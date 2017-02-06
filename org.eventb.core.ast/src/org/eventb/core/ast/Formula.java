@@ -2393,6 +2393,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             if this formula is an assignment
 	 * @throws IllegalStateException
 	 *             if this formula is not type-checked.
+	 * @throws IllegalArgumentException
+	 *             if the given specialization is not compatible with this
+	 *             formula, that is the specialization contains a substitution
+	 *             for an identifier with the same name as an identifier in this
+	 *             formula, but with a different type
 	 * 
 	 * @since 2.6
 	 */
