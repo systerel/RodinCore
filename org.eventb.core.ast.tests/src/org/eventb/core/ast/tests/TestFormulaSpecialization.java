@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,25 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - added tests for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +43,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.junit.Test;
@@ -56,6 +63,7 @@ import org.junit.Test;
  * 
  * @author Thomas Muller
  * @author Laurent Voisin
+ * @author htson - Added tests for specializing predicate variables
  */
 public class TestFormulaSpecialization extends AbstractTests {
 
@@ -114,6 +122,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"a ∈ A ∧ b ∈ B ∧ c ∈ C", //
 				"S := T || a := x",//
 				"x ∈ A ∧ b ∈ B ∧ c ∈ C");
+		assertPredicateSpecialization(te, //
+				"a ∈ A ∧ b ∈ B ∧ $P", //
+				"S := T || a := x || $P := c ∈ C",//
+				"x ∈ A ∧ b ∈ B ∧ c ∈ C");
 	}
 
 	/**
@@ -146,6 +158,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"a ∈ A ⇒ b ∈ B",//
 				"S := T || a := c",//
 				"c ∈ A ⇒ b ∈ B");
+		assertPredicateSpecialization(te,//
+				"a ∈ A ⇒ $P",//
+				"S := T || a := c || $P := b ∈ B",//
+				"c ∈ A ⇒ b ∈ B");
 	}
 
 	/**
@@ -156,6 +172,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(te,//
 				"bool(a ∈ A)",//
 				"S := T || a := c",//
+				"bool(c ∈ A)");
+		assertExpressionSpecialization(te,//
+				"bool($P)",//
+				"$P := c ∈ A",//
 				"bool(c ∈ A)");
 	}
 
@@ -206,6 +226,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"α(a∈A, a)",//
 				"S := T || a := b",//
 				"α(b∈A, b)");
+		assertPredicateSpecialization(te,//
+				"α($P, a)",//
+				"S := T || a := b || $P := b∈A",//
+				"α(b∈A, b)");
 	}
 
 	/**
@@ -216,6 +240,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(te, "a", "S := T", "a");
 		assertExpressionSpecialization(te, "a", "S := T || b := d", "a");
 		assertExpressionSpecialization(te, "a", "S := T || a := c", "c");
+		assertExpressionSpecialization(te, "S", "S := T || a := c", "T");
 	}
 
 	/**
@@ -245,6 +270,19 @@ public class TestFormulaSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that an predicate variables gets specialized.
+	 * 
+	 * @author htson
+	 */
+	@Test 
+	public void testPredicateVariable() {
+		assertPredicateSpecialization(te,//
+				"$P", "$P := $Q", "$Q");
+		assertPredicateSpecialization(te,//
+				"$P", "$P := x∈A", "x∈A");
+	}
+
+	/**
 	 * Ensures that quantified expressions get specialized.
 	 */
 	@Test 
@@ -255,6 +293,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"{x∣x∈A}", "S := T || A := B", "{x∣x∈B}");
 		assertExpressionSpecialization(te,//
 				"{a∣a∈A}", "S := ℤ || a := 5 || A := {2}", "{a∣a∈{2}}");
+		assertExpressionSpecialization(te, "{x∣x∈A}", "S := T", "{x∣x∈A}");
 	}
 
 	/**
@@ -353,6 +392,304 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"∀x⦂S·x↦1 ∈ y",//
 				"S := T || y := {x↦z∣x∈A ∧ z∈B}",//
 				"∀x⦂T·x↦1 ∈ {x↦z∣x∈A ∧ z∈B}");
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on a given type with the same name.
+	 */
+	@Test
+	public void identBlocksType() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(ff.makeGivenType(src.getName()), INT_TYPE);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on the same identifier.
+	 */
+	@Test
+	public void identBlocksIdent() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(src, mFreeIdentifier("T", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a free identifier which has no substitution
+	 * prevents adding later a substitution on an identifier with the same name,
+	 * but a different type.
+	 */
+	@Test
+	public void identBlocksIdentDifferentType() {
+		final FreeIdentifier src = mFreeIdentifier("S", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(mFreeIdentifier(src.getName(), BOOL_TYPE),
+					mFreeIdentifier("T", BOOL_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := S", "S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a predicate variable which has no substitution
+	 * prevents adding later a substitution on the same predicate variable.
+	 */
+	@Test
+	public void predBlocksPred() {
+		final PredicateVariable P = mPredicateVariable("$P");
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(P, P.specialize(spe));
+
+		assertFalse(spe.put(P, mLiteralPredicate()));
+		SpecializationChecker.verify(spe, "", "$P := $P", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which has no
+	 * substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void typeBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which gets
+	 * substituted does not conflict with a substituted identifier.
+	 */
+	@Test
+	public void typeDoesNotBlockFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(ff.makeGivenType("S"), ff.makeGivenType("T"));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		assertEquals(mFreeIdentifier("a", ff.makeGivenType("T")),
+				mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"b=ℤ; a=S", "S := T || b := S || a := a", "S=ℤ; a=T");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which gets
+	 * substituted cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void identDoesNotBlockFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", ff.makeGivenType("S")),
+				mFreeIdentifier("b", ff.makeGivenType("S")));
+		spe.put(mFreeIdentifier("b", INT_TYPE), mFreeIdentifier("a", INT_TYPE));
+
+		assertEquals(mFreeIdentifier("b", ff.makeGivenType("S")),
+				mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"a=S; b=ℤ", //
+				"a := b || b := a || S := S", //
+				"b=S; a=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which gets
+	 * substituted cannot conflict with an existing substitution.
+	 */
+	@Test
+	public void predDoesNotBlockFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", ff.makeGivenType("S")),
+				mFreeIdentifier("b", ff.makeGivenType("S")));
+		spe.put(mPredicateVariable("$P"),
+				parsePredicate("a=0", mTypeEnvironment()));
+
+		assertEquals(mFreeIdentifier("b", ff.makeGivenType("S")),
+				mFreeIdentifier("a", ff.makeGivenType("S")).specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"a=S", //
+				"S := S || a := b || $P := a=0", //
+				"b=S; a=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution prevents adding later a substitution using the same
+	 * identifier in its replacement but with a different type.
+	 */
+	@Test
+	public void identBlocksDstType() {
+		final Expression src = mFreeIdentifier("T", INT_TYPE);
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(ff.makeGivenType("S"), ff.makeGivenType("T"));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "T=ℤ", "T := T", "T=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which has no
+	 * substitution prevents adding later a substitution using the same
+	 * identifier in its replacement but with a different type.
+	 */
+	@Test
+	public void typeBlocksDstIdent() {
+		final Expression src = mFreeIdentifier("b", ff.makeGivenType("S"));
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(mFreeIdentifier("a", INT_TYPE),
+					mFreeIdentifier("S", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "b=S", "S := S || b := b", "b=S");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution prevents adding later a substitution using the same
+	 * identifier in its replacement but with a different type.
+	 */
+	@Test
+	public void identBlocksDstIdent() {
+		final Expression src = mFreeIdentifier("b", ff.makeGivenType("S"));
+		final ISpecialization spe = ff.makeSpecialization();
+		assertSame(src, src.specialize(spe));
+
+		try {
+			spe.put(mFreeIdentifier("a", INT_TYPE),
+					mFreeIdentifier("b", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "b=S", "S := S || b := b", "b=S");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing a given type which has no
+	 * substitution cannot conflict with the right-hand side of an existing
+	 * type substitution.
+	 */
+	@Test
+	public void dstTypeBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		try {
+			mFreeIdentifier("b", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := S", "S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution cannot conflict with the right-hand side of an existing
+	 * identifier substitution.
+	 */
+	@Test
+	public void dstIdentBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("b", INT_TYPE));
+
+		try {
+			mFreeIdentifier("b", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := b", "b=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a formula containing an identifier which has no
+	 * substitution cannot conflict with the right-hand side of an existing
+	 * predicate variable substitution.
+	 */
+	@Test
+	public void dstPredBlocksFormulaSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mPredicateVariable("$P"),
+				parsePredicate("b=0", mTypeEnvironment()));
+
+		try {
+			mFreeIdentifier("b", ff.makeGivenType("S")).specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "", "$P := b=0", "b=ℤ");
 	}
 
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,

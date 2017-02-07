@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,41 +7,44 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - Make this class generic
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 
 /**
- * Common abstraction for a substitute expression used in a substitution.
+ * Common abstraction for a substitute formula used in a substitution.
  * <p>
  * This class is not public API. Don't use it.
  * </p>
  * 
  * @author Laurent Voisin
  */
-public abstract class Substitute {
+public abstract class Substitute<T extends Formula<T>> {
 
 	/**
-	 * Simple substitute where the expression doesn't contain any externally
+	 * Simple substitute where the formula doesn't contain any externally
 	 * bound identifier.
 	 */
-	private static class SimpleSubstitute extends Substitute {
+	private static class SimpleSubstitute<T extends Formula<T>>
+			extends Substitute<T> {
 
-		Expression expr;
+		T formula;
 
-		public SimpleSubstitute(Expression expr) {
-			this.expr = expr;
+		public SimpleSubstitute(T formula) {
+			this.formula = formula;
 		}
 
 		@Override
-		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
-			return expr;
+		public T getSubstitute(T original, int nbOfInternallyBound) {
+			return formula;
 		}
 
 		@Override
 		public int hashCode() {
-			return expr.hashCode();
+			return formula.hashCode();
 		}
 
 		@Override
@@ -52,27 +55,29 @@ public abstract class Substitute {
 			if (obj == null || this.getClass() != obj.getClass()) {
 				return false;
 			}
-			final SimpleSubstitute other = (SimpleSubstitute) obj;
-			return expr.equals(other.expr);
+			@SuppressWarnings("unchecked")
+			final SimpleSubstitute<T> other = (SimpleSubstitute<T>) obj;
+			return formula.equals(other.formula);
 		}
 
 		@Override
 		public String toString() {
-			return expr.toString();
+			return formula.toString();
 		}
 
 	}
 
 	/**
-	 * Susbtitute where the expression consists of a bound identifier.
+	 * Susbtitute where the formula consists of a bound identifier.
 	 * <p>
 	 * This means that we must renumber the index of this identifier, taking
 	 * into account the offset.
 	 * </p>
 	 * This class corresponds to an optimized simple version of
-	 * {@link ComplexSubstitute}.
+	 * {@link org.eventb.internal.core.ast.Substitute.ComplexSubstitute
+	 * ComplexSubstitute}.
 	 */
-	private static class BoundIdentSubstitute extends Substitute {
+	private static class BoundIdentSubstitute extends Substitute<Expression> {
 
 		/**
 		 * Index of the bound variable, before correction.
@@ -115,7 +120,7 @@ public abstract class Substitute {
 	}
 
 	/**
-	 * Complex substitute where the expression does contain some externally
+	 * Complex substitute where the formula does contain some externally
 	 * bound identifiers.
 	 * <p>
 	 * This means that we must renumber the index of these identifiers, taking
@@ -123,26 +128,27 @@ public abstract class Substitute {
 	 * small cache.
 	 * </p>
 	 */
-	private static class ComplexSubstitute extends Substitute {
+	private static class ComplexSubstitute<T extends Formula<T>>
+			extends Substitute<T> {
 
 		/**
-		 * Cache of substitute expressions, indexed by the offset applied to
+		 * Cache of substitute formulas, indexed by the offset applied to
 		 * them. For instance, the first element of the list contains the
-		 * original expression untouched.
+		 * original formula untouched.
 		 */
-		private Cache<Expression> cache;
+		private Cache<T> cache;
 
-		public ComplexSubstitute(Expression expr) {
-			this.cache = new Cache<Expression>();
-			this.cache.set(0, expr);
+		public ComplexSubstitute(T formula) {
+			this.cache = new Cache<T>();
+			this.cache.set(0, formula);
 		}
 
 		@Override
-		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
-			Expression result = cache.get(nbOfInternallyBound);
+		public T getSubstitute(T original, int nbOfInternallyBound) {
+			T result = cache.get(nbOfInternallyBound);
 			if (result == null) {
-				Expression expr = cache.get(0);
-				result = expr.shiftBoundIdentifiers(nbOfInternallyBound);
+				T formula = cache.get(0);
+				result = formula.shiftBoundIdentifiers(nbOfInternallyBound);
 				cache.set(nbOfInternallyBound, result);
 			}
 			return result;
@@ -161,11 +167,13 @@ public abstract class Substitute {
 			if (obj == null || this.getClass() != obj.getClass()) {
 				return false;
 			}
-			return equalExpressions((ComplexSubstitute) obj);
+			@SuppressWarnings("unchecked")
+			final ComplexSubstitute<T> other = (ComplexSubstitute<T>) obj;
+			return equalFormulas(other);
 		}
 
 		// Test extracted to a method for subclass comparison
-		protected boolean equalExpressions(ComplexSubstitute other) {
+		protected boolean equalFormulas(ComplexSubstitute<T> other) {
 			return cache.get(0).equals(other.cache.get(0));
 		}
 
@@ -177,20 +185,21 @@ public abstract class Substitute {
 	}
 
 	/**
-	 * Complex substitute where the expression does contain some externally
+	 * Complex substitute where the formula does contain some externally
 	 * bound identifiers, and where an additional offset needs to be applied.
 	 */
-	private static class ComplexSubstituteWithOffset extends ComplexSubstitute {
+	private static class ComplexSubstituteWithOffset<T extends Formula<T>>
+			extends ComplexSubstitute<T> {
 
 		private final int offset;
 
-		public ComplexSubstituteWithOffset(Expression expr, int offset) {
-			super(expr);
+		public ComplexSubstituteWithOffset(T formula, int offset) {
+			super(formula);
 			this.offset = offset;
 		}
 
 		@Override
-		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
+		public T getSubstitute(T original, int nbOfInternallyBound) {
 			return super.getSubstitute(original, nbOfInternallyBound + offset);
 		}
 
@@ -207,8 +216,9 @@ public abstract class Substitute {
 			if (obj == null || this.getClass() != obj.getClass()) {
 				return false;
 			}
-			final ComplexSubstituteWithOffset other = (ComplexSubstituteWithOffset) obj;
-			return equalExpressions(other) && offset == other.offset;
+			@SuppressWarnings("unchecked")
+			final ComplexSubstituteWithOffset<T> other = (ComplexSubstituteWithOffset<T>) obj;
+			return equalFormulas(other) && offset == other.offset;
 		}
 
 		@Override
@@ -219,31 +229,32 @@ public abstract class Substitute {
 	}
 
 	/**
-	 * Factory method to create a substitute with an arbitrary expression.
+	 * Factory method to create a substitute with an arbitrary formula.
 	 * 
-	 * @param expr
-	 *            initial substitute expression
-	 * @return the substitute object for that expression
+	 * @param formula
+	 *            initial substitute formula
+	 * @return the substitute object for that formula
 	 */
-	public static Substitute makeSubstitute(Expression expr) {
-		if (expr.isWellFormed()) {
-			return new SimpleSubstitute(expr);
+	public static <T extends Formula<T>> Substitute<T> makeSubstitute(T formula) {
+		if (formula.isWellFormed()) {
+			return new SimpleSubstitute<T>(formula);
 		}
-		return new ComplexSubstitute(expr);
+		return new ComplexSubstitute<T>(formula);
 	}
 
 	/**
-	 * Factory method to create a substitute with an arbitrary expression and
+	 * Factory method to create a substitute with an arbitrary formula and
 	 * applying a constant offset to its bound identifiers.
 	 * 
-	 * @param expr
-	 *            initial substitute expression
+	 * @param formula
+	 *            initial substitute formula
 	 * @param offset
 	 *            offset to systematically apply
-	 * @return the substitute object for that expression
+	 * @return the substitute object for that formula
 	 */
-	public static Substitute makeSubstitute(Expression expr, int offset) {
-		return new ComplexSubstituteWithOffset(expr, offset);
+	public static <T extends Formula<T>> Substitute<T> makeSubstitute(T formula,
+			int offset) {
+		return new ComplexSubstituteWithOffset<T>(formula, offset);
 	}
 
 	/**
@@ -253,23 +264,23 @@ public abstract class Substitute {
 	 *            initial index of the bound identifier
 	 * @return the substitute object for that identifier
 	 */
-	public static Substitute makeSubstitute(int index) {
+	public static Substitute<Expression> makeSubstitute(int index) {
 		return new BoundIdentSubstitute(index);
 	}
 
 	/**
-	 * Returns the substitute expression where bound identifier occurrences have
+	 * Returns the substitute formula where bound identifier occurrences have
 	 * been renumbered using the given offset.
 	 * 
 	 * @param original
-	 *            original expression that gets substituted
+	 *            original formula that gets substituted
 	 * @param nbOfInternallyBound
 	 *            offset to use, that is the number of identifiers bound between
-	 *            the point where the substitute expression was given and the
+	 *            the point where the substitute formula was given and the
 	 *            place where it is used
 	 * 
-	 * @return the actual substitute expression to use
+	 * @return the actual substitute formula to use
 	 */
-	public abstract Expression getSubstitute(Expression original, int nbOfInternallyBound);
+	public abstract T getSubstitute(T original, int nbOfInternallyBound);
 
 }

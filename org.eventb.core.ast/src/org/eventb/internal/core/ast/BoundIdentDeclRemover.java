@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class BoundIdentDeclRemover extends Substitution {
 	protected final List<BoundIdentDecl> newDecls;
 	
 	// Reversed array of substitutes
-	protected final Substitute[] substitutes;
+	protected final Substitute<Expression>[] substitutes;
 	
 	/**
 	 * Creates a new substitution for removing some bound identifier
@@ -60,7 +60,9 @@ public class BoundIdentDeclRemover extends Substitution {
 		assert decls.length == keep.length;
 
 		final int lastIndex = decls.length - 1;
-		substitutes = new Substitute[keep.length];
+		@SuppressWarnings("unchecked")
+		final Substitute<Expression>[] temp = new Substitute[keep.length];
+		substitutes = temp;
 		newDecls = new ArrayList<BoundIdentDecl>(decls.length);
 		int newIndex = 0;
 		// We need to traverse both arrays backward to compute the new indexes

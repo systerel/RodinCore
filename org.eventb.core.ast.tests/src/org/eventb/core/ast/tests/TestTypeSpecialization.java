@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 import static org.eventb.core.ast.tests.datatype.TestDatatypes.MOULT_FAC;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
@@ -148,6 +151,172 @@ public class TestTypeSpecialization extends AbstractTests {
 		final Type actual = src.specialize(spe);
 		assertEquals(src, actual);
 		assertSame(LIST_FAC, actual.getFactory());
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution prevents
+	 * adding later a substitution on the same type.
+	 */
+	@Test
+	public void typeBlocksType() {
+		final GivenType src = ff.makeGivenType("S");
+		final ISpecialization spe = ff.makeSpecialization();
+		src.specialize(spe);
+
+		try {
+			spe.put(src, INT_TYPE);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution prevents
+	 * adding later a substitution on the identifier denoting that type.
+	 */
+	@Test
+	public void typeBlocksIdent() {
+		final GivenType src = ff.makeGivenType("S");
+		final ISpecialization spe = ff.makeSpecialization();
+		src.specialize(spe);
+
+		try {
+			spe.put(src.toExpression(), INT_TYPE.toExpression());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution prevents
+	 * adding later a substitution on the same identifier but with a different
+	 * type.
+	 */
+	@Test
+	public void typeBlocksIdentDifferentType() {
+		final GivenType src = ff.makeGivenType("S");
+		final ISpecialization spe = ff.makeSpecialization();
+		src.specialize(spe);
+
+		try {
+			spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution cannot
+	 * conflict with an existing substitution.
+	 */
+	@Test
+	public void identBlocksTypeSpecialization() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("S", INT_TYPE), mIntegerLiteral(0));
+
+		try {
+			ff.makeGivenType("S").specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℤ", "S := 0", "");
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution prevents
+	 * adding later a substitution using the same identifier in its replacement
+	 * but with a different type.
+	 */
+	@Test
+	public void typeBlocksDstIdent() {
+		final GivenType src = ff.makeGivenType("S");
+		final ISpecialization spe = ff.makeSpecialization();
+		src.specialize(spe);
+
+		try {
+			spe.put(mFreeIdentifier("a", INT_TYPE),
+					mFreeIdentifier("S", INT_TYPE));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := S", "S=ℙ(S)");
+	}
+
+	/**
+	 * Ensures that specializing a given type which has no substitution raises
+	 * an exception if the type name is already used with a different type in
+	 * the destination type environment.
+	 */
+	@Test
+	public void dstIdentBlocksType() {
+		final ISpecialization spe = ff.makeSpecialization();
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("T", INT_TYPE));
+
+		final Type src = parseType("S×T");
+		try {
+			src.specialize(spe);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+
+		SpecializationChecker.verify(spe, "a=ℤ", "a := T", "T=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a given type which gets substituted works as
+	 * expected, even if the type name is already used with a different type in
+	 * an identifier substitution.
+	 */
+	@Test
+	public void dstIdentDoesNotBlockType() {
+		final ISpecialization spe = ff.makeSpecialization();
+		final GivenType src = ff.makeGivenType("S");
+		final GivenType dst = ff.makeGivenType("T");
+		spe.put(src, dst);
+		spe.put(mFreeIdentifier("a", INT_TYPE), mFreeIdentifier("S", INT_TYPE));
+
+		assertEquals(dst, src.specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"S=ℙ(S); a=ℤ", //
+				"S := T || a := S", //
+				"T=ℙ(T); S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a given type which gets substituted works as
+	 * expected, even if the type name is already used with a different type in
+	 * a predicate variable substitution.
+	 */
+	@Test
+	public void dstPredVarDoesNotBlockType() {
+		final ISpecialization spe = ff.makeSpecialization();
+		final GivenType src = ff.makeGivenType("S");
+		final GivenType dst = ff.makeGivenType("T");
+		spe.put(src, dst);
+		spe.put(ff.makePredicateVariable("$P", null),
+				parsePredicate("S=0", mTypeEnvironment()));
+
+		assertEquals(dst, src.specialize(spe));
+
+		SpecializationChecker.verify(spe, //
+				"S=ℙ(S)", //
+				"S := T || $P := S=0", //
+				"T=ℙ(T); S=ℤ");
 	}
 
 	private static void assertSpecialization(String typeImage,

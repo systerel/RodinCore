@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2016 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class BindingSubstitution extends SimpleSubstitution {
 		
 		super(ff);
 		this.offset = identsToBind.size();
-		map = new HashMap<FreeIdentifier, Substitute>(offset * 4 / 3 + 1);
+		map = new HashMap<FreeIdentifier, Substitute<Expression>>(offset * 4 / 3 + 1);
 
 		int index = offset - 1;
 		for (FreeIdentifier ident : identsToBind) {
