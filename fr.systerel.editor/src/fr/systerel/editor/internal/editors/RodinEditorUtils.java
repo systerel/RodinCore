@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import static java.util.Collections.EMPTY_LIST;
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertAcceleratorToKeyStroke;
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
@@ -18,7 +17,7 @@ import static org.eventb.ui.manipulation.ElementManipulationFacade.getRodinFileU
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eventb.core.IEventBRoot;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
@@ -234,11 +234,11 @@ public class RodinEditorUtils {
 		display.asyncExec(runnable);
 	}
 
-	public static EvaluationContext getDefaultEvaluationContext(
-			RodinEditor editor) {
-		final EvaluationContext ctx = new EvaluationContext(null, EMPTY_LIST);
-		ctx.addVariable(ISources.ACTIVE_EDITOR_NAME, editor);
-		return ctx;
+	public static IEvaluationContext getDefaultEvaluationContext(RodinEditor editor) {
+		final IEvaluationService service = editor.getSite().getService(IEvaluationService.class);
+		final IEvaluationContext currentState = service.getCurrentState();
+		currentState.addVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, RodinEditor.EDITOR_ID);
+		return currentState;
 	}
 
 }

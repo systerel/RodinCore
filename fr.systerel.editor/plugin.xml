@@ -25,7 +25,7 @@
             commandId="fr.systerel.editor.addChild">
          <activeWhen>
             <reference
-                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+                  definitionId="fr.systerel.editor.definition.editableStructuralMode">
             </reference>
          </activeWhen>
       </handler>
@@ -34,7 +34,7 @@
             commandId="fr.systerel.editor.addSibling">
          <activeWhen>
             <reference
-                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+                  definitionId="fr.systerel.editor.definition.editableStructuralMode">
             </reference>
          </activeWhen>
       </handler>
@@ -43,7 +43,7 @@
             commandId="fr.systerel.editor.addSameSibling">
          <activeWhen>
             <reference
-                  definitionId="fr.systerel.editor.definition.inRodinEditor">
+                  definitionId="fr.systerel.editor.definition.editableStructuralMode">
             </reference>
          </activeWhen>
       </handler>

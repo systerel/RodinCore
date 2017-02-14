@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eventb.core.IContextRoot;
@@ -156,11 +155,6 @@ public class RodinEditor extends TextEditor {
 	
 		setTitleImageAndPartName();
 		contextMenuSimplifier = ContextMenuSimplifier.startSimplifying(styledText.getMenu());
-		// the focus tracker is used to activate the handlers, when the widget
-		// has focus and the editor is not in overlay mode.
-		final IFocusService focusService = (IFocusService) getSite()
-				.getService(IFocusService.class);
-		focusService.addFocusTracker(styledText, EDITOR_ID);
 		viewer.setEditable(false);
 		styledText.setEditable(false);
 		

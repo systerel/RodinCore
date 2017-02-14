@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.util.Collections;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -120,7 +120,7 @@ public class EditorActionTarget implements ITextOperationTarget {
 				.getService(ICommandService.class);
 		final Command command = service.getCommand(commandId);
 		try {
-			final EvaluationContext context = getDefaultEvaluationContext(editor);
+			final IEvaluationContext context = getDefaultEvaluationContext(editor);
 			command.executeWithChecks(new ExecutionEvent(command,
 					Collections.EMPTY_MAP, null, context));
 		} catch (Exception e) {
