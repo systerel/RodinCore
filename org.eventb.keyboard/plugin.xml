@@ -401,4 +401,19 @@
             primary="true">
       </toc>
    </extension>
+   <extension
+         point="org.rodinp.keyboard.core.symbols">
+      <symbol
+            combo="+-&gt;&gt;"
+            id="psur1"
+            name="%psurName"
+            translation="⤀">
+      </symbol>
+      <symbol
+            combo="--&gt;&gt;"
+            id="tsur1"
+            name="%tsurName"
+            translation="↠">
+      </symbol>
+   </extension>
 </plugin>
