@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,14 +125,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty()
-					.equals(RODIN_MATH_FONT)) {
-				if (event.getProperty().equals(
-						RODIN_MATH_FONT)) {
-					final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
-					viewer.getControl().setFont(font);
-					viewer.refresh();
-				}
+			if (event.getProperty().equals(RODIN_MATH_FONT)) {
+				final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
+				viewer.getControl().setFont(font);
+				viewer.refresh();
 			}
 		}
 
