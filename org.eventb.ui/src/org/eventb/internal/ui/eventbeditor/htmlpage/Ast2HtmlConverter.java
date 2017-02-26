@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ package org.eventb.internal.ui.eventbeditor.htmlpage;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
+import org.rodinp.keyboard.ui.BundledFileExtractor;
 
 
 /**

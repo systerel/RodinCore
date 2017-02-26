@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui;
+package org.rodinp.keyboard.ui;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,7 +34,7 @@ import org.osgi.framework.Bundle;
  *         This based on the class
  *         {@link org.eventb.core.seqprover.xprover.BundledFileExtractor} by
  *         Laurent Voisin
- * 
+ * @since 2.1
  */
 public class BundledFileExtractor {
 
