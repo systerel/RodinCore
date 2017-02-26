@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,18 @@
  *******************************************************************************/
 package org.rodinp.keyboard.ui;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.rodinp.internal.keyboard.ui.RodinModifyListener;
 import org.rodinp.internal.keyboard.ui.views.KeyboardView;
@@ -70,6 +76,7 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 		plugin = this;
 		if (isDebugging())
 			configureDebugOptions();
+		loadFont();
 	}
 
 	/**
@@ -170,6 +177,29 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 
 	public String translate(String text) {
 		return RodinKeyboardCore.translate(text);
+	}
+
+	/**
+	 * Utility method which try to load the necessary font if it is not
+	 * currently available.
+	 */
+	private void loadFont() {
+		final Display display = this.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				final FontData[] fontList = display.getFontList("Brave Sans Mono", true);
+				if (fontList.length != 0) {
+					return;
+				}
+				// The font is not available, try to load the font
+				final Bundle bundle = RodinKeyboardUIPlugin.getDefault().getBundle();
+				final IPath path = new Path("fonts/bravesansmono_roman.ttf");
+				final IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
+				Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
+				display.loadFont(absolutePath.toString());
+			}
+		});
 	}
 
 }
