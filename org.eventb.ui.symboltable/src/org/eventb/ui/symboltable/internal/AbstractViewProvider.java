@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Universitaet Duesseldorf and others.
+ * Copyright (c) 2009, 2017 Universitaet Duesseldorf and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 public abstract class AbstractViewProvider {
 	protected static final String TOOLTIP_PATTERN = "{0} (ASCII: {1})";
@@ -44,9 +44,7 @@ public abstract class AbstractViewProvider {
 		gray = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		black = display.getSystemColor(SWT.COLOR_BLACK);
 
-		// make sure Event-B UI plug-in is loaded and font is registered
-		EventBUIPlugin.getDefault();
-		// final FontData[] fontList = display.getFontList(null, true);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		symbolFont = new Font(display, "Brave Sans Mono", 12, SWT.NORMAL);
 	}
 
