@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Colum
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -193,6 +194,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	@Override
 	public Font getFont(Object element, int columnIndex) {
 		if (font == null) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 			font = JFaceResources.getFont(RODIN_MATH_FONT);
 		}
 		return font;
@@ -200,6 +202,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		viewer.refresh();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.internal.views.markers.ProblemsView;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
@@ -44,6 +45,7 @@ public class RodinProblemView extends ProblemsView {
 		for (Control control : children) {
 			if (control instanceof Tree) {
 				final Tree tree = (Tree) control;
+				RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 				final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 				tree.setFont(font);
 			}

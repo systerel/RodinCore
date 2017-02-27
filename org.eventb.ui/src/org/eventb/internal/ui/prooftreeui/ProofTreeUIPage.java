@@ -67,6 +67,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prooftreeui.services.ProofRuleSelectionService;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -120,12 +121,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		@Override
 		public Font getFont(Object element) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 			return JFaceResources.getFont(RODIN_MATH_FONT);
 		}
 
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(RODIN_MATH_FONT)) {
+				RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 				final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 				viewer.getControl().setFont(font);
 				viewer.refresh();

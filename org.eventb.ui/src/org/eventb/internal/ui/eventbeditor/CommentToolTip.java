@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 public class CommentToolTip {
@@ -301,6 +302,7 @@ public class CommentToolTip {
 				tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
 						| GridData.VERTICAL_ALIGN_CENTER));
 				// Create a new font for this label
+				RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 				Font font = JFaceResources
 						.getFont(PreferenceConstants.RODIN_MATH_FONT);
 				tipLabel.setFont(font);

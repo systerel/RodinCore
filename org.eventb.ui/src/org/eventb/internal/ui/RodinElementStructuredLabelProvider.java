@@ -32,6 +32,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
@@ -82,6 +83,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 
 	@Override
 	public Font getFont(Object element) {
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 	}
 

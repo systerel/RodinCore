@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.TimeTracker;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
@@ -153,6 +154,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	
 	@Override
 	public void createControl(Composite parent) {
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		// Create the top-level composite.
 		control = new Composite(parent, SWT.NULL);
@@ -420,6 +422,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 			return;
 		}
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 			font = JFaceResources
 					.getFont(PreferenceConstants.RODIN_MATH_FONT);			
 			styledText.setFont(font);

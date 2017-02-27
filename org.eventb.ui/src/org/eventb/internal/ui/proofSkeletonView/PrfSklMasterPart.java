@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -65,6 +66,7 @@ public class PrfSklMasterPart extends AbstractFormPart {
 	 */
 	public PrfSklMasterPart(Composite parent, IWorkbenchPartSite site) {
 		this.viewer = new TreeViewer(parent);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		setFont(JFaceResources.getFont(RODIN_MATH_FONT));
 		viewer.setContentProvider(new PrfSklContentProvider());
 		final ILabelDecorator decorator = PlatformUI.getWorkbench()
