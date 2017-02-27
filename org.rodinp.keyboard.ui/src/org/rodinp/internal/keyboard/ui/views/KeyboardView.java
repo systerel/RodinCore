@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.ui.views;
 
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.rodinp.internal.keyboard.ui.RodinModifyListener;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -77,7 +78,7 @@ public class KeyboardView extends ViewPart implements IPropertyChangeListener {
 
 		// Using a special fonts for showing Event-B symbols.
 		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-		Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 		formula.setFont(font);
 
 		// set context help id
@@ -93,10 +94,9 @@ public class KeyboardView extends ViewPart implements IPropertyChangeListener {
 	 * .jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
 			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-			Font font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+			Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 			formula.setFont(font);
 		}
 	}

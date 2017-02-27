@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.TimeTracker.newTracker;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +59,6 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -210,8 +210,7 @@ public abstract class HypothesisComposite implements
 		setScrolledLayout(sc, buttonBar);
 		
 		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-		font = JFaceResources
-				.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 
 		// Refresh to create to fill out the content of the scrolled form.
@@ -703,10 +702,9 @@ public abstract class HypothesisComposite implements
 		if (styledText == null || styledText.isDisposed()) {
 			return;
 		}
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
 			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-			font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
 			styledText.setFont(font);
 			refresh();
 			scrollToBottom();

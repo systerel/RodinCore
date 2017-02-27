@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.rodinproblems;
 
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -17,7 +19,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.internal.views.markers.ProblemsView;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * Overriding of the regular Problems view for Rodin.
@@ -46,7 +47,7 @@ public class RodinProblemView extends ProblemsView {
 			if (control instanceof Tree) {
 				final Tree tree = (Tree) control;
 				RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-				final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+				final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 				tree.setFont(font);
 			}
 		}

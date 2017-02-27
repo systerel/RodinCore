@@ -19,6 +19,7 @@ import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -73,7 +74,6 @@ import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.TimeTracker;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -155,7 +155,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	@Override
 	public void createControl(Composite parent) {
 		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		// Create the top-level composite.
 		control = new Composite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
@@ -421,10 +421,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		if (styledText == null || styledText.isDisposed()) {
 			return;
 		}
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
 			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-			font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);			
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
 			styledText.setFont(font);
 			setGoal();
 		}

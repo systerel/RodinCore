@@ -14,6 +14,7 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -47,7 +48,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 public class CommentToolTip {
 	Shell parentShell;
@@ -303,8 +303,7 @@ public class CommentToolTip {
 						| GridData.VERTICAL_ALIGN_CENTER));
 				// Create a new font for this label
 				RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-				Font font = JFaceResources
-						.getFont(PreferenceConstants.RODIN_MATH_FONT);
+				Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 				tipLabel.setFont(font);
 
 				// tipLabel.setData ("_TABLEITEM", item);

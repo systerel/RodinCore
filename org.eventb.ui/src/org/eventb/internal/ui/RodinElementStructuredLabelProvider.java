@@ -12,6 +12,7 @@
 package org.eventb.internal.ui;
 
 import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.Set;
 
@@ -33,7 +34,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -84,7 +84,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	@Override
 	public Font getFont(Object element) {
 		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
-		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		return JFaceResources.getFont(RODIN_MATH_FONT);
 	}
 
 	/* (non-Javadoc)
@@ -92,7 +92,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
 			viewer.refresh();
 		}
 	}
