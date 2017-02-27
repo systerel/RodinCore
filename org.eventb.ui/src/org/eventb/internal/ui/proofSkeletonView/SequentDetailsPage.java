@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * DetailsPage for sequents. It is used within the proof skeleton
@@ -87,6 +88,7 @@ public class SequentDetailsPage implements IDetailsPage {
 	public void createContents(Composite parent) {
 		parent.setLayout(new FillLayout());
 		viewer = new ListViewer(parent);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		setFont(JFaceResources.getFont(RODIN_MATH_FONT));
 		viewer.setContentProvider(sequentContentProvider);
 		addPopUpMenu();

@@ -4,7 +4,7 @@ Bundle-Name: %BundleName
 Bundle-SymbolicName: org.eventb.ui.symboltable;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eventb.ui.symboltable.internal.SymbolTablePlugin
-Require-Bundle: org.eventb.ui,
+Require-Bundle: org.rodinp.keyboard.ui,
  org.eclipse.core.expressions,
  org.eclipse.ui,
  org.eclipse.core.runtime

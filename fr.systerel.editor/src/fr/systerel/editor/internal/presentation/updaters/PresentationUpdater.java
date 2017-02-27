@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.editors.RodinEditor;
@@ -147,6 +148,7 @@ public class PresentationUpdater extends EContentAdapter implements
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 			final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 			final StyledText styledText = editor.getStyledText();
 			if (styledText == null || styledText.isDisposed()) {

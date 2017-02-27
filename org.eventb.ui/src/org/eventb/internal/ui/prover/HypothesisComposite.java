@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.TimeTracker.newTracker;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +58,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -208,8 +209,8 @@ public abstract class HypothesisComposite implements
 		sc = new ScrolledComposite(control, SWT.H_SCROLL | SWT.V_SCROLL);
 		setScrolledLayout(sc, buttonBar);
 		
-		font = JFaceResources
-				.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 
 		// Refresh to create to fill out the content of the scrolled form.
@@ -701,9 +702,9 @@ public abstract class HypothesisComposite implements
 		if (styledText == null || styledText.isDisposed()) {
 			return;
 		}
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-			font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
 			styledText.setFont(font);
 			refresh();
 			scrollToBottom();

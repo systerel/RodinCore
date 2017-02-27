@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -38,8 +40,8 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 */
 	public EventBControl(Control control) {
 		this.control = control;
-		Font font = JFaceResources
-				.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+		Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 		control.setFont(font);
 
 		JFaceResources.getFontRegistry().addListener(this);
@@ -52,9 +54,9 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-			Font font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+			Font font = JFaceResources.getFont(RODIN_MATH_FONT);
 			control.setFont(font);
 		}
 	}

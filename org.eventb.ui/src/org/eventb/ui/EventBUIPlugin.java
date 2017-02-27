@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,20 +15,14 @@
  *******************************************************************************/
 package org.eventb.ui;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -47,7 +41,6 @@ import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.eventb.ui.itemdescription.IElementDescRegistry;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -210,32 +203,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		
 		ToggleAutoTacticPreference.registerListener();
 		
-		loadFont();
-		
 		RodinCore.addElementChangedListener(new EditorManager());
-	}
-
-	/**
-	 * Utility method which try to load the necessary font if it is not
-	 * currently available.
-	 */
-	private void loadFont() {
-		final Display display = this.getWorkbench().getDisplay();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				final FontData[] fontList = display.getFontList("Brave Sans Mono", true);
-				if (fontList.length != 0) {
-					return;
-				}
-				// The font is not available, try to load the font
-				final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
-				final IPath path = new Path("fonts/bravesansmono_roman.ttf");
-				final IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
-				Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
-				display.loadFont(absolutePath.toString());
-			}
-		});
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -72,7 +73,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.TimeTracker;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -153,7 +154,8 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	
 	@Override
 	public void createControl(Composite parent) {
-		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		// Create the top-level composite.
 		control = new Composite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
@@ -419,9 +421,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		if (styledText == null || styledText.isDisposed()) {
 			return;
 		}
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-			font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);			
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
 			styledText.setFont(font);
 			setGoal();
 		}

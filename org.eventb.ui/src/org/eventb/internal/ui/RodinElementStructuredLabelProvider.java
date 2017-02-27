@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eventb.internal.ui;
 
 import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -82,7 +83,8 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 
 	@Override
 	public Font getFont(Object element) {
-		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
+		return JFaceResources.getFont(RODIN_MATH_FONT);
 	}
 
 	/* (non-Javadoc)
@@ -90,10 +92,8 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-			if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-				viewer.refresh();
-			}
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			viewer.refresh();
 		}
 	}
 

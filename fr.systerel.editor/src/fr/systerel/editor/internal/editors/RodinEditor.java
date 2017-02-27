@@ -48,6 +48,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.operations.EditorActionTarget;
@@ -127,6 +128,7 @@ public class RodinEditor extends TextEditor {
 			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(this);
 	
 		styledText = viewer.getTextWidget();
+		RodinKeyboardUIPlugin.getDefault().ensureMathFontIsAvailable();
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		styledText.setFont(font);
 	
