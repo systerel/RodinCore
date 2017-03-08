@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,16 +105,6 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 				"{P=ℙ(ℤ)}[][][1∈P] |- bool(⊤) = TRUE "));
 		tests.add(makeSuccess(" 1∈P |- {x ∣ 1∈P ∧ x∈P} = P ", //
 				"{P=ℙ(ℤ)}[][][1∈P] |- {x ∣ ⊤ ∧ x∈P} = P "));
-		// Hidden hypotheses are considered.
-		tests.add(makeSuccess(seq("1∈P", "1∈P⇒2∈P", "", "⊥"),
-				seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "⊥")));
-		// Hidden hypothesis takes precedence over goal. The behavior
-		// in level 0 and 1 is incorrect and has been fixed in level 2 where
-		// the goal gets rewritten by a hidden hypothesis
-		tests.add(makeSuccess(seq("1∈P", "1∈P⇒2∈P", "", "1∈P"), //
-				fromLevel2 //
-				? seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "⊤") //
-						: seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "1∈P")));
 		if (fromLevel2) {
 			// Two equivalent hypothesis
 			tests.add(makeSuccess(" x=1 ;; 1=x|- ⊤ ",
@@ -188,6 +178,10 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		// Fails because genSeq removes duplicates hypotheses
 		// rewrites the sequent to "1∈P|- ⊤"
 		tests.add(makeFailure(" 1∈P ;; 1∈P|- ⊤ "));
+		// Hidden hypotheses are not considered anymore
+		tests.add(makeFailure(seq("1∈P", "1∈P⇒2∈P", "", "⊥")));
+		// Hidden hypothesis cannot rewrite the goal.
+		tests.add(makeFailure(seq("1∈P", "2∈P", "", "1∈P")));
 		// From the level 2, works as HYP, CNTR
 		if (!fromLevel2) {
 			// Two hypothesis equal
@@ -199,10 +193,17 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 			// A goal and its negation in hypothesis
 			tests.add(makeFailure(" ¬1∈P |- 1∈P "));
 		}
+
+		// Regression test for bug #764
+		tests.add(makeFailure(seq("¬x<2", "", "x≥2", "x=2")));
 	}
 
 	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
 		final IProverSequent sequent = genSeq(sequentImage);
+		return makeFailure(sequent);
+	}
+
+	private UnsuccessfullReasonerApplication makeFailure(IProverSequent sequent) {
 		return new UnsuccessfullReasonerApplication(sequent, new EmptyInput());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class GenMPC {
 	 * Extracts the substitutes from all hypotheses and the goal.
 	 */
 	private void extractSubstitutes() {
-		for (Predicate hyp : seq.hypIterable()) {
+		for (Predicate hyp : seq.visibleHypIterable()) {
 			addSubstitute(hyp, false, hyp);
 		}
 		if (!level.from(Level.L1)) {
