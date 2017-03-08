@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,29 +131,4 @@ import org.eventb.core.seqprover.ProverFactory;
 		return hyps;
 	}
 
-	
-	/**
-	 * Searches the set of hypotheses in the given sequent for the given
-	 * hypotheses and returns the hypothesis found as it occurs in the
-	 * sequent.
-	 * 
-	 * This is useful for extracting the reference of a hypothesis inside
-	 * a sequent in the case where this is needed.
-	 * 
-	 * @param seq
-	 * 		The sequent in whose hyoptheses to search
-	 * @param hyp
-	 * 		The hypothesis to search for
-	 * @return
-	 * 		The sequent copy of the hypothesis in case it is found, or
-	 * 		<code>null</code> otherwise.
-	 */
-	public static Predicate getHypRef(IProverSequent seq, Predicate hyp)
-	{
-		for (Predicate pred : seq.hypIterable()) {
-			if (hyp.equals(pred)) return pred;
-		}
-		return null;
-	}
-	
 }
