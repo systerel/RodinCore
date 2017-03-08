@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,10 @@ public class GeneralizedModusPonensL2Tests extends GeneralizedModusPonensL1Tests
 		// Apply many times in goal 2/2
 		tests.add(makeSuccess(" 1=x ;; (2∈P⇒3∈P) |- x=1∧(2∈P⇒3∈P) ", //
 				"{P=ℙ(ℤ)}[][][1=x ;; (2∈P⇒3∈P)] |- ⊤∧⊤")); //
+		// Regression test for a case similar to bug #764:
+		// Two equivalent hypotheses do not rewrite each other.
+		tests.add(makeSuccess(" a<b ;; b>a |- ⊤ ", //
+				"{a=ℤ; b=ℤ}[b>a][][a<b ;; ⊤] |- ⊤"));
 		super.addSuccessfullReasonerApplications(tests);
 	}
 
