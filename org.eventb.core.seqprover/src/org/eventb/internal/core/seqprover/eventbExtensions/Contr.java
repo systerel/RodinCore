@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,57 +10,59 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Collections;
+import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
+
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
 /**
- * Generates a proof rule to contradict the goal and falsify a given hypothesis simultaniously.
- * 
+ * Generates a proof rule to contradict the goal and falsify a given hypothesis
+ * simultaneously.
  * <p>
- * In case no hypothesis is given, the reasoner assumes the given hypothesis is 'true'.
+ * In case no hypothesis is given, the reasoner assumes the given hypothesis is
+ * 'true'.
  * </p>
  * 
  * @author Farhad Mehta
- *
  */
-public class Contr extends HypothesisReasoner{
-	
+public class Contr extends HypothesisReasoner {
+
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".contr";
-	
+
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
-	@ProverRule( { "CONTRADICT_L", "CONTRADICT_R" })
+	@ProverRule({ "CONTRADICT_L", "CONTRADICT_R" })
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent sequent,
 			Predicate pred) {
 
 		final Predicate newGoal;
-		IHypAction deselect = null;
+		final IHypAction deselect;
 		if (pred == null) {
-			newGoal = DLib.False(sequent.getFormulaFactory());
+			newGoal = False(sequent.getFormulaFactory());
+			deselect = null;
 		} else {
-			newGoal = DLib.makeNeg(pred);
-			deselect = ProverFactory.makeDeselectHypAction(Collections.singleton(pred));
+			newGoal = makeNeg(pred);
+			deselect = makeDeselectHypAction(singleton(pred));
 		}
-		return new IAntecedent[] {
-				ProverFactory.makeAntecedent(
-						newGoal,
-						Lib.breakPossibleConjunct(DLib.makeNeg(sequent.goal())),
-						deselect)
-		};
+		final Predicate negOldGoal = makeNeg(sequent.goal());
+		final Set<Predicate> newHyps = breakPossibleConjunct(negOldGoal);
+		return new IAntecedent[] { makeAntecedent(newGoal, newHyps, deselect) };
 	}
 
 	@Override
