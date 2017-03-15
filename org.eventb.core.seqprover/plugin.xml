@@ -227,6 +227,11 @@
             name="%genMPName">
       </reasoner>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL3"
+            id="genMPL3"
+            name="%genMPName">
+      </reasoner>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites"
             id="disjToImplRewrites"
             name="%disjToImplRewritesName"/>

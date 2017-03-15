@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			+ ".genMP";
 
 	public static enum Level {
-		L0, L1, L2;
+		L0, L1, L2, L3;
 
 		public static final Level LATEST = Level.latest();
 

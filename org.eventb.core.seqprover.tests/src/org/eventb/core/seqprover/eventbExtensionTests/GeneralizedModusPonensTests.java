@@ -27,9 +27,11 @@ import org.junit.Test;
 public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests {
 	private final String REASONER_ID;
 	protected final boolean fromLevel2;
+	protected final boolean fromLevel3;
 
 	public GeneralizedModusPonensTests(AbstractGenMP reasoner) {
 		this.fromLevel2 = reasoner.level().from(Level.L2);
+		this.fromLevel3 = reasoner.level().from(Level.L3);
 		REASONER_ID = reasoner.getReasonerID();
 	}
 
@@ -94,6 +96,23 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 				"{P=ℙ(ℤ)}[][][1∈P] |- bool(⊤) = TRUE ");
 		assertReasonerSuccess(" 1∈P |- {x ∣ 1∈P ∧ x∈P} = P ", //
 				"{P=ℙ(ℤ)}[][][1∈P] |- {x ∣ ⊤ ∧ x∈P} = P ");
+		if (fromLevel3) {
+			// Hidden hypotheses are not considered anymore
+			assertReasonerFailure(seq("1∈P", "1∈P⇒2∈P", "", "⊥"));
+			// Hidden hypothesis cannot rewrite the goal.
+			assertReasonerFailure(seq("1∈P", "2∈P", "", "1∈P"));
+		} else {
+			// Hidden hypotheses are considered.
+			assertReasonerSuccess(seq("1∈P", "1∈P⇒2∈P", "", "⊥"),
+					seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "⊥"));
+			// Hidden hypothesis takes precedence over goal. The behavior
+			// in level 0 and 1 is incorrect and has been fixed in level 2 where
+			// the goal gets rewritten by a hidden hypothesis
+			assertReasonerSuccess(seq("1∈P", "1∈P⇒2∈P", "", "1∈P"), //
+					fromLevel2 //
+							? seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "⊤") //
+							: seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "1∈P"));
+		}
 		if (fromLevel2) {
 			// Two equivalent hypothesis
 			assertReasonerSuccess(" x=1 ;; 1=x|- ⊤ ",
@@ -139,10 +158,6 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		// Fails because genSeq removes duplicates hypotheses
 		// rewrites the sequent to "1∈P|- ⊤"
 		assertReasonerFailure(" 1∈P ;; 1∈P|- ⊤ ");
-		// Hidden hypotheses are not considered anymore
-		assertReasonerFailure(seq("1∈P", "1∈P⇒2∈P", "", "⊥"));
-		// Hidden hypothesis cannot rewrite the goal.
-		assertReasonerFailure(seq("1∈P", "2∈P", "", "1∈P"));
 		// From the level 2, works as HYP, CNTR
 		if (!fromLevel2) {
 			// Two hypothesis equal
@@ -156,7 +171,12 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		}
 
 		// Regression test for bug #764
-		assertReasonerFailure(seq("¬x<2", "", "x≥2", "x=2"));
+		if (!fromLevel2 || fromLevel3) {
+			assertReasonerFailure(seq("¬x<2", "", "x≥2", "x=2"));
+		} else {
+			assertReasonerSuccess(seq("¬x<2", "", "x≥2", "x=2"),
+					seq("¬x<2 ;; x≥2", "", "⊤", "x=2"));
+		}
 	}
 
 	protected void assertReasonerSuccess(IProverSequent sequent,
