@@ -36,6 +36,10 @@
              id="contr"
              name="%contrName"/>
        <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.ContrL1"
+             id="contrL1"
+             name="%contrName"/>
+       <reasoner
              class="org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps"
              id="contrHyps"
              name="%contrHypsName"/>
