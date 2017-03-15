@@ -11,16 +11,13 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP;
 import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP.Level;
+import org.junit.Test;
 
 /**
  * Units tests for reasoners GeneralizedModusPonens.
@@ -41,170 +38,152 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		return REASONER_ID;
 	}
 
-	@Override
-	public final SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final List<SuccessfullReasonerApplication> tests;
-		tests = new ArrayList<SuccessfullReasonerApplication>();
-		addSuccessfullReasonerApplications(tests);
-		return tests
-				.toArray(new SuccessfullReasonerApplication[tests.size()]);
-	}
+	@Test
+	public void success() throws Exception {
 
-	protected void addSuccessfullReasonerApplications(
-			List<SuccessfullReasonerApplication> tests) {
 		// Apply once in the hypothesis 1/2 (TRUE)
-		tests.add(makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- ⊤ ", //
-				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒2∈P] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; 1∈P⇒2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒2∈P] |- ⊤");
 		// Apply once in the hypothesis 2/2 (TRUE)
-		tests.add(makeSuccess(" 1∈P ;; ¬1∈P⇒2∈P |- ⊤ ", //
-				"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][1∈P ;; ¬⊤⇒2∈P] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; ¬1∈P⇒2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][1∈P ;; ¬⊤⇒2∈P] |- ⊤");
 		// Apply once in goal 1/2 (TRUE)
-		tests.add(makeSuccess(" 1∈P |- 1∈P⇒2∈P ", //
-				"{P=ℙ(ℤ)}[][][1∈P] |- ⊤⇒2∈P"));
+		assertReasonerSuccess(" 1∈P |- 1∈P⇒2∈P ", //
+				"{P=ℙ(ℤ)}[][][1∈P] |- ⊤⇒2∈P");
 		// Apply once in goal 2/2 (TRUE)
-		tests.add(makeSuccess("  1∈P |- ¬1∈P⇒2∈P ", //
-				"{P=ℙ(ℤ)}[][][1∈P] |- ¬⊤⇒2∈P"));
+		assertReasonerSuccess("  1∈P |- ¬1∈P⇒2∈P ", //
+				"{P=ℙ(ℤ)}[][][1∈P] |- ¬⊤⇒2∈P");
 		// Apply once in the hypothesis 1/2 (FALSE)
-		tests.add(makeSuccess(" ¬1∈P ;; 1∈P⇒2∈P |- ⊤ ", //
-				"{P=ℙ(ℤ)}[(1∈P⇒2∈P)][][¬1∈P ;; ⊥⇒2∈P] |- ⊤"));
+		assertReasonerSuccess(" ¬1∈P ;; 1∈P⇒2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[(1∈P⇒2∈P)][][¬1∈P ;; ⊥⇒2∈P] |- ⊤");
 		// Apply once in the hypothesis 2/2 (FALSE)
-		tests.add(makeSuccess(" ¬1∈P ;; ¬1∈P⇒2∈P |- ⊤ ", //
-				"{P=ℙ(ℤ)}[(¬1∈P⇒2∈P)][][¬1∈P ;; ¬⊥⇒2∈P] |- ⊤"));
+		assertReasonerSuccess(" ¬1∈P ;; ¬1∈P⇒2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[(¬1∈P⇒2∈P)][][¬1∈P ;; ¬⊥⇒2∈P] |- ⊤");
 		// Apply once in goal 1/2 (FALSE)
-		tests.add(makeSuccess(" ¬1∈P |- 1∈P⇒2∈P ", //
-				"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥⇒2∈P"));
+		assertReasonerSuccess(" ¬1∈P |- 1∈P⇒2∈P ", //
+				"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥⇒2∈P");
 		// Apply once in goal 2/2 (FALSE)
-		tests.add(makeSuccess("  ¬1∈P |- ¬1∈P⇒2∈P ", //
-				"{P=ℙ(ℤ)}[][][¬1∈P] |- ¬⊥⇒2∈P"));
+		assertReasonerSuccess("  ¬1∈P |- ¬1∈P⇒2∈P ", //
+				"{P=ℙ(ℤ)}[][][¬1∈P] |- ¬⊥⇒2∈P");
 		// Apply in both hypothesis and goal
-		tests.add(makeSuccess(" 1∈P ;; (1∈P⇒2∈P)⇒3∈P |- 2∈P⇒1∈P ", //
-				"{P=ℙ(ℤ)}[(1∈P⇒2∈P)⇒3∈P][][1∈P ;; (⊤⇒2∈P)⇒3∈P] |- 2∈P⇒⊤"));
+		assertReasonerSuccess(" 1∈P ;; (1∈P⇒2∈P)⇒3∈P |- 2∈P⇒1∈P ", //
+				"{P=ℙ(ℤ)}[(1∈P⇒2∈P)⇒3∈P][][1∈P ;; (⊤⇒2∈P)⇒3∈P] |- 2∈P⇒⊤");
 		// Apply in many hypothesis
-		tests.add(makeSuccess(" 1∈P ;; ¬(1∈P⇒2∈P) ;; (¬1∈P⇒3∈P) |- ⊤ ", //
-				"{P=ℙ(ℤ)}[¬(1∈P⇒2∈P) ;; (¬1∈P⇒3∈P)][][1∈P ;; ¬(⊤⇒2∈P) ;; (¬⊤⇒3∈P)] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; ¬(1∈P⇒2∈P) ;; (¬1∈P⇒3∈P) |- ⊤ ", //
+				"{P=ℙ(ℤ)}[¬(1∈P⇒2∈P) ;; (¬1∈P⇒3∈P)][][1∈P ;; ¬(⊤⇒2∈P) ;; (¬⊤⇒3∈P)] |- ⊤");
 		// Apply many times in many hypothesis
-		tests.add(makeSuccess(" 1∈P ;; (1∈P⇒2∈P) ;; 1∈P∧(1∈P⇒2∈P) |- ⊤ ", //
-				"{P=ℙ(ℤ)}[(1∈P⇒2∈P) ;; 1∈P∧(1∈P⇒2∈P)][][1∈P ;; (⊤⇒2∈P) ;; ⊤∧⊤] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; (1∈P⇒2∈P) ;; 1∈P∧(1∈P⇒2∈P) |- ⊤ ", //
+				"{P=ℙ(ℤ)}[(1∈P⇒2∈P) ;; 1∈P∧(1∈P⇒2∈P)][][1∈P ;; (⊤⇒2∈P) ;; ⊤∧⊤] |- ⊤");
 		// Apply many times in hypothesis
-		tests.add(makeSuccess(" 1∈P ;;  1∈P∧(¬1∈P⇒(3∈P∧1∈P)) |- ⊤ ", //
-				"{P=ℙ(ℤ)}[1∈P∧(¬1∈P⇒(3∈P∧1∈P))][][1∈P ;; ⊤∧(¬⊤⇒(3∈P∧⊤))] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;;  1∈P∧(¬1∈P⇒(3∈P∧1∈P)) |- ⊤ ", //
+				"{P=ℙ(ℤ)}[1∈P∧(¬1∈P⇒(3∈P∧1∈P))][][1∈P ;; ⊤∧(¬⊤⇒(3∈P∧⊤))] |- ⊤");
 		// Apply many times in goal 1/2
-		tests.add(makeSuccess(" 1∈P |- 2∈P⇒1∈P ∧ (1∈P ∨ (¬1∈P)⇒2∈P)", //
-				"{P=ℙ(ℤ)}[][][1∈P] |- 2∈P⇒⊤ ∧ (⊤ ∨ (¬⊤)⇒2∈P)"));
+		assertReasonerSuccess(" 1∈P |- 2∈P⇒1∈P ∧ (1∈P ∨ (¬1∈P)⇒2∈P)", //
+				"{P=ℙ(ℤ)}[][][1∈P] |- 2∈P⇒⊤ ∧ (⊤ ∨ (¬⊤)⇒2∈P)");
 		// Apply many times in goal 2/2
-		tests.add(makeSuccess(" 1∈P ;; (2∈P⇒3∈P) |- 1∈P∧(2∈P⇒3∈P) ", //
-				"{P=ℙ(ℤ)}[][][1∈P ;; (2∈P⇒3∈P)] |- ⊤∧⊤"));
+		assertReasonerSuccess(" 1∈P ;; (2∈P⇒3∈P) |- 1∈P∧(2∈P⇒3∈P) ", //
+				"{P=ℙ(ℤ)}[][][1∈P ;; (2∈P⇒3∈P)] |- ⊤∧⊤");
 		// With associative predicates exactly equal (∧)
-		tests.add(makeSuccess(" 1∈P∧2∈P |- 1∈P∧2∈P ⇒ 3∈P ", //
-				"{P=ℙ(ℤ)}[][][1∈P∧2∈P] |- ⊤⇒3∈P "));
+		assertReasonerSuccess(" 1∈P∧2∈P |- 1∈P∧2∈P ⇒ 3∈P ", //
+				"{P=ℙ(ℤ)}[][][1∈P∧2∈P] |- ⊤⇒3∈P ");
 		// With associative predicates exactly equal (∨)
-		tests.add(makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ⇒ 3∈P ", //
-				"{P=ℙ(ℤ)}[][][1∈P∨2∈P] |- ⊤⇒3∈P "));
+		assertReasonerSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ⇒ 3∈P ", //
+				"{P=ℙ(ℤ)}[][][1∈P∨2∈P] |- ⊤⇒3∈P ");
 		// Rewrites deeply in expressions
-		tests.add(makeSuccess(" 1∈P |- bool(1∈P) = TRUE ", //
-				"{P=ℙ(ℤ)}[][][1∈P] |- bool(⊤) = TRUE "));
-		tests.add(makeSuccess(" 1∈P |- {x ∣ 1∈P ∧ x∈P} = P ", //
-				"{P=ℙ(ℤ)}[][][1∈P] |- {x ∣ ⊤ ∧ x∈P} = P "));
+		assertReasonerSuccess(" 1∈P |- bool(1∈P) = TRUE ", //
+				"{P=ℙ(ℤ)}[][][1∈P] |- bool(⊤) = TRUE ");
+		assertReasonerSuccess(" 1∈P |- {x ∣ 1∈P ∧ x∈P} = P ", //
+				"{P=ℙ(ℤ)}[][][1∈P] |- {x ∣ ⊤ ∧ x∈P} = P ");
 		if (fromLevel2) {
 			// Two equivalent hypothesis
-			tests.add(makeSuccess(" x=1 ;; 1=x|- ⊤ ",
-					"{x=ℤ}[1=x][][x=1 ;; ⊤] |- ⊤ "));
+			assertReasonerSuccess(" x=1 ;; 1=x|- ⊤ ",
+					"{x=ℤ}[1=x][][x=1 ;; ⊤] |- ⊤ ");
 			// A hypothesis and its negation
-			tests.add(makeSuccess(" 1∈P ;; ¬1∈P|- ⊤ ",
-					"{P=ℙ(ℤ)}[¬1∈P][][1∈P ;; ¬⊤] |- ⊤"));
+			assertReasonerSuccess(" 1∈P ;; ¬1∈P|- ⊤ ",
+					"{P=ℙ(ℤ)}[¬1∈P][][1∈P ;; ¬⊤] |- ⊤");
 			// A hypothesis and its negation in goal
-			tests.add(makeSuccess(" 1∈P |- ¬1∈P ",
-					"{P=ℙ(ℤ)}[][][1∈P] |- ¬⊤ "));
+			assertReasonerSuccess(" 1∈P |- ¬1∈P ", //
+					"{P=ℙ(ℤ)}[][][1∈P] |- ¬⊤ ");
 			// A goal and its negation in hypothesis
-			tests.add(makeSuccess(" ¬1∈P |- 1∈P ",
-					"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥ "));
+			assertReasonerSuccess(" ¬1∈P |- 1∈P ", //
+					"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥ ");
 		}
 		// Bug #713: Apply in two hypotheses giving the same result
-		tests.add(makeSuccess(" 1∈P ;; 2∈P ;; 3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P |- ⊤ ", //
-				"{P=ℙ(ℤ)}[3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P][][1∈P ;; 2∈P ;; 3∈P ⇒ ⊤] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; 2∈P ;; 3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P |- ⊤ ", //
+				"{P=ℙ(ℤ)}[3∈P ⇒ 1∈P ;; 3∈P ⇒ 2∈P][][1∈P ;; 2∈P ;; 3∈P ⇒ ⊤] |- ⊤");
 		// Bug #713: Apply in a hypotheses giving an already existing hypothesis
-		tests.add(makeSuccess(" 1∈P ;; 2∈P ⇒ 1∈P ;; 2∈P ⇒ ⊤ |- ⊤ ", //
-				"{P=ℙ(ℤ)}[2∈P ⇒ 1∈P][][1∈P ;; 2∈P ⇒ ⊤] |- ⊤"));
+		assertReasonerSuccess(" 1∈P ;; 2∈P ⇒ 1∈P ;; 2∈P ⇒ ⊤ |- ⊤ ", //
+				"{P=ℙ(ℤ)}[2∈P ⇒ 1∈P][][1∈P ;; 2∈P ⇒ ⊤] |- ⊤");
 	}
 
-	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
-			String newSequentImage) {
-		final IProverSequent sequent = genSeq(sequentImage);
-		return new SuccessfullReasonerApplication(sequent, new EmptyInput(),
-				newSequentImage);
-	}
-
-	protected SuccessfullReasonerApplication makeSuccess(IProverSequent sequent,
-			IProverSequent newSequent) {
-		return new SuccessfullReasonerApplication(sequent, new EmptyInput(),
-				newSequent);
-	}
-
-	private IProverSequent seq(String hiddenHypsImage, String defaultHypsImage,
-			String selHypsImage, String goalImage) {
-		return genFullSeq("P=ℙ(ℤ)", hiddenHypsImage, defaultHypsImage,
-				selHypsImage, goalImage);
-	}
-
-	@Override
-	public final UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		final List<UnsuccessfullReasonerApplication> tests;
-		tests = new ArrayList<UnsuccessfullReasonerApplication>();
-		addUnsuccessfullReasonerApplications(tests);
-		return tests
-				.toArray(new UnsuccessfullReasonerApplication[tests.size()]);
-	}
-
-	protected void addUnsuccessfullReasonerApplications(
-			List<UnsuccessfullReasonerApplication> tests) {
+	@Test
+	public void failure() throws Exception {
 		// Two associative predicates equivalent but not exactly
 		// equal
 		// (∨)
-		tests.add(makeFailure(" 1∈P∨2∈P ;; 2∈P∨1∈P |- ⊤ "));
+		assertReasonerFailure(" 1∈P∨2∈P ;; 2∈P∨1∈P |- ⊤ ");
 		// Two associative predicates equivalent but not exactly
 		// equal
 		// (∧)
-		tests.add(makeFailure(" 1∈P∧2∈P ;; 2∈P∧1∈P |- ⊤ "));
+		assertReasonerFailure(" 1∈P∧2∈P ;; 2∈P∧1∈P |- ⊤ ");
 		// Two associative predicates : one containing the other
 		// one (∨)
-		tests.add(makeFailure(" 1∈P∨2∈P ;; 3∈P∨1∈P∨2∈P |- ⊤ "));
+		assertReasonerFailure(" 1∈P∨2∈P ;; 3∈P∨1∈P∨2∈P |- ⊤ ");
 		// Two associative predicates : one containing the other
 		// one (∧)
-		tests.add(makeFailure(" 1∈P∧2∈P ;; 3∈P∧1∈P∧2∈P |- ⊤ "));
+		assertReasonerFailure(" 1∈P∧2∈P ;; 3∈P∧1∈P∧2∈P |- ⊤ ");
 		// Predicate ⊤ and ⊥ are not replaced
-		tests.add(makeFailure(" ⊥ ;; ⊤ ;; (⊤∨⊥) |- ⊤ "));
+		assertReasonerFailure(" ⊥ ;; ⊤ ;; (⊤∨⊥) |- ⊤ ");
 		// Avoid infinite loop
-		tests.add(makeFailure(" ⊥ ;; ¬⊤ |- ¬⊤ "));
+		assertReasonerFailure(" ⊥ ;; ¬⊤ |- ¬⊤ ");
 		// Fails because genSeq removes duplicates hypotheses
 		// rewrites the sequent to "1∈P|- ⊤"
-		tests.add(makeFailure(" 1∈P ;; 1∈P|- ⊤ "));
+		assertReasonerFailure(" 1∈P ;; 1∈P|- ⊤ ");
 		// Hidden hypotheses are not considered anymore
-		tests.add(makeFailure(seq("1∈P", "1∈P⇒2∈P", "", "⊥")));
+		assertReasonerFailure(seq("1∈P", "1∈P⇒2∈P", "", "⊥"));
 		// Hidden hypothesis cannot rewrite the goal.
-		tests.add(makeFailure(seq("1∈P", "2∈P", "", "1∈P")));
+		assertReasonerFailure(seq("1∈P", "2∈P", "", "1∈P"));
 		// From the level 2, works as HYP, CNTR
 		if (!fromLevel2) {
 			// Two hypothesis equal
-			tests.add(makeFailure(" 1=x ;; x=1|- ⊤ "));
+			assertReasonerFailure(" 1=x ;; x=1|- ⊤ ");
 			// A hypothesis and its negation
-			tests.add(makeFailure(" 1∈P ;; ¬1∈P|- ⊤ "));
+			assertReasonerFailure(" 1∈P ;; ¬1∈P|- ⊤ ");
 			// A hypothesis and its negation in goal
-			tests.add(makeFailure(" 1∈P |- ¬1∈P "));
+			assertReasonerFailure(" 1∈P |- ¬1∈P ");
 			// A goal and its negation in hypothesis
-			tests.add(makeFailure(" ¬1∈P |- 1∈P "));
+			assertReasonerFailure(" ¬1∈P |- 1∈P ");
 		}
 
 		// Regression test for bug #764
-		tests.add(makeFailure(seq("¬x<2", "", "x≥2", "x=2")));
+		assertReasonerFailure(seq("¬x<2", "", "x≥2", "x=2"));
 	}
 
-	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
-		final IProverSequent sequent = genSeq(sequentImage);
-		return makeFailure(sequent);
+	protected void assertReasonerSuccess(IProverSequent sequent,
+			IProverSequent newSequent) throws Exception {
+		assertReasonerSuccess(sequent, new EmptyInput(), newSequent);
 	}
 
-	private UnsuccessfullReasonerApplication makeFailure(IProverSequent sequent) {
-		return new UnsuccessfullReasonerApplication(sequent, new EmptyInput());
+	protected void assertReasonerSuccess(String sequent, String newSequent)
+			throws Exception {
+		assertReasonerSuccess(sequent, new EmptyInput(), newSequent);
+	}
+
+	protected void assertReasonerFailure(String sequent) throws Exception {
+		// FIXME error message
+		assertReasonerFailure(sequent, new EmptyInput(), null);
+	}
+
+	protected void assertReasonerFailure(IProverSequent sequent)
+			throws Exception {
+		// FIXME error message
+		assertReasonerFailure(sequent, new EmptyInput(), null);
+	}
+
+	protected IProverSequent seq(String hiddenHypsImage,
+			String defaultHypsImage, String selHypsImage, String goalImage) {
+		return genFullSeq("P=ℙ(ℤ); a=S; b=S", hiddenHypsImage, defaultHypsImage,
+				selHypsImage, goalImage);
 	}
 
 }
