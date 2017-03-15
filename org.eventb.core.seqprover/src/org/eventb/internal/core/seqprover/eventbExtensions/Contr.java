@@ -58,11 +58,15 @@ public class Contr extends HypothesisReasoner {
 			deselect = null;
 		} else {
 			newGoal = makeNeg(pred);
-			deselect = makeDeselectHypAction(singleton(pred));
+			deselect = makeHypAction(pred);
 		}
 		final Predicate negOldGoal = makeNeg(sequent.goal());
 		final Set<Predicate> newHyps = breakPossibleConjunct(negOldGoal);
 		return new IAntecedent[] { makeAntecedent(newGoal, newHyps, deselect) };
+	}
+	
+	protected IHypAction makeHypAction(Predicate pred) {
+		return makeDeselectHypAction(singleton(pred));
 	}
 
 	@Override
