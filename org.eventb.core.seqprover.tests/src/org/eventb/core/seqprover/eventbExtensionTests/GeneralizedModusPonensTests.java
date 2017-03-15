@@ -169,15 +169,15 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		assertReasonerSuccess(sequent, new EmptyInput(), newSequent);
 	}
 
+	private static final String REASON = "generalized MP no more applicable";
+	
 	protected void assertReasonerFailure(String sequent) throws Exception {
-		// FIXME error message
-		assertReasonerFailure(sequent, new EmptyInput(), null);
+		assertReasonerFailure(sequent, new EmptyInput(), REASON);
 	}
 
 	protected void assertReasonerFailure(IProverSequent sequent)
 			throws Exception {
-		// FIXME error message
-		assertReasonerFailure(sequent, new EmptyInput(), null);
+		assertReasonerFailure(sequent, new EmptyInput(), REASON);
 	}
 
 	protected IProverSequent seq(String hiddenHypsImage,
