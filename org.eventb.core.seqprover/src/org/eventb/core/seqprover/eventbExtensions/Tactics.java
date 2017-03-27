@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,8 +78,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.CardComparison;
 import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
-import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
+import org.eventb.internal.core.seqprover.eventbExtensions.ContrL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
@@ -469,7 +469,7 @@ public class Tactics {
 	 * 		The contradict goal tactic.
 	 */
 	public static ITactic contradictGoal() {
-		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(null));
+		return BasicTactics.reasonerTac(new ContrL1(), new ContrL1.Input(null));
 	}
 
 	public static boolean contradictGoal_applicable(IProofTreeNode node) {
@@ -720,7 +720,7 @@ public class Tactics {
 	}
 
 	public static ITactic falsifyHyp(Predicate hyp) {
-		return BasicTactics.reasonerTac(new Contr(), new Contr.Input(hyp));
+		return BasicTactics.reasonerTac(new ContrL1(), new ContrL1.Input(hyp));
 	}
 
 	public static boolean falsifyHyp_applicable(Predicate hyp,
