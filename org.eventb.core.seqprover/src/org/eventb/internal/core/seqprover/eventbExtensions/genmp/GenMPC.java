@@ -135,7 +135,11 @@ public class GenMPC {
 	 * Extracts the substitutes from all hypotheses and the goal.
 	 */
 	private void extractSubstitutes() {
-		for (Predicate hyp : seq.visibleHypIterable()) {
+		final Iterable<Predicate> hypIterable = //
+				level.from(Level.L3) ? //
+						seq.visibleHypIterable() : //
+						seq.hypIterable();
+		for (Predicate hyp : hypIterable) {
 			addSubstitute(hyp, false, hyp);
 		}
 		if (!level.from(Level.L1)) {
