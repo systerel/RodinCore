@@ -31,23 +31,23 @@
          <view
                id="org.eventb.ui.views.ProofInformation"
                ratio="0.25"
-               relationship="fast"/>
+               relationship="stack"/>
          <view
                id="org.eventb.ui.views.SearchHypothesis"
                ratio="0.25"
-               relationship="fast"/>
+               relationship="stack"/>
          <view
                id="org.eventb.ui.views.CacheHypothesis"
                ratio="0.25"
-               relationship="fast"/>
+               relationship="stack"/>
          <view
                id="org.eventb.ui.views.ProofSkeleton"
                ratio="0.25"
-               relationship="fast"/>
+               relationship="stack"/>
          <view
                id="org.eventb.ui.views.RuleDetails"
                ratio="0.25"
-               relationship="fast">
+               relationship="stack">
          </view>
          <view
                id="org.eventb.ui.views.Goal"
