@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sequent Prover Developer Guide Plug-in
 Bundle-SymbolicName: org.eventb.core.seqprover.doc.isv; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Require-Bundle: org.eclipse.help
