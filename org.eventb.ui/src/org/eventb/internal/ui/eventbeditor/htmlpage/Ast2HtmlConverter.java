@@ -17,9 +17,9 @@ package org.eventb.internal.ui.eventbeditor.htmlpage;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eventb.core.seqprover.xprover.BundledFileExtractor;
 import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
-import org.rodinp.keyboard.ui.BundledFileExtractor;
 
 
 /**
@@ -30,7 +30,7 @@ public class Ast2HtmlConverter extends AstConverter {
 	public Ast2HtmlConverter() {
 		Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		IPath path = new Path("html/style.css");
-		IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
+		IPath absolutePath = BundledFileExtractor.extractFile(bundle, path, false);
 		HEADER = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
 			"<head>"+
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"+
