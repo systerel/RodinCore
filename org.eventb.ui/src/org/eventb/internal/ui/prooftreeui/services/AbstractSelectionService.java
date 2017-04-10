@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Systerel and others.
+ * Copyright (c) 2016, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     INP Toulouse - use of generics for listeners
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui.services;
 
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public abstract class AbstractSelectionService<T, L> {
 
-	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<L> listeners = new ListenerList<L>(ListenerList.IDENTITY);
 
 	private T current;
 
@@ -50,12 +51,9 @@ public abstract class AbstractSelectionService<T, L> {
 	 */
 	protected abstract void notifyChange(L listener, T newValue);
 
-	@SuppressWarnings("unchecked")
 	private final void fireChange() {
-		// following code recommendation from ListenerList
-		final Object[] listenerArray = listeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			notifyChange((L) listenerArray[i], current);
+		for (L listener : listeners) {
+			notifyChange(listener, current);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     INP Toulouse - use of generics for listeners
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
 
@@ -51,7 +52,7 @@ public class ModelController implements IElementChangedListener {
 	private static HashMap<IRodinProject, ModelProject> projects = new HashMap<IRodinProject, ModelProject>();
 	private static ModelController INSTANCE = new ModelController();
 
-	private final ListenerList listeners = new ListenerList();
+	private final ListenerList<IModelListener> listeners = new ListenerList<IModelListener>();
 
 	private ModelController() {
 		RodinCore.addElementChangedListener(this);
@@ -485,8 +486,8 @@ public class ModelController implements IElementChangedListener {
 	}
 
 	private void notifyListeners(List<IRodinElement> toRefresh) {
-		for (Object listener : listeners.getListeners()) {
-			safeNotify((IModelListener) listener, toRefresh);
+		for (IModelListener listener : listeners) {
+			safeNotify(listener, toRefresh);
 		}
 	}
 

@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening
  *     Systerel - refactored saveDefaultPage()
+ *     INP Toulouse - use of generics for listeners
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -109,7 +110,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			ISelectionProvider {
 		private ISelection globalSelection;
 
-		private ListenerList listenerList;
+		private ListenerList<ISelectionChangedListener> listenerList;
 
 		private FormEditor formEditor;
 
@@ -121,7 +122,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 *            the Form Editor contains this provider.
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
-			listenerList = new ListenerList();
+			listenerList = new ListenerList<ISelectionChangedListener>();
 			this.formEditor = formEditor;
 		}
 
@@ -167,13 +168,11 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 *            the selection changed event
 		 */
 		public void fireSelectionChanged(final SelectionChangedEvent event) {
-			Object[] listeners = this.listenerList.getListeners();
-			for (int i = 0; i < listeners.length; ++i) {
-				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+			for (final ISelectionChangedListener listener : listenerList) {
 				SafeRunner.run(new SafeRunnable() {
 					@Override
 					public void run() {
-						l.selectionChanged(event);
+						listener.selectionChanged(event);
 					}
 				});
 			}
