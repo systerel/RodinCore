@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     INP Toulouse - use of generics for adapters
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
@@ -296,16 +297,15 @@ public class RodinEditor extends TextEditor {
 	 * depending on the current mode (i.e. in overlay mode or not). Overriding
 	 * these actions at the handler level is not possible.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (ITextOperationTarget.class.equals(adapter)) {
-			return getEditorActionTarget();
-		}
+	public <T> T getAdapter(Class<T> adapter) {
+		if (ITextOperationTarget.class.equals(adapter))
+			return (T) getEditorActionTarget();
 		return super.getAdapter(adapter);
 	}
 	
-	
-	private Object getEditorActionTarget() {
+	private EditorActionTarget getEditorActionTarget() {
 		if (editorActionTarget == null)
 			editorActionTarget = new EditorActionTarget(this);
 		return editorActionTarget;
