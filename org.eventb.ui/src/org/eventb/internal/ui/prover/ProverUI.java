@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - handled user support saving state
  *     Systerel - redirected dialog opening and externalized strings
+ *     INP Toulouse - use of generics for adapters
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 

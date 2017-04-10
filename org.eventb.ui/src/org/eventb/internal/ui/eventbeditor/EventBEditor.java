@@ -11,7 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening
  *     Systerel - refactored saveDefaultPage()
- *     INP Toulouse - use of generics for listeners
+ *     INP Toulouse - use of generics for listeners and adapters
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
