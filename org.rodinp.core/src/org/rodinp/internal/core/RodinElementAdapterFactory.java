@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     INP Toulouse - use of generics for adapters
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -15,27 +16,30 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.rodinp.core.IRodinElement;
 
 /**
- * Adapter from IOpenable to IResource.
+ * Adapter from IRodinElement to IResource.
  * 
  * @author Laurent Voisin
  */
-@SuppressWarnings("rawtypes")
 public class RodinElementAdapterFactory implements IAdapterFactory {
 
-	private static final Class[] ADAPTERS = new Class[] {
+	private static final Class<?>[] ADAPTERS = new Class[] {
 		IResource.class,
 	};
 	
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (!(adaptableObject instanceof IRodinElement)) {
+			return null;
+		}
 		if (IResource.class.equals(adapterType)) {
-			return ((IRodinElement) adaptableObject).getCorrespondingResource();
+			return adapterType.cast(
+					((IRodinElement) adaptableObject).getCorrespondingResource());
 		}
 		return null;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return ADAPTERS;
 	}
 

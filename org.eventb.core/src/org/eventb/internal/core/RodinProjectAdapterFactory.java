@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     INP Toulouse - use of generics for adapters
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -18,23 +19,26 @@ import org.rodinp.core.IRodinProject;
  * 
  * @author Laurent Voisin
  */
-@SuppressWarnings("rawtypes")
 public class RodinProjectAdapterFactory implements IAdapterFactory {
 
-	private static final Class[] ADAPTERS = new Class[] {
+	private static final Class<?>[] ADAPTERS = new Class[] {
 		IRodinProject.class,
 	};
 	
 	@Override
-	public IRodinProject getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+		if (!(adaptableObject instanceof EventBProject)) {
+			return null;
+		}
 		if (IRodinProject.class.equals(adapterType)) {
-			return ((EventBProject) adaptableObject).getRodinProject();
+			return adapterType.cast(
+					((EventBProject) adaptableObject).getRodinProject());
 		}
 		return null;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return ADAPTERS;
 	}
 
