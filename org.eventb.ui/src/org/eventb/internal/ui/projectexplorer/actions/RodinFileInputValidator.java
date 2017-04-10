@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public class RodinFileInputValidator implements IInputValidator {
 	private final IEventBProject prj;
 
 	public RodinFileInputValidator(IRodinProject prj) {
-		this.prj = (IEventBProject) prj.getAdapter(IEventBProject.class);
+		this.prj = prj.getAdapter(IEventBProject.class);
 	}
 
 	@Override

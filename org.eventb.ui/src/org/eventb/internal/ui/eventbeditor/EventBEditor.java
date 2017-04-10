@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -357,7 +357,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		setPartName(rodinFile.getBareName());
 		
 		// Activate Event-B Editor Context
-		IContextService contextService = (IContextService) getSite()
+		IContextService contextService = getSite()
 				.getService(IContextService.class);
 		contextActivation = contextService
 				.activateContext(EventBUIPlugin.PLUGIN_ID
@@ -433,7 +433,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			fOutlinePage.setInput(null);
 		// De-activate the Event-B Editor context
 		if (contextActivation != null) {
-			IContextService contextService = (IContextService) getSite()
+			IContextService contextService = getSite()
 					.getService(IContextService.class);
 			contextService.deactivateContext(contextActivation);
 		}

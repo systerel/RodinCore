@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Systerel and others.
+ * Copyright (c) 2009, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -332,7 +332,7 @@ public class ActionCollection {
 		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage()
 				.getEditorReferences();
 		for (int j = 0; j < editorReferences.length; j++) {
-			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
+			IFile inputFile = editorReferences[j].getEditorInput()
 					.getAdapter(IFile.class);
 
 			if (file.getResource().equals(inputFile)) {
@@ -354,7 +354,7 @@ public class ActionCollection {
 		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage()
 		.getEditorReferences();
 		for (int j = 0; j < editorReferences.length; j++) {
-			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
+			IFile inputFile = editorReferences[j].getEditorInput()
 					.getAdapter(IFile.class);
 			if (inputFile.getProject().equals(project)) {
 				IEditorPart editor = editorReferences[j].getEditor(true);
