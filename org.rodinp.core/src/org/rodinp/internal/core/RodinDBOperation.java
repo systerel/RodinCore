@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,18 +44,18 @@ import org.rodinp.internal.core.util.Messages;
 public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressMonitor {
 	
 	protected static interface IPostAction {
-		/*
+		/**
 		 * Returns the id of this action.
 		 * @see RodinDBOperation#postAction
 		 */
 		String getID();
-		/*
+		/**
 		 * Run this action.
 		 */
 		void run() throws RodinDBException;
 	}
 	
-	/*
+	/**
 	 * Constants controlling the insertion mode of an action.
 	 * @see RodinDBOperation#postAction
 	 */
@@ -63,19 +63,19 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	protected static final int REMOVEALL_APPEND = 2; // remove all existing ones with same ID, and add new one at the end
 	protected static final int KEEP_EXISTING = 3; // do not insert if already existing with same ID
 	
-	/*
+	/**
 	 * Whether tracing post actions is enabled.
 	 */
 	protected static boolean POST_ACTION_VERBOSE;
 
-	/*
+	/**
 	 * A list of IPostActions.
 	 */
 	protected IPostAction[] actions;
 	protected int actionsStart = 0;
 	protected int actionsEnd = -1;
 	
-	/*
+	/**
 	 * A HashMap of attributes that can be used by operations
 	 */
 	// TODO check if can be made less generic (when all operations are implemented).
@@ -127,7 +127,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 */
 	protected boolean force = false;
 
-	/*
+	/**
 	 * A per thread stack of Rodin database operations
 	 */
 	protected static ThreadLocal<Stack<RodinDBOperation>> operationStacks = 
@@ -184,7 +184,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		this.force= force;
 	}
 	
-	/*
+	/**
 	 * Registers the given action at the end of the list of actions to run.
 	 */
 	protected void addAction(IPostAction action) {
@@ -195,7 +195,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		this.actions[this.actionsEnd] = action;
 	}
 	
-	/*
+	/**
 	 * Registers the given delta with the Rodin database Manager.
 	 */
 	protected void addDelta(IRodinElementDelta delta) {
@@ -331,7 +331,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		}
 	}
 	
-	/*
+	/**
 	 * Returns whether the given path is equals to one of the given other paths.
 	 */
 	protected boolean equalsOneOf(IPath path, IPath[] otherPaths) {
@@ -377,7 +377,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 */
 	protected abstract void executeOperation() throws RodinDBException;
 	
-	/*
+	/**
 	 * Returns the attribute registered at the given key with the top level operation.
 	 * Returns null if no such attribute is found.
 	 */
@@ -390,7 +390,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		}
 	}
 	
-	/*
+	/**
 	 * Returns the stack of operations running in the current thread.
 	 * Returns an empty stack if no operations are currently running in this thread. 
 	 */
@@ -403,7 +403,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return stack;
 	}
 	
-//	/*
+//	/**
 //	 * Returns the existing document for the given cu, or a DocumentAdapter if none.
 //	 */
 //	protected IDocument getDocument(ICompilationUnit cu) throws RodinDBException {
@@ -469,7 +469,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return resultElements;
 	}
 
-	/*
+	/**
 	 * Returns the scheduling rule for this operation (i.e. the resource that needs to be locked 
 	 * while this operation is running).
 	 * Subclasses can override.
@@ -489,7 +489,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return sub;
 	}
 
-	/*
+	/**
 	 * Returns the top-level operation in this thread or <code>null</code> if
 	 * the stack of current operations is empty.
 	 */
@@ -535,14 +535,14 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return false;
 	}
 	
-	/*
+	/**
 	 * Returns whether this operation is the first operation to run in the current thread.
 	 */
 	protected boolean isTopLevelOperation() {
 		return getTopLevelOperation() == this;
 	}
 	
-	/*
+	/**
 	 * Returns the index of the first registered action with the given id, starting from a given position.
 	 * Returns -1 if not found.
 	 */
@@ -580,7 +580,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return new RodinElementDelta(getRodinDB());
 	}
 
-	/*
+	/**
 	 * Removes the last pushed operation from the stack of running operations.
 	 * Returns the popped operation or null if the stack was empty.
 	 */
@@ -596,7 +596,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		}
 	}
 	
-	/*
+	/**
 	 * Registers the given action to be run when the outer most Rodin database operation has finished.
 	 * The insertion mode controls whether:
 	 * - the action should discard all existing actions with the same id, and be queued at the end (REMOVEALL_APPEND),
@@ -649,7 +649,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		}
 	}
 	
-	/*
+	/**
 	 * Returns whether the given path is the prefix of one of the given other paths.
 	 */
 	protected boolean prefixesOneOf(IPath path, IPath[] otherPaths) {
@@ -661,14 +661,14 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return false;
 	}
 	
-	/*
+	/**
 	 * Pushes the given operation on the stack of operations currently running in this thread.
 	 */
 	protected void pushOperation(RodinDBOperation operation) {
 		getCurrentOperationStack().push(operation);
 	}
 	
-	/*
+	/**
 	 * Removes all actions with the given id from the queue of post actions.
 	 * Does nothing if no such action is in the queue.
 	 */
@@ -786,7 +786,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 			postAction.run();
 		}
 	}
-	/*
+	/**
 	 * Registers the given attribute at the given key with the top level operation.
 	 */
 	protected void setAttribute(Object key, Object attribute) {
