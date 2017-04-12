@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     INP Toulouse - fix compareTo()
  *******************************************************************************/
 package org.eventb.internal.pp.core.elements.terms;
 
@@ -104,15 +105,15 @@ public final class LocalVariable extends SimpleTerm {
 	}
 	
 	@Override
-	public int compareTo(Term o) {
-		if (equals(0)) return 0;
-		else if (getPriority() == o.getPriority()) {
-			LocalVariable tmp = (LocalVariable)o;
+	public int compareTo(Term other) {
+		if (equals(other)) return 0;
+		else if (getPriority() == other.getPriority()) {
+			LocalVariable tmp = (LocalVariable)other;
 			if (tmp.isForall==isForall) return index-tmp.index;
 			else if (isForall) return 1;
 			else return -1;
 		}
-		else return getPriority() - o.getPriority();
+		else return getPriority() - other.getPriority();
 	}
 	
 	@Override
