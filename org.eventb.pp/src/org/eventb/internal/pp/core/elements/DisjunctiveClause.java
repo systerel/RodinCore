@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,14 +32,12 @@ public final class DisjunctiveClause extends Clause {
 		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
 		assert predicates.size() + equalities.size() + arithmetic.size() + conditions.size() >=1;
-		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
 	}
 	
 	DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
 		super(origin, predicates, equalities, arithmetic, BASE_HASHCODE);
 		
 		assert predicates.size() + equalities.size() + arithmetic.size() + conditions.size() >=1;
-		assert predicates != null && equalities != null && arithmetic != null;
 	}
 	
 	@Override
