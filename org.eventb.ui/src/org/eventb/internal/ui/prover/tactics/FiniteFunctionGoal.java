@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     INP Toulouse - fix broken tactic
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
@@ -67,7 +68,7 @@ public class FiniteFunctionGoal implements ITacticProvider {
 		final Predicate goal = node.getSequent().goal();
 		if (Lib.isFinite(goal)) {
 			if (Lib.isRelation(((SimplePredicate) goal).getExpression()))
-				singletonList(new FiniteFunctionGoalApplication(node));
+				return Collections.<ITacticApplication>singletonList(new FiniteFunctionGoalApplication(node));
 		}
 		return emptyList();
 	}
