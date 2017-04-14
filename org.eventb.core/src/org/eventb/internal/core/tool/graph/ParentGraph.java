@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.internal.core.tool.graph;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleDesc;
@@ -47,6 +48,9 @@ public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements
 
 		@Override
 		public String next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			index--;
 			String id = sorted.get(index).getId();
 			return id;
