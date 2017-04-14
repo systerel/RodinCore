@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,7 +228,7 @@ public class BecomesMemberOf extends Assignment {
 			goOn = visitor.continueBECOMES_MEMBER_OF(this);
 		}
 		if (goOn) {
-			goOn = setExpr.accept(visitor);
+			setExpr.accept(visitor);
 		}
 		return visitor.exitBECOMES_MEMBER_OF(this);
 	}

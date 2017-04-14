@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -655,7 +655,7 @@ public class QuantifiedExpression extends Expression {
 		}
 		if (goOn) goOn = pred.accept(visitor);
 		if (goOn) goOn = acceptContinue(visitor);
-		if (goOn) goOn = expr.accept(visitor);
+		if (goOn) expr.accept(visitor);
 		
 		switch (getTag()) {
 		case QUNION: return visitor.exitQUNION(this);

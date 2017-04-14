@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,7 +293,7 @@ public class BecomesSuchThat extends Assignment {
 		}
 		
 		if (goOn) {
-			goOn = condition.accept(visitor);
+			condition.accept(visitor);
 		}
 
 		return visitor.exitBECOMES_SUCH_THAT(this);
