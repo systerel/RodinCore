@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -537,10 +538,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			for (String key : map.keySet()) {
-				buffer.append(key);
+			for (Entry<String, AttributeDesc> entry : map.entrySet()) {
+				buffer.append(entry.getKey());
 				buffer.append(":\n  ");
-				buffer.append(map.get(key));
+				buffer.append(entry.getValue());
 				buffer.append('\n');
 			}
 			return buffer.toString();

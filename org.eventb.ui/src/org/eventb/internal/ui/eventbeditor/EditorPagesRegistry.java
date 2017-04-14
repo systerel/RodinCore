@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -393,8 +394,8 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	private synchronized void sortPages() {
 		assert registry != null;
 
-		for (String targetID : registry.keySet()) {
-			EditorInfo infos = registry.get(targetID);
+		for (Entry<String,EditorInfo> targetID : registry.entrySet()) {
+			EditorInfo infos = targetID.getValue();
 			infos.sortPages();
 		}
 	}
