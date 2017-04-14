@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,10 +119,8 @@ public class DocumentElementUtils {
 			ILElement element) {
 		final IElementDesc eDesc = getElementDesc(element);
 		final Set<IInternalElementType<?>> types = new HashSet<IInternalElementType<?>>();
-		for (IElementType<?> t : eDesc.getChildTypes()) {
-			if (t instanceof IInternalElementType<?>) {
-				types.add((IInternalElementType<?>) t);
-			}
+		for (IInternalElementType<?> t : eDesc.getChildTypes()) {
+			types.add(t);
 		}
 		return types;
 	}
