@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 vgheorgh and others.
+ * Copyright (c) 2013, 2017 vgheorgh and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class CreateElementHandler extends AbstractHandler {
 	 *         read-only.
 	 * 
 	 */
-	public static IInternalElement insertionPointForSelection(
+	static public IInternalElement insertionPointForSelection(
 			ISelection selection) {
 
 		// If there is no selection or selection is empty then return null.
@@ -101,7 +101,7 @@ public class CreateElementHandler extends AbstractHandler {
 	 *      the new element.
 	 * 
 	 */
-	static public void doExecute(IInternalElement parent,
+	public static void doExecute(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type,
 			IInternalElement insertionPoint) throws RodinDBException {
 

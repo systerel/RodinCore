@@ -319,7 +319,7 @@ public class ProverUI extends EventBFormEditor implements
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	private class ProofStateContentProvider implements
+	private static class ProofStateContentProvider implements
 			IStructuredContentProvider {
 
 		private IProofState[] proofStates;
@@ -346,7 +346,7 @@ public class ProverUI extends EventBFormEditor implements
 
 	}
 
-	class ProofStateLabelProvider implements ILabelProvider {
+	static class ProofStateLabelProvider implements ILabelProvider {
 
 		@Override
 		public Image getImage(Object element) {
