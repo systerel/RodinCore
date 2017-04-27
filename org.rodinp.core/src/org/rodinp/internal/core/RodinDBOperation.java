@@ -278,7 +278,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	protected void createFolder(IContainer parentFolder, String name, boolean forceFlag) throws RodinDBException {
 		IFolder folder= parentFolder.getFolder(new Path(name));
 		try {
-			// we should use true to create the file locally. Only VCM should use tru/false
+			// we should use true to create the file locally. Only VCM should use true/false
 			folder.create(
 				forceFlag ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY,
 				true, // local
