@@ -37,7 +37,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;

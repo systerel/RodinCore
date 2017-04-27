@@ -29,7 +29,6 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;

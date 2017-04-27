@@ -22,7 +22,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.xprover.XProverCall2;
-import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.pp.IPPMonitor;
 import org.eventb.pp.PPProof;
 import org.eventb.pp.PPResult;

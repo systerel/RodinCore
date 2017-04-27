@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.ElementParser;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.ItemRelationParser;
