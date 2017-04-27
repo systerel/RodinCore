@@ -78,9 +78,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * A HashMap of attributes that can be used by operations
 	 */
-	// TODO check if can be made less generic (when all operations are implemented).
-	// In fact, this is currently used only for the modified resource attribute. 
-	protected HashMap<Object, Object> attributes;
+	protected HashMap<String, String> attributes;
 
 	public static final String HAS_MODIFIED_RESOURCE_ATTR = "hasModifiedResource"; //$NON-NLS-1$
 	public static final String TRUE = "true"; //$NON-NLS-1$
@@ -789,10 +787,10 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * Registers the given attribute at the given key with the top level operation.
 	 */
-	protected void setAttribute(Object key, Object attribute) {
+	protected void setAttribute(String key, String attribute) {
 		RodinDBOperation topLevelOp = getTopLevelOperation();
 		if (topLevelOp.attributes == null) {
-			topLevelOp.attributes = new HashMap<Object, Object>();
+			topLevelOp.attributes = new HashMap<String, String>();
 		}
 		topLevelOp.attributes.put(key, attribute);
 	}
