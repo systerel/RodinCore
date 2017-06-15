@@ -345,14 +345,11 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		final IInternalElement root ;
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		rodinFile = getRodinFile(input);
-		root = rodinFile.getRoot();
-		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
-		rodinRoot = (R) root;
+		setRoot(rodinFile.getRoot());
 		setPartName(rodinFile.getBareName());
 		
 		// Activate Event-B Editor Context
@@ -366,6 +363,12 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 
 		// Listen to change events when fully initialized
 		RodinCore.addElementChangedListener(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setRoot(IInternalElement root) {
+		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
+		rodinRoot = (R) root;
 	}
 
 	private void setRetargetedAction() {
