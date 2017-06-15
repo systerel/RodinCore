@@ -297,11 +297,10 @@ public class RodinEditor extends TextEditor {
 	 * depending on the current mode (i.e. in overlay mode or not). Overriding
 	 * these actions at the handler level is not possible.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (ITextOperationTarget.class.equals(adapter))
-			return (T) getEditorActionTarget();
+			return adapter.cast(getEditorActionTarget());
 		return super.getAdapter(adapter);
 	}
 	

@@ -519,19 +519,18 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
 				fOutlinePage = new EventBContentOutlinePage(this);
 				if (getEditorInput() != null)
 					fOutlinePage.setInput(getRodinInput());
 			}
-			return fOutlinePage;
+			return required.cast(fOutlinePage);
 		}
 
 		if (IPropertySheetPage.class.equals(required)) {
-			return new TabbedPropertySheetPage(this);
+			return required.cast(new TabbedPropertySheetPage(this));
 		}
 		return super.getAdapter(required);
 	}
