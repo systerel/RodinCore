@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     INP Toulouse - use of generics for listeners
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
@@ -80,7 +81,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private final MultipleSelection selection;
 
 
-	private final ListenerList postSelectionChangedListeners;
+	private final ListenerList<ISelectionChangedListener> postSelectionChangedListeners;
 	
 	/**
 	 * Last selected offset
@@ -94,7 +95,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.overlayEditor = overlayEditor;
-		this.postSelectionChangedListeners = new ListenerList();
+		this.postSelectionChangedListeners = new ListenerList<ISelectionChangedListener>();
 		selection = new MultipleSelection(new SelectionEffect(styledText));
 	}
 
@@ -524,12 +525,10 @@ public class SelectionController implements MouseListener, VerifyListener,
 	 * @see #addPostSelectionChangedListener(ISelectionChangedListener)
 	 */
 	protected void firePostSelectionChanged(final SelectionChangedEvent event) {
-		final Object[] listeners = postSelectionChangedListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+		for (final ISelectionChangedListener listener : postSelectionChangedListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				public void run() {
-					l.selectionChanged(event);
+					listener.selectionChanged(event);
 				}
 			});
 		}

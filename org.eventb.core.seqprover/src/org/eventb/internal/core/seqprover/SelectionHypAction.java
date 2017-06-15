@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,6 @@ package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -25,8 +22,6 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 	private final String actionType;
 	private final Collection<Predicate> hyps;
 
-	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
-	
 	/**
 	 * @param actionType
 	 * 			Must be the same as the action types defined in {@link ISelectionHypAction}
@@ -36,7 +31,7 @@ public class SelectionHypAction implements IInternalHypAction, ISelectionHypActi
 		super();
 		assert hyps != null;
 		this.actionType = actionType;
-		this.hyps = hyps == null ? NO_HYPS : new ArrayList<Predicate>(hyps);
+		this.hyps = new ArrayList<Predicate>(hyps);
 	}
 
 	@Override

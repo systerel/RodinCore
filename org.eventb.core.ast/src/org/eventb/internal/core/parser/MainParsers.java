@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,10 +138,6 @@ public class MainParsers {
 
 		// errors must be non empty 
 		protected static ASTProblem newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
-			final List<String> messages = new ArrayList<String>(errors.size());
-			for (ASTProblem astProblem : errors) {
-				messages.add(astProblem.toString());
-			}
 			return new ASTProblem(loc,
 					ProblemKind.VariousPossibleErrors, ProblemSeverities.Error,
 					ProblemKind.makeCompoundMessage(errors));

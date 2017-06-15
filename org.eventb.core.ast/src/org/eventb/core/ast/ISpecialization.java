@@ -94,7 +94,7 @@ package org.eventb.core.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 2.6
  */
-public interface ISpecialization {
+public interface ISpecialization extends Cloneable {
 
 	/**
 	 * Returns a deep copy of this specialization. This method is useful to

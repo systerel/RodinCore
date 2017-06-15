@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,8 +60,7 @@ public class EventBAttributesManager {
 					value));
 		} else if (type instanceof IAttributeType.Boolean) {
 			final IAttributeType.Boolean attrType = (IAttributeType.Boolean) type;
-			final Boolean value = new Boolean(element
-					.getAttributeValue(attrType));
+			final Boolean value = element.getAttributeValue(attrType);
 			listBoolean.add(new Pair<IAttributeType.Boolean, Boolean>(attrType,
 					value));
 		} else if (type instanceof IAttributeType.Handle) {
@@ -71,13 +70,12 @@ public class EventBAttributesManager {
 					attrType, value));
 		} else if (type instanceof IAttributeType.Integer) {
 			final IAttributeType.Integer attrType = (IAttributeType.Integer) type;
-			final Integer value = new Integer(element
-					.getAttributeValue(attrType));
+			final Integer value = element.getAttributeValue(attrType);
 			listInteger.add(new Pair<IAttributeType.Integer, Integer>(attrType,
 					value));
 		} else if (type instanceof IAttributeType.Long) {
 			final IAttributeType.Long attrType = (IAttributeType.Long) type;
-			final Long value = new Long(element.getAttributeValue(attrType));
+			final Long value = element.getAttributeValue(attrType);
 			listLong.add(new Pair<IAttributeType.Long, Long>(attrType, value));
 		}
 	}
@@ -105,7 +103,7 @@ public class EventBAttributesManager {
 	public void addAttribute(IAttributeType.Boolean type, boolean value) {
 		attributeTypes.add(type);
 		listBoolean.add(new Pair<IAttributeType.Boolean, Boolean>(type,
-				new Boolean(value)));
+				Boolean.valueOf(value)));
 	}
 
 	public void addAttribute(IAttributeType.Handle type, IInternalElement value) {
@@ -124,7 +122,7 @@ public class EventBAttributesManager {
 	public void addAttribute(IAttributeType.Long type, long value) {
 		attributeTypes.add(type);
 		listLong
-				.add(new Pair<IAttributeType.Long, Long>(type, new Long(value)));
+				.add(new Pair<IAttributeType.Long, Long>(type, value));
 	}
 
 	public void addAttribute(IAttributeType.String type, String value) {

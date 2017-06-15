@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Systerel and others.
+ * Copyright (c) 2009, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
@@ -160,9 +161,9 @@ public class ContrHyps implements IVersionedReasoner {
 			Map<Predicate, List<Predicate>> contrHyps) {
 		Set<Predicate> preds = new HashSet<Predicate>();
 		boolean contain;
-		for (Predicate pred : contrHyps.keySet()) {
+		for (Entry<Predicate,List<Predicate>> entry : contrHyps.entrySet()) {
 			contain = false;
-			for (Predicate cntr: contrHyps.get(pred)) {
+			for (Predicate cntr: entry.getValue()) {
 				if (seq.containsHypothesis(cntr)) {
 					contain = true;
 					preds.add(cntr);

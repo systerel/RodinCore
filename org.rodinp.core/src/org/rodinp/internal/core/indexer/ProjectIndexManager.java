@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 
@@ -187,9 +188,9 @@ public class ProjectIndexManager {
 		final Map<IInternalElement, Set<IOccurrence>> occurrencesMap =
 				result.getOccurrences();
 
-		for (IInternalElement element : occurrencesMap.keySet()) {
-			final Set<IOccurrence> occurrences = occurrencesMap.get(element);
-			final Descriptor descriptor = index.getDescriptor(element);
+		for (Entry<IInternalElement,Set<IOccurrence>> elementEntry : occurrencesMap.entrySet()) {
+			final Set<IOccurrence> occurrences = elementEntry.getValue();
+			final Descriptor descriptor = index.getDescriptor(elementEntry.getKey());
 			// not null expected from bridge checks
 			assert descriptor != null;
 

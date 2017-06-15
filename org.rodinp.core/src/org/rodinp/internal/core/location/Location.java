@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,8 @@ public abstract class Location <T extends IRodinElement> {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
 		if (this == obj)
 			return true;
 		if (obj.getClass() != this.getClass())

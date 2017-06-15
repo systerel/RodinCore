@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -55,7 +56,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 *         <p>
 	 *         Utility class for storing information related to an Editor id.
 	 */
-	private class EditorInfo {
+	private static class EditorInfo {
 
 		// Array of information related to the editor pages.
 		ArrayList<PageInfo> infos;
@@ -199,7 +200,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * @author htson
 	 *         <p> Utility class for storing information related to an editor page.
 	 */
-	private final class PageInfo {
+	private static final class PageInfo {
 
 		// The configuration element.
 		private final IConfigurationElement configElement;
@@ -393,8 +394,8 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	private synchronized void sortPages() {
 		assert registry != null;
 
-		for (String targetID : registry.keySet()) {
-			EditorInfo infos = registry.get(targetID);
+		for (Entry<String,EditorInfo> targetID : registry.entrySet()) {
+			EditorInfo infos = targetID.getValue();
 			infos.sortPages();
 		}
 	}

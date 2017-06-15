@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -363,7 +363,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 				&& isReadOnly((IInternalElement) itemData)) {
 			text.setEditable(false);
 		} else {
-			final IFocusService service = (IFocusService) editor.getSite()
+			final IFocusService service = editor.getSite()
 					.getService(IFocusService.class);
 			service.addFocusTracker(text, TEXT_CONTROL_ID);
 		}

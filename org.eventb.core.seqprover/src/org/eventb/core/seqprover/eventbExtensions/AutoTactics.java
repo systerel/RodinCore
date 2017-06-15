@@ -918,7 +918,7 @@ public class AutoTactics {
 	 * 
 	 * @since 2.1
 	 */
-	private static class RmGoalOnceAutoTac extends RmOnceTac implements ITactic {
+	private static class RmGoalOnceAutoTac extends RmOnceTac {
 
 		@Override
 		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
@@ -995,7 +995,7 @@ public class AutoTactics {
 	 * 
 	 * @since 2.1
 	 */
-	private static class RmHypOnceAutoTac extends RmOnceTac implements ITactic {
+	private static class RmHypOnceAutoTac extends RmOnceTac {
 		@Override
 		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
 			return ptNode.getSequent().selectedHypIterable();

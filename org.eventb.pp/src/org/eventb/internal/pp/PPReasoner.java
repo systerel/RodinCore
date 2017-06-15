@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.xprover.XProverCall2;
-import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.core.seqprover.xprover.XProverReasoner2;
 
 /**
@@ -47,7 +46,7 @@ public class PPReasoner extends XProverReasoner2 implements IVersionedReasoner {
 			ISimpleSequent sequent, IProofMonitor pm) {
 		if (PPReasoner.DEBUG) PPReasoner.constructTest(sequent);
 		
-		return new PPProverCall((XProverInput)input,sequent,pm);
+		return new PPProverCall((PPInput)input,sequent,pm);
 	}
 
 	@Override

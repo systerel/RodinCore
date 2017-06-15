@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1104,7 +1104,7 @@ public class UIUtils {
 	 * @return the attached handler service
 	 */
 	public static IHandlerService getHandlerService(IWorkbenchSite site) {
-		return (IHandlerService) site.getService(IHandlerService.class);
+		return site.getService(IHandlerService.class);
 	}
 
 	/**

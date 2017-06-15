@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.xprover.XProverCall2;
-import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.pp.IPPMonitor;
 import org.eventb.pp.PPProof;
 import org.eventb.pp.PPResult;
@@ -39,10 +38,10 @@ public class PPProverCall extends XProverCall2 implements IPPMonitor {
 	private final int maxSteps;
 	private PPResult result;
 
-	public PPProverCall(XProverInput input, ISimpleSequent sequent,
+	public PPProverCall(PPInput input, ISimpleSequent sequent,
 			IProofMonitor pm) {
 		super(sequent, pm);
-		maxSteps = ((PPInput) input).getMaxSteps();
+		maxSteps = input.getMaxSteps();
 	}
 
 	@Override

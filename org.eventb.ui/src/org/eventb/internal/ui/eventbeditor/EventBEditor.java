@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening
  *     Systerel - refactored saveDefaultPage()
+ *     INP Toulouse - use of generics for listeners and adapters
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -109,7 +110,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			ISelectionProvider {
 		private ISelection globalSelection;
 
-		private ListenerList listenerList;
+		private ListenerList<ISelectionChangedListener> listenerList;
 
 		private FormEditor formEditor;
 
@@ -121,7 +122,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 *            the Form Editor contains this provider.
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
-			listenerList = new ListenerList();
+			listenerList = new ListenerList<ISelectionChangedListener>();
 			this.formEditor = formEditor;
 		}
 
@@ -167,13 +168,11 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 *            the selection changed event
 		 */
 		public void fireSelectionChanged(final SelectionChangedEvent event) {
-			Object[] listeners = this.listenerList.getListeners();
-			for (int i = 0; i < listeners.length; ++i) {
-				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+			for (final ISelectionChangedListener listener : listenerList) {
 				SafeRunner.run(new SafeRunnable() {
 					@Override
 					public void run() {
-						l.selectionChanged(event);
+						listener.selectionChanged(event);
 					}
 				});
 			}
@@ -346,18 +345,15 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		final IInternalElement root ;
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		rodinFile = getRodinFile(input);
-		root = rodinFile.getRoot();
-		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
-		rodinRoot = (R) root;
+		setRoot(rodinFile.getRoot());
 		setPartName(rodinFile.getBareName());
 		
 		// Activate Event-B Editor Context
-		IContextService contextService = (IContextService) getSite()
+		IContextService contextService = getSite()
 				.getService(IContextService.class);
 		contextActivation = contextService
 				.activateContext(EventBUIPlugin.PLUGIN_ID
@@ -367,6 +363,12 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 
 		// Listen to change events when fully initialized
 		RodinCore.addElementChangedListener(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setRoot(IInternalElement root) {
+		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
+		rodinRoot = (R) root;
 	}
 
 	private void setRetargetedAction() {
@@ -433,7 +435,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			fOutlinePage.setInput(null);
 		// De-activate the Event-B Editor context
 		if (contextActivation != null) {
-			IContextService contextService = (IContextService) getSite()
+			IContextService contextService = getSite()
 					.getService(IContextService.class);
 			contextService.deactivateContext(contextActivation);
 		}
@@ -520,19 +522,18 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
 				fOutlinePage = new EventBContentOutlinePage(this);
 				if (getEditorInput() != null)
 					fOutlinePage.setInput(getRodinInput());
 			}
-			return fOutlinePage;
+			return required.cast(fOutlinePage);
 		}
 
 		if (IPropertySheetPage.class.equals(required)) {
-			return new TabbedPropertySheetPage(this);
+			return required.cast(new TabbedPropertySheetPage(this));
 		}
 		return super.getAdapter(required);
 	}

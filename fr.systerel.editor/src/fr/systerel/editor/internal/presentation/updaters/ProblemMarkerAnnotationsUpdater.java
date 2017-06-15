@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -216,8 +215,8 @@ public class ProblemMarkerAnnotationsUpdater implements IDocumentListener {
 	public void refreshMarkersAnnotations() {
 		annotationModel = editor.getViewer().getAnnotationModel();
 		removeMarkerAnnotations();
-		final IInternalElement inputRoot = editor.getInputRoot();
-		if (!(inputRoot instanceof IEventBRoot) || !inputRoot.exists()) {
+		final IEventBRoot inputRoot = editor.getInputRoot();
+		if (!inputRoot.exists()) {
 			return;
 		}
 		final IResource file = ((IEventBRoot) inputRoot).getResource();

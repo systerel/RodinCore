@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,8 +90,7 @@ class CreateIdenticalElement extends OperationLeaf {
 					value));
 		} else if (type instanceof IAttributeType.Boolean) {
 			final IAttributeType.Boolean attrType = (IAttributeType.Boolean) type;
-			final Boolean value = new Boolean(element
-					.getAttributeValue(attrType));
+			final Boolean value = element.getAttributeValue(attrType);
 			listBoolean.add(new Pair<IAttributeType.Boolean, Boolean>(attrType,
 					value));
 		} else if (type instanceof IAttributeType.Handle) {
@@ -101,13 +100,12 @@ class CreateIdenticalElement extends OperationLeaf {
 					attrType, value));
 		} else if (type instanceof IAttributeType.Integer) {
 			final IAttributeType.Integer attrType = (IAttributeType.Integer) type;
-			final Integer value = new Integer(element
-					.getAttributeValue(attrType));
+			final Integer value = element.getAttributeValue(attrType);
 			listInteger.add(new Pair<IAttributeType.Integer, Integer>(attrType,
 					value));
 		} else if (type instanceof IAttributeType.Long) {
 			final IAttributeType.Long attrType = (IAttributeType.Long) type;
-			final Long value = new Long(element.getAttributeValue(attrType));
+			final Long value = element.getAttributeValue(attrType);
 			listLong.add(new Pair<IAttributeType.Long, Long>(attrType, value));
 		}
 	}

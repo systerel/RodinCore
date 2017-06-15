@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,7 +229,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	
 	void setViewInput(final InputMaker<?> maker) {
 		final IWorkbenchPartSite site = view.getSite();
-		final IProgressService service = (IProgressService) site
+		final IProgressService service = site
 				.getService(IProgressService.class);
 		final Shell shell = site.getShell();
 		final ComputeInputOperation computeInputOp = new ComputeInputOperation(

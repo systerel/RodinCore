@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class TextEditComposite extends AbstractEditComposite {
 
 		private IContextService getContextService() {
 			final IWorkbenchPartSite site = part.getSite();
-			return (IContextService) site.getService(IContextService.class);
+			return site.getService(IContextService.class);
 		}
 
 	}
@@ -206,7 +206,7 @@ public class TextEditComposite extends AbstractEditComposite {
 	private void manageFocusTracker(boolean track) {
 		if (text == null)
 			return;
-		final IFocusService service = (IFocusService) fEditor.getSite()
+		final IFocusService service = fEditor.getSite()
 				.getService(IFocusService.class);
 
 		// always remove first, to prevent from adding tracker twice

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,9 @@ import org.eventb.internal.ui.EventBMath;
  */
 public final class SearchBox extends ToolBarContributionItem {
 
-	protected Text text;
+	private Text text;
 
-	protected SearchHypothesisPage searchHypothesis;
+	private SearchHypothesisPage searchHypothesis;
 
 	public SearchBox(SearchHypothesisPage searchHyp) {
 		super();

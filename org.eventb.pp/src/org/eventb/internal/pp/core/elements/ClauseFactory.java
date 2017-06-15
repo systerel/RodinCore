@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class ClauseFactory {
 		return new EquivalenceClause(origin, predicate, equality, arithmetic, conditions);
 	}
 	
-	private static <T extends Literal<?,?>> void replaceLocalVariablesByVariables(List<T> literals, VariableContext context) {
+	private static <T extends Literal<T,?>> void replaceLocalVariablesByVariables(List<T> literals, VariableContext context) {
 		assert literals.size() == 1;
 		T literal = literals.remove(0);
 		Set<LocalVariable> localVariables = new HashSet<LocalVariable>();
@@ -156,7 +156,7 @@ public class ClauseFactory {
 			for (LocalVariable variable : localVariables) {
 				map.put(variable, variable.getVariable(context));
 			}
-			literal = (T)literal.substitute(map);
+			literal = literal.substitute(map);
 		}
 		literals.add(literal);
 	}

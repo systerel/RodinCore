@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,11 +125,13 @@ public abstract class AbstractProofTreeCommandHandler extends AbstractHandler {
 		if (ui == null) {
 			logAndInformCommandNotExecuted(shell,
 					proofTreeHandler_noActiveProofTreeUIError);
+			return;
 		}
 		final IUserSupport us = getUserSupport(ui);
 		if (us == null) {
 			logAndInformCommandNotExecuted(shell,
 					proofTreeHandler_noActiveUserSupportError);
+			return;
 		}
 		applyTacticWithProgress(shell, us, tactic, applyPostTactic);
 		log(successMessage);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,12 +84,12 @@ public class RefineItem extends CompoundContributionItem implements
 		IWorkbenchPart part = null;
 		ISelection selection = null;
 
-		final ISelectionService selService = (ISelectionService) serviceLoc
+		final ISelectionService selService = serviceLoc
 				.getService(ISelectionService.class);
 		if (selService != null) {
 			selection = selService.getSelection();
 		}
-		final IPartService partService = (IPartService) serviceLoc
+		final IPartService partService = serviceLoc
 				.getService(IPartService.class);
 		if (partService != null) {
 			part = partService.getActivePart();

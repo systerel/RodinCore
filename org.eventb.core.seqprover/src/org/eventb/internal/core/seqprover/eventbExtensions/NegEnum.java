@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
@@ -45,7 +44,7 @@ import org.eventb.core.seqprover.reasonerInputs.MultiplePredInputReasoner;
  * TODO : make this an empty input reasoner, similar to AutoImpF
  *
  */
-public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
+public class NegEnum extends MultiplePredInputReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";
 

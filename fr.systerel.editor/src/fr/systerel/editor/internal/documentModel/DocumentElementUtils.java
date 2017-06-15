@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -119,10 +118,8 @@ public class DocumentElementUtils {
 			ILElement element) {
 		final IElementDesc eDesc = getElementDesc(element);
 		final Set<IInternalElementType<?>> types = new HashSet<IInternalElementType<?>>();
-		for (IElementType<?> t : eDesc.getChildTypes()) {
-			if (t instanceof IInternalElementType<?>) {
-				types.add((IInternalElementType<?>) t);
-			}
+		for (IInternalElementType<?> t : eDesc.getChildTypes()) {
+			types.add(t);
 		}
 		return types;
 	}

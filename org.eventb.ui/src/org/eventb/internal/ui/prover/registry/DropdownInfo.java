@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eventb.internal.ui.prover.registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
@@ -35,12 +36,12 @@ public class DropdownInfo extends AbstractInfo {
 	}
 
 	private void initTactics(Map<String, TacticUIInfo> globalRegistry) {
-		for (String tacticID : globalRegistry.keySet()) {
-			final TacticUIInfo info = globalRegistry.get(tacticID);
+		for (Entry<String, TacticUIInfo> tacticIDEntry : globalRegistry.entrySet()) {
+			final TacticUIInfo info = tacticIDEntry.getValue();
 			if (id.equals(info.getDropdown())) {
 				tactics.add(info);
 				if (ProverUIUtils.DEBUG)
-					ProverUIUtils.debug("Attached tactic " + tacticID
+					ProverUIUtils.debug("Attached tactic " + tacticIDEntry.getKey()
 							+ " to dropdown " + id);
 			}
 		}

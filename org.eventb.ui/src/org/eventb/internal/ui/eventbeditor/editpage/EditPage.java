@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -843,11 +843,10 @@ public class EditPage extends EventBEditorPage implements
 		} else if (kind == IResourceDelta.CHANGED) {
 			EventBEditorUtils.debug("Marker changed");
 		}
-		final Map<?,?> attributes = delta.getAttributes();
-		final Set<?> keySet = attributes.keySet();
-		for (Object key : keySet) {
-			EventBEditorUtils.debug(key.toString() + " --> "
-					+ attributes.get(key).toString());
+		final Map<String,?> attributes = delta.getAttributes();
+		for (Entry<String,?> entry : attributes.entrySet()) {
+			EventBEditorUtils.debug(entry.getKey().toString() + " --> "
+					+ entry.getValue().toString());
 		}
 	}
 

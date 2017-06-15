@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - handled user support saving state
  *     Systerel - redirected dialog opening and externalized strings
+ *     INP Toulouse - use of generics for adapters
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -232,8 +233,7 @@ public class ProverUI extends EventBFormEditor implements
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (IProofTreeUIPage.class.equals(required)) {
 			// Create a new Proof Tree UI Page
 			fProofTreeUI = new ProofTreeUIPage(userSupport);
@@ -241,39 +241,39 @@ public class ProverUI extends EventBFormEditor implements
 					fProofTreeUI.setInput(userSupport.getCurrentPO()
 							.getProofTree());
 				}
-			return fProofTreeUI;
+			return required.cast(fProofTreeUI);
 		}
 		if (IProofControlPage.class.equals(required)) {
 			// Create a new Proof Control Page
 			fProofControlPage = new ProofControlPage(this);
-			return fProofControlPage;
+			return required.cast(fProofControlPage);
 		}
 
 		if (IProofInformationPage.class.equals(required)) {
 			// Create a new Proof Information Page
 			fProofInformationPage = new ProofInformationPage(this
 					.getUserSupport());
-			return fProofInformationPage;
+			return required.cast(fProofInformationPage);
 		}
 
 		if (ISearchHypothesisPage.class.equals(required)) {
 			// Create a new Search Hypothesis Page
 			fSearchHypothesisPage = new SearchHypothesisPage(this
 					.getUserSupport(), this);
-			return fSearchHypothesisPage;
+			return required.cast(fSearchHypothesisPage);
 		}
 
 		if (ICacheHypothesisPage.class.equals(required)) {
 			// Create a new Cache Hypothesis Page
 			fCacheHypothesisPage = new CacheHypothesisPage(this
 					.getUserSupport(), this);
-			return fCacheHypothesisPage;
+			return required.cast(fCacheHypothesisPage);
 		}
 
 		if (IGoalPage.class.equals(required)) {
 			// Create a new Goal Page.
 			fGoalPage = new GoalPage(this, this.getUserSupport());
-			return fGoalPage;
+			return required.cast(fGoalPage);
 		}
 
 		return super.getAdapter(required);
@@ -319,7 +319,7 @@ public class ProverUI extends EventBFormEditor implements
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
 	}
 
-	private class ProofStateContentProvider implements
+	private static class ProofStateContentProvider implements
 			IStructuredContentProvider {
 
 		private IProofState[] proofStates;
@@ -346,7 +346,7 @@ public class ProverUI extends EventBFormEditor implements
 
 	}
 
-	class ProofStateLabelProvider implements ILabelProvider {
+	static class ProofStateLabelProvider implements ILabelProvider {
 
 		@Override
 		public Image getImage(Object element) {
