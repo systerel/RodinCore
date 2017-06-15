@@ -31,9 +31,9 @@ public class RodinProjectAdapterFactory implements IAdapterFactory {
 		if (!(adaptableObject instanceof IRodinProject)) {
 			return null;
 		}
+		final IRodinProject rodinProject = (IRodinProject) adaptableObject;
 		if (IProject.class.equals(adapterType)) {
-			return adapterType.cast(
-					((IRodinProject) adaptableObject).getProject());
+			return adapterType.cast(rodinProject.getProject());
 		}
 		return null;
 	}

@@ -32,9 +32,9 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		if (!(adaptableObject instanceof IResource)) {
 			return null;
 		}
+		final IResource resource = (IResource) adaptableObject;
 		if (IRodinElement.class.equals(adapterType)) {
-			return adapterType.cast(
-					RodinCore.valueOf((IResource) adaptableObject));
+			return adapterType.cast(RodinCore.valueOf(resource));
 		}
 		return null;
 	}

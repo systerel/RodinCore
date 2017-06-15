@@ -31,9 +31,9 @@ public class RodinElementAdapterFactory implements IAdapterFactory {
 		if (!(adaptableObject instanceof IRodinElement)) {
 			return null;
 		}
+		final IRodinElement element = (IRodinElement) adaptableObject;
 		if (IResource.class.equals(adapterType)) {
-			return adapterType.cast(
-					((IRodinElement) adaptableObject).getCorrespondingResource());
+			return adapterType.cast(element.getCorrespondingResource());
 		}
 		return null;
 	}

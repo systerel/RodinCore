@@ -31,9 +31,9 @@ public class EventBProjectAdapterFactory implements IAdapterFactory {
 		if (!(adaptableObject instanceof IRodinProject)) {
 			return null;
 		}
+		final IRodinProject rodinProject = (IRodinProject) adaptableObject;
 		if (IEventBProject.class.equals(adapterType)) {
-			return adapterType.cast(
-					new EventBProject((IRodinProject) adaptableObject));
+			return adapterType.cast(new EventBProject(rodinProject));
 		}
 		return null;
 	}
