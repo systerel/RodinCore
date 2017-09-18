@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,6 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
-
 /**
  * @author Nicolas Beauger
  * 
@@ -792,10 +791,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		treeViewer = new TreeViewer(parent);
 		final Tree tree = treeViewer.getTree();
 		tree.setLayout(new GridLayout());
-		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.minimumWidth = 200;
-		layoutData.minimumHeight = 200;
-		tree.setLayoutData(layoutData);
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new TacticContentProvider());
 		treeViewer.setLabelProvider(new TacticNodeLabelProvider());
 	}
@@ -836,20 +832,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public void refresh(ITacticNode node) {
 		treeViewer.refresh(node);
 		treeViewer.expandToLevel(node, 1);
-		internalPack(treeViewer.getTree());
 		notifyListeners();
 	}
 
 	@Override
 	public void refresh() {
 		treeViewer.refresh();
-		internalPack(treeViewer.getTree());
 		notifyListeners();
-	}
-
-	private static void internalPack(Composite c) {
-		// TODO make container expandable rather than authoritically repack 
-//		packAll(c);
 	}
 	
 	public void addEditSupport() {

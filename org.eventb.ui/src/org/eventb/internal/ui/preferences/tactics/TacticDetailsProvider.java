@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -62,19 +65,26 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		return paramViewer.getEditResult();
 	}
 	
+	private void updateDetails(Control topControl) {
+		final Layout layout = parent.getLayout();
+		assert layout instanceof StackLayout;
+		final StackLayout sl = (StackLayout) layout;
+		sl.topControl = topControl;
+		parent.layout();
+	}
+	
 	@Override
 	public void putDetails(String element) {
 		currentProfile = cache.getEntry(element);
 		if (currentProfile == null) return;
 		final ITacticDescriptor desc = currentProfile.getValue();
-		hideAll();
 		if (desc instanceof IParamTacticDescriptor) {
 			paramViewer.setReadOnly(cache.isDefaultEntry(element));
 			paramViewer.setInput((IParamTacticDescriptor) desc);
-			paramViewer.show();
+			updateDetails(paramViewer.getControl());
 		} else {
 			combViewer.setInput(desc);
-			combViewer.show();
+			updateDetails(combViewer.getControl());
 		}
 	}
 
@@ -94,14 +104,9 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		currentProfile.setValue(currentEditResult);
 	}
 	
-	private void hideAll()  {
-		paramViewer.hide();
-		combViewer.hide();
-	}
-	
 	@Override
 	public void clear() {
-		hideAll();
+		updateDetails(null);
 	}
 
 }
