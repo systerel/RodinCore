@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
-
-import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eventb.core.preferences.IPrefMapEntry;
@@ -74,11 +72,9 @@ public class TacticDetailsProvider implements IDetailsProvider {
 			paramViewer.setReadOnly(cache.isDefaultEntry(element));
 			paramViewer.setInput((IParamTacticDescriptor) desc);
 			paramViewer.show();
-			packAll(paramViewer.getControl());
 		} else {
 			combViewer.setInput(desc);
 			combViewer.show();
-			packAll(combViewer.getControl());
 		}
 	}
 
