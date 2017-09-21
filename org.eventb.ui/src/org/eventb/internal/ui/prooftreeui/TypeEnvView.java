@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eventb.internal.ui.prooftreeui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -212,7 +214,7 @@ public class TypeEnvView extends AbstractProofNodeView implements IProofNodeSele
 
 		private final int column;
 		private final CellEditor editor;
-		
+
 		public TypeEnvEditingSupport(TableViewer tableViewer, int column) {
 			super(tableViewer);
 			this.column = column;
@@ -244,20 +246,22 @@ public class TypeEnvView extends AbstractProofNodeView implements IProofNodeSele
 
 		@Override
 		protected void setValue(Object element, Object value) {
-			// nothing to do			
+			// nothing to do
 		}
-		
+
 	}
 
 	TableViewer tableViewer;
 
 	@Override
 	protected void initializeControl(Composite parent, Font font) {
+		final TableColumnLayout tableLayout = new TableColumnLayout();
+		parent.setLayout(tableLayout);
 		tableViewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.FILL
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		final ColumnComparator comparator = new ColumnComparator();
 		tableViewer.setComparator(comparator);
-		createColumns(font);
+		createColumns(font, tableLayout);
 		tableViewer.setLabelProvider(new TypeEnvLabelProvider());
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
 		initColumnSorting(comparator);
@@ -271,20 +275,24 @@ public class TypeEnvView extends AbstractProofNodeView implements IProofNodeSele
 		}
 	}
 
-	private void createColumns(Font font) {
+	private void createColumns(Font font, TableColumnLayout tableLayout) {
 		final Table table = tableViewer.getTable();
 		table.setFont(font);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
 		for (int i = 0; i < Ident.getNumberOfColumns(); i++) {
 			final String columnName = Ident.getColumnTitle(i);
-			final TableViewerColumn colViewer = new TableViewerColumn(
-					tableViewer, SWT.WRAP);
+			final TableViewerColumn colViewer = new TableViewerColumn(tableViewer, SWT.NONE);
 			colViewer.setEditingSupport(new TypeEnvEditingSupport(tableViewer, i));
 			final TableColumn col = colViewer.getColumn();
+
 			col.setText(columnName);
 			col.pack();
+			final int width = col.getWidth();
+			// give minimum width to each column, 100% weight for the rightmost one
+			// so that it expands horizontally to occupy the available space
+			final int weight = i == Ident.getNumberOfColumns() - 1 ? 100 : 0;
+			tableLayout.setColumnData(col, new ColumnWeightData(weight, width));
 		}
 	}
 
