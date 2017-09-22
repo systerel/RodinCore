@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -130,18 +130,18 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	// Consumes at most two ticks of the given monitor.
 	private boolean compareAndSave(IRodinFile scFile, IRodinFile scTmpFile,
 			IProgressMonitor monitor) throws RodinDBException {
+		final SubMonitor sMonitor = SubMonitor.convert(monitor, 2);
 		IEventBRoot scRoot = (IEventBRoot) scFile.getRoot();
 		IEventBRoot scTmpRoot = (IEventBRoot) scTmpFile.getRoot();
 		if (scTmpRoot.hasSameAttributes(scRoot)
 				&& scTmpRoot.hasSameChildren(scRoot)) {
-			scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
+			scTmpFile.delete(true, sMonitor.split(2));
 			return false;
 		}
-		scTmpFile.save(new SubProgressMonitor(monitor, 1), true, false);
+		scTmpFile.save(sMonitor.split(1), true, false);
 		final IRodinElement project = scFile.getParent();
 		final String name = scFile.getElementName();
-		final SubProgressMonitor subPM = new SubProgressMonitor(monitor, 1);
-		scTmpFile.move(project, null, name, true, subPM);
+		scTmpFile.move(project, null, name, true, sMonitor.split(1));
 		return true;
 	}
 	
@@ -188,58 +188,55 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	}
 	
 	@Override
-	public final boolean run(IFile source, IFile file, IProgressMonitor monitor)
-			throws CoreException {
-			
-				final IRodinFile scFile = RodinCore.valueOf(file);
-				final IRodinFile sourceFile = RodinCore.valueOf(source).getSnapshot();
-				final IRodinFile scTmpFile = getTmpSCFile(scFile);
-				
-				final int totalWork = sourceFile.getRoot().getChildren().length + 5 + 1;
-			
-				try {
-			
-					monitor.beginTask(
-					Messages.bind(Messages.build_runningSC,
-							((IEventBRoot) scFile.getRoot())
-									.getComponentName()), totalWork);
-			
-					scTmpFile.create(true, new SubProgressMonitor(monitor, 1));
-			
-					ISCStateRepository repository = createRepository(sourceFile,
-							monitor);
-			
-					sourceFile.open(new SubProgressMonitor(monitor, 1));
-					scTmpFile.open(new SubProgressMonitor(monitor, 1));
-					
-					String config = getConfiguration(sourceFile);
-			
-					if (config != null) {
-						
-						setSCTmpConfiguration((IEventBRoot) scTmpFile.getRoot(), config);
-						
-						deleteAllRodinMarkers(sourceFile);
+	public final boolean run(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 
-						final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
-					
-						if (rootModule != null) {
-							runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(),
-									repository, monitor);
-						}
-						
-					}
-			
-					return compareAndSave(scFile, scTmpFile, monitor);
-			
-				} finally {
-					// Ensure that the temporary file gets deleted
-					if (scTmpFile.exists()) {
-						scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
-					}
-					monitor.done();
-					scFile.makeConsistent(null);
+		final IRodinFile scFile = RodinCore.valueOf(file);
+		final IRodinFile sourceFile = RodinCore.valueOf(source).getSnapshot();
+		final IRodinFile scTmpFile = getTmpSCFile(scFile);
+
+		final int childCount = sourceFile.getRoot().getChildren().length;
+		final int totalWork = childCount + 6;
+		final SubMonitor sMonitor = SubMonitor.convert(monitor,
+				Messages.bind(Messages.build_runningSC, ((IEventBRoot) scFile.getRoot()).getComponentName()),
+				totalWork);
+
+		try {
+
+			scTmpFile.create(true, sMonitor.split(1));
+
+			ISCStateRepository repository = createRepository(sourceFile, sMonitor.split(1));
+
+			sourceFile.open(sMonitor.split(1));
+			scTmpFile.open(sMonitor.split(1));
+
+			String config = getConfiguration(sourceFile);
+
+			if (config != null) {
+
+				setSCTmpConfiguration((IEventBRoot) scTmpFile.getRoot(), config);
+
+				deleteAllRodinMarkers(sourceFile);
+
+				final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
+
+				if (rootModule != null) {
+					runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(), repository,
+							sMonitor.split(childCount));
 				}
+
 			}
+
+			return compareAndSave(scFile, scTmpFile, sMonitor.split(1));
+
+		} finally {
+			// Ensure that the temporary file gets deleted
+			if (scTmpFile.exists()) {
+				scTmpFile.delete(true, sMonitor.split(1));
+			}
+			monitor.done();
+			scFile.makeConsistent(null);
+		}
+	}
 
 	private void setSCTmpConfiguration(final IEventBRoot scTmpRoot, String config)
 			throws RodinDBException {

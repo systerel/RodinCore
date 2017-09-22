@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eventb.internal.core.pm;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Implements reverting of a proof file. Instances must be run while locking all
@@ -31,10 +31,10 @@ class RevertProofComponentOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
+		final SubMonitor sMonitor = SubMonitor.convert(pm, "Reverting proof files", 2);
 		try {
-			pm.beginTask("Reverting proof files", 2);
-			pc.getPRRoot().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
-			pc.getPSRoot().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
+			pc.getPRRoot().getRodinFile().makeConsistent(sMonitor.split(1));
+			pc.getPSRoot().getRodinFile().makeConsistent(sMonitor.split(1));
 		} finally {
 			pm.done();
 		}

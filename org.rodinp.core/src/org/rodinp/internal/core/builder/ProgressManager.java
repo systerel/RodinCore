@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -24,7 +24,7 @@ import org.rodinp.internal.core.util.Messages;
  */
 public class ProgressManager {
 
-	private final IProgressMonitor monitor;
+	private final SubMonitor monitor;
 	
 	private final static int MAX_EFFORT = 1000;
 	
@@ -35,8 +35,7 @@ public class ProgressManager {
 	private List<Integer> sList;
 	
 	public ProgressManager(IProgressMonitor monitor, IncrementalProjectBuilder builder) {
-		this.monitor = new BuilderProgressMonitor(monitor, builder);
-		monitor.beginTask(
+		this.monitor = SubMonitor.convert(new BuilderProgressMonitor(monitor, builder),
 				Messages.bind(Messages.build_building, builder.getProject().getName()), 
 				MAX_EFFORT);
 		remainingEffort = MAX_EFFORT;
@@ -55,7 +54,7 @@ public class ProgressManager {
 	}
 	
 	IProgressMonitor getZeroProgressMonitor() {
-		return new SubProgressMonitor(monitor, 0);
+		return monitor.split(0);
 	}
 	
 	IProgressMonitor getSliceProgressMonitor() {
@@ -63,7 +62,7 @@ public class ProgressManager {
 			int newSlice = remainingEffort / slices--;
 			remainingEffort -= newSlice;
 			sList.add(remainingEffort);
-			return new SubProgressMonitor(monitor, newSlice);
+			return monitor.split(newSlice);
 		} else
 			return getZeroProgressMonitor();
 	}
@@ -72,7 +71,7 @@ public class ProgressManager {
 		if (remainingEffort > 0) {
 			remainingEffort--;
 			sList.add(remainingEffort);
-			return new SubProgressMonitor(monitor, 1);
+			return monitor.split(1);
 		} else
 			return getZeroProgressMonitor();
 	}

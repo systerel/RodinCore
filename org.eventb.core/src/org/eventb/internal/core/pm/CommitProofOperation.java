@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofDependencies;
@@ -61,12 +60,12 @@ class CommitProofOperation implements IWorkspaceRunnable {
 	// Consumes one tick of the given progress monitor
 	private IProofTree getProofTree(IProgressMonitor pm)
 			throws RodinDBException {
+		final SubMonitor sMonitor = SubMonitor.convert(pm, 1);
 		final IProofTree proofTree = pa.getProofTree();
 		if (simplify) {
-			final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
-			return simplifyIfClosed(proofTree, spm);
+			return simplifyIfClosed(proofTree, sMonitor.split(1));
 		} else {
-			pm.worked(1);
+			sMonitor.worked(1);
 			return proofTree;
 		}
 	}
@@ -90,30 +89,30 @@ class CommitProofOperation implements IWorkspaceRunnable {
 	// Consumes three ticks of the given progress monitor
 	private void commitProof(IProofTree proofTree, IProgressMonitor pm)
 			throws RodinDBException {
+		final SubMonitor sMonitor = SubMonitor.convert(pm, 3);
 		final IPRProof proof = pa.getProof();
 		if (!proof.exists()) {
-			proof.create(null, new SubProgressMonitor(pm, 1));
+			proof.create(null, sMonitor.split(1));
 		} else {
-			pm.worked(1);
+			sMonitor.worked(1);
 		}
-		proof.setProofTree(proofTree, new SubProgressMonitor(pm, 1));
-		proof.setHasManualProof(manual, new SubProgressMonitor(pm, 1));
+		proof.setProofTree(proofTree, sMonitor.split(1));
+		proof.setHasManualProof(manual, sMonitor.split(1));
 	}
 
 	// Consumes four ticks of the given progress monitor
 	public void commitStatus(IProofDependencies proofDeps, IProgressMonitor pm)
 			throws RodinDBException {
-		final SubMonitor monitor = SubMonitor.convert(pm);
+		final SubMonitor sMonitor = SubMonitor.convert(pm, 4);
 		final IPSStatus status = pa.getStatus();
-		status.copyProofInfo(monitor.newChild(1));
-		status.setBroken(pa.isBroken(), monitor.newChild(1));
+		status.copyProofInfo(sMonitor.split(1));
+		status.setBroken(pa.isBroken(), sMonitor.split(1));
 		final Long poStamp = pa.getPoStamp();
 		if (poStamp != null) {
-			status.setPOStamp(poStamp, monitor.newChild(1));
+			status.setPOStamp(poStamp, sMonitor.split(1));
 		} else {
-			monitor.worked(1);
+			sMonitor.worked(1);
 		}
-		status.setContextDependent(proofDeps.isContextDependent(),
-				monitor.newChild(1));
+		status.setContextDependent(proofDeps.isContextDependent(), sMonitor.split(1));
 	}
 }
