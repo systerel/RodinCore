@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
-
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -64,21 +65,26 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		return paramViewer.getEditResult();
 	}
 	
+	private void updateDetails(Control topControl) {
+		final Layout layout = parent.getLayout();
+		assert layout instanceof StackLayout;
+		final StackLayout sl = (StackLayout) layout;
+		sl.topControl = topControl;
+		parent.layout();
+	}
+	
 	@Override
 	public void putDetails(String element) {
 		currentProfile = cache.getEntry(element);
 		if (currentProfile == null) return;
 		final ITacticDescriptor desc = currentProfile.getValue();
-		hideAll();
 		if (desc instanceof IParamTacticDescriptor) {
 			paramViewer.setReadOnly(cache.isDefaultEntry(element));
 			paramViewer.setInput((IParamTacticDescriptor) desc);
-			paramViewer.show();
-			packAll(paramViewer.getControl());
+			updateDetails(paramViewer.getControl());
 		} else {
 			combViewer.setInput(desc);
-			combViewer.show();
-			packAll(combViewer.getControl());
+			updateDetails(combViewer.getControl());
 		}
 	}
 
@@ -98,14 +104,9 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		currentProfile.setValue(currentEditResult);
 	}
 	
-	private void hideAll()  {
-		paramViewer.hide();
-		combViewer.hide();
-	}
-	
 	@Override
 	public void clear() {
-		hideAll();
+		updateDetails(null);
 	}
 
 }

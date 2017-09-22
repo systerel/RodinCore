@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -370,11 +372,15 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	private TableViewer tableViewer;
 	private Label tacticName;
 	private ParamEditingSupport editSupport;
+	private Composite innerParent;
 
 	@Override
 	public void createContents(Composite parent) {
-		tacticName = new Label(parent, SWT.NONE);
-		tableViewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI
+		innerParent = new Composite(parent, SWT.NONE);
+		innerParent.setLayout(new GridLayout());
+		innerParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		tacticName = new Label(innerParent, SWT.NONE);
+		tableViewer = new TableViewer(innerParent, SWT.FULL_SELECTION | SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		editSupport = new ParamEditingSupport(tableViewer);
 		createColumns();
@@ -406,6 +412,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 				col = new TableColumn(table, SWT.WRAP);
 			}
 			col.setText(column.getText());
+			col.setResizable(true);
 		}
 		tableViewer.setColumnProperties(columnNames);
 	}
@@ -435,10 +442,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	
 	@Override
 	public Control getControl() {
-		if (tableViewer == null) {
-			return null;
-		}
-		return tableViewer.getTable();
+		return innerParent;
 	}
 	
 	@Override
