@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package fr.systerel.explorer.tests.contentProviders;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IContextRoot;
 import org.junit.Before;
 import org.junit.Test;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.tests.ExplorerTest;
 import fr.systerel.internal.explorer.navigator.contentProviders.ContextContentProvider;
@@ -51,14 +50,14 @@ public class ContextContentProviderTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void getChildren() throws RodinDBException {
+	public void getChildren() {
 		Object[] children = contentProvider.getChildren(rodinProject.getProject());
 		assertArray(children, c0, c1, c2);
 		assertProcessed(rodinProject);
 	}
 
 	@Test
-	public void getParent() throws RodinDBException {
+	public void getParent() {
 		assertEquals(contentProvider.getParent(c0), rodinProject);
 		assertEquals(contentProvider.getParent(c1), rodinProject);
 		assertEquals(contentProvider.getParent(c2), rodinProject);

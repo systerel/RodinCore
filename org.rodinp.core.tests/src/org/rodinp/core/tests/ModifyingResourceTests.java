@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	}
 
 	protected static void createNENegative(IInternalElement parent, String name,
-			IInternalElement nextSibling, int failureCode) throws RodinDBException {
+			IInternalElement nextSibling, int failureCode) {
 		
 		NamedElement element = getNamedElement(parent, name);
 		if (parent.isReadOnly()) {
@@ -276,7 +276,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		}		
 	}
 	
-	public static boolean isReadOnly(IResource resource) throws CoreException {
+	public static boolean isReadOnly(IResource resource) {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
 		if (resourceAttributes != null) {
 			return resourceAttributes.isReadOnly();

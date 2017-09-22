@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,38 +181,38 @@ public class POContentProviderTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void getChildrenContext() throws RodinDBException {
+	public void getChildrenContext() {
 		assertArray(contentProvider.getChildren(c0), node);
 	}
 
 	@Test
-	public void getChildrenMachine() throws RodinDBException {
+	public void getChildrenMachine() {
 		assertArray(contentProvider.getChildren(m0), node2);
 	}
 	
 	@Test
-	public void getChildrenPOnodeContext() throws RodinDBException {
+	public void getChildrenPOnodeContext() {
 		ModelController.getContext(c0).processPORoot();
 		ModelController.getContext(c0).processPSRoot();
 		assertArray(contentProvider.getChildren(node), status1, status2);
 	}
 
 	@Test
-	public void getChildrenPOnodeMachine() throws RodinDBException {
+	public void getChildrenPOnodeMachine() {
 		ModelController.getMachine(m0).processPORoot();
 		ModelController.getMachine(m0).processPSRoot();
 		assertArray(contentProvider.getChildren(node2), status3, status4, status5);
 	}
 	
 	@Test
-	public void getChildrenAxiom() throws RodinDBException {
+	public void getChildrenAxiom() {
 		ModelController.getContext(c0).processPORoot();
 		ModelController.getContext(c0).processPSRoot();
 		assertArray(contentProvider.getChildren(axiom1), status1, status2);
 	}
 
 	@Test
-	public void getChildrenEvent() throws RodinDBException {
+	public void getChildrenEvent() {
 		ModelController.getMachine(m0).processPORoot();
 		ModelController.getMachine(m0).processPSRoot();
 		assertArray(contentProvider.getChildren(event1), status4, status5);
@@ -227,21 +227,21 @@ public class POContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getChildrenTheoremContext() throws RodinDBException {
+	public void getChildrenTheoremContext() {
 		ModelController.getContext(c0).processPORoot();
 		ModelController.getContext(c0).processPSRoot();
 		assertArray(contentProvider.getChildren(thm1), status2);
 	}
 	
 	@Test
-	public void getChildrenTheoremMachine() throws RodinDBException {
+	public void getChildrenTheoremMachine() {
 		ModelController.getMachine(m0).processPORoot();
 		ModelController.getMachine(m0).processPSRoot();
 		assertArray(contentProvider.getChildren(thm2), status5);
 	}
 	
 	@Test
-	public void getParent() throws RodinDBException {
+	public void getParent() {
 		//the getParent function is not really implemented in POContentProvider,
 		//since POs can have more than one parent. It always returns null.
 	}

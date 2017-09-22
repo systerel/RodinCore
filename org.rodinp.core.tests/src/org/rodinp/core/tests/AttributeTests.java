@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,7 +201,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void removeAttrNegative(IInternalElement element, IAttributeType type,
-			int failureCode) throws RodinDBException {
+			int failureCode) {
 		
 		try {
 			startDeltas();
@@ -309,8 +309,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void setBoolAttrNegative(IInternalElement element,
-			IAttributeType.Boolean type, boolean newValue, int failureCode)
-			throws RodinDBException {
+			IAttributeType.Boolean type, boolean newValue, int failureCode) {
 
 		try {
 			startDeltas();
@@ -325,8 +324,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void setHandleAttrNegative(IInternalElement element,
-			IAttributeType.Handle type, IRodinElement newValue, int failureCode)
-			throws RodinDBException {
+			IAttributeType.Handle type, IRodinElement newValue, int failureCode) {
 
 		try {
 			startDeltas();
@@ -341,8 +339,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void setIntAttrNegative(IInternalElement element,
-			IAttributeType.Integer type, int newValue, int failureCode)
-			throws RodinDBException {
+			IAttributeType.Integer type, int newValue, int failureCode) {
 
 		try {
 			startDeltas();
@@ -357,8 +354,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void setLongAttrNegative(IInternalElement element,
-			IAttributeType.Long type, long newValue, int failureCode)
-			throws RodinDBException {
+			IAttributeType.Long type, long newValue, int failureCode) {
 
 		try {
 			startDeltas();
@@ -373,8 +369,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	}
 
 	void setStringAttrNegative(IInternalElement element,
-			IAttributeType.String type, String newValue, int failureCode)
-			throws RodinDBException {
+			IAttributeType.String type, String newValue, int failureCode) {
 
 		try {
 			startDeltas();
@@ -469,8 +464,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertRemoveAttribute(ne);
 	}
 
-	private void assertRemoveAttributeNoElement(IInternalElement ie)
-			throws CoreException {
+	private void assertRemoveAttributeNoElement(IInternalElement ie) {
 		assertFalse(ie.exists());
 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
@@ -499,8 +493,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		assertRemoveAttributeNoElement(ne);
 	}
 
-	private void assertSetAttributeNoElement(IInternalElement ie)
-			throws CoreException {
+	private void assertSetAttributeNoElement(IInternalElement ie) {
 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 		assertNotExists("Element should not exist", ie);

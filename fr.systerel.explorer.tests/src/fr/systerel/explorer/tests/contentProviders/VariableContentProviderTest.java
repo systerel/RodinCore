@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.junit.Before;
 import org.junit.Test;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.explorer.tests.ExplorerTest;
@@ -59,7 +58,7 @@ public class VariableContentProviderTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void getChildren() throws RodinDBException {
+	public void getChildren() {
 		// get the intermediary node for context input
 		assertArray(contentProvider.getChildren(m0), node);
 		//get the variables for the node input
@@ -67,7 +66,7 @@ public class VariableContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getParent() throws RodinDBException {
+	public void getParent() {
 		// get the parent of the axioms
 		assertEquals(contentProvider.getParent(variable1),  node);
 		// get the parent of the intermediary node

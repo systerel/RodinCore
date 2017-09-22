@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,8 +107,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 	 * the database, and that the elements are well loaded.
 	 */
 	@Test
-	public void afterLoadingTest() throws RodinDBException,
-			InterruptedException {
+	public void afterLoadingTest() throws Exception {
 		// first we retreive the resource that has a root (see the first test)
 		final ILFile rodinResource = getRodinResource();
 		final ILElement root = rodinResource.getRoot();

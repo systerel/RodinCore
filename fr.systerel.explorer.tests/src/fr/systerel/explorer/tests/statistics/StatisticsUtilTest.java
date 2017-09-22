@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class StatisticsUtilTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void isValidSelectionMultipleProjects() throws RodinDBException {
+	public void isValidSelectionMultipleProjects() {
 		ModelController.processProject(rodinProject);
 		ModelController.processProject(rodinProject2);
 		Object[] input = {rodinProject.getProject(), rodinProject2.getProject()};
