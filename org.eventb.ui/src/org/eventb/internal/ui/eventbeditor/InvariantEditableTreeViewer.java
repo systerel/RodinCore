@@ -147,7 +147,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		super(editor, parent, style);
 		this.setContentProvider(new InvariantContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
-		this.setSorter(new ElementSorter());
+		this.setComparator(new ElementSorter());
 	}
 
 	/*
