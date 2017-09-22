@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -339,7 +339,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			return;
 		
 		interval = inter;
-		if (!editorText.isVisible() && inter != null) {
+		if (!editorText.isVisible()) {
 			final int pos = editorToOverlayOffset(offset);
 			EditType.handleEdit(this, inter, pos, changeBooleanValue);
 		}
