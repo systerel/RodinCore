@@ -257,8 +257,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		setupEditorText();
 		contentProposal = new ContentProposalManager(editorText, mapper
 				.getRoot().getElement());
-		final ISourceProviderService sourceService = (ISourceProviderService) editor
-				.getSite().getService(ISourceProviderService.class);
+		final ISourceProviderService sourceService = editor.getSite().getService(ISourceProviderService.class);
 		editionModeProvider = (EditionModeProvider) sourceService
 				.getSourceProvider(EDITION_MODE);
 	}
@@ -278,8 +277,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
 		// has focus.
-		final IFocusService focusService = (IFocusService) editor.getSite()
-				.getService(IFocusService.class);
+		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 

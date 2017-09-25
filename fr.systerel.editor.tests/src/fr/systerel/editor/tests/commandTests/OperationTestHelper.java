@@ -101,8 +101,7 @@ public class OperationTestHelper {
 	}
 
 	public void executeOperation(String commandId) throws Exception {
-		final ICommandService service = (ICommandService) WORKBENCH
-				.getService(ICommandService.class);
+		final ICommandService service = WORKBENCH.getService(ICommandService.class);
 		final Command command = service.getCommand(commandId);
 		final EvaluationContext context = new EvaluationContext(null,
 				Collections.EMPTY_LIST);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,8 +104,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		final IDocument doc = new Document();
 		if (element instanceof IEditorInput) {
-			final IFile file = (IFile) ((IEditorInput) element)
-					.getAdapter(IFile.class);
+			final IFile file = ((IEditorInput) element).getAdapter(IFile.class);
 			editorInput = (IEditorInput) element;
 			inputResource = getResource(file);
 			inputRoot = inputResource.getRoot();
