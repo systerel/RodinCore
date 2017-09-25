@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.pp.PPInput;
+import org.junit.Test;
 
 //import com.b4free.rodin.core.B4freeCore;
 
@@ -26,24 +27,18 @@ public class ReasonerExtensionTests extends AbstractReasonerTests {
 		return "org.eventb.pp.pp";
 	}
 
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[] {
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 1 "), input),
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" 1∈P |- 1∈P "), input)
-		};
+	@Test
+	public void testPPSuccessHyp() throws Exception {
+		testSuccessfulReasonerApplications("Success expected",
+				new SuccessfullReasonerApplication(TestLib.genSeq(" x = 1 |- x = 1 "), input),
+				new SuccessfullReasonerApplication(TestLib.genSeq(" 1∈P |- 1∈P "), input));
 	}
 
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2"), input,"Failed"),
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" 1∈P |- 2∈P "), input,"Failed")
-		};
+	@Test
+	public void testPPFailure() throws Exception {
+		testUnsuccessfulReasonerApplications("Failure expected",
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" x = 1 |- x = 2"), input, "Failed"),
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1∈P |- 2∈P "), input, "Failed"));
 	}
 
 //	@Override
