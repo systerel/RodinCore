@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -94,19 +95,19 @@ public class SynchroUtils {
 
 	// Used in case of reloading, to remove the attributes which were suppressed
 	// from the database from the light model.
+	// For instance, the boolean attributes are generally suppressed when they
+	// become false.
 	private static void keepKnownAttributes(LightElement lElement,
 			final Set<IAttributeType> availableTypes) {
 		final Set<String> ids = new HashSet<String>();
 		for (IAttributeType t : availableTypes) {
 			ids.add(t.getId());
 		}
-		try {
-			// no need to trigger add/remove notifications in case of a
-			// retainAll() here
-			lElement.eSetDeliver(false);
-			lElement.getEAttributes().retainAll(ids);
-		} finally {
-			lElement.eSetDeliver(true);
+		final EMap<String, Attribute> attrs = lElement.getEAttributes();
+		final Set<String> toDelete = new HashSet<String>(attrs.keySet());
+		toDelete.removeAll(ids);
+		for (String key : toDelete) {
+			attrs.removeKey(key);
 		}
 	}
 
