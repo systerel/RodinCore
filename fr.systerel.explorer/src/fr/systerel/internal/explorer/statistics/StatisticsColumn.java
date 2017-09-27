@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,22 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public abstract class StatisticsColumn {
 
+	private static final int NUMBER_COLUMN_WIDTH = 48; // display 4 numbers and the "Total" header
+	
 	private TableColumn column;
 	
-	
-	protected void createTableColumn(Table table, String header) {
+	protected void createTableColumn(Table table, String header, int width) {
 		column = new TableColumn(table, SWT.NONE);
 		column.setText(header);
 		column.pack();
-	
+		if (width > 0) {
+			if (width < column.getWidth()) {
+				// the header is too long: make a short name, add a tooltip
+				column.setText(header.substring(0, 3) + ".");
+				column.setToolTipText(header);
+			}
+			column.setWidth(width);
+		}
 	}
 	
 	protected void createTableColumn(Table table) {
@@ -52,7 +60,7 @@ public abstract class StatisticsColumn {
 	public static class NameColumn extends StatisticsColumn {
 		
 		public NameColumn(Table table){
-			createTableColumn(table, "Element Name");
+			createTableColumn(table, "Element Name", 0);
 		}
 
 		@Override
@@ -64,7 +72,7 @@ public abstract class StatisticsColumn {
 	public static class TotalColumn extends StatisticsColumn {
 		
 		public TotalColumn(Table table){
-			createTableColumn(table, "Total");
+			createTableColumn(table, "Total", NUMBER_COLUMN_WIDTH);
 			setAlignRight();
 		}
 
@@ -77,7 +85,7 @@ public abstract class StatisticsColumn {
 	public static class AutoColumn extends StatisticsColumn {
 		
 		public AutoColumn(Table table){
-			createTableColumn(table, "Auto");
+			createTableColumn(table, "Auto", NUMBER_COLUMN_WIDTH);
 			setAlignRight();
 		}
 
@@ -90,7 +98,7 @@ public abstract class StatisticsColumn {
 	public static class ManualColumn extends StatisticsColumn {
 		
 		public ManualColumn(Table table){
-			createTableColumn(table, "Manual");
+			createTableColumn(table, "Manual", NUMBER_COLUMN_WIDTH);
 			setAlignRight();
 		}
 
@@ -103,7 +111,7 @@ public abstract class StatisticsColumn {
 	public static class ReviewedColumn extends StatisticsColumn {
 		
 		public ReviewedColumn(Table table){
-			createTableColumn(table, "Reviewed");
+			createTableColumn(table, "Reviewed", NUMBER_COLUMN_WIDTH);
 			setAlignRight();
 		}
 
@@ -116,7 +124,7 @@ public abstract class StatisticsColumn {
 	public static class UndischargedColumn extends StatisticsColumn {
 		
 		public UndischargedColumn(Table table){
-			createTableColumn(table, "Undischarged");
+			createTableColumn(table, "Undischarged", NUMBER_COLUMN_WIDTH);
 			setAlignRight();
 		}
 
