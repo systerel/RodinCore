@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 
 	
 	@Test
-	public void getChildrenContext() throws RodinDBException {
+	public void getChildrenContext() {
 		// get the intermediary node for context input
 		assertArray(axmContentProvider.getChildren(c0), nodeAxm);
 		//get the theorems for the node input
@@ -80,7 +80,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getChildrenMachine() throws RodinDBException {
+	public void getChildrenMachine() {
 		// get the intermediary node for machine input
 		assertArray(invContentProvider.getChildren(m0), nodeInv);
 		//get the theorem for the node input
@@ -88,7 +88,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void getParentContext() throws RodinDBException {
+	public void getParentContext() {
 		ModelController.getContext(c0).processChildren();
 		// get the parent of the theorems
 		assertEquals(axmContentProvider.getParent(theorem1),  nodeAxm);
@@ -97,7 +97,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getParentMachine() throws RodinDBException {
+	public void getParentMachine() {
 		ModelController.getMachine(m0).processChildren();
 		// get the parent of the theorems
 		assertEquals(invContentProvider.getParent(theorem4),  nodeInv);

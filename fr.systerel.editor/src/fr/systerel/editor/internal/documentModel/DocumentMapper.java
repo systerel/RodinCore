@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,6 @@ import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.SECTION_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,30 +23,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eventb.core.IAssignmentElement;
-import org.eventb.core.ICommentedElement;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.IPredicateElement;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
-import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -576,99 +561,8 @@ public class DocumentMapper {
 		}
 	}
 
-	// TODO use the attribute types
-	public void elementChanged(ILElement element) {
-		final EditorElement el = findEditorElement(element);
-		final IInternalElement ie = element.getElement();
-		if (el != null) {
-			for (Interval interval : el.getIntervals()) {
-				final ContentType contentType = interval.getContentType();
-				if (contentType == null) {
-					return;
-				}
-				try {
-					final String contentTypeName = contentType.getName();
-					if (LEFT_PRESENTATION_TYPE.equals(contentTypeName)
-							|| (SECTION_TYPE.equals(contentTypeName))) {
-						continue;
-					}
-					if (ie instanceof IIdentifierElement
-							&& (IDENTIFIER_TYPE.equals(contentTypeName) || //
-							IMPLICIT_IDENTIFIER_TYPE.equals(contentTypeName))) {
-						checkIdentifier((IIdentifierElement) ie, interval);
-					} else if (ie instanceof ILabeledElement
-							&& (IDENTIFIER_TYPE.equals(contentTypeName) || //
-							IMPLICIT_IDENTIFIER_TYPE.equals(contentTypeName))) {
-						checkLabeled((ILabeledElement) ie, interval);
-					} else if (ie instanceof ICommentedElement
-							&& (COMMENT_TYPE.equals(contentTypeName) || //
-							IMPLICIT_COMMENT_TYPE.equals(contentTypeName))) {
-						checkCommented((ICommentedElement) ie, interval);
-					} else if (contentType instanceof AttributeContentType) {
-						checkAttribute(element, interval);
-					}
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	private Interval getLastInterval() {
 		return intervals.get(intervals.size() - 1);
-	}
-
-	private void checkLabeled(ILabeledElement element, Interval interval)
-			throws RodinDBException {
-		if (element.hasLabel()) {
-			final String text = element.getLabel();
-			synchronizeInterval(interval, text);
-		}
-	}
-
-	private void checkIdentifier(IIdentifierElement element, Interval interval)
-			throws RodinDBException {
-		if (element.hasIdentifierString()) {
-			final String text = element.getIdentifierString();
-			synchronizeInterval(interval, text);
-		}
-	}
-
-	private void checkAssignment(IAssignmentElement element, Interval interval)
-			throws RodinDBException {
-		if (element.hasAssignmentString()) {
-			final String text = element.getAssignmentString();
-			synchronizeInterval(interval, text);
-		}
-	}
-
-	private void checkPredicate(IPredicateElement element, Interval interval)
-			throws RodinDBException {
-		if (element.hasPredicateString()) {
-			final String text = element.getPredicateString();
-			synchronizeInterval(interval, text);
-		}
-	}
-
-	private void checkCommented(ICommentedElement element, Interval interval)
-			throws RodinDBException {
-		if (element.hasComment()) {
-			final String text = element.getComment();
-			synchronizeInterval(interval, text);
-		}
-	}
-
-	private void checkAttribute(ILElement element, Interval interval) {
-		try {
-			final IAttributeManipulation attManip = interval
-					.getAttributeManipulation();
-			if (attManip == null)
-				return;
-			synchronizeInterval(interval,
-					attManip.getValue(element.getElement(), null));
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void setDocument(IDocument document) {

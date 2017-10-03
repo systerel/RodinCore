@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 
@@ -45,8 +44,7 @@ public class ImplicitDeltaProcessor {
 	 * @param delta
 	 *            The delta from the Rodin Database
 	 */
-	public void processDelta(final IRodinElementDelta delta)
-			throws RodinDBException {
+	public void processDelta(final IRodinElementDelta delta) {
 		if (traverseDelta(delta)) {
 			submit(
 					new ElementOperation.RecalculateImplicitElementOperation(

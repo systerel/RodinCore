@@ -219,7 +219,7 @@ public class ProblemMarkerAnnotationsUpdater implements IDocumentListener {
 		if (!inputRoot.exists()) {
 			return;
 		}
-		final IResource file = ((IEventBRoot) inputRoot).getResource();
+		final IResource file = inputRoot.getResource();
 		try {
 			final IMarker[] markers = file.findMarkers(
 					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,

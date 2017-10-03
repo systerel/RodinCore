@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPOPredicateSet;
@@ -88,7 +88,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			IRodinFile oldFile, 
 			IRodinFile newFile,
 			IProgressMonitor monitor) throws CoreException {
-		
+		final SubMonitor sMonitor = SubMonitor.convert(monitor, 2);
 		assert oldFile != null;
 		assert newFile != null;
 
@@ -123,14 +123,13 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		
 		if (changed) {
 			newRoot.setPOStamp(freshStamp, null);
-			newFile.save(new SubProgressMonitor(monitor, 1), true, false);
+			newFile.save(sMonitor.split(1), true, false);
 			final IRodinElement project = oldFile.getParent();
 			final String name = oldFile.getElementName();
-			final SubProgressMonitor subPM = new SubProgressMonitor(monitor, 1);
-			newFile.move(project, null, name, true, subPM);
+			newFile.move(project, null, name, true, sMonitor.split(1));
 			return true;			
 		} else {
-			newFile.delete(true, new SubProgressMonitor(monitor, 1));
+			newFile.delete(true, sMonitor.split(2));
 			return false;
 		}
 	}
@@ -364,7 +363,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 				} finally {
 					// Ensure that the temporary file gets deleted
 					if (poTmpFile.exists()) {
-						poTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
+						poTmpFile.delete(true, SubMonitor.convert(monitor, 1));
 					}
 					monitor.done();
 					poFile.makeConsistent(null);

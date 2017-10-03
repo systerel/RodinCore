@@ -154,7 +154,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		super(editor, parent, style);
 		this.setContentProvider(new SyntheticContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
-		this.setSorter(new ElementSorter());
+		this.setComparator(new ElementSorter());
 		makeActions();
 		// Fill the action bars and update the global action handlers'
 		// enabled state to match the current selection.

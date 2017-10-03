@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,21 +57,21 @@ public class ComplexMachineContentProviderTest extends ExplorerTest {
 
 	
 	@Test
-	public void getChildrenProject() throws RodinDBException {
+	public void getChildrenProject() {
 		//check the children of the project
 		Object[] children = contentProvider.getChildren(rodinProject.getProject());
 		assertArray(children, m0, m1, m2);
 }
 
 	@Test
-	public void getChildrenMachine() throws RodinDBException {
+	public void getChildrenMachine() {
 		ModelController.processProject(rodinProject);
 		//check the children of the machine m0
 		assertArray(contentProvider.getChildren(m0), m3);
 	}
 	
 	@Test
-	public void getParent() throws RodinDBException {
+	public void getParent() {
 		ModelController.processProject(rodinProject);
 
 		assertEquals(contentProvider.getParent(m0), rodinProject);

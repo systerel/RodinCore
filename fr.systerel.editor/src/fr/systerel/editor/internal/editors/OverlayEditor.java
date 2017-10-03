@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -257,8 +257,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		setupEditorText();
 		contentProposal = new ContentProposalManager(editorText, mapper
 				.getRoot().getElement());
-		final ISourceProviderService sourceService = (ISourceProviderService) editor
-				.getSite().getService(ISourceProviderService.class);
+		final ISourceProviderService sourceService = editor.getSite().getService(ISourceProviderService.class);
 		editionModeProvider = (EditionModeProvider) sourceService
 				.getSourceProvider(EDITION_MODE);
 	}
@@ -278,8 +277,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
 		// has focus.
-		final IFocusService focusService = (IFocusService) editor.getSite()
-				.getService(IFocusService.class);
+		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 
@@ -339,7 +337,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			return;
 		
 		interval = inter;
-		if (!editorText.isVisible() && inter != null) {
+		if (!editorText.isVisible()) {
 			final int pos = editorToOverlayOffset(offset);
 			EditType.handleEdit(this, inter, pos, changeBooleanValue);
 		}

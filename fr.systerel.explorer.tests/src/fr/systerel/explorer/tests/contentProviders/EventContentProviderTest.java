@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.junit.Before;
 import org.junit.Test;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.explorer.tests.ExplorerTest;
@@ -60,7 +59,7 @@ public class EventContentProviderTest extends ExplorerTest {
 	}
 	
 	@Test
-	public void getChildren() throws RodinDBException {
+	public void getChildren() {
 		// get the intermediary node for context input
 		assertArray(contentProvider.getChildren(m0), node);
 		//get the events for the node input
@@ -68,7 +67,7 @@ public class EventContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getParent() throws RodinDBException {
+	public void getParent() {
 		ModelController.getMachine(m0).processChildren();
 		// get the parent of the events
 		assertEquals(contentProvider.getParent(event1),  node);

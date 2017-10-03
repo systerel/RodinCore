@@ -146,7 +146,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		super(editor, parent, style);
 		this.setContentProvider(new EventContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
-		this.setSorter(new ElementSorter());
+		this.setComparator(new ElementSorter());
 	}
 
 	/*

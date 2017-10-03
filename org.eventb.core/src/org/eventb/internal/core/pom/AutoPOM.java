@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
-import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
 import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
@@ -66,7 +65,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	@Override
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
 			throws CoreException {
-		
 		final IRodinFile psFile = RodinCore.valueOf(target);
 		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 		final IProofComponent pc = manager.getProofComponent(psRoot);
@@ -76,35 +74,32 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final IPOSequent[] poSequents = pc.getPORoot().getSequents();
 		final int nbOfPOs = poSequents.length;
 		final int workUnits = 2 + nbOfPOs * 2 + 2 + nbOfPOs;
+		final SubMonitor sMonitor = SubMonitor.convert(pm, "Processing PO for " + componentName + ": ", workUnits);
 		
 		try {
-			pm.beginTask("Processing PO for " + componentName + ": ", workUnits);
-			
-			pm.subTask("loading");
-			createFreshProofFile(pc, newSubProgressMonitor(pm, 1));
-			checkCancellation(pm, pc);
+			sMonitor.subTask("loading");
+			createFreshProofFile(pc, sMonitor.split(1));
 			
 			// update proof statuses
-			final PSUpdater updater = new PSUpdater(pc,
-					newSubProgressMonitor(pm, 1));
+			final PSUpdater updater = new PSUpdater(pc, sMonitor.split(1));
 			for (final IPOSequent poSequent : poSequents) {
-				pm.subTask("updating status of " + poSequent.getElementName());
-				updater.updatePO(poSequent, newSubProgressMonitor(pm, 1));
-				checkCancellation(pm, pc);
+				sMonitor.subTask("updating status of " + poSequent.getElementName());
+				updater.updatePO(poSequent, sMonitor.split(1));
 			}
 			
-			updater.cleanup(newSubProgressMonitor(pm, nbOfPOs));
+			updater.cleanup(sMonitor.split(nbOfPOs));
 			
-			pm.subTask("saving");
-			pc.save(newSubProgressMonitor(pm, 2), true);
+			sMonitor.subTask("saving");
+			pc.save(sMonitor.split(2), true);
 			
-			checkCancellation(pm, pc);
-
-			IProgressMonitor spm = newSubProgressMonitor(pm, nbOfPOs);
 			if (AutoProver.isEnabled()) {
-				AutoProver.run(pc, updater.getOutOfDateStatuses(), spm);
+				AutoProver.run(pc, updater.getOutOfDateStatuses(), sMonitor.split(nbOfPOs));
 			}
 			return true;
+		} catch(OperationCanceledException e) {
+			// Cleanup PR & PS files (may have unsaved changes).
+			tryMakeConsistent(pc);
+			throw e;
 		} finally {
 			pm.done();
 			
@@ -140,21 +135,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private IProgressMonitor newSubProgressMonitor(IProgressMonitor pm,
-			int ticks) {
-		return new SubProgressMonitor(pm, ticks, PREPEND_MAIN_LABEL_TO_SUBTASK);
-	}
-
-	private void checkCancellation(IProgressMonitor monitor, IProofComponent pc) {
-		if (monitor.isCanceled()) {
-			// Cleanup PR & PS files (may have unsaved changes).
-			try {
-				pc.makeConsistent(null);
-			} catch (RodinDBException e) {
-				Util.log(e, "when reverting changes to proof and status files for"
-						+ ((IPORoot)pc.getPRRoot()).getComponentName());
-			}
-			throw new OperationCanceledException();
+	public static void tryMakeConsistent(IProofComponent pc) {
+		try {
+			pc.makeConsistent(null);
+		} catch (RodinDBException e) {
+			Util.log(e, "when reverting changes to proof and status files for"
+					+ ((IPORoot)pc.getPRRoot()).getComponentName());
 		}
 	}
 	

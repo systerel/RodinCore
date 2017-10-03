@@ -325,8 +325,7 @@ public class RodinEditor extends TextEditor {
 
 	public void activateRodinEditorContext() {
 		// Activate Event-B Editor Context
-		final IContextService contextService = (IContextService) getSite()
-				.getService(IContextService.class);
+		final IContextService contextService = getSite().getService(IContextService.class);
 		final IInternalElement inputRoot = documentProvider.getInputRoot();
 		if (inputRoot instanceof IMachineRoot) {
 			specificContext = contextService
@@ -342,8 +341,7 @@ public class RodinEditor extends TextEditor {
 	}
 	
 	public void deactivateRodinEditorContext() {
-		final IContextService contextService = (IContextService) getSite()
-				.getService(IContextService.class);
+		final IContextService contextService = getSite().getService(IContextService.class);
 		if (specificContext != null)
 			contextService.deactivateContext(specificContext);
 		if (defaultContext != null)

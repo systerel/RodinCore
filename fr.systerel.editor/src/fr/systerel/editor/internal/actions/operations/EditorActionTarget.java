@@ -116,8 +116,7 @@ public class EditorActionTarget implements ITextOperationTarget {
 	}
 
 	private void executeCommand(String commandId) {
-		final ICommandService service = (ICommandService) editor.getSite()
-				.getService(ICommandService.class);
+		final ICommandService service = editor.getSite().getService(ICommandService.class);
 		final Command command = service.getCommand(commandId);
 		try {
 			final IEvaluationContext context = getDefaultEvaluationContext(editor);

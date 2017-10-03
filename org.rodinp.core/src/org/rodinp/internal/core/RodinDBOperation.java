@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinDBStatus;
@@ -113,7 +113,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * The progress monitor passed into this operation
 	 */
-	protected IProgressMonitor progressMonitor= null;
+	protected SubMonitor progressMonitor= null;
 
 	/**
 	 * A flag indicating whether this operation is nested.
@@ -482,7 +482,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	protected IProgressMonitor getSubProgressMonitor(int workAmount) {
 		IProgressMonitor sub = null;
 		if (progressMonitor != null) {
-			sub = new SubProgressMonitor(progressMonitor, workAmount, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+			sub = progressMonitor.newChild(workAmount);
 		}
 		return sub;
 	}
@@ -557,10 +557,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * Convenience method to move resources
 	 */
 	protected void moveResources(IResource[] resources, IPath destinationPath) throws RodinDBException {
-		IProgressMonitor subProgressMonitor = null;
-		if (progressMonitor != null) {
-			subProgressMonitor = new SubProgressMonitor(progressMonitor, resources.length, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-		}
+		final IProgressMonitor subProgressMonitor = getSubProgressMonitor(resources.length);
 		IWorkspace workspace = resources[0].getWorkspace();
 		try {
 			workspace.move(resources, destinationPath, false, subProgressMonitor);
@@ -698,7 +695,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		DeltaProcessor deltaProcessor = manager.getDeltaProcessor();
 		int previousDeltaCount = deltaProcessor.rodinDBDeltas.size();
 		try {
-			progressMonitor = monitor;
+			progressMonitor = SubMonitor.convert(monitor);
 			pushOperation(this);
 			try {
 				executeOperation();

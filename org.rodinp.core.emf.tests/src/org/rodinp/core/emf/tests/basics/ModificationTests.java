@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,11 @@ import static org.rodinp.core.tests.AbstractRodinDBTests.fBool;
 import java.util.List;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
@@ -42,8 +40,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * Database is suppressed in the light model
 	 */
 	@Test
-	public void deleteAnAttribute() throws RodinDBException,
-			InterruptedException {
+	public void deleteAnAttribute() throws Exception {
 		// we create elements, and add one attribute to the first element
 		// beneath the root
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
@@ -74,8 +71,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * updated in the light model
 	 */
 	@Test
-	public void modifyRodinAttribute() throws RodinDBException,
-			InterruptedException {
+	public void modifyRodinAttribute() throws Exception {
 		// we get the resource (empty)
 		final ILFile rodinResource = getRodinResource();
 		// we get the root element of the light model
@@ -112,8 +108,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * transparent for light model elements.
 	 */
 	@Test
-	public void modifyElementOrder() throws RodinDBException,
-			InterruptedException {
+	public void modifyElementOrder() throws Exception {
 		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element
@@ -142,8 +137,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	}
 
 	@Test
-	public void testGetChildPosition() throws RodinDBException,
-			InterruptedException {
+	public void testGetChildPosition() throws Exception {
 		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element

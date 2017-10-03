@@ -147,7 +147,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		super(editor, parent, style);
 		this.setContentProvider(new CarrierSetContentProvider());
 		this.setLabelProvider(new EventBTreeLabelProvider(editor, this));
-		this.setSorter(new ElementSorter());
+		this.setComparator(new ElementSorter());
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Universitaet Duesseldorf and others.
+ * Copyright (c) 2009, 2017 Universitaet Duesseldorf and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,7 @@ public class ClickListener implements MouseListener {
 					final ParameterizedCommand command = makeInsertCommand(insertText);
 					
 					if (command != null) {
-						final IHandlerService handlerService = (IHandlerService) editor
-								.getSite().getService(IHandlerService.class);
+						final IHandlerService handlerService = editor.getSite().getService(IHandlerService.class);
 						try {
 							handlerService.executeCommand(
 									command, null);
@@ -82,8 +81,7 @@ public class ClickListener implements MouseListener {
 	}
 
 	private ParameterizedCommand makeInsertCommand(final String insertText) {
-		final ICommandService commandService = (ICommandService) editor
-				.getSite().getService(ICommandService.class);
+		final ICommandService commandService = editor.getSite().getService(ICommandService.class);
 
 		final Command command = commandService
 				.getCommand("org.eventb.ui.edit.insert"); //$NON-NLS-1$

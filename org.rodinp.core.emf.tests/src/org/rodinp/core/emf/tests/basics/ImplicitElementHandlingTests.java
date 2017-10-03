@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,8 +151,7 @@ public class ImplicitElementHandlingTests {
 	 * root element.
 	 */
 	@Test
-	public void createDependencyAndCheckImplicitChildren()
-			throws RodinDBException, InterruptedException {
+	public void createDependencyAndCheckImplicitChildren() throws Exception {
 		final ImplicitHolder holder1 = getImplicitHolder(rf1.getRoot(),
 				"Holder1");
 		final NamedElement s1 = getNamedElement(holder1, "s1");

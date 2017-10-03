@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Systerel and others.
+ * Copyright (c) 2009, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public class RootElementTests extends CopyMoveTests {
 	 * Ensures that a root element cannot be moved from.
 	 */
 	@Test
-	public void testMoveFromRoot() throws CoreException {
+	public void testMoveFromRoot() {
 		moveNegative(rSource, rDest, null, null, false, ROOT_ELEMENT);
 		moveNegative(rSource, rDest, null, null, true, ROOT_ELEMENT);
 		moveNegative(rSource, rfSource, null, null, false, ROOT_ELEMENT);
@@ -153,7 +153,7 @@ public class RootElementTests extends CopyMoveTests {
 	 * Ensures that one cannot move to a root element.
 	 */
 	@Test
-	public void testMoveToRoot() throws CoreException {
+	public void testMoveToRoot() {
 		final String name = rDest.getElementName();
 
 		moveNegative(neSource, rfDest, null, null, false, INVALID_DESTINATION);
@@ -166,7 +166,7 @@ public class RootElementTests extends CopyMoveTests {
 	 * Ensures that a root element cannot be renamed.
 	 */
 	@Test
-	public void testRenameRoot() throws CoreException {
+	public void testRenameRoot() {
 		renameNegative(rSource, "Y", false, ROOT_ELEMENT);
 		renameNegative(rSource, "Y", true, ROOT_ELEMENT);
 	}

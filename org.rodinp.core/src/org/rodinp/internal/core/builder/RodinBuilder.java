@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.FileAssociation;
 import org.rodinp.internal.core.util.Util;
@@ -231,14 +230,6 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		return null;
-	}
-	
-	IProgressMonitor makeProgressMonitor(IProgressMonitor monitor) {
-		return new SubProgressMonitor(makeBuilderProgressMonitor(monitor), 1);
-	}
-
-	IProgressMonitor makeBuilderProgressMonitor(IProgressMonitor monitor) {
-		return new BuilderProgressMonitor(monitor, this);
 	}
 
 	/**

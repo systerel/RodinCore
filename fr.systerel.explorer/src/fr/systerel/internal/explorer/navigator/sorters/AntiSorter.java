@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package fr.systerel.internal.explorer.navigator.sorters;
 import java.text.Collator;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * A sorter that does not sort at all. The elements are sorted by the CNF
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * For that, we suppose that the sorting algorithm used by the CNF is stable and
  * just say that all elements are equal.
  */
-public class AntiSorter extends ViewerSorter {
+public class AntiSorter extends ViewerComparator {
 
 	public AntiSorter() {
 		// do nothing

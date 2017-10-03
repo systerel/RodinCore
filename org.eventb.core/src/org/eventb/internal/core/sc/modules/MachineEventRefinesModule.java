@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2017 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,8 +295,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 			ILabelSymbolInfo symbolInfo, String abstractLabel,
 			IInternalElement element, IAttributeType attributeType)
 			throws CoreException {
-		IAbstractEventInfo info = abstractEventTable
-				.getAbstractEventInfo(abstractLabel);
+		final IAbstractEventInfo info = abstractEventTable.getAbstractEventInfo(abstractLabel);
 
 		if (info == null) {
 			if (attributeType == null)
@@ -305,7 +304,6 @@ public class MachineEventRefinesModule extends SCFilterModule {
 			else
 				createProblemMarker(element, attributeType,
 						GraphProblem.AbstractEventNotFoundError, abstractLabel);
-			info = null;
 			issueRefinementErrorMarker(symbolInfo);
 		}
 		return info;

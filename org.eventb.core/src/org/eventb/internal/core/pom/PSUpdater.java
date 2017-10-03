@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
@@ -132,45 +130,29 @@ public class PSUpdater {
 	}
 	
 	public void cleanup(IProgressMonitor ipm) throws RodinDBException {
-		final IProgressMonitor pm = definedProgressMonitor(ipm);
+		final SubMonitor sMonitor = SubMonitor.convert(ipm, "Cleaning up proof statuses", initialNbOfStatuses);
 		final ElementSorter.Mover<IPSStatus> mover = new ElementSorter.Mover<IPSStatus>() {
 			@Override
 			public void move(IPSStatus element, IPSStatus nextSibling)
 					throws RodinDBException {
-				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
-				element.move(psRoot, nextSibling, null, false, spm);
+				element.move(psRoot, nextSibling, null, false, sMonitor.split(1));
 			}
 		};
-		try {
-			pm.beginTask("Cleaning up proof statuses", initialNbOfStatuses);
-			removeUnusedStatuses(pm);
-			sorter.sort(psRoot.getStatuses(), mover);
-		} finally {
-			pm.done();
-		}
+		removeUnusedStatuses(sMonitor);
+		sorter.sort(psRoot.getStatuses(), mover);
 	}
 
 	private void removeUnusedStatuses(final IProgressMonitor pm)
 			throws RodinDBException {
 		final int size = unusedStatuses.size();
 		if (size != 0) {
+			final SubMonitor spm = SubMonitor.convert(pm, size);
 			final IRodinElement[] es = new IRodinElement[size];
 			unusedStatuses.toArray(es);
-			final IProgressMonitor spm = new SubProgressMonitor(pm, size);
 			RodinCore.getRodinDB().delete(es, false, spm);
 		}
 	}
 
-	private static IProgressMonitor definedProgressMonitor(IProgressMonitor ipm) {
-		final IProgressMonitor pm;
-		if (ipm == null) {
-			pm = new NullProgressMonitor();
-		} else {
-			pm = ipm;
-		}
-		return pm;
-	}
-	
 	// Returns true if the both the status and the corresponding PO sequent
 	// carry the same stamp.
 	private static boolean hasSameStampAsPo(IPSStatus psStatus)

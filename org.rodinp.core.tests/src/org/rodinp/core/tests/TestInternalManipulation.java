@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -559,7 +559,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	 * element cannot be created.
 	 */
 	@Test
-	public void testCreateNewChildRootInvalidType() throws RodinDBException {
+	public void testCreateNewChildRootInvalidType() {
 		assertCreateNewChildError(root2, NamedElement.ELEMENT_TYPE, null,
 				INVALID_CHILD_TYPE, root2);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,8 +106,7 @@ public class XMLPersistorTests extends IndexTests {
 	}
 
 	public static void assertExportTable(IExportTable expected,
-			ProjectIndexManager actual, List<IRodinFile> files)
-			throws InterruptedException {
+			ProjectIndexManager actual, List<IRodinFile> files) {
 		for (IRodinFile file : files) {
 			assertSameElements(expected.get(file), actual.getExports(file),
 					"exports");
@@ -115,8 +114,7 @@ public class XMLPersistorTests extends IndexTests {
 	}
 
 	public static void assertFileTable(FileTable expected,
-			ProjectIndexManager actual, List<IRodinFile> files)
-			throws InterruptedException {
+			ProjectIndexManager actual, List<IRodinFile> files) {
 		for (IRodinFile file : files) {
 			assertSameElements(expected.get(file),
 					actual.getDeclarations(file), "elements in file table");
@@ -124,7 +122,7 @@ public class XMLPersistorTests extends IndexTests {
 	}
 
 	public static void assertNameTable(NameTable expected, ProjectIndexManager actual,
-			List<String> names) throws InterruptedException {
+			List<String> names) {
 		for (String name : names) {
 			assertSameElements(expected.getDeclarations(name), actual
 					.getDeclarations(name), "elements in name table");
@@ -133,7 +131,7 @@ public class XMLPersistorTests extends IndexTests {
 
 
 	private static void assertIMData(IPersistResource resource,
-			PersistentIndexManager actual) throws InterruptedException {
+			PersistentIndexManager actual) {
 		final Map<IRodinProject, PublicPIM> expectedPIMs = resource.getPublicPIMs();
 		final List<IRodinFile> files = resource.getRodinFiles();
 		final List<String> names = resource.getNames();
@@ -194,8 +192,7 @@ public class XMLPersistorTests extends IndexTests {
 		file.delete();
 	}
 
-	private static void restoreTest(File file, IPersistResource expected)
-			throws InterruptedException {
+	private static void restoreTest(File file, IPersistResource expected) {
 
 		final IPersistor ps = new XMLPersistor();
 
