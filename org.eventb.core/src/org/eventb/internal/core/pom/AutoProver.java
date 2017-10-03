@@ -62,7 +62,6 @@ public final class AutoProver {
 			for (IPSStatus status : pos) {
 				dirty |= processPo(pc, status, sMonitor.split(1));
 			}
-			dirty = true;
 			if (dirty) {
 				pc.save(sMonitor.split(1), false);
 			} else {
