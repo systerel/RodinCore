@@ -1,5 +1,123 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.rodinp.core" version="2">
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType$Boolean">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="Boolean"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType$Handle">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="Handle"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType$Integer">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="Integer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType$Long">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="Long"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeType.java" type="org.rodinp.core.IAttributeType$String">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="IAttributeType"/>
+                <message_argument value="String"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeValue.java" type="org.rodinp.core.IAttributeValue$Boolean">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IAttributeValue"/>
+                <message_argument value="Boolean"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeValue.java" type="org.rodinp.core.IAttributeValue$Handle">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IAttributeValue"/>
+                <message_argument value="Handle"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeValue.java" type="org.rodinp.core.IAttributeValue$Integer">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IAttributeValue"/>
+                <message_argument value="Integer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeValue.java" type="org.rodinp.core.IAttributeValue$Long">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IAttributeValue"/>
+                <message_argument value="Long"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IAttributeValue.java" type="org.rodinp.core.IAttributeValue$String">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IAttributeValue"/>
+                <message_argument value="String"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/IInternalElement.java" type="org.rodinp.core.IInternalElement">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IElementManipulation"/>
+                <message_argument value="IInternalElement"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IParent"/>
+                <message_argument value="IInternalElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/ISnapshotable.java" type="org.rodinp.core.ISnapshotable">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IRodinElement"/>
+                <message_argument value="ISnapshotable"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/basis/RodinElement.java" type="org.rodinp.core.basis.RodinElement">
+        <filter comment="Invalid Warning" id="576725006">
+            <message_arguments>
+                <message_argument value="IRodinElement"/>
+                <message_argument value="RodinElement"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/rodinp/core/location/IAttributeLocation.java" type="org.rodinp.core.location.IAttributeLocation">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IInternalLocation"/>
+                <message_argument value="IAttributeLocation"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/rodinp/internal/core/RodinDBStatus.java" type="org.rodinp.internal.core.RodinDBStatus">
         <filter comment="Exception to the @noextend rule" id="574619656">
             <message_arguments>
