@@ -11,7 +11,7 @@
   
   <groupId>org.eventb</groupId>
   <artifactId>org.eventb.ui.symboltable.tests</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   
   <packaging>eclipse-test-plugin</packaging>
 
