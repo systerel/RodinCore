@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,8 @@ import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE_PATH;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.IPSStatus;
@@ -462,7 +464,7 @@ public class EventBImage {
 				throw new IllegalStateException("unknown image descriptor: "
 						+ baseKey);
 			}
-			final OverlayIcon icon = new OverlayIcon(descriptor);
+			final DecorationOverlayIcon icon = new DecorationOverlayIcon(descriptor, null, IDecoration.TOP_LEFT);
 			image = icon.createImage();
 			registry.put(key, image);
 		}
@@ -485,7 +487,7 @@ public class EventBImage {
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(desc);
+			DecorationOverlayIcon icon = new DecorationOverlayIcon(desc, null, IDecoration.TOP_LEFT);
 			image = icon.createImage();
 			imageRegistry.put(key, image);
 		}

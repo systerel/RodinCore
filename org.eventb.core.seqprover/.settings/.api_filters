@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.core.seqprover" version="2">
+    <resource path="src/org/eventb/core/seqprover/IHypAction.java" type="org.eventb.core.seqprover.IHypAction$IForwardInfHypAction">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IHypAction"/>
+                <message_argument value="IForwardInfHypAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/seqprover/IHypAction.java" type="org.eventb.core.seqprover.IHypAction$ISelectionHypAction">
+        <filter comment="Invalid Warning" id="576720909">
+            <message_arguments>
+                <message_argument value="IHypAction"/>
+                <message_argument value="ISelectionHypAction"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/seqprover/autoTacticPreference/AutoTacticPreference.java" type="org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference">
+        <filter comment="Invalid Warning" id="576725006">
+            <message_arguments>
+                <message_argument value="IAutoTacticPreference"/>
+                <message_argument value="AutoTacticPreference"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/seqprover/xprover/XProverReasoner.java" type="org.eventb.core.seqprover.xprover.XProverReasoner">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="AbstractXProverReasoner"/>
+                <message_argument value="XProverReasoner"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/seqprover/xprover/XProverReasoner2.java" type="org.eventb.core.seqprover.xprover.XProverReasoner2">
+        <filter comment="Invalid Warning" id="576778288">
+            <message_arguments>
+                <message_argument value="AbstractXProverReasoner"/>
+                <message_argument value="XProverReasoner2"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
