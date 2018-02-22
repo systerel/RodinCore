@@ -5,23 +5,23 @@
 
 	<groupId>org.eventb</groupId>
 	<artifactId>parent</artifactId>
-	<version>3.3.0-SNAPSHOT</version>
+	<version>3.4.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<www-basedir>/tmp/rodin-build/rodin-3.3</www-basedir>
+		<www-basedir>/tmp/rodin-build/rodin-3.4</www-basedir>
 
 		<!-- Plug-in versions -->
-		<tycho-version>0.26.0</tycho-version>
-		<maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+		<tycho-version>1.1.0</tycho-version>
+		<maven-resources-plugin-version>3.0.2</maven-resources-plugin-version>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>neon-4.6</id>
+			<id>oxygen-4.7</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.6/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
@@ -136,19 +136,9 @@
                      <arch>x86_64</arch>
                   </environment>
                   <environment>
-                     <os>linux</os>
-                     <ws>gtk</ws>
-                     <arch>x86</arch>
-                  </environment>
-                  <environment>
                      <os>win32</os>
                      <ws>win32</ws>
                      <arch>x86_64</arch>
-                  </environment>
-                  <environment>
-                     <os>win32</os>
-                     <ws>win32</ws>
-                     <arch>x86</arch>
                   </environment>
                   <environment>
                      <os>macosx</os>

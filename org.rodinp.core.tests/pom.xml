@@ -6,13 +6,13 @@
 	<parent>
 		<groupId>org.eventb</groupId>
 		<artifactId>parent</artifactId>
-        <version>3.3.0-SNAPSHOT</version>
+        <version>3.4.0-SNAPSHOT</version>
 		<relativePath>../org.eventb.parent</relativePath>
 	</parent>
 
 	<groupId>org.eventb</groupId>
 	<artifactId>org.rodinp.core.tests</artifactId>
-	<version>1.7.0-SNAPSHOT</version>
+	<version>1.7.1-SNAPSHOT</version>
 
 	<packaging>eclipse-test-plugin</packaging>
 

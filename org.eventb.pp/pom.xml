@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.eventb</groupId>
     <artifactId>parent</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+    <version>3.4.0-SNAPSHOT</version>
     <relativePath>../org.eventb.parent/pom.xml</relativePath>
   </parent>
   
   <groupId>org.eventb</groupId>
   <artifactId>org.eventb.pp</artifactId>
-  <version>0.8.1-SNAPSHOT</version>
+  <version>0.8.2-SNAPSHOT</version>
   
   <packaging>eclipse-plugin</packaging>
 
