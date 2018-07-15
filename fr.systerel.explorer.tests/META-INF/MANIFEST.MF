@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui,
  org.eventb.core.seqprover
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
+Automatic-Module-Name: fr.systerel.explorer.tests

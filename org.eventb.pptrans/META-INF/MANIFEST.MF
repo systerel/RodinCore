@@ -13,3 +13,4 @@ Export-Package: org.eventb.pptrans,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.eventb.internal.pptrans.TranslatorPlugin
+Automatic-Module-Name: org.eventb.pptrans

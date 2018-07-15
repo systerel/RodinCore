@@ -33,3 +33,4 @@ Export-Package: org.rodinp.core,
  org.rodinp.internal.core.util.sort;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.rodinp.core

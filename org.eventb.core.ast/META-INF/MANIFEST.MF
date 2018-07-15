@@ -22,3 +22,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.eventb.internal.core.ast.ASTPlugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-ExtensibleAPI: true
+Automatic-Module-Name: org.eventb.core.ast

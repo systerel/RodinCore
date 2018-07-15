@@ -54,3 +54,4 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.ui.prettyprint,
  org.eventb.ui.prover
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.eventb.ui

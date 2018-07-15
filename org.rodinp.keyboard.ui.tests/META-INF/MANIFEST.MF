@@ -12,4 +12,5 @@ Import-Package: org.junit
 Export-Package: org.rodinp.keyboard.ui.tests
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
+Automatic-Module-Name: org.rodinp.keyboard.ui.tests
 

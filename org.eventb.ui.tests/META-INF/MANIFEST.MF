@@ -19,3 +19,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eventb.ui.tests.EventBUITestsPlugin
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eventb.ui.tests

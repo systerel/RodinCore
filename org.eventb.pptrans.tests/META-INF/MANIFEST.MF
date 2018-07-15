@@ -11,3 +11,4 @@ Require-Bundle: org.junit,
  org.eventb.core.seqprover;bundle-version="2.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eventb.pptrans.tests

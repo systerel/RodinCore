@@ -26,3 +26,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: fr.systerel.editor.internal.documentModel;x-friends:="fr.systerel.editor.tests",
  fr.systerel.editor.internal.editors;x-friends:="fr.systerel.editor.tests",
  fr.systerel.editor.internal.presentation.updaters;x-friends:="fr.systerel.editor.tests"
+Automatic-Module-Name: fr.systerel.editor

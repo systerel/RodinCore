@@ -14,3 +14,4 @@ Bundle-Vendor: %BundleVendor
 Bundle-Localization: plugin
 Export-Package: org.eventb.ui.symboltable,
  org.eventb.ui.symboltable.internal;x-friends:="org.eventb.ui.symboltable.tests"
+Automatic-Module-Name: org.eventb.ui.symboltable

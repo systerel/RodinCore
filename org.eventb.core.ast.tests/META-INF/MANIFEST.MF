@@ -9,3 +9,4 @@ Require-Bundle: org.eventb.core.ast,
 Export-Package: org.eventb.core.ast.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eventb.core.ast.tests

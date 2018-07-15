@@ -9,3 +9,4 @@ Fragment-Host: org.eventb.pp
 Require-Bundle: org.junit,
  org.eventb.core.seqprover.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Automatic-Module-Name: org.eventb.pp.tests

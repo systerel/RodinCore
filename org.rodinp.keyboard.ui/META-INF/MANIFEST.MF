@@ -15,3 +15,4 @@ Export-Package: org.rodinp.internal.keyboard.ui.translators;x-internal:=true,
  org.rodinp.keyboard.ui,
  org.rodinp.keyboard.ui.preferences
 Bundle-Localization: plugin
+Automatic-Module-Name: org.rodinp.keyboard.ui
