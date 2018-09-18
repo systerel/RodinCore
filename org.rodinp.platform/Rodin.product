@@ -14,8 +14,13 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xmx1024m
--Dosgi.requiredJavaVersion=1.8</vmArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.8
+-Xms256m
+-Xmx1024m
+-XX:+UseG1GC
+-XX:+UseStringDeduplication
+--add-modules=ALL-SYSTEM
+      </vmArgs>
    </launcherArgs>
 
    <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif" i48="/org.rodinp.platform/icons/rodin48.gif" i64="/org.rodinp.platform/icons/rodin64.gif" i128="/org.rodinp.platform/icons/rodin128.gif"/>
