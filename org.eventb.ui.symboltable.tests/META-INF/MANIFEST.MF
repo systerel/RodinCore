@@ -11,3 +11,4 @@ Require-Bundle: org.junit,
  org.eclipse.core.runtime
 Import-Package: org.eclipse.ui
 Bundle-Vendor: %Bundle-Vendor
+Automatic-Module-Name: org.eventb.ui.symboltable.tests

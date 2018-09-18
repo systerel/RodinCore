@@ -10,3 +10,4 @@ Require-Bundle: org.rodinp.keyboard.core,
 Export-Package: org.rodinp.keyboard.core.tests,
  org.rodinp.keyboard.core.tests.registry
 Bundle-Localization: plugin
+Automatic-Module-Name: org.rodinp.keyboard.core.tests

@@ -15,3 +15,4 @@ Export-Package: org.eventb.core.seqprover.reasonerExtensionTests,
  org.eventb.core.seqprover.rewriterTests,
  org.eventb.core.seqprover.tests
 Bundle-Localization: plugin
+Automatic-Module-Name: org.eventb.core.seqprover.tests

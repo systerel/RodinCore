@@ -40,3 +40,4 @@ Export-Package: org.eventb.core,
  org.eventb.internal.core.upgrade;x-internal:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-ExtensibleAPI: true
+Automatic-Module-Name: org.eventb.core

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,12 +135,13 @@ public abstract class MoveHandler extends AbstractHandler {
 			if (!(obj instanceof IRodinElement))
 				return null;
 			IRodinElement element = (IRodinElement) obj;
+			IParent newParent = (IParent) element.getParent();
 			if (parent == null) {
-				parent = (IParent) element.getParent();
+				parent = newParent;
 				type = element.getElementType();
 				elements.add(element);
 			} else {
-				if (!element.getParent().equals(parent)) {
+				if (!newParent.equals(parent)) {
 					return null;
 				} else {
 					elements.add(element);
