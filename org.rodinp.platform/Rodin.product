@@ -28,7 +28,6 @@
    <launcher name="rodin">
       <linux icon="org.rodinp.platform/rodin32.xpm"/>
       <macosx icon="org.rodinp.platform/rodin.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="org.rodinp.platform/rodin.ico"/>
          <bmp/>
