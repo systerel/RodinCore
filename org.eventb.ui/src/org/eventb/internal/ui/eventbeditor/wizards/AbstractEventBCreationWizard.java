@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.wizards;
 
-import static org.eventb.core.EventBAttributes.GENERATED_ATTRIBUTE;
 import static org.eventb.internal.ui.UIUtils.log;
 
 import org.eclipse.jface.dialogs.InputDialog;
@@ -156,8 +155,7 @@ public abstract class AbstractEventBCreationWizard {
 	 */
 	public static boolean isCreationAllowed(IEventBRoot root) {
 		try {
-			return !root.isReadOnly()
-					&& !root.hasAttribute(GENERATED_ATTRIBUTE);
+			return !root.isReadOnly() && !root.isGenerated();
 		} catch (RodinDBException e) {
 			log(e,
 					"Problem occurred while retrieving "
