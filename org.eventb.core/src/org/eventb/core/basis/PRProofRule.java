@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,14 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 			Util.log(e, msg);
 			return new EmptySkeleton(comment);
 		}
-		
+
+		if (input == null) {
+			final String msg = "Null input while deserializing rule of reasoner: "
+					+ reasonerDesc.getId();
+			Util.log(null, msg);
+			return new EmptySkeleton(comment);
+		}
+
 		final IProofRule proofRule = ProverFactory.makeProofRule(
 				reasonerDesc,
 				input, 
