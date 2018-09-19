@@ -155,7 +155,7 @@ public abstract class AbstractEventBCreationWizard {
 	 */
 	public static boolean isCreationAllowed(IEventBRoot root) {
 		try {
-			return !root.isReadOnly() && !root.isGenerated();
+			return root.exists() && !root.isReadOnly() && !root.isGenerated();
 		} catch (RodinDBException e) {
 			log(e,
 					"Problem occurred while retrieving "
