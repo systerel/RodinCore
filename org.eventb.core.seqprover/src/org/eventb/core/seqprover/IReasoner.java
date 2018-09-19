@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,10 +61,13 @@ public interface IReasoner {
 	/**
 	 * Deserializes an input of this reasoner using the given reader.
 	 * <p>
-	 * Clients should retriever from the reader all data needed to reconstruct
+	 * Clients should retrieve from the reader all data needed to reconstruct
 	 * an input that was previously serialized. The reader provides means to
-	 * access to data serialized explicitely, as well as to the proof rule that
+	 * access to data serialized explicitly, as well as to the proof rule that
 	 * was generated from the serialized input.
+	 * </p>
+	 * <p>
+	 * The returned value must not be <code>null</code>.
 	 * </p>
 	 * 
 	 * @param reader
