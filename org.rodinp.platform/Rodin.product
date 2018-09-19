@@ -23,7 +23,7 @@
       </vmArgs>
    </launcherArgs>
 
-   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif" i48="/org.rodinp.platform/icons/rodin48.gif" i64="/org.rodinp.platform/icons/rodin64.gif" i128="/org.rodinp.platform/icons/rodin128.gif"/>
+   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif" i48="/org.rodinp.platform/icons/rodin48.gif" i64="/org.rodinp.platform/icons/rodin64.gif" i128="/org.rodinp.platform/icons/rodin128.gif" i256="/org.rodinp.platform/icons/rodin256.gif"/>
 
    <splash
       location="org.rodinp.platform"
