@@ -1,4 +1,5 @@
 instructions.configure=\
+  mkdir(path:${installFolder}/dropins);\
   addRepository(type:0,location:http${#58}//download.eclipse.org/releases/oxygen,name:Oxygen Update Site);\
   addRepository(type:1,location:http${#58}//download.eclipse.org/releases/oxygen,name:Oxygen Update Site);\
   addRepository(type:0,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
