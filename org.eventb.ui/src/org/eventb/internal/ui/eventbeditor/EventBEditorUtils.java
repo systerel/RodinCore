@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,16 +43,13 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
@@ -60,7 +57,6 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
-import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.UIUtils;
@@ -91,37 +87,6 @@ public class EventBEditorUtils {
 	public static boolean DEBUG = false;
 
 	public final static String DEBUG_PREFIX = "*** EventBEditor *** ";
-	
-	static IRefinesEvent newRefEvt;
-
-	static IParameter newParam;
-	
-	static IGuard newGrd;
-	
-	static IWitness newWit;
-	
-	static IAction newAct;
-	
-	static IRefinesMachine newRefMch;
-	
-	static ISeesContext newSeeCtx;
-
-	static IVariable newVar;
-
-	static IInvariant newInv;
-	
-	static IEvent newEvt;
-
-	static IVariant newVariant;
-
-	static IExtendsContext newExtCtx;
-
-	static ICarrierSet newSet;
-
-	static IConstant newCst;
-	
-	static IAxiom newAxm;
-
 
 	/**
 	 * Delete selected elements in a tree viewer.
