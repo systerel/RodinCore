@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.core.ast" version="2">
     <resource path="src/org/eventb/core/ast/ExtendedExpression.java" type="org.eventb.core.ast.ExtendedExpression">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IExtendedFormula"/>
                 <message_argument value="ExtendedExpression"/>
@@ -9,7 +9,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/ast/ExtendedPredicate.java" type="org.eventb.core.ast.ExtendedPredicate">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IExtendedFormula"/>
                 <message_argument value="ExtendedPredicate"/>
