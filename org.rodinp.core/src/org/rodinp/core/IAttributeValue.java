@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see IInternalElement#getAttributeValues()
  * @see IInternalElement#setAttributeValue(IAttributeValue, IProgressMonitor)
  * @since 1.0
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAttributeValue {
@@ -76,6 +77,9 @@ public interface IAttributeValue {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 *
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	interface Boolean extends IAttributeValue {
 
@@ -92,6 +96,9 @@ public interface IAttributeValue {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 *
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	interface Handle extends IAttributeValue {
 
@@ -108,6 +115,9 @@ public interface IAttributeValue {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 *
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	interface Integer extends IAttributeValue {
 
@@ -124,6 +134,9 @@ public interface IAttributeValue {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 *
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	interface Long extends IAttributeValue {
 
@@ -140,6 +153,9 @@ public interface IAttributeValue {
 	 * <p>
 	 * This interface is not intended to be implemented by clients.
 	 * </p>
+	 *
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	interface String extends IAttributeValue {
 
