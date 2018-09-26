@@ -110,12 +110,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/rodinp/core/location/IAttributeLocation.java" type="org.rodinp.core.location.IAttributeLocation">
-        <filter comment="Invalid Warning" id="576720909">
-            <message_arguments>
-                <message_argument value="IInternalLocation"/>
-                <message_argument value="IAttributeLocation"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
