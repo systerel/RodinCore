@@ -80,34 +80,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/rodinp/core/IInternalElement.java" type="org.rodinp.core.IInternalElement">
-        <filter comment="Invalid Warning" id="576720909">
-            <message_arguments>
-                <message_argument value="IElementManipulation"/>
-                <message_argument value="IInternalElement"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Invalid Warning" id="576720909">
-            <message_arguments>
-                <message_argument value="IParent"/>
-                <message_argument value="IInternalElement"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/rodinp/core/ISnapshotable.java" type="org.rodinp.core.ISnapshotable">
-        <filter comment="Invalid Warning" id="576720909">
-            <message_arguments>
-                <message_argument value="IRodinElement"/>
-                <message_argument value="ISnapshotable"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/rodinp/core/basis/RodinElement.java" type="org.rodinp.core.basis.RodinElement">
-        <filter comment="Invalid Warning" id="576725006">
-            <message_arguments>
-                <message_argument value="IRodinElement"/>
-                <message_argument value="RodinElement"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
