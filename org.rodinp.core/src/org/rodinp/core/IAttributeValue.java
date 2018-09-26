@@ -81,7 +81,7 @@ public interface IAttributeValue {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	interface Boolean extends IAttributeValue {
+	public interface Boolean extends IAttributeValue {
 
 		@Override
 		IAttributeType.Boolean getType();
@@ -100,7 +100,7 @@ public interface IAttributeValue {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	interface Handle extends IAttributeValue {
+	public interface Handle extends IAttributeValue {
 
 		@Override
 		IAttributeType.Handle getType();
@@ -119,7 +119,7 @@ public interface IAttributeValue {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	interface Integer extends IAttributeValue {
+	public interface Integer extends IAttributeValue {
 
 		@Override
 		IAttributeType.Integer getType();
@@ -138,7 +138,7 @@ public interface IAttributeValue {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	interface Long extends IAttributeValue {
+	public interface Long extends IAttributeValue {
 
 		@Override
 		IAttributeType.Long getType();
@@ -157,7 +157,7 @@ public interface IAttributeValue {
 	 * @noextend This interface is not intended to be extended by clients.
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	interface String extends IAttributeValue {
+	public interface String extends IAttributeValue {
 
 		@Override
 		IAttributeType.String getType();
