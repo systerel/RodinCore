@@ -39,12 +39,6 @@
                 <message_argument value="ContextRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="ContextRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Event.java" type="org.eventb.core.basis.Event">
         <filter comment="Invalid Warning" id="576725006">
@@ -121,12 +115,6 @@
                 <message_argument value="MachineRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="MachineRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POIdentifier.java" type="org.eventb.core.basis.POIdentifier">
         <filter comment="Invalid Warning" id="576725006">
@@ -156,12 +144,6 @@
         <filter comment="Invalid Warning" id="576725006">
             <message_arguments>
                 <message_argument value="IPORoot"/>
-                <message_argument value="PORoot"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
                 <message_argument value="PORoot"/>
             </message_arguments>
         </filter>
@@ -253,12 +235,6 @@
                 <message_argument value="PRRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="PRRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRRuleAntecedent.java" type="org.eventb.core.basis.PRRuleAntecedent">
         <filter comment="Invalid Warning" id="576725006">
@@ -296,12 +272,6 @@
         <filter comment="Invalid Warning" id="576725006">
             <message_arguments>
                 <message_argument value="IPSRoot"/>
-                <message_argument value="PSRoot"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
                 <message_argument value="PSRoot"/>
             </message_arguments>
         </filter>
@@ -385,12 +355,6 @@
                 <message_argument value="SCContextRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="SCContextRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCEvent.java" type="org.eventb.core.basis.SCEvent">
         <filter comment="Invalid Warning" id="576725006">
@@ -452,12 +416,6 @@
         <filter comment="Invalid Warning" id="576725006">
             <message_arguments>
                 <message_argument value="ISCMachineRoot"/>
-                <message_argument value="SCMachineRoot"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
                 <message_argument value="SCMachineRoot"/>
             </message_arguments>
         </filter>
