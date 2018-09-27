@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.core.seqprover" version="2">
     <resource path="src/org/eventb/core/seqprover/autoTacticPreference/AutoTacticPreference.java" type="org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IAutoTacticPreference"/>
                 <message_argument value="AutoTacticPreference"/>
@@ -9,7 +9,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/seqprover/xprover/XProverReasoner.java" type="org.eventb.core.seqprover.xprover.XProverReasoner">
-        <filter comment="Invalid Warning" id="576778288">
+        <filter comment="This is on purpose, but we have a different concept of non extensible classes than the API tools" id="576778288">
             <message_arguments>
                 <message_argument value="AbstractXProverReasoner"/>
                 <message_argument value="XProverReasoner"/>
@@ -17,7 +17,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/seqprover/xprover/XProverReasoner2.java" type="org.eventb.core.seqprover.xprover.XProverReasoner2">
-        <filter comment="Invalid Warning" id="576778288">
+        <filter comment="This is on purpose, but we have a different concept of non extensible classes than the API tools" id="576778288">
             <message_arguments>
                 <message_argument value="AbstractXProverReasoner"/>
                 <message_argument value="XProverReasoner2"/>
