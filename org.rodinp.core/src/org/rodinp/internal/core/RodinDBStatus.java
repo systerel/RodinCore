@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -29,7 +28,7 @@ import org.rodinp.internal.core.util.Messages;
  * @see IRodinDBStatus
  */
 public class RodinDBStatus extends Status implements IRodinDBStatus,
-		IRodinDBStatusConstants, IResourceStatus {
+		IRodinDBStatusConstants {
 
 	/**
 	 * The elements related to the failure, or <code>null</code> if no

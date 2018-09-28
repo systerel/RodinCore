@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public interface IHypAction {
 	 * @see IHypAction
 	 * 
 	 * @author Farhad Mehta
-	 *
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface ISelectionHypAction extends IHypAction{
 		
@@ -122,7 +122,7 @@ public interface IHypAction {
 	 * @see IHypAction
 	 * 
 	 * @author Farhad Mehta
-	 *
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IForwardInfHypAction extends IHypAction{
 		
@@ -189,6 +189,7 @@ public interface IHypAction {
 	 *
 	 * @see IHypAction
 	 * @since 3.0
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IRewriteHypAction extends IForwardInfHypAction {
 

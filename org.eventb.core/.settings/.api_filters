@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.core" version="2">
     <resource path="src/org/eventb/core/basis/Action.java" type="org.eventb.core.basis.Action">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IAction"/>
                 <message_argument value="Action"/>
@@ -9,7 +9,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Axiom.java" type="org.eventb.core.basis.Axiom">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IAxiom"/>
                 <message_argument value="Axiom"/>
@@ -17,7 +17,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/CarrierSet.java" type="org.eventb.core.basis.CarrierSet">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ICarrierSet"/>
                 <message_argument value="CarrierSet"/>
@@ -25,7 +25,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Constant.java" type="org.eventb.core.basis.Constant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IConstant"/>
                 <message_argument value="Constant"/>
@@ -33,21 +33,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/ContextRoot.java" type="org.eventb.core.basis.ContextRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IContextRoot"/>
                 <message_argument value="ContextRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="ContextRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Event.java" type="org.eventb.core.basis.Event">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IEvent"/>
                 <message_argument value="Event"/>
@@ -55,13 +49,13 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/EventBProofElement.java" type="org.eventb.core.basis.EventBProofElement">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOStampedElement"/>
                 <message_argument value="EventBProofElement"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRProofInfoElement"/>
                 <message_argument value="EventBProofElement"/>
@@ -69,13 +63,13 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/EventBRoot.java" type="org.eventb.core.basis.EventBRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IEventBRoot"/>
                 <message_argument value="EventBRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOStampedElement"/>
                 <message_argument value="EventBRoot"/>
@@ -83,7 +77,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/ExtendsContext.java" type="org.eventb.core.basis.ExtendsContext">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IExtendsContext"/>
                 <message_argument value="ExtendsContext"/>
@@ -91,7 +85,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Guard.java" type="org.eventb.core.basis.Guard">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IGuard"/>
                 <message_argument value="Guard"/>
@@ -99,7 +93,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Invariant.java" type="org.eventb.core.basis.Invariant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IInvariant"/>
                 <message_argument value="Invariant"/>
@@ -107,7 +101,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Language.java" type="org.eventb.core.basis.Language">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ILanguage"/>
                 <message_argument value="Language"/>
@@ -115,21 +109,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/MachineRoot.java" type="org.eventb.core.basis.MachineRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IMachineRoot"/>
                 <message_argument value="MachineRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="MachineRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POIdentifier.java" type="org.eventb.core.basis.POIdentifier">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOIdentifier"/>
                 <message_argument value="POIdentifier"/>
@@ -137,7 +125,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POPredicate.java" type="org.eventb.core.basis.POPredicate">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOPredicate"/>
                 <message_argument value="POPredicate"/>
@@ -145,7 +133,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POPredicateSet.java" type="org.eventb.core.basis.POPredicateSet">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOPredicateSet"/>
                 <message_argument value="POPredicateSet"/>
@@ -153,21 +141,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PORoot.java" type="org.eventb.core.basis.PORoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPORoot"/>
                 <message_argument value="PORoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="PORoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POSelectionHint.java" type="org.eventb.core.basis.POSelectionHint">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOSelectionHint"/>
                 <message_argument value="POSelectionHint"/>
@@ -175,7 +157,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POSequent.java" type="org.eventb.core.basis.POSequent">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOSequent"/>
                 <message_argument value="POSequent"/>
@@ -183,7 +165,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/POSource.java" type="org.eventb.core.basis.POSource">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPOSource"/>
                 <message_argument value="POSource"/>
@@ -191,7 +173,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRExprRef.java" type="org.eventb.core.basis.PRExprRef">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRExprRef"/>
                 <message_argument value="PRExprRef"/>
@@ -199,7 +181,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRHypAction.java" type="org.eventb.core.basis.PRHypAction">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRHypAction"/>
                 <message_argument value="PRHypAction"/>
@@ -207,7 +189,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRIdentifier.java" type="org.eventb.core.basis.PRIdentifier">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRIdentifier"/>
                 <message_argument value="PRIdentifier"/>
@@ -215,7 +197,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRPredRef.java" type="org.eventb.core.basis.PRPredRef">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRPredRef"/>
                 <message_argument value="PRPredRef"/>
@@ -223,7 +205,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRProof.java" type="org.eventb.core.basis.PRProof">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRProof"/>
                 <message_argument value="PRProof"/>
@@ -231,7 +213,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRProofRule.java" type="org.eventb.core.basis.PRProofRule">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRProofRule"/>
                 <message_argument value="PRProofRule"/>
@@ -239,7 +221,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRReasoner.java" type="org.eventb.core.basis.PRReasoner">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRReasoner"/>
                 <message_argument value="PRReasoner"/>
@@ -247,21 +229,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRRoot.java" type="org.eventb.core.basis.PRRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRRoot"/>
                 <message_argument value="PRRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="PRRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRRuleAntecedent.java" type="org.eventb.core.basis.PRRuleAntecedent">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRRuleAntecedent"/>
                 <message_argument value="PRRuleAntecedent"/>
@@ -269,7 +245,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRStoredExpr.java" type="org.eventb.core.basis.PRStoredExpr">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRStoredExpr"/>
                 <message_argument value="PRStoredExpr"/>
@@ -277,7 +253,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRStoredPred.java" type="org.eventb.core.basis.PRStoredPred">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRStoredPred"/>
                 <message_argument value="PRStoredPred"/>
@@ -285,7 +261,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PRStringInput.java" type="org.eventb.core.basis.PRStringInput">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPRStringInput"/>
                 <message_argument value="PRStringInput"/>
@@ -293,21 +269,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PSRoot.java" type="org.eventb.core.basis.PSRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPSRoot"/>
                 <message_argument value="PSRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="PSRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/PSStatus.java" type="org.eventb.core.basis.PSStatus">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IPSStatus"/>
                 <message_argument value="PSStatus"/>
@@ -315,7 +285,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Parameter.java" type="org.eventb.core.basis.Parameter">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IParameter"/>
                 <message_argument value="Parameter"/>
@@ -323,7 +293,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/RefinesEvent.java" type="org.eventb.core.basis.RefinesEvent">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IRefinesEvent"/>
                 <message_argument value="RefinesEvent"/>
@@ -331,7 +301,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/RefinesMachine.java" type="org.eventb.core.basis.RefinesMachine">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IRefinesMachine"/>
                 <message_argument value="RefinesMachine"/>
@@ -339,7 +309,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCAction.java" type="org.eventb.core.basis.SCAction">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCAction"/>
                 <message_argument value="SCAction"/>
@@ -347,7 +317,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCAssignmentElement.java" type="org.eventb.core.basis.SCAssignmentElement">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCAssignmentElement"/>
                 <message_argument value="SCAssignmentElement"/>
@@ -355,7 +325,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCAxiom.java" type="org.eventb.core.basis.SCAxiom">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCAxiom"/>
                 <message_argument value="SCAxiom"/>
@@ -363,7 +333,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCCarrierSet.java" type="org.eventb.core.basis.SCCarrierSet">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCCarrierSet"/>
                 <message_argument value="SCCarrierSet"/>
@@ -371,7 +341,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCConstant.java" type="org.eventb.core.basis.SCConstant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCConstant"/>
                 <message_argument value="SCConstant"/>
@@ -379,21 +349,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCContextRoot.java" type="org.eventb.core.basis.SCContextRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCContextRoot"/>
                 <message_argument value="SCContextRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="SCContextRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCEvent.java" type="org.eventb.core.basis.SCEvent">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCEvent"/>
                 <message_argument value="SCEvent"/>
@@ -401,7 +365,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCExpressionElement.java" type="org.eventb.core.basis.SCExpressionElement">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCExpressionElement"/>
                 <message_argument value="SCExpressionElement"/>
@@ -409,7 +373,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCExtendsContext.java" type="org.eventb.core.basis.SCExtendsContext">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCExtendsContext"/>
                 <message_argument value="SCExtendsContext"/>
@@ -417,7 +381,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCGuard.java" type="org.eventb.core.basis.SCGuard">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCGuard"/>
                 <message_argument value="SCGuard"/>
@@ -425,7 +389,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCIdentifierElement.java" type="org.eventb.core.basis.SCIdentifierElement">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCIdentifierElement"/>
                 <message_argument value="SCIdentifierElement"/>
@@ -433,7 +397,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCInternalContext.java" type="org.eventb.core.basis.SCInternalContext">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCInternalContext"/>
                 <message_argument value="SCInternalContext"/>
@@ -441,7 +405,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCInvariant.java" type="org.eventb.core.basis.SCInvariant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCInvariant"/>
                 <message_argument value="SCInvariant"/>
@@ -449,21 +413,15 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCMachineRoot.java" type="org.eventb.core.basis.SCMachineRoot">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCMachineRoot"/>
                 <message_argument value="SCMachineRoot"/>
             </message_arguments>
         </filter>
-        <filter comment="Invalid Warning" id="576778288">
-            <message_arguments>
-                <message_argument value="EventBRoot"/>
-                <message_argument value="SCMachineRoot"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCParameter.java" type="org.eventb.core.basis.SCParameter">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCParameter"/>
                 <message_argument value="SCParameter"/>
@@ -471,7 +429,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCPredicateElement.java" type="org.eventb.core.basis.SCPredicateElement">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCPredicateElement"/>
                 <message_argument value="SCPredicateElement"/>
@@ -479,7 +437,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCRefinesEvent.java" type="org.eventb.core.basis.SCRefinesEvent">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCRefinesEvent"/>
                 <message_argument value="SCRefinesEvent"/>
@@ -487,7 +445,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCRefinesMachine.java" type="org.eventb.core.basis.SCRefinesMachine">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCRefinesMachine"/>
                 <message_argument value="SCRefinesMachine"/>
@@ -495,7 +453,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCSeesContext.java" type="org.eventb.core.basis.SCSeesContext">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCSeesContext"/>
                 <message_argument value="SCSeesContext"/>
@@ -503,7 +461,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCVariable.java" type="org.eventb.core.basis.SCVariable">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCVariable"/>
                 <message_argument value="SCVariable"/>
@@ -511,7 +469,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCVariant.java" type="org.eventb.core.basis.SCVariant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCVariant"/>
                 <message_argument value="SCVariant"/>
@@ -519,7 +477,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SCWitness.java" type="org.eventb.core.basis.SCWitness">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISCWitness"/>
                 <message_argument value="SCWitness"/>
@@ -527,7 +485,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/SeesContext.java" type="org.eventb.core.basis.SeesContext">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="ISeesContext"/>
                 <message_argument value="SeesContext"/>
@@ -535,7 +493,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Variable.java" type="org.eventb.core.basis.Variable">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IVariable"/>
                 <message_argument value="Variable"/>
@@ -543,7 +501,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Variant.java" type="org.eventb.core.basis.Variant">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IVariant"/>
                 <message_argument value="Variant"/>
@@ -551,7 +509,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/basis/Witness.java" type="org.eventb.core.basis.Witness">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
                 <message_argument value="IWitness"/>
                 <message_argument value="Witness"/>
@@ -559,7 +517,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/pog/POGFilterModule.java" type="org.eventb.core.pog.POGFilterModule">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576725006">
             <message_arguments>
                 <message_argument value="IPOGFilterModule"/>
                 <message_argument value="POGFilterModule"/>
@@ -567,7 +525,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/pog/POGModule.java" type="org.eventb.core.pog.POGModule">
-        <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576720909">
             <message_arguments>
                 <message_argument value="Module"/>
                 <message_argument value="POGModule"/>
@@ -575,7 +533,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/pog/POGProcessorModule.java" type="org.eventb.core.pog.POGProcessorModule">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576725006">
             <message_arguments>
                 <message_argument value="IPOGProcessorModule"/>
                 <message_argument value="POGProcessorModule"/>
@@ -583,7 +541,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/sc/SCFilterModule.java" type="org.eventb.core.sc.SCFilterModule">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576725006">
             <message_arguments>
                 <message_argument value="ISCFilterModule"/>
                 <message_argument value="SCFilterModule"/>
@@ -591,7 +549,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/sc/SCModule.java" type="org.eventb.core.sc.SCModule">
-        <filter comment="Module class must not be referenced or used outside this plug-in." id="576720909">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576720909">
             <message_arguments>
                 <message_argument value="Module"/>
                 <message_argument value="SCModule"/>
@@ -599,7 +557,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/sc/SCProcessorModule.java" type="org.eventb.core.sc.SCProcessorModule">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576725006">
             <message_arguments>
                 <message_argument value="ISCProcessorModule"/>
                 <message_argument value="SCProcessorModule"/>
@@ -607,7 +565,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/sc/state/ISymbolInfo.java" type="org.eventb.core.sc.state.ISymbolInfo">
-        <filter comment="Invalid Warning" id="576725006">
+        <filter comment="Due to wrong architecture of the SC and POG, that we cannot change without breaking all clients" id="576725006">
             <message_arguments>
                 <message_argument value="IAttributedSymbol"/>
                 <message_argument value="ISymbolInfo&lt;E, T&gt;"/>
@@ -623,7 +581,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/internal/core/preferences/ITacticDescriptorRef.java" type="org.eventb.internal.core.preferences.ITacticDescriptorRef">
-        <filter comment="required to reference tactic descriptors seemlessly" id="571473929">
+        <filter comment="Should be in the Sequent Prover plug-in" id="571473929">
             <message_arguments>
                 <message_argument value="ITacticDescriptor"/>
                 <message_argument value="ITacticDescriptorRef"/>
@@ -631,7 +589,7 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/internal/core/preferences/TacticDescriptorRef.java" type="org.eventb.internal.core.preferences.TacticDescriptorRef">
-        <filter id="574668824">
+        <filter comment="Should be in the Sequent Prover plug-in" id="574668824">
             <message_arguments>
                 <message_argument value="ITacticDescriptorRef"/>
                 <message_argument value="TacticDescriptorRef"/>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class ImplicitChildProviderManager {
 	 * @param association
 	 *            the child/provider association to add
 	 */
-	public static void addProviderFor(
+	private static void addProviderFor(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IImplicitProvidingAssociation association) {
 		List<IImplicitProvidingAssociation> list = relationships
