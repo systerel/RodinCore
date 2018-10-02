@@ -164,7 +164,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 
 <xsl:template match="/*/org.eventb.core.variant">
 	<tr class="level2_row">
-		<td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.expression"/></td>
+		<td class="single_label" align="left" valign="top"><xsl:choose><xsl:when test="@org.eventb.core.label"><xsl:value-of select="@org.eventb.core.label"/></xsl:when><xsl:otherwise>vrn</xsl:otherwise></xsl:choose>:</td><td class="single_content" align="left" valign="top"><xsl:value-of select="@org.eventb.core.expression"/></td>
 		<xsl:call-template name="tdcomment"/>
 	</tr>
 </xsl:template>

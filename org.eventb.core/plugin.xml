@@ -1508,6 +1508,9 @@
          <attributeType
                typeId="org.eventb.core.comment">
          </attributeType>
+         <attributeType
+               typeId="org.eventb.core.label">
+         </attributeType>
       </relationship>
       <relationship
             parentTypeId="org.eventb.core.event">
