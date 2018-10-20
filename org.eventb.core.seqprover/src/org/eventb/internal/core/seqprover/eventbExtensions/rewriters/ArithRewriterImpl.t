@@ -87,14 +87,10 @@ public class ArithRewriterImpl extends DefaultRewriter {
                 if (r >= 0) {
                     final IPosition samePosLeft = nextSibling(firstLeftPos, l);
                     final IPosition samePosRight = nextSibling(firstRightPos, r);
-                    return mArray(samePosLeft, samePosRight); 
+                    return new IPosition[]{samePosLeft, samePosRight}; 
                 }
             }
             return null;
-        }
-
-        private static <T> T[] mArray(T... objs) {
-            return objs;
         }
 
         private static <T> int getEqualsIndex(T f, T[] candidates) {
