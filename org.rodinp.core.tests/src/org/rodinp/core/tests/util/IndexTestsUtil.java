@@ -288,7 +288,16 @@ public class IndexTestsUtil {
 		}
 	}
 
-	public static <T> T[] makeArray(T... elements) {
+	public static IRodinFile[] makeArray(IRodinFile... elements) {
 		return elements;
 	}
+
+	public static IDeclaration[] makeArray(IDeclaration... elements) {
+		return elements;
+	}
+
+	public static Integer[] makeArray(Integer... elements) {
+		return elements;
+	}
+
 }
