@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,8 @@ public class FindingAccumulator<F> implements IAccumulator<F> {
 	}
 
 	@Override
-	public void add(F... items) {
+	@SafeVarargs
+	public final void add(F... items) {
 		for (F item : items) {
 			findings.add(item);
 		}
