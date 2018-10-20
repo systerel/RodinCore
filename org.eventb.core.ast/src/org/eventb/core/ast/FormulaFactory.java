@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2067,6 +2067,9 @@ public class FormulaFactory {
 	 *             if the given string doesn't denote a formula position
 	 */
 	public static IPosition makePosition(String image) {
+		if (image.length() == 0) {
+			return IPosition.ROOT;
+		}
 		return new Position(image);
 	}
 
