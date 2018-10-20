@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1216,7 +1216,8 @@ public class TestSpecialization extends AbstractTests {
 				"b=T; a=S");
 	}
 
-	private <T extends Object> void assertSet(T[] actuals, T...expected) {
+	@SafeVarargs
+	private final <T extends Object> void assertSet(T[] actuals, T...expected) {
 		final Set<T> exp = new HashSet<T>(Arrays.asList(expected));
 		final Set<T> act = new HashSet<T>(Arrays.asList(actuals));
 		assertEquals("Incorrect sets", exp, act);

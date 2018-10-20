@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,7 +273,23 @@ public class FastFactory {
 		return fac.makeIntegerLiteral(BigInteger.valueOf(value), null);
 	}
 
-	public static <T> T[] mList(T... objs) {
+	public static BoundIdentDecl[] mList(BoundIdentDecl... objs) {
+		return objs;
+	}
+
+	public static Expression[] mList(Expression... objs) {
+		return objs;
+	}
+
+	public static FreeIdentifier[] mList(FreeIdentifier... objs) {
+		return objs;
+	}
+
+	public static Predicate[] mList(Predicate... objs) {
+		return objs;
+	}
+
+	public static String[] mList(String... objs) {
 		return objs;
 	}
 

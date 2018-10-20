@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,11 +54,20 @@ import org.junit.Test;
  */
 public class TestPredicateVariables extends AbstractTests {
 
+	@SafeVarargs
 	private static <T> Set<T> mSet(T... objects) {
 		return new HashSet<T>(Arrays.asList(objects));
 	}
 
-	private static <T> T[] mArray(T... objects) {
+	private static BoundIdentDecl[] mArray(BoundIdentDecl... objects) {
+		return objects;
+	}
+
+	private static FreeIdentifier[] mArray(FreeIdentifier... objects) {
+		return objects;
+	}
+
+	private static BoolExpression[] mArray(BoolExpression... objects) {
 		return objects;
 	}
 
