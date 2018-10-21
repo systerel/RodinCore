@@ -15,7 +15,7 @@ package org.eventb.internal.core.sc.symbolTable;
 import static java.util.Collections.unmodifiableCollection;
 
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.ISymbolInfo;
@@ -32,10 +32,10 @@ import org.rodinp.core.IInternalElementType;
 public abstract class SymbolTable<E extends IInternalElement, T extends IInternalElementType<? extends E>, I extends ISymbolInfo<E, T>>
 		extends State implements ISymbolTable<E, T, I> {
 
-	private final Hashtable<String, I> table;
+	private final HashMap<String, I> table;
 
 	public SymbolTable(int size) {
-		table = new Hashtable<String, I>(size);
+		table = new HashMap<String, I>(size);
 	}
 
 	@Override

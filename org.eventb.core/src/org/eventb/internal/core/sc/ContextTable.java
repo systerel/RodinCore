@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
@@ -29,10 +29,10 @@ public class ContextTable extends State implements IContextTable {
 		return contexts.keySet().toString();
 	}
 
-	private final Hashtable<String, ISCContext> contexts;
+	private final HashMap<String, ISCContext> contexts;
 	
 	public ContextTable(int size) {
-		contexts = new Hashtable<String, ISCContext>(size);
+		contexts = new HashMap<String, ISCContext>(size);
 	}
 	
 	/* (non-Javadoc)

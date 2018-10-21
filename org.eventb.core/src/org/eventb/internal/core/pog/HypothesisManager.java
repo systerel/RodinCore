@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -67,7 +67,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	protected final IPORoot target;
 	private final ISCPredicateElement[] predicateTable;
 	private final String[] hypothesisNames;
-	private final Hashtable<String, Integer> predicateMap;
+	private final HashMap<String, Integer> predicateMap;
 	private final String rootHypName;
 	private final String hypPrefix;
 	private final String allHypName;
@@ -99,7 +99,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		this.predicateTable = predicateTable;
 		this.accurate = accurate;
 		hypothesisNames = new String[predicateTable.length];
-		predicateMap = new Hashtable<String, Integer>(predicateTable.length * 4 / 3 + 1);
+		predicateMap = new HashMap<String, Integer>(predicateTable.length * 4 / 3 + 1);
 		identifiers = new HashSet<FreeIdentifier>(identifierHashSize * 4 / 3 + 1);
 		
 		for(int i=0; i<predicateTable.length; i++) {

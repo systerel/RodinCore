@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 University of Southampton and others.
+ * Copyright (c) 2008, 2018 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -118,13 +118,13 @@ public class MachineEventRefinesModule extends SCFilterModule {
 		HashSet<String> typeErrors = (refinesEvents.length > 1) ? new HashSet<String>(
 				37)
 				: null;
-		Hashtable<String, Type> types = (refinesEvents.length > 1) ? new Hashtable<String, Type>(
+		HashMap<String, Type> types = (refinesEvents.length > 1) ? new HashMap<String, Type>(
 				37)
 				: null;
 
 		boolean firstAction = true;
 		boolean actionError = false;
-		Hashtable<String, String> actions = (refinesEvents.length > 1) ? new Hashtable<String, String>(
+		HashMap<String, String> actions = (refinesEvents.length > 1) ? new HashMap<String, String>(
 				43)
 				: null;
 
@@ -204,7 +204,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	}
 
 	private boolean checkAbstractActionAccordance(ILabelSymbolInfo symbolInfo,
-			Hashtable<String, String> actions, IAbstractEventInfo abstractInfo)
+			HashMap<String, String> actions, IAbstractEventInfo abstractInfo)
 			throws CoreException {
 		ISCAction[] scActions = abstractInfo.getEvent().getSCActions();
 		boolean ok = scActions.length == actions.size();
@@ -233,7 +233,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	}
 
 	private void checkForParameterTypeErrors(ILabelSymbolInfo symbolInfo,
-			HashSet<String> typeErrors, Hashtable<String, Type> types,
+			HashSet<String> typeErrors, HashMap<String, Type> types,
 			IAbstractEventInfo abstractInfo) throws RodinDBException,
 			CoreException {
 		if (types != null)
