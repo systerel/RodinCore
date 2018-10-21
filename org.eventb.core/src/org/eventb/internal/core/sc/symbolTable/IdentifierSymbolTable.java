@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,7 +75,7 @@ public class IdentifierSymbolTable
 
 	@Override
 	public Collection<IIdentifierSymbolInfo> getSymbolInfosFromTop() {
-		return Collections.unmodifiableSet(tableValues);
+		return getSymbolInfos();
 	}
 
 }

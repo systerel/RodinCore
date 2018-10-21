@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import static java.util.Collections.unmodifiableCollection;
+
+import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.ISymbolInfo;
@@ -33,13 +34,8 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 
 	private final Hashtable<String, I> table;
 
-	// the tableValues variable is a cache that holds the value of
-	// table.values()
-	protected final Set<I> tableValues;
-
 	public SymbolTable(int size) {
 		table = new Hashtable<String, I>(size);
-		tableValues = new TreeSet<I>();
 	}
 
 	@Override
@@ -74,16 +70,19 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 			table.put(key, oldSymbol);
 			return false;
 		}
-		tableValues.add(symbolInfo);
 		return true;
 	}
 
 	@Override
 	public void makeImmutable() {
-		for (I info : tableValues) {
+		for (I info : table.values()) {
 			info.makeImmutable();
 		}
 		super.makeImmutable();
+	}
+
+	public Collection<I> getSymbolInfos() {
+		return unmodifiableCollection(table.values());
 	}
 
 	/*
