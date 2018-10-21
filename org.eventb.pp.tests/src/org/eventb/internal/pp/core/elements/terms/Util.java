@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -470,15 +470,17 @@ public class Util {
 		return cf.makeEquivalenceClause(new DummyOrigin(Level.BASE),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
+	@SafeVarargs
 	public static <T> Set<T> mSet(T... elements) {
 		return new LinkedHashSet<T>(Arrays.asList(elements));
 	}
 
+	@SafeVarargs
 	public static <T> List<T> mList(T... elements) {
 		return Arrays.asList(elements);
 	}
 	
-	public static <T> T[] mArray(T... elements) {
+	public static BoundIdentDecl[] mArray(BoundIdentDecl... elements) {
 		return elements;
 	}
 

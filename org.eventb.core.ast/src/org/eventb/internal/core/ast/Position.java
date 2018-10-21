@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,18 +26,12 @@ import org.eventb.core.ast.IPosition;
 public final class Position implements IPosition {
 	
 	public static IPosition getRoot() {
-		return new Position();
+		return new Position(new int[0]);
 	}
 
-	private static final int[] NO_INTS = new int[0];
-	
 	private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
 	
 	public final int[] indexes;
-	
-	private Position() {
-		this.indexes = NO_INTS;
-	}
 	
 	private Position(int[] indexes) {
 		this.indexes = indexes;
@@ -48,24 +42,19 @@ public final class Position implements IPosition {
 	}
 
 	public Position(String image) {
-		if (image.length() == 0) {
-			this.indexes = NO_INTS;
-		} else {
-			final String[] components = DOT_PATTERN.split(image, -1);
-			final int length = components.length;
-			this.indexes = new int[length];
-			for (int i = 0; i < length; i++) {
-				try {
-					final int idx = Integer.parseInt(components[i]);
-					if (idx < 0) {
-						throw new IllegalArgumentException(
-								"Negative index in position: " + image);
-					}
-					this.indexes[i] = idx;
-				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException("Invalid position: "
-							+ image);
+		final String[] components = DOT_PATTERN.split(image, -1);
+		final int length = components.length;
+		this.indexes = new int[length];
+		for (int i = 0; i < length; i++) {
+			try {
+				final int idx = Integer.parseInt(components[i]);
+				if (idx < 0) {
+					throw new IllegalArgumentException(
+							"Negative index in position: " + image);
 				}
+				this.indexes[i] = idx;
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("Invalid position: " + image);
 			}
 		}
 	}

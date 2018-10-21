@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -988,6 +988,7 @@ public abstract class Formula<T extends Formula<T>> {
 		return result;
 	}
 	
+	@SafeVarargs
 	private static <S extends Formula<?>> ArrayList<FreeIdentifier[]> getFreeIdentifiers(
 			S... formulas) {
 		final ArrayList<FreeIdentifier[]> lists = new ArrayList<FreeIdentifier[]>(
@@ -1008,6 +1009,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a sorted merged array of identifiers or <code>null</code> if an
 	 *         error occurred
 	 */
+	@SafeVarargs
 	protected static <S extends Formula<?>> IdentListMerger mergeFreeIdentifiers(
 			S... formulas) {
 		
