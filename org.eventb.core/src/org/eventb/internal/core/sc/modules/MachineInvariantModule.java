@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class MachineInvariantModule extends
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		IAbstractMachineInfo abstractMachineInfo = (IAbstractMachineInfo) repository
+		IAbstractMachineInfo abstractMachineInfo = repository
 				.getState(IAbstractMachineInfo.STATE_TYPE);
 
 		ISCMachineRoot scMachineRoot = abstractMachineInfo.getAbstractMachine();
@@ -89,8 +89,7 @@ public class MachineInvariantModule extends
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository
-				.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		return repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -111,8 +110,7 @@ public class MachineInvariantModule extends
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IMachineAccuracyInfo) repository
-				.getState(IMachineAccuracyInfo.STATE_TYPE);
+		return repository.getState(IMachineAccuracyInfo.STATE_TYPE);
 	}
 
 }

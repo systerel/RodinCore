@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -87,7 +88,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	private void checkForRedundantVariant(ISCStateRepository repository)
 			throws CoreException, RodinDBException {
-		IConcreteEventTable concreteEventTable = (IConcreteEventTable) repository
+		IConcreteEventTable concreteEventTable = repository
 				.getState(IConcreteEventTable.STATE_TYPE);
 
 		boolean noCvgEvent = true;
@@ -190,7 +191,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		else {
 			Expression expression = formula;
 			Type type = expression.getType();
-			boolean ok = type.equals(factory.makeIntegerType())
+			boolean ok = type instanceof IntegerType
 					|| type.getBaseType() != null;
 			if (!ok) {
 				createProblemMarker(formulaElement, getFormulaAttributeType(),

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eventb.internal.core.tool.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -27,12 +27,12 @@ public abstract class Graph<T> {
 
 	protected final String creator;
 	
-	private final Hashtable<String, Node<T>> graph;
+	private final HashMap<String, Node<T>> graph;
 	private final List<Node<T>> nodes;
 	private final List<Node<T>> sorted;
 	
 	public Graph(String creator) {
-		graph = new Hashtable<String, Node<T>>(DEFAULT_SIZE * 4 / 3 + 1);
+		graph = new HashMap<String, Node<T>>(DEFAULT_SIZE * 4 / 3 + 1);
 		nodes = new ArrayList<Node<T>>(DEFAULT_SIZE);
 		sorted = new ArrayList<Node<T>>(DEFAULT_SIZE);
 		this.creator = creator;

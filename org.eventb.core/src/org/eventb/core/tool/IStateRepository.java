@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public interface IStateRepository <I extends IState> {
 	/**
 	 * Returns the state stored for the specified state type.
 	 * 
+	 * @param <T>   the Java type of the state
 	 * @param stateType
 	 *            the type of the state
 	 * @return the state stored for the specified state type
@@ -46,7 +47,7 @@ public interface IStateRepository <I extends IState> {
 	 *             state was not initialised before being read), or if an
 	 *             exception has occurred earlier with this repository
 	 */
-	I getState(IStateType<? extends I> stateType) throws CoreException;
+	<T extends I> T getState(IStateType<T> stateType) throws CoreException;
 	
 	/**
 	 * Set the specified state. The state type is accessible by means of

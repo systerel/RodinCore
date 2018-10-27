@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,18 +141,15 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 
 		eventLabel = event.getLabel();
 
-		labelSymbolTable = (ILabelSymbolTable) repository
-				.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		labelSymbolTable = repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 
-		concreteEventTable = (IConcreteEventTable) repository
-				.getState(IConcreteEventTable.STATE_TYPE);
+		concreteEventTable = repository.getState(IConcreteEventTable.STATE_TYPE);
 
 		concreteEventInfo = concreteEventTable.getConcreteEventInfo(eventLabel);
 
 		repository.setState(concreteEventInfo);
 
-		abstractEventTable = (IAbstractEventTable) repository
-				.getState(IAbstractEventTable.STATE_TYPE);
+		abstractEventTable = repository.getState(IAbstractEventTable.STATE_TYPE);
 
 	}
 

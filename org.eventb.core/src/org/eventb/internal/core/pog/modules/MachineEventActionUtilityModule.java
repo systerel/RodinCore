@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,9 +64,9 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		super.initModule(element, repository, monitor);
 		machineInfo = (IMachineInfo) repository.getState(IMachineInfo.STATE_TYPE);
 		machineHypothesisManager =
-			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
+			repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		eventHypothesisManager = 
-			(IEventHypothesisManager) repository.getState(IEventHypothesisManager.STATE_TYPE);
+			repository.getState(IEventHypothesisManager.STATE_TYPE);
 		accurate = 
 			machineHypothesisManager.machineIsAccurate() && eventHypothesisManager.eventIsAccurate();
 		
@@ -76,7 +76,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		fullHypothesis = eventHypothesisManager.getFullHypothesis();
 		
 		concreteEventActionTable =
-			(IConcreteEventActionTable) repository.getState(IConcreteEventActionTable.STATE_TYPE);
+			repository.getState(IConcreteEventActionTable.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)

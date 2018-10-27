@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -245,8 +245,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository
-				.getState(IEventLabelSymbolTable.STATE_TYPE);
+		return repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -259,8 +258,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		concreteEventInfo = (IConcreteEventInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
+		concreteEventInfo = repository.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = concreteEventInfo.isInitialisation();
 		factory = repository.getFormulaFactory();
 	}
@@ -295,8 +293,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IAccuracyInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
+		return repository.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 }

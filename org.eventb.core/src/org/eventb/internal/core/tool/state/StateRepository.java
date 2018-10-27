@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.state;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
@@ -48,20 +48,23 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		// init with root factory
 		factory = root.getFormulaFactory();
 		environment = factory.makeTypeEnvironment();
-		repository = new Hashtable<IStateType<?>, I>(REPOSITORY_SIZE);
+		repository = new HashMap<IStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;
 	}
 	
-	private final Hashtable<IStateType<?>, I> repository;
+	private final HashMap<IStateType<?>, I> repository;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IStateRepository#getState(java.lang.String)
 	 */
 	@Override
-	public final I getState(IStateType<? extends I> stateType) throws CoreException {
+	public final <T extends I> T getState(IStateType<T> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
-		I state = repository.get(stateType);
+		// The cast below is correct by construction: the object has been
+		// entered in the repository by using the exact same state type.
+		@SuppressWarnings("unchecked")
+		T state = (T) repository.get(stateType);
 		if (DEBUG)
 			System.out.print("GET STATE: " + stateType + 
 					((state == null) ? " NONE" : 

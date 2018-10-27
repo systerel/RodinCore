@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2018 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,12 +93,9 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		concreteEventInfo = (IConcreteEventInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
-		labelSymbolTable = (IEventLabelSymbolTable) repository
-				.getState(IEventLabelSymbolTable.STATE_TYPE);
-		abstractMachineInfo = (IAbstractMachineInfo) repository
-				.getState(IAbstractMachineInfo.STATE_TYPE);
+		concreteEventInfo = repository.getState(IConcreteEventInfo.STATE_TYPE);
+		labelSymbolTable = repository.getState(IEventLabelSymbolTable.STATE_TYPE);
+		abstractMachineInfo = repository.getState(IAbstractMachineInfo.STATE_TYPE);
 	}
 
 	@Override

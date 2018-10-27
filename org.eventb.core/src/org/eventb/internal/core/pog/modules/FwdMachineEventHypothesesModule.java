@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			IPOGStateRepository repository) throws CoreException {
 		
 		IMachineVariableTable machineVariableTable =
-			(IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
+			repository.getState(IMachineVariableTable.STATE_TYPE);
 		
 		IConcreteEventActionTable concreteEventActionTable =
 			new ConcreteEventActionTable(
@@ -229,7 +229,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		eventTypeEnvironment = repository.getTypeEnvironment();
 		
 		IMachineHypothesisManager machineHypothesisManager =
-			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
+			repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		
 		ISCEvent concreteEvent = (ISCEvent) element;
 		
@@ -261,7 +261,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 	private void fetchWitnesses(ISCEvent concreteEvent,
 			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException, RodinDBException {
-		variableTable = (IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
+		variableTable = repository.getState(IMachineVariableTable.STATE_TYPE);
 
 		ITypeEnvironmentBuilder largeEnv = eventTypeEnvironment.makeBuilder();
 		List<FreeIdentifier> variables = variableTable.getVariables();

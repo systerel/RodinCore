@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,7 @@ public class MachineEventGuardTheoremModule extends TheoremModule {
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTable(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository
-				.getState(IEventLabelSymbolTable.STATE_TYPE);
+		return repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 }
