@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 University of Southampton and others.
+ * Copyright (c) 2008, 2018 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eventb.core.tool.IStateType;
  */
 public interface IConcreteEventTable extends ISCState, Iterable<IConcreteEventInfo> {
 	
-	final static IStateType<IConcreteEventInfo> STATE_TYPE = 
+	final static IStateType<IConcreteEventTable> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventTable");
 
 	IConcreteEventInfo getConcreteEventInfo(String symbol) throws CoreException;
