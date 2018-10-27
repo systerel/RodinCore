@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2018 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,12 +111,9 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		abstractMachineInfo = (IAbstractMachineInfo) repository
-				.getState(IAbstractMachineInfo.STATE_TYPE);
-		concreteEventInfo = (IConcreteEventInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
-		identifierSymbolTable = (IIdentifierSymbolTable) repository
-				.getState(IIdentifierSymbolTable.STATE_TYPE);
+		abstractMachineInfo = repository.getState(IAbstractMachineInfo.STATE_TYPE);
+		concreteEventInfo = repository.getState(IConcreteEventInfo.STATE_TYPE);
+		identifierSymbolTable = repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		typeEnvironment = repository.getTypeEnvironment();
 	}
 

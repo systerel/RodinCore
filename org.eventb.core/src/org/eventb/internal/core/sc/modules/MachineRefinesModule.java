@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,11 +106,10 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		if (!scAbstractMachineFile.isAccurate())
 			accuracyInfo.setNotAccurate();
 
-		IIdentifierSymbolTable abstractIdentifierSymbolTable = (IIdentifierSymbolTable) repository
+		IIdentifierSymbolTable abstractIdentifierSymbolTable = repository
 				.getState(IIdentifierSymbolTable.STATE_TYPE);
 
-		IContextTable contextTable = (IContextTable) repository
-				.getState(IContextTable.STATE_TYPE);
+		IContextTable contextTable = repository.getState(IContextTable.STATE_TYPE);
 
 		fetchSCMachine(abstractIdentifierSymbolTable, contextTable,
 				repository.getFormulaFactory(), null);
@@ -414,8 +413,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		repository.setState(abstractEventTable);
 
-		accuracyInfo = (IMachineAccuracyInfo) repository
-				.getState(IMachineAccuracyInfo.STATE_TYPE);
+		accuracyInfo = repository.getState(IMachineAccuracyInfo.STATE_TYPE);
 
 		reservedNameTable = new ReservedNameTable();
 		repository.setState(reservedNameTable);

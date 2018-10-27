@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,13 +42,13 @@ public class FwdMachineInvariantModule extends PredicateModule<ISCInvariant> {
 	@Override
 	protected IHypothesisManager getHypothesisManager(IPOGStateRepository repository) 
 	throws CoreException {
-		return (IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
+		return repository.getState(IMachineHypothesisManager.STATE_TYPE);
 	}
 
 	@Override
 	protected IPredicateTable<ISCInvariant> getPredicateTable(IPOGStateRepository repository) 
 	throws CoreException {
-		return (IMachineInvariantTable) repository.getState(IMachineInvariantTable.STATE_TYPE);
+		return repository.getState(IMachineInvariantTable.STATE_TYPE);
 	}
 
 	@Override

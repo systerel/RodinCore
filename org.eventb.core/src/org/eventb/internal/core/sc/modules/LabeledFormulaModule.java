@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		identifierSymbolTable = (IIdentifierSymbolTable) repository
-				.getState(IIdentifierSymbolTable.STATE_TYPE);
+		identifierSymbolTable = repository.getState(IIdentifierSymbolTable.STATE_TYPE);
 		accuracyInfo = getAccuracyInfo(repository);
 
 		formulaElements = getFormulaElements(element);

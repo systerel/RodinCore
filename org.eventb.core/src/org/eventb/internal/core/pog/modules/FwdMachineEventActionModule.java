@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,12 +198,9 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		abstractEventGuardList =
-			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
-		abstractEventActionTable = 
-			(IAbstractEventActionTable) repository.getState(IAbstractEventActionTable.STATE_TYPE);
-		witnessTable =
-			(IEventWitnessTable) repository.getState(IEventWitnessTable.STATE_TYPE);
+		abstractEventGuardList = repository.getState(IAbstractEventGuardList.STATE_TYPE);
+		abstractEventActionTable = repository.getState(IAbstractEventActionTable.STATE_TYPE);
+		witnessTable = repository.getState(IEventWitnessTable.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)

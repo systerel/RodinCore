@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,10 +41,8 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 	@Override
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		symbolTable = (IIdentifierSymbolTable) repository
-				.getState(IIdentifierSymbolTable.STATE_TYPE);
-		parsedFormula = (IParsedFormula) repository
-				.getState(IParsedFormula.STATE_TYPE);
+		symbolTable = repository.getState(IIdentifierSymbolTable.STATE_TYPE);
+		parsedFormula = repository.getState(IParsedFormula.STATE_TYPE);
 	}
 
 	@Override

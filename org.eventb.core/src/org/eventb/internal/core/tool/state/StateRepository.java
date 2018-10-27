@@ -58,10 +58,13 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	 * @see org.eventb.core.sc.IStateRepository#getState(java.lang.String)
 	 */
 	@Override
-	public final I getState(IStateType<? extends I> stateType) throws CoreException {
+	public final <T extends I> T getState(IStateType<T> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
-		I state = repository.get(stateType);
+		// The cast below is correct by construction: the object has been
+		// entered in the repository by using the exact same state type.
+		@SuppressWarnings("unchecked")
+		T state = (T) repository.get(stateType);
 		if (DEBUG)
 			System.out.print("GET STATE: " + stateType + 
 					((state == null) ? " NONE" : 

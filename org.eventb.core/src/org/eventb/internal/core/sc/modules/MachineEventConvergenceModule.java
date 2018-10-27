@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,13 +201,9 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		variantInfo = (IVariantInfo) repository
-				.getState(IVariantInfo.STATE_TYPE);
-		labelSymbolTable = (ILabelSymbolTable) repository
-				.getState(IMachineLabelSymbolTable.STATE_TYPE);
-		concreteEventTable = (IConcreteEventTable) repository
-				.getState(IConcreteEventTable.STATE_TYPE);
-
+		variantInfo = repository.getState(IVariantInfo.STATE_TYPE);
+		labelSymbolTable = repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		concreteEventTable = repository.getState(IConcreteEventTable.STATE_TYPE);
 	}
 
 	@Override

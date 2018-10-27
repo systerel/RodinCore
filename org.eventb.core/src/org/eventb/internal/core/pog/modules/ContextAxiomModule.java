@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	@Override
 	protected IHypothesisManager getHypothesisManager(
 			IPOGStateRepository repository) throws CoreException {
-		return (IContextHypothesisManager) repository.getState(IContextHypothesisManager.STATE_TYPE);
+		return repository.getState(IContextHypothesisManager.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +54,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	@Override
 	protected IPredicateTable<ISCAxiom> getPredicateTable(
 			IPOGStateRepository repository) throws CoreException {
-		return (IContextAxiomTable) repository.getState(IContextAxiomTable.STATE_TYPE);
+		return repository.getState(IContextAxiomTable.STATE_TYPE);
 	}
 
 	@Override

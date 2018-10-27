@@ -323,17 +323,10 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		abstractEventTable = (IAbstractEventTable) repository
-				.getState(IAbstractEventTable.STATE_TYPE);
-
-		concreteEventTable = (IConcreteEventTable) repository
-				.getState(IConcreteEventTable.STATE_TYPE);
-
-		abstractMachineInfo = (IAbstractMachineInfo) repository
-				.getState(IAbstractMachineInfo.STATE_TYPE);
-
-		labelSymbolTable = (ILabelSymbolTable) repository
-				.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		abstractEventTable = repository.getState(IAbstractEventTable.STATE_TYPE);
+		concreteEventTable = repository.getState(IConcreteEventTable.STATE_TYPE);
+		abstractMachineInfo = repository.getState(IAbstractMachineInfo.STATE_TYPE);
+		labelSymbolTable = repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override

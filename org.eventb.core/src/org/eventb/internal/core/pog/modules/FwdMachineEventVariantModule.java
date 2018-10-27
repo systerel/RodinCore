@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,12 +186,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		concreteConvergence = concreteEvent.getConvergence();
 		getAbstractConvergence(repository);
 		machineVariantInfo = 
-			(IMachineVariantInfo) repository.getState(IMachineVariantInfo.STATE_TYPE);
+			repository.getState(IMachineVariantInfo.STATE_TYPE);
 	}
 
 	private void getAbstractConvergence(IPOGStateRepository repository) throws CoreException, RodinDBException {
 		IAbstractEventGuardList abstractEventGuardList = 
-			(IAbstractEventGuardList) repository.getState(IAbstractEventGuardList.STATE_TYPE);
+			repository.getState(IAbstractEventGuardList.STATE_TYPE);
 		List<ISCEvent> abstractEvents = abstractEventGuardList.getAbstractEvents();
 		if (abstractEvents.size() == 0) {
 			abstractConvergence = null;

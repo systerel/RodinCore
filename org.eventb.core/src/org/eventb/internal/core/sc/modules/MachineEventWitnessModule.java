@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	private void getWitnessNames(Set<String> witnessNames,
 			ISCStateRepository repository) throws CoreException {
 
-		IConcreteEventInfo eventRefinesInfo = (IConcreteEventInfo) repository
+		IConcreteEventInfo eventRefinesInfo = repository
 				.getState(IConcreteEventInfo.STATE_TYPE);
 
 		if (eventRefinesInfo.eventIsNew())
@@ -242,8 +242,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		super.initModule(element, repository, monitor);
 		factory = repository.getFormulaFactory();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		concreteEventInfo = (IConcreteEventInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
+		concreteEventInfo = repository.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 	/*
@@ -276,8 +275,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository
-				.getState(IEventLabelSymbolTable.STATE_TYPE);
+		return repository.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -303,8 +301,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IAccuracyInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
+		return repository.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 }

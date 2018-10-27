@@ -88,7 +88,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	private void checkForRedundantVariant(ISCStateRepository repository)
 			throws CoreException, RodinDBException {
-		IConcreteEventTable concreteEventTable = (IConcreteEventTable) repository
+		IConcreteEventTable concreteEventTable = repository
 				.getState(IConcreteEventTable.STATE_TYPE);
 
 		boolean noCvgEvent = true;
