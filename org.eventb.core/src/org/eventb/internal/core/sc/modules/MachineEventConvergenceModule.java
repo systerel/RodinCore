@@ -43,7 +43,7 @@ import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.state.IVariantInfo;
+import org.eventb.core.sc.state.IVariantPresentInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -58,7 +58,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventConvergenceModule"); //$NON-NLS-1$
 
-	private IVariantInfo variantInfo;
+	private IVariantPresentInfo variantPresent;
 	private ILabelSymbolTable labelSymbolTable;
 	private IConcreteEventTable concreteEventTable;
 
@@ -195,7 +195,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	private void checkVariantConvergence(IConcreteEventInfo concreteEventInfo)
 			throws CoreException {
 
-		if (variantInfo.getExpression() != null) {
+		if (variantPresent.isTrue()) {
 			return;
 		}
 
@@ -214,7 +214,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		variantInfo = repository.getState(IVariantInfo.STATE_TYPE);
+		variantPresent = repository.getState(IVariantPresentInfo.STATE_TYPE);
 		labelSymbolTable = repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 		concreteEventTable = repository.getState(IConcreteEventTable.STATE_TYPE);
 	}
@@ -222,7 +222,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	@Override
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		variantInfo = null;
+		variantPresent = null;
 		super.endModule(repository, monitor);
 	}
 

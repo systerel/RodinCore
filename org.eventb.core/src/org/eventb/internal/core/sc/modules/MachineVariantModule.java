@@ -36,10 +36,12 @@ import org.eventb.core.sc.state.IConcreteEventTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IVariantPresentInfo;
 import org.eventb.core.sc.state.SymbolFactory;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.VariantInfo;
+import org.eventb.internal.core.sc.VariantPresentInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -63,6 +65,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	VariantInfo variantInfo;
+	IVariantPresentInfo variantPresent;
 	FormulaFactory factory;
 
 	@Override
@@ -71,8 +74,10 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
+		variantPresent = new VariantPresentInfo();
 		factory = repository.getFormulaFactory();
 		repository.setState(variantInfo);
+		repository.setState(variantPresent);
 	}
 
 	@Override
@@ -82,6 +87,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		checkForRedundantVariant(repository);
 
 		variantInfo = null;
+		variantPresent = null;
 		factory = null;
 		super.endModule(element, repository, monitor);
 	}
@@ -115,7 +121,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 				}
 			}
 		}
-		if (noCvgEvent && variantInfo.getExpression() != null) {
+		if (noCvgEvent && variantPresent.isTrue()) {
 			createProblemMarker(formulaElements[0],
 					EventBAttributes.EXPRESSION_ATTRIBUTE,
 					GraphProblem.NoConvergentEventButVariantWarning);
@@ -147,6 +153,8 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		if (formulaElements.length == 0) {
 			variantInfo.makeImmutable();
+			variantPresent.set(false);
+			variantPresent.makeImmutable();
 			return;
 		}
 
@@ -163,6 +171,9 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		variantInfo.setExpression(formulas[0]);
 		variantInfo.makeImmutable();
+
+		variantPresent.set(formulas[0] != null);
+		variantPresent.makeImmutable();
 
 		createSCExpressions(target, monitor);
 
