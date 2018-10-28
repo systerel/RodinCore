@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,6 +162,8 @@ public class GraphProblemTest {
 			spec(GraphProblem.AxiomLabelConflictWarning, 1),
 			spec(GraphProblem.InvariantLabelConflictError, 1),
 			spec(GraphProblem.InvariantLabelConflictWarning, 1),
+			spec(GraphProblem.VariantLabelConflictError, 1),
+			spec(GraphProblem.VariantLabelConflictWarning, 1),
 			spec(GraphProblem.EventLabelConflictError, 1),
 			spec(GraphProblem.EventLabelConflictWarning, 1),
 			spec(GraphProblem.GuardLabelConflictError, 1),

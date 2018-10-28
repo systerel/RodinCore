@@ -11,17 +11,22 @@
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
- *     Systerel - add more tests
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.EventLabelConflictError;
 import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
 import static org.eventb.core.sc.GraphProblem.InvalidVariantTypeError;
+import static org.eventb.core.sc.GraphProblem.InvariantLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
 import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
+import static org.eventb.core.sc.GraphProblem.VariantLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.VariantLabelConflictWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.SyntaxError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
@@ -29,6 +34,7 @@ import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IVariant;
@@ -337,6 +343,84 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		runBuilderCheck(//
 				marker(init, CONVERGENCE_ATTRIBUTE, InitialisationNotOrdinaryWarning),
+				marker(vrn, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1");
+	}
+
+	/**
+	 * There is no risk of conflict between a variant label and a variable with the
+	 * same name.
+	 */
+	@Test
+	public void testVariant_12() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		addVariant(mac, "V1", "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1");
+	}
+
+	/**
+	 * There can be a name conflict between a variant label and an invariant label
+	 * with the same name. This is a regression introduced in version 3.4. The
+	 * variant is then erased by the static checker.
+	 */
+	@Test
+	public void testVariant_13() throws Exception {
+		String label = IVariant.DEFAULT_LABEL;
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		IInvariant inv = addInvariant(mac, label, "V1∈ℕ", false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		IVariant vrn = addVariant(mac, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(inv, LABEL_ATTRIBUTE, InvariantLabelConflictWarning, label),
+				marker(vrn, LABEL_ATTRIBUTE, VariantLabelConflictError, label),
+				marker(evt, CONVERGENCE_ATTRIBUTE, ConvergentEventNoVariantWarning, "evt"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariant(file, emptyEnv);
+	}
+
+	/**
+	 * There can be a name conflict between a variant label and an event label with
+	 * the same name. This is a regression introduced in version 3.4. The event is
+	 * then erased by the static checker.
+	 */
+	@Test
+	public void testVariant_14() throws Exception {
+		String label = IVariant.DEFAULT_LABEL;
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, label);
+		setConvergent(evt);
+		IVariant vrn = addVariant(mac, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(evt, LABEL_ATTRIBUTE, EventLabelConflictError, label),
+				marker(vrn, LABEL_ATTRIBUTE, VariantLabelConflictWarning, label),
 				marker(vrn, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();

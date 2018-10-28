@@ -611,10 +611,6 @@
             id="parsedFormula"
             name="%parsedFormula"/>
       <stateType
-            class="org.eventb.core.sc.state.IVariantInfo"
-            id="variantInfo"
-            name="%variantInfo"/>
-      <stateType
             class="org.eventb.core.sc.state.IVariantPresentInfo"
             id="variantPresentInfo"
             name="%variantPresentInfo"/>
