@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
+import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.eventb.core.sc.GraphProblem.ConvergenceUndefError;
+import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceAnticipatedWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceOrdinaryWarning;
+import static org.eventb.core.sc.GraphProblem.FaultyAbstractConvergenceUnchangedWarning;
+import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
+import static org.eventb.core.sc.GraphProblem.OrdinaryFaultyConvergenceWarning;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -51,8 +62,8 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	private ILabelSymbolTable labelSymbolTable;
 	private IConcreteEventTable concreteEventTable;
 
-	private IConvergenceElement.Convergence concreteCvg;
-	private IConvergenceElement.Convergence abstractCvg;
+	private Convergence concreteCvg;
+	private Convergence abstractCvg;
 
 	@Override
 	public IModuleType<?> getModuleType() {
@@ -85,8 +96,8 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 			return true;
 
 		} else {
-			createProblemMarker(event, EventBAttributes.CONVERGENCE_ATTRIBUTE,
-					GraphProblem.ConvergenceUndefError);
+			createProblemMarker(event, CONVERGENCE_ATTRIBUTE,
+					ConvergenceUndefError);
 			return false;
 		}
 	}
@@ -96,14 +107,14 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 
 		abstractCvg = null;
 		concreteCvg = concreteEventInfo.getEvent().getConvergence();
-		IConvergenceElement.Convergence origConcreteCvg = concreteCvg;
+		Convergence origConcreteCvg = concreteCvg;
 
 		if (concreteEventInfo.isInitialisation()) {
-			if (concreteCvg != IConvergenceElement.Convergence.ORDINARY) {
-				concreteCvg = IConvergenceElement.Convergence.ORDINARY;
+			if (concreteCvg != ORDINARY) {
+				concreteCvg = ORDINARY;
 				createProblemMarker(concreteEventInfo.getEvent(),
-						EventBAttributes.CONVERGENCE_ATTRIBUTE,
-						GraphProblem.InitialisationNotOrdinaryWarning);
+						CONVERGENCE_ATTRIBUTE,
+						InitialisationNotOrdinaryWarning);
 			}
 		} else {
 
@@ -121,8 +132,8 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 		if (concreteCvg != origConcreteCvg)
 			concreteEventInfo.setNotAccurate();
 
-		eventSymbolInfo.setAttributeValue(
-				EventBAttributes.CONVERGENCE_ATTRIBUTE, concreteCvg.getCode());
+		eventSymbolInfo.setAttributeValue(CONVERGENCE_ATTRIBUTE,
+				concreteCvg.getCode());
 
 	}
 
@@ -132,13 +143,12 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 		getAbstractConvergence(concreteEventInfo.getRefinesClauses(),
 				abstractEventInfos);
 
-		if (abstractCvg == IConvergenceElement.Convergence.ORDINARY
-				&& concreteCvg != IConvergenceElement.Convergence.ORDINARY) {
+		if (abstractCvg == ORDINARY && concreteCvg != ORDINARY) {
 			createProblemMarker(concreteEventInfo.getEvent(),
-					EventBAttributes.CONVERGENCE_ATTRIBUTE,
-					GraphProblem.OrdinaryFaultyConvergenceWarning,
+					CONVERGENCE_ATTRIBUTE,
+					OrdinaryFaultyConvergenceWarning,
 					concreteEventInfo.getEventLabel());
-			concreteCvg = IConvergenceElement.Convergence.ORDINARY;
+			concreteCvg = ORDINARY;
 		}
 	}
 
@@ -146,8 +156,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 			List<IAbstractEventInfo> abstractEventInfos)
 			throws RodinDBException {
 
-		List<IConvergenceElement.Convergence> convergences = new ArrayList<IConvergenceElement.Convergence>(
-				3);
+		List<Convergence> convergences = new ArrayList<>(3);
 
 		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
 
@@ -165,16 +174,16 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 				for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
 					if (abstractEventInfo.getEventLabel().equals(label)) {
 						Convergence cvg = abstractEventInfo.getConvergence();
-						GraphProblem problem = GraphProblem.FaultyAbstractConvergenceUnchangedWarning;
+						GraphProblem problem = FaultyAbstractConvergenceUnchangedWarning;
 						if (abstractCvg != cvg) {
-							if (abstractCvg == Convergence.ANTICIPATED)
-								problem = GraphProblem.FaultyAbstractConvergenceAnticipatedWarning;
-							else if (abstractCvg == Convergence.ORDINARY)
-								problem = GraphProblem.FaultyAbstractConvergenceOrdinaryWarning;
+							if (abstractCvg == ANTICIPATED)
+								problem = FaultyAbstractConvergenceAnticipatedWarning;
+							else if (abstractCvg == ORDINARY)
+								problem = FaultyAbstractConvergenceOrdinaryWarning;
 						}
 						createProblemMarker(
 								refinesEvent,
-								EventBAttributes.TARGET_ATTRIBUTE,
+								TARGET_ATTRIBUTE,
 								problem,
 								label);
 					}
@@ -187,13 +196,12 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 			throws CoreException {
 
 		if (variantInfo.getExpression() == null)
-			if (concreteCvg == IConvergenceElement.Convergence.CONVERGENT
-					&& abstractCvg != IConvergenceElement.Convergence.CONVERGENT) {
+			if (concreteCvg == CONVERGENT && abstractCvg != CONVERGENT) {
 				createProblemMarker(concreteEventInfo.getEvent(),
-						EventBAttributes.CONVERGENCE_ATTRIBUTE,
-						GraphProblem.ConvergentEventNoVariantWarning,
+						CONVERGENCE_ATTRIBUTE,
+						ConvergentEventNoVariantWarning,
 						concreteEventInfo.getEventLabel());
-				concreteCvg = IConvergenceElement.Convergence.ORDINARY;
+				concreteCvg = ORDINARY;
 			}
 	}
 
