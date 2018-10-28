@@ -195,14 +195,19 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	private void checkVariantConvergence(IConcreteEventInfo concreteEventInfo)
 			throws CoreException {
 
-		if (variantInfo.getExpression() == null)
-			if (concreteCvg == CONVERGENT && abstractCvg != CONVERGENT) {
-				createProblemMarker(concreteEventInfo.getEvent(),
-						CONVERGENCE_ATTRIBUTE,
-						ConvergentEventNoVariantWarning,
-						concreteEventInfo.getEventLabel());
-				concreteCvg = ORDINARY;
-			}
+		if (variantInfo.getExpression() != null) {
+			return;
+		}
+
+		if (concreteCvg != CONVERGENT || abstractCvg == CONVERGENT) {
+			return;
+		}
+
+		createProblemMarker(concreteEventInfo.getEvent(),
+				CONVERGENCE_ATTRIBUTE,
+				ConvergentEventNoVariantWarning,
+				concreteEventInfo.getEventLabel());
+		concreteCvg = ORDINARY;
 	}
 
 	@Override
