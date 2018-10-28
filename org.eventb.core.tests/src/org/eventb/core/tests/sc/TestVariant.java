@@ -11,12 +11,14 @@
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
+ *     Systerel - add more tests
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
 import static org.eventb.core.sc.GraphProblem.InvalidVariantTypeError;
 import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
 import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
@@ -316,6 +318,30 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		containsVariant(file, emptyEnv);
+	}
+
+	/**
+	 * A variant is not needed even when the INITIALISATION is marked as convergent
+	 * (which is faulty and fixed by the static checker).
+	 */
+	@Test
+	public void testVariant_11() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		IEvent init = addInitialisation(mac, "V1");
+		setConvergent(init);
+		IVariant vrn = addVariant(mac, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(init, CONVERGENCE_ATTRIBUTE, InitialisationNotOrdinaryWarning),
+				marker(vrn, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1");
 	}
 
 }
