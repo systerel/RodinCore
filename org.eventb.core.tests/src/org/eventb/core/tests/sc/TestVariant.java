@@ -30,7 +30,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IVariant;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.junit.Test;
 
 /**
@@ -55,7 +55,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariant(file, emptyEnv, "1");
 	}
 
@@ -75,7 +74,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariant(file, emptyEnv, "{TRUE}");
 	}
 
@@ -97,11 +95,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
-		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ",
-				factory);
-
-		containsVariant(file, typeEnvironment, "V1");
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1");
 	}
 
 	/**
@@ -120,7 +115,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				InvalidVariantTypeError, "BOOL"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariant(file, emptyEnv);
 	}
 
@@ -148,11 +142,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
-		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; C1=ℤ",
-				factory);
-
-		containsVariant(file, typeEnvironment, "V1+C1");
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ; C1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1+C1");
 	}
 
 	/**
@@ -186,7 +177,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 						ConvergentEventNoVariantWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariables(file, "V0", "V1");
 		containsVariant(file, emptyEnv);
 	}
@@ -222,10 +212,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
-				factory);
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
 		containsVariant(file, typeEnv, "V1");
 	}
 
@@ -247,7 +235,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
+		containsVariant(file, emptyEnv, "1");
 		containsEvents(file, IEvent.INITIALISATION, "evt");
 	}
 	
@@ -283,10 +271,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
-				factory);
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
 		containsVariant(file, typeEnv, "V1");
 	}
 
@@ -311,7 +297,6 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 						ConvergentEventNoVariantWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-
 		containsVariant(file, emptyEnv);
 	}
 	
@@ -328,6 +313,9 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		
 		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE, 0,
 				1, SyntaxError, "Premature End Of Formula"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariant(file, emptyEnv);
 	}
 
 }
