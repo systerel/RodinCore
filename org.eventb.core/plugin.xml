@@ -619,6 +619,10 @@
             id="variantPresentInfo"
             name="%variantPresentInfo"/>
       <stateType
+            class="org.eventb.core.sc.state.IVariantUsedInfo"
+            id="variantUsedInfo"
+            name="%variantUsedInfo"/>
+      <stateType
             class="org.eventb.core.sc.state.IContextAccuracyInfo"
             id="contextAccuracyInfo"
             name="%contextAccuracyInfo"/>
