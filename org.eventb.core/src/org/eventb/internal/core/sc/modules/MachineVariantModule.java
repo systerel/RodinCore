@@ -12,13 +12,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
@@ -29,30 +26,26 @@ import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
-import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.state.IConcreteEventTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.state.IVariantPresentInfo;
+import org.eventb.core.sc.state.IVariantUsedInfo;
 import org.eventb.core.sc.state.SymbolFactory;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.VariantInfo;
+import org.eventb.internal.core.sc.VariantPresentInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  * 
  */
 public class MachineVariantModule extends ExpressionModule<IVariant> {
-
-	private static final int CVG_CODE = IConvergenceElement.Convergence.CONVERGENT
-			.getCode();
 
 	public static final IModuleType<MachineVariantModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
@@ -63,6 +56,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	VariantInfo variantInfo;
+	IVariantPresentInfo variantPresent;
 	FormulaFactory factory;
 
 	@Override
@@ -71,8 +65,10 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
+		variantPresent = new VariantPresentInfo();
 		factory = repository.getFormulaFactory();
 		repository.setState(variantInfo);
+		repository.setState(variantPresent);
 	}
 
 	@Override
@@ -82,44 +78,26 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		checkForRedundantVariant(repository);
 
 		variantInfo = null;
+		variantPresent = null;
 		factory = null;
 		super.endModule(element, repository, monitor);
 	}
 
 	private void checkForRedundantVariant(ISCStateRepository repository)
-			throws CoreException, RodinDBException {
-		IConcreteEventTable concreteEventTable = repository
-				.getState(IConcreteEventTable.STATE_TYPE);
+			throws CoreException {
 
-		boolean noCvgEvent = true;
-		for (IConcreteEventInfo info : concreteEventTable) {
-			ILabelSymbolInfo symbolInfo = info.getSymbolInfo();
-			if (symbolInfo.hasError())
-				continue;
-			else {
-				int cvg = symbolInfo
-						.getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
-				if (cvg == CVG_CODE) {
-					List<IAbstractEventInfo> infoList = info
-							.getAbstractEventInfos();
-					boolean nc = true;
-					if (infoList.size() != 0) {
-						for (IAbstractEventInfo absInfo : infoList) {
-							nc &= absInfo.getConvergence() != IConvergenceElement.Convergence.CONVERGENT;
-						}
-					}
-					if (nc) {
-						noCvgEvent = false;
-						break;
-					}
-				}
-			}
+		if (!variantPresent.isTrue()) {
+			return;
 		}
-		if (noCvgEvent && variantInfo.getExpression() != null) {
-			createProblemMarker(formulaElements[0],
-					EventBAttributes.EXPRESSION_ATTRIBUTE,
-					GraphProblem.NoConvergentEventButVariantWarning);
+		
+		IVariantUsedInfo variantUsed = repository.getState(IVariantUsedInfo.STATE_TYPE);
+		if (variantUsed.isTrue()) {
+			return;
 		}
+
+		createProblemMarker(formulaElements[0],
+				EventBAttributes.EXPRESSION_ATTRIBUTE,
+				GraphProblem.NoConvergentEventButVariantWarning);
 	}
 
 	@Override
@@ -147,6 +125,8 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		if (formulaElements.length == 0) {
 			variantInfo.makeImmutable();
+			variantPresent.set(false);
+			variantPresent.makeImmutable();
 			return;
 		}
 
@@ -163,6 +143,9 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		variantInfo.setExpression(formulas[0]);
 		variantInfo.makeImmutable();
+
+		variantPresent.set(formulas[0] != null);
+		variantPresent.makeImmutable();
 
 		createSCExpressions(target, monitor);
 

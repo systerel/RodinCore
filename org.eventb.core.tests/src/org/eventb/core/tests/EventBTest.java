@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -299,14 +299,15 @@ public abstract class EventBTest extends BuilderTest {
 	
 
 	
-	public void addVariant(IMachineRoot root, String expression) throws RodinDBException {
+	public IVariant addVariant(IMachineRoot root, String expression) throws RodinDBException {
 		IVariant variant = root.createChild(IVariant.ELEMENT_TYPE, null, null);
 		variant.setExpressionString(expression, null);
+		return variant;
 	}
 	
-	public void addVariant(IRodinFile rodinFile, String expression) throws RodinDBException {
+	public IVariant addVariant(IRodinFile rodinFile, String expression) throws RodinDBException {
 		IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
-		addVariant(root, expression);
+		return addVariant(root, expression);
 	}
 
 	public void addMachineSees(IMachineRoot root, String name) throws RodinDBException {
