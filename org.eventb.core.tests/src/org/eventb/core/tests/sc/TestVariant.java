@@ -29,6 +29,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.eventb.core.IVariant;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Test;
 
@@ -111,11 +112,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addInitialisation(mac);
 
-		addVariant(mac, "TRUE");
+		IVariant vrn = addVariant(mac, "TRUE");
 
 		saveRodinFileOf(mac);
 		
-		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE,
 				InvalidVariantTypeError, "BOOL"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
@@ -174,12 +175,12 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		final IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList(), makeSList());
 		setConvergent(evt);
-		addVariant(mac, "V1+V0");
+		IVariant vrn = addVariant(mac, "V1+V0");
 
 		saveRodinFileOf(mac);
 		
 		runBuilderCheck(
-				marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 3, 5,
+				marker(vrn, EXPRESSION_ATTRIBUTE, 3, 5,
 						VariantFreeIdentifierError, "V0"),
 				marker(evt, CONVERGENCE_ATTRIBUTE,
 						ConvergentEventNoVariantWarning, "evt"));
@@ -213,11 +214,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(mac, "evt");
 		setConvergent(evt);
 		addEventRefines(evt, "evt");
-		addVariant(mac, "V1");
+		IVariant vrn = addVariant(mac, "V1");
 
 		saveRodinFileOf(mac);
 
-		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE,
 				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
@@ -238,11 +239,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		addInitialisation(mac);
 		setOrdinary(addEvent(mac, "evt"));
-		addVariant(mac, "1");
+		IVariant vrn = addVariant(mac, "1");
 
 		saveRodinFileOf(mac);
 
-		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE,
+		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE,
 				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
@@ -299,12 +300,12 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		final IEvent evt = addEvent(mac, "evt");
 		setConvergent(evt);
 		addInitialisation(mac);
-		addVariant(mac, "{x ∣ x /= 0}");
+		IVariant vrn = addVariant(mac, "{x ∣ x /= 0}");
 
 		saveRodinFileOf(mac);
 		
 		runBuilderCheck(
-				marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 7, 8,
+				marker(vrn, EXPRESSION_ATTRIBUTE, 7, 8,
 						LexerError, "/"),
 				marker(evt, CONVERGENCE_ATTRIBUTE,
 						ConvergentEventNoVariantWarning, "evt"));
@@ -321,11 +322,11 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_10() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		addInitialisation(mac);
-		addVariant(mac, "");
+		IVariant vrn = addVariant(mac, "");
 
 		saveRodinFileOf(mac);
 		
-		runBuilderCheck(marker(mac.getVariants()[0], EXPRESSION_ATTRIBUTE, 0,
+		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE, 0,
 				1, SyntaxError, "Premature End Of Formula"));
 	}
 
