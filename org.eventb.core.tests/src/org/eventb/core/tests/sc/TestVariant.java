@@ -33,6 +33,7 @@ import static org.eventb.core.sc.ParseProblem.SyntaxError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
@@ -375,20 +376,32 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	}
 
 	/**
-	 * There can be a name conflict between a variant label and an invariant label
-	 * with the same name. This is a regression introduced in version 3.4. The
-	 * variant is then erased by the static checker.
+	 * There can be a conflict between the default variant label and an invariant
+	 * label with the same label. This is a regression introduced in version 3.4.
+	 * The variant is then erased by the static checker.
 	 */
 	@Test
 	public void testVariant_13() throws Exception {
-		String label = IVariant.DEFAULT_LABEL;
+		variantInvariantLabelConflict(IVariant.DEFAULT_LABEL);
+	}
+
+	/**
+	 * There can be a conflict between a variant label and an invariant with the
+	 * same label.
+	 */
+	@Test
+	public void testVariant_14() throws Exception {
+		variantInvariantLabelConflict("user-defined-label");
+	}
+
+	private void variantInvariantLabelConflict(String label) throws CoreException {
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "V1");
 		IInvariant inv = addInvariant(mac, label, "V1∈ℕ", false);
 		addInitialisation(mac, "V1");
 		IEvent evt = addEvent(mac, "evt");
 		setConvergent(evt);
-		IVariant vrn = addVariant(mac, "V1");
+		IVariant vrn = addVariant(mac, label, "V1");
 
 		saveRodinFileOf(mac);
 
@@ -402,20 +415,32 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	}
 
 	/**
-	 * There can be a name conflict between a variant label and an event label with
-	 * the same name. This is a regression introduced in version 3.4. The event is
-	 * then erased by the static checker.
+	 * There can be a conflict between the default label of a variant and an event
+	 * with the same label. This is a regression introduced in version 3.4. The
+	 * event is then erased by the static checker.
 	 */
 	@Test
-	public void testVariant_14() throws Exception {
-		String label = IVariant.DEFAULT_LABEL;
+	public void testVariant_15() throws Exception {
+		variantEventLabelConflict(IVariant.DEFAULT_LABEL);
+	}
+
+	/**
+	 * There can be a conflict between a variant label and an event with the same
+	 * label.
+	 */
+	@Test
+	public void testVariant_16() throws Exception {
+		variantInvariantLabelConflict("user-defined-label");
+	}
+
+	private void variantEventLabelConflict(String label) throws CoreException {
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addInitialisation(mac, "V1");
 		IEvent evt = addEvent(mac, label);
 		setConvergent(evt);
-		IVariant vrn = addVariant(mac, "V1");
+		IVariant vrn = addVariant(mac, label, "V1");
 
 		saveRodinFileOf(mac);
 
