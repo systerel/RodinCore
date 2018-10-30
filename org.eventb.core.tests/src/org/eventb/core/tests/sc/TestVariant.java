@@ -11,24 +11,32 @@
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
- *     Systerel - add more tests
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.IVariant.DEFAULT_LABEL;
 import static org.eventb.core.sc.GraphProblem.ConvergentEventNoVariantWarning;
+import static org.eventb.core.sc.GraphProblem.EventLabelConflictError;
 import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
 import static org.eventb.core.sc.GraphProblem.InvalidVariantTypeError;
+import static org.eventb.core.sc.GraphProblem.InvariantLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
 import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
+import static org.eventb.core.sc.GraphProblem.VariantLabelConflictError;
+import static org.eventb.core.sc.GraphProblem.VariantLabelConflictWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.SyntaxError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IVariant;
@@ -57,7 +65,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv, "1");
+		containsVariant(file, emptyEnv, DEFAULT_LABEL, "1");
 	}
 
 	/**
@@ -76,7 +84,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilderCheck();
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv, "{TRUE}");
+		containsVariant(file, emptyEnv, DEFAULT_LABEL, "{TRUE}");
 	}
 
 	/**
@@ -98,7 +106,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
-		containsVariant(file, typeEnv, "V1");
+		containsVariant(file, typeEnv, DEFAULT_LABEL, "V1");
 	}
 
 	/**
@@ -117,7 +125,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				InvalidVariantTypeError, "BOOL"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv);
+		containsNoVariant(file);
 	}
 
 	/**
@@ -145,7 +153,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ; C1=ℤ", factory);
-		containsVariant(file, typeEnv, "V1+C1");
+		containsVariant(file, typeEnv, DEFAULT_LABEL, "V1+C1");
 	}
 
 	/**
@@ -180,7 +188,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		containsVariables(file, "V0", "V1");
-		containsVariant(file, emptyEnv);
+		containsNoVariant(file);
 	}
 
 	/**
@@ -216,7 +224,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		containsVariables(file, "V0", "V1");
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
-		containsVariant(file, typeEnv, "V1");
+		containsVariant(file, typeEnv, DEFAULT_LABEL, "V1");
 	}
 
 	/**
@@ -237,7 +245,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				NoConvergentEventButVariantWarning));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv, "1");
+		containsVariant(file, emptyEnv, DEFAULT_LABEL, "1");
 		containsEvents(file, IEvent.INITIALISATION, "evt");
 	}
 	
@@ -275,7 +283,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		containsVariables(file, "V0", "V1");
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
-		containsVariant(file, typeEnv, "V1");
+		containsVariant(file, typeEnv, DEFAULT_LABEL, "V1");
 	}
 
 	/**
@@ -299,7 +307,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 						ConvergentEventNoVariantWarning, "evt"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv);
+		containsNoVariant(file);
 	}
 	
 	/**
@@ -317,7 +325,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 				1, SyntaxError, "Premature End Of Formula"));
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		containsVariant(file, emptyEnv);
+		containsNoVariant(file);
 	}
 
 	/**
@@ -341,7 +349,109 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
-		containsVariant(file, typeEnv, "V1");
+		containsVariant(file, typeEnv, DEFAULT_LABEL, "V1");
+	}
+
+	/**
+	 * There is no risk of conflict between a variant label and a variable with the
+	 * same name.
+	 */
+	@Test
+	public void testVariant_12() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		addVariant(mac, "V1", "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, "V1", "V1");
+	}
+
+	/**
+	 * There can be a conflict between the default variant label and an invariant
+	 * label with the same label. This is a regression introduced in version 3.4.
+	 * The variant is then erased by the static checker.
+	 */
+	@Test
+	public void testVariant_13() throws Exception {
+		variantInvariantLabelConflict(IVariant.DEFAULT_LABEL);
+	}
+
+	/**
+	 * There can be a conflict between a variant label and an invariant with the
+	 * same label.
+	 */
+	@Test
+	public void testVariant_14() throws Exception {
+		variantInvariantLabelConflict("user-defined-label");
+	}
+
+	private void variantInvariantLabelConflict(String label) throws CoreException {
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		IInvariant inv = addInvariant(mac, label, "V1∈ℕ", false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		IVariant vrn = addVariant(mac, label, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(inv, LABEL_ATTRIBUTE, InvariantLabelConflictWarning, label),
+				marker(vrn, LABEL_ATTRIBUTE, VariantLabelConflictError, label),
+				marker(evt, CONVERGENCE_ATTRIBUTE, ConvergentEventNoVariantWarning, "evt"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsNoVariant(file);
+	}
+
+	/**
+	 * There can be a conflict between the default label of a variant and an event
+	 * with the same label. This is a regression introduced in version 3.4. The
+	 * event is then erased by the static checker.
+	 */
+	@Test
+	public void testVariant_15() throws Exception {
+		variantEventLabelConflict(IVariant.DEFAULT_LABEL);
+	}
+
+	/**
+	 * There can be a conflict between a variant label and an event with the same
+	 * label.
+	 */
+	@Test
+	public void testVariant_16() throws Exception {
+		variantInvariantLabelConflict("user-defined-label");
+	}
+
+	private void variantEventLabelConflict(String label) throws CoreException {
+		IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
+		addInitialisation(mac, "V1");
+		IEvent evt = addEvent(mac, label);
+		setConvergent(evt);
+		IVariant vrn = addVariant(mac, label, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(evt, LABEL_ATTRIBUTE, EventLabelConflictError, label),
+				marker(vrn, LABEL_ATTRIBUTE, VariantLabelConflictWarning, label),
+				marker(vrn, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
+		containsVariant(file, typeEnv, label, "V1");
 	}
 
 }

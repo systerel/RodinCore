@@ -152,6 +152,7 @@
 <!ATTLIST %variant;
   %NameAttDecl;
   %CommentAttDecl;
+  %LabelAttDecl;
   %ExprAttDecl;
   >
 

@@ -268,19 +268,20 @@ public abstract class EventBTest extends BuilderTest {
 	}
 	
 	
-	public void addInvariant(IMachineRoot root, String label,
+	public IInvariant addInvariant(IMachineRoot root, String label,
 			String pred, boolean derived) throws RodinDBException {
 		final IInvariant invariant = root.createChild(IInvariant.ELEMENT_TYPE, null, null);
 		invariant.setLabel(label, null);
 		invariant.setTheorem(derived, null);
 		invariant.setPredicateString(pred, null);
+		return invariant;
 	}
 	
 	
-	public void addInvariant(IRodinFile rodinFile, String label, String pred, boolean derived)
+	public IInvariant addInvariant(IRodinFile rodinFile, String label, String pred, boolean derived)
 			throws RodinDBException {
 		final IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
-		addInvariant(root, label, pred, derived);
+		return addInvariant(root, label, pred, derived);
 	}
 
 	public void addInvariants(IRodinFile rodinFile,
@@ -301,6 +302,13 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public IVariant addVariant(IMachineRoot root, String expression) throws RodinDBException {
 		IVariant variant = root.createChild(IVariant.ELEMENT_TYPE, null, null);
+		variant.setExpressionString(expression, null);
+		return variant;
+	}
+
+	public IVariant addVariant(IMachineRoot root, String label, String expression) throws RodinDBException {
+		IVariant variant = root.createChild(IVariant.ELEMENT_TYPE, null, null);
+		variant.setLabel(label, null);
 		variant.setExpressionString(expression, null);
 		return variant;
 	}

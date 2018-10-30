@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - got factory from repository
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -20,7 +21,6 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
@@ -29,13 +29,13 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantPresentInfo;
 import org.eventb.core.sc.state.IVariantUsedInfo;
 import org.eventb.core.sc.state.SymbolFactory;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.VariantInfo;
 import org.eventb.internal.core.sc.VariantPresentInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -55,19 +55,14 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 		return MODULE_TYPE;
 	}
 
-	VariantInfo variantInfo;
 	IVariantPresentInfo variantPresent;
-	FormulaFactory factory;
 
 	@Override
 	public void initModule(IRodinElement element,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		variantInfo = new VariantInfo();
 		variantPresent = new VariantPresentInfo();
-		factory = repository.getFormulaFactory();
-		repository.setState(variantInfo);
 		repository.setState(variantPresent);
 	}
 
@@ -77,9 +72,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		checkForRedundantVariant(repository);
 
-		variantInfo = null;
 		variantPresent = null;
-		factory = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -100,16 +93,6 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 				GraphProblem.NoConvergentEventButVariantWarning);
 	}
 
-	@Override
-	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
-			String component, IProgressMonitor monitor) throws CoreException {
-		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance()
-				.makeLocalVariant("VARIANT", true, internalElement, component);
-		symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
-				internalElement);
-		return symbolInfo;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -124,7 +107,6 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			throws CoreException {
 
 		if (formulaElements.length == 0) {
-			variantInfo.makeImmutable();
 			variantPresent.set(false);
 			variantPresent.makeImmutable();
 			return;
@@ -141,14 +123,10 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		variantInfo.setExpression(formulas[0]);
-		variantInfo.makeImmutable();
-
 		variantPresent.set(formulas[0] != null);
 		variantPresent.makeImmutable();
 
 		createSCExpressions(target, monitor);
-
 	}
 
 	@Override
@@ -159,8 +137,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		// this method is never called because fetchLabel() is overriden
-		return null;
+		return repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -188,7 +165,8 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		throw new UnsupportedOperationException();
+		SymbolFactory sf = SymbolFactory.getInstance();
+		return sf.makeLocalVariant(symbol, true, element, component);
 	}
 
 	@Override

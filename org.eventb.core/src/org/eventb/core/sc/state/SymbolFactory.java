@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 University of Southampton and others.
+ * Copyright (c) 2008, 2018 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -459,14 +459,19 @@ public final class SymbolFactory {
 		@Override
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			throw new UnsupportedOperationException();
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					GraphProblem.VariantLabelConflictError, symbolInfo
+							.getSymbol());
 		}
 
 		@Override
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			throw new UnsupportedOperationException();
-
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
+					symbolInfo.getProblemAttributeType(),
+					GraphProblem.VariantLabelConflictWarning, symbolInfo
+							.getSymbol());
 		}
 
 	}

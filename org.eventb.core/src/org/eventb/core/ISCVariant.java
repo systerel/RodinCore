@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - update documentation for label attribute
  *******************************************************************************/
 package org.eventb.core;
 
@@ -19,12 +20,14 @@ import org.rodinp.core.RodinCore;
 /**
  * Common protocol for Event-B SC variants.
  * <p>
- * An SC variant is a variant that has been statically checked. It contains an
- * expression that is accessed and manipulated via
- * {@link ISCExpressionElement}. This interface itself does not
- * contribute any method.
+ * An SC variant is a variant that has been statically checked. It contains a
+ * label that is accessed and manipulated via {@link ILabeledElement} and an
+ * expression that is accessed and manipulated via {@link ISCExpressionElement}.
+ * This interface itself does not contribute any method.
  * </p>
  *
+ * @see ILabeledElement#getLabel()
+ * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * @see ISCExpressionElement#getExpression(ITypeEnvironment)
  * @see ISCExpressionElement#setExpression(Expression, IProgressMonitor)
  * 

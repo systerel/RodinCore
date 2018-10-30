@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -670,21 +670,21 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	public void containsVariant(ISCMachineRoot root, ITypeEnvironment environment, String... strings) throws RodinDBException {
-		assert strings.length <= 1;
+	public void containsVariant(ISCMachineRoot root, ITypeEnvironment environment, String expectedLabel, String expectedExpression)
+			throws RodinDBException {
 		ISCVariant[] variants = root.getSCVariants();
-		
-		
-		
-		assertEquals("wrong number of variants", strings.length, variants.length);
-		
-		if (strings.length == 0)
-			return;
+		assertEquals("wrong number of variants", 1, variants.length);
+
+		assertEquals("wrong variant label", expectedLabel, variants[0].getLabel());
 		
 		String vs = variants[0].getExpressionString();
-		String exp = getNormalizedExpression(strings[0], environment);
-				
+		String exp = getNormalizedExpression(expectedExpression, environment);
 		assertEquals("wrong variant", exp, vs);
+	}
+
+	public void containsNoVariant(ISCMachineRoot root) throws RodinDBException {
+		ISCVariant[] variants = root.getSCVariants();
+		assertEquals("wrong number of variants", 0, variants.length);
 	}
 
 	public void containsCarrierSets(ISCContext context, String... strings) throws RodinDBException {
