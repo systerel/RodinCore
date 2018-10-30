@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
  *     Systerel - Simplify PO for anticipated event (FR326)
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -80,11 +81,11 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		
 		// no PO for anticipated events if there is no variant
-		Expression varExpression = machineVariantInfo.getExpression();
-		if (concreteConvergence == ANTICIPATED && varExpression == null)
+		if (concreteConvergence == ANTICIPATED && !machineVariantInfo.machineHasVariant())
 			return;
 		
 		IPORoot target = repository.getTarget();
+		Expression varExpression = machineVariantInfo.getExpression();
 		
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)

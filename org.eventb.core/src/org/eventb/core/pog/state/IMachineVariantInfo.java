@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
@@ -29,18 +30,18 @@ public interface IMachineVariantInfo extends IPOGState {
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariantInfo");
 
 	/**
-	 * Returns the parsed and type-checked variant expression, or <code>null</code> 
-	 * if the machine does not have a variant.
+	 * Returns the parsed and type-checked variant expression.
 	 * 
-	 * @return the parsed and type-checked variant expression, or <code>null</code> 
-	 * 		if the machine does not have a variant
+	 * @return the parsed and type-checked variant expression
+	 * @throws IndexOutOfBoundsException if there is no variant
 	 */
 	Expression getExpression();
 	
 	/**
-	 * Returns a handle to the variant, or <code>null</code> if the machine does not have a variant.
+	 * Returns a handle to the variant.
 	 * 
-	 * @return a handle to the variant, or <code>null</code> if the machine does not have a variant
+	 * @return a handle to the variant
+	 * @throws IndexOutOfBoundsException if there is no variant
 	 */
 	ISCVariant getVariant();
 	
