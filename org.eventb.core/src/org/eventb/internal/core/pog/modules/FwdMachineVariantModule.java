@@ -70,8 +70,8 @@ public class FwdMachineVariantModule extends UtilityModule {
 		
 		IPORoot target = repository.getTarget();
 		
-		IRodinElement source = variantInfo.getVariant().getSource();
-		Expression expression = variantInfo.getExpression();
+		IRodinElement source = variantInfo.getVariant(0).getSource();
+		Expression expression = variantInfo.getExpression(0);
 
 		Predicate wdPredicate = expression.getWDPredicate();
 		IPOGSource[] sources = new IPOGSource[] {

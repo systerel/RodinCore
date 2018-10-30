@@ -85,7 +85,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		
 		IPORoot target = repository.getTarget();
-		Expression varExpression = machineVariantInfo.getExpression();
+		Expression varExpression = machineVariantInfo.getExpression(0);
 		
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
@@ -104,7 +104,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		boolean isIntVariant = varExpression.getType() instanceof IntegerType;
 		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
 		
-		IRodinElement variantSource = machineVariantInfo.getVariant().getSource();
+		IRodinElement variantSource = machineVariantInfo.getVariant(0).getSource();
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, variantSource),
 				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())

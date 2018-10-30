@@ -30,23 +30,35 @@ public interface IMachineVariantInfo extends IPOGState {
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariantInfo");
 
 	/**
+	 * Returns the number of variants of the machine.
+	 * 
+	 * @return the number of variants of the machine
+	 */
+	int count();
+
+	/**
 	 * Returns the parsed and type-checked variant expression.
 	 * 
+	 * @param index index of the variant
 	 * @return the parsed and type-checked variant expression
-	 * @throws IndexOutOfBoundsException if there is no variant
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
 	 */
-	Expression getExpression();
+	Expression getExpression(int index);
 	
 	/**
 	 * Returns a handle to the variant.
 	 * 
+	 * @param index index of the variant
 	 * @return a handle to the variant
-	 * @throws IndexOutOfBoundsException if there is no variant
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
 	 */
-	ISCVariant getVariant();
+	ISCVariant getVariant(int index);
 	
 	/**
-	 * Returns whether the machine has a variant.
+	 * Returns whether the machine has a variant. This is shortcut fully equivalent
+	 * to <code>count() != 0</code>
 	 * 
 	 * @return whether the machine has a variant
 	 */

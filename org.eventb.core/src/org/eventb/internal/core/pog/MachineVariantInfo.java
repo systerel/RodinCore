@@ -31,15 +31,20 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	private final Expression[] varExpressions;
 	
 	private final ISCVariant[] variants;
-	
+
 	@Override
-	public Expression getExpression() {
-		return varExpressions[0];
+	public int count() {
+		return varExpressions.length;
+	}
+
+	@Override
+	public Expression getExpression(int index) {
+		return varExpressions[index];
 	}
 	
 	@Override
-	public ISCVariant getVariant() {
-		return variants[0];
+	public ISCVariant getVariant(int index) {
+		return variants[index];
 	}
 
 	@Override
@@ -48,6 +53,7 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	}
 
 	public MachineVariantInfo(final Expression[] expressions, final ISCVariant[] variants) {
+		assert expressions.length == variants.length;
 		this.varExpressions = expressions;
 		this.variants = variants;
 	}
