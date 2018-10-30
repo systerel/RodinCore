@@ -430,7 +430,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testVariant_16() throws Exception {
-		variantInvariantLabelConflict("user-defined-label");
+		variantEventLabelConflict("user-defined-label");
 	}
 
 	private void variantEventLabelConflict(String label) throws CoreException {
