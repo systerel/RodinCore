@@ -30,6 +30,8 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		return varExpressions == null ? "null" : varExpressions.toString();
 	}
 
+	private final String[] varLabels;
+
 	private final Expression[] varExpressions;
 	
 	private final ISCVariant[] variants;
@@ -39,6 +41,11 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		return varExpressions.length;
 	}
 
+	@Override
+	public String getLabel(int index) {
+		return varLabels[index];
+	}
+	
 	@Override
 	public Expression getExpression(int index) {
 		return varExpressions[index];
@@ -56,8 +63,10 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 
 	public MachineVariantInfo(ISCVariant[] variants, ITypeEnvironment typeEnvironment) throws CoreException {
 		this.variants = variants;
+		varLabels = new String[variants.length];
 		varExpressions = new Expression[variants.length];
 		for (int i = 0; i < variants.length; ++i) {
+			varLabels[i] = variants[i].getLabel();
 			varExpressions[i] = variants[i].getExpression(typeEnvironment);
 		}
 	}

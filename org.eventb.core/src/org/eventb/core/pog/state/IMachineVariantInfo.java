@@ -37,6 +37,16 @@ public interface IMachineVariantInfo extends IPOGState {
 	int count();
 
 	/**
+	 * Returns the label of a variant.
+	 * 
+	 * @param index index of the variant
+	 * @return the label of the variant
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
+	 */
+	String getLabel(int index);
+	
+	/**
 	 * Returns the parsed and type-checked variant expression.
 	 * 
 	 * @param index index of the variant
