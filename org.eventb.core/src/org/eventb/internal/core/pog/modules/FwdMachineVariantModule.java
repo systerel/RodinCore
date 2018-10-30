@@ -70,9 +70,12 @@ public class FwdMachineVariantModule extends UtilityModule {
 		
 		IPORoot target = repository.getTarget();
 		
-		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate();
+		IRodinElement source = variantInfo.getVariant().getSource();
+		Expression expression = variantInfo.getExpression();
+
+		Predicate wdPredicate = expression.getWDPredicate();
 		IPOGSource[] sources = new IPOGSource[] {
-				makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource())
+				makeSource(IPOSource.DEFAULT_ROLE, source)
 		};
 		if (!isTrivial(wdPredicate)) {
 			createPO(
@@ -81,7 +84,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 					IPOGNature.VARIANT_WELL_DEFINEDNESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					makePredicate(wdPredicate, variantInfo.getVariant().getSource()), 
+					makePredicate(wdPredicate, source), 
 					sources, 
 					NO_HINTS, 
 					machineHypothesisManager.machineIsAccurate(),
@@ -91,16 +94,16 @@ public class FwdMachineVariantModule extends UtilityModule {
 				debugTraceTrivial("VWD");
 		}
 		
-		if (mustProveFinite()) {
+		if (mustProveFinite(expression)) {
 			Predicate finPredicate = 
-				factory.makeSimplePredicate(Formula.KFINITE, variantInfo.getExpression(), null);
+				factory.makeSimplePredicate(Formula.KFINITE, expression, null);
 			createPO(
 					target, 
 					"FIN", 
 					IPOGNature.VARIANT_FINITENESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					makePredicate(finPredicate, variantInfo.getVariant().getSource()), 
+					makePredicate(finPredicate, source), 
 					sources, 
 					NO_HINTS, 
 					machineHypothesisManager.machineIsAccurate(),
@@ -152,8 +155,8 @@ public class FwdMachineVariantModule extends UtilityModule {
 		super.endModule(element, repository, monitor);
 	}
 	
-	private boolean mustProveFinite() {
-		Type type = variantInfo.getExpression().getType();
+	private boolean mustProveFinite(Expression expression) {
+		Type type = expression.getType();
 		return !(type instanceof IntegerType) && !isFinite(type);
 	}
 
