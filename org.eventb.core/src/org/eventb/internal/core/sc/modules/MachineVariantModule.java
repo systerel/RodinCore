@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import static java.util.Arrays.stream;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
+
+import java.util.Objects;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -88,9 +93,12 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			return;
 		}
 
-		createProblemMarker(formulaElements[0],
-				EventBAttributes.EXPRESSION_ATTRIBUTE,
-				GraphProblem.NoConvergentEventButVariantWarning);
+		for (int i = 0; i < formulaElements.length; ++i) {
+			if (formulas[i] != null) {
+				createProblemMarker(formulaElements[i], EXPRESSION_ATTRIBUTE, //
+						NoConvergentEventButVariantWarning);
+			}
+		}
 	}
 
 	/*
@@ -112,18 +120,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			return;
 		}
 
-		if (formulaElements.length > 1) {
-			for (int k = 1; k < formulaElements.length; k++)
-				createProblemMarker(formulaElements[k],
-						EventBAttributes.EXPRESSION_ATTRIBUTE,
-						GraphProblem.TooManyVariantsError);
-		}
-
 		monitor.subTask(Messages.bind(Messages.progress_MachineVariant));
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		variantPresent.set(formulas[0] != null);
+		variantPresent.set(stream(formulas).anyMatch(Objects::nonNull));
 		variantPresent.makeImmutable();
 
 		createSCExpressions(target, monitor);
