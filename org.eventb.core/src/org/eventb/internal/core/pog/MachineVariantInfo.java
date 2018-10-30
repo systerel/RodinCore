@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IMachineVariantInfo;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
@@ -52,10 +54,12 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		return STATE_TYPE;
 	}
 
-	public MachineVariantInfo(final Expression[] expressions, final ISCVariant[] variants) {
-		assert expressions.length == variants.length;
-		this.varExpressions = expressions;
+	public MachineVariantInfo(ISCVariant[] variants, ITypeEnvironment typeEnvironment) throws CoreException {
 		this.variants = variants;
+		varExpressions = new Expression[variants.length];
+		for (int i = 0; i < variants.length; ++i) {
+			varExpressions[i] = variants[i].getExpression(typeEnvironment);
+		}
 	}
 
 	@Override
