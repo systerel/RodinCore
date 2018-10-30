@@ -135,13 +135,11 @@ public class FwdMachineVariantModule extends UtilityModule {
 		ISCMachineRoot machineRoot = (ISCMachineRoot) machineFile.getRoot();
 		
 		ISCVariant[] variants = machineRoot.getSCVariants();
-		if (variants.length == 0) {
-			variantInfo = new MachineVariantInfo(null, null);
-		} else {
-			ISCVariant variant = variants[0];
-			Expression expression = variant.getExpression(typeEnvironment);
-			variantInfo = new MachineVariantInfo(expression, variant);
+		Expression[] expressions = new Expression[variants.length];
+		for (int i = 0; i < variants.length; ++i) {
+			expressions[i] = variants[i].getExpression(typeEnvironment);
 		}
+		variantInfo = new MachineVariantInfo(expressions, variants);
 		repository.setState(variantInfo);
 	}
 	@Override

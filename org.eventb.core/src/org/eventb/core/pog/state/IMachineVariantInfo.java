@@ -18,7 +18,7 @@ import org.eventb.core.pog.POGCore;
 import org.eventb.core.tool.IStateType;
 
 /**
- * Protocol for accessing the variant of a machine.
+ * Protocol for accessing the variants of a machine.
  *
  * @author Stefan Hallerstede
  * @since 1.0

@@ -25,27 +25,21 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 
 	@Override
 	public String toString() {
-		return varExpression == null ? "null" : varExpression.toString();
+		return varExpressions == null ? "null" : varExpressions.toString();
 	}
 
-	private final Expression varExpression;
+	private final Expression[] varExpressions;
 	
-	private final ISCVariant variant;
+	private final ISCVariant[] variants;
 	
 	@Override
 	public Expression getExpression() {
-		if (varExpression == null) {
-			throw new IndexOutOfBoundsException();
-		}
-		return varExpression;
+		return varExpressions[0];
 	}
 	
 	@Override
 	public ISCVariant getVariant() {
-		if (variant == null) {
-			throw new IndexOutOfBoundsException();
-		}
-		return variant;
+		return variants[0];
 	}
 
 	@Override
@@ -53,14 +47,14 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		return STATE_TYPE;
 	}
 
-	public MachineVariantInfo(final Expression expression, final ISCVariant variant) {
-		this.varExpression = expression;
-		this.variant = variant;
+	public MachineVariantInfo(final Expression[] expressions, final ISCVariant[] variants) {
+		this.varExpressions = expressions;
+		this.variants = variants;
 	}
 
 	@Override
 	public boolean machineHasVariant() {
-		return varExpression != null;
+		return varExpressions.length != 0;
 	}
 
 }
