@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
+
+import static org.eventb.internal.core.pog.modules.FwdMachineVariantModule.FiniteTypeMatcher.isFinite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,9 +22,15 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCVariant;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeVisitor;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
@@ -145,25 +154,57 @@ public class FwdMachineVariantModule extends UtilityModule {
 	
 	private boolean mustProveFinite() {
 		Type type = variantInfo.getExpression().getType();
-		if (type.equals(factory.makeIntegerType()))
-			return false;
-		if (derivedFromBoolean(type))
-			return false;
-		return true;
+		return !(type instanceof IntegerType) && !isFinite(type);
 	}
 
-	private boolean derivedFromBoolean(Type type) {
-		if (type.equals(factory.makeBooleanType()))
-			return true;
-		Type baseType = type.getBaseType();
-		if (baseType != null)
-			return derivedFromBoolean(baseType);
-		if (type instanceof ProductType) {
-			ProductType productType = (ProductType) type;
-			return derivedFromBoolean(productType.getLeft()) 
-				&& derivedFromBoolean(productType.getRight());
+	// Recognize that a type is finite by construction.
+	static class FiniteTypeMatcher implements ITypeVisitor {
+
+		public static boolean isFinite(Type type) {
+			FiniteTypeMatcher matcher = new FiniteTypeMatcher();
+			type.accept(matcher);
+			return matcher.result;
 		}
-		return false;
+
+		// Can only change to false during traversal
+		private boolean result = true;
+
+		@Override
+		public void visit(BooleanType type) {
+			// OK
+		}
+
+		@Override
+		public void visit(GivenType type) {
+			// Can be infinite
+			result = false;
+		}
+
+		@Override
+		public void visit(IntegerType type) {
+			// Is infinite
+			result = false;
+		}
+
+		@Override
+		public void visit(ParametricType type) {
+			// Can be infinite, e.g. List(BOOL)
+			result = false;
+		}
+
+		@Override
+		public void visit(PowerSetType type) {
+			if (result)
+				type.getBaseType().accept(this);
+		}
+
+		@Override
+		public void visit(ProductType type) {
+			if (result)
+				type.getLeft().accept(this);
+			if (result)
+				type.getRight().accept(this);
+		}
 	}
-	
+
 }
