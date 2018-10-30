@@ -669,22 +669,31 @@ public abstract class BasicSCTest extends EventBTest {
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
-	
-	public void containsVariant(ISCMachineRoot root, ITypeEnvironment environment, String expectedLabel, String expectedExpression)
-			throws RodinDBException {
-		ISCVariant[] variants = root.getSCVariants();
-		assertEquals("wrong number of variants", 1, variants.length);
 
-		assertEquals("wrong variant label", expectedLabel, variants[0].getLabel());
-		
-		String vs = variants[0].getExpressionString();
-		String exp = getNormalizedExpression(expectedExpression, environment);
-		assertEquals("wrong variant", exp, vs);
+	public void containsVariants(ISCMachineRoot root, ITypeEnvironment environment, String[] expectedLabels,
+			String[] expectedExpressions) throws RodinDBException {
+		assert (expectedLabels.length == expectedExpressions.length);
+		int nofExpectedVariants = expectedLabels.length;
+
+		ISCVariant[] variants = root.getSCVariants();
+		assertEquals("wrong number of variants", nofExpectedVariants, variants.length);
+
+		for (int i = 0; i < nofExpectedVariants; ++i) {
+			assertEquals("wrong variant label", expectedLabels[i], variants[i].getLabel());
+
+			String vs = variants[i].getExpressionString();
+			String exp = getNormalizedExpression(expectedExpressions[i], environment);
+			assertEquals("wrong variant", exp, vs);
+		}
+	}
+
+	public void containsVariant(ISCMachineRoot root, ITypeEnvironment environment, String expectedLabel,
+			String expectedExpression) throws RodinDBException {
+		containsVariants(root, environment, makeSList(expectedLabel), makeSList(expectedExpression));
 	}
 
 	public void containsNoVariant(ISCMachineRoot root) throws RodinDBException {
-		ISCVariant[] variants = root.getSCVariants();
-		assertEquals("wrong number of variants", 0, variants.length);
+		containsVariants(root, null, makeSList(), makeSList());
 	}
 
 	public void containsCarrierSets(ISCContext context, String... strings) throws RodinDBException {
