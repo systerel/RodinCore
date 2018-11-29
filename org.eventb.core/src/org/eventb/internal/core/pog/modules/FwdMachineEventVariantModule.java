@@ -66,6 +66,30 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		return MODULE_TYPE;
 	}
 
+	/**
+	 * Stores information about variants for which POs should be generated.
+	 */
+	private class Info {
+		// Index in machineVariantInfo
+		public final int index;
+
+		// Before expression
+		public final Expression expression;
+
+		// Is this an integer variant
+		public final boolean isNatural;
+
+		// After expression
+		public final Expression nextExpression;
+
+		public Info(int index, Expression expression, Expression nextExpression) {
+			this.index = index;
+			this.expression = expression;
+			this.isNatural = expression.getType() instanceof IntegerType;
+			this.nextExpression = nextExpression;
+		}
+	}
+
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
@@ -85,20 +109,20 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		
 		IPORoot target = repository.getTarget();
-		Expression varExpression = machineVariantInfo.getExpression(0);
-		
-		Expression nextVarExpression = getAfterExpression(varExpression);
 
-		if (concreteConvergence == ANTICIPATED && nextVarExpression.equals(varExpression)) {
+		Expression varExpression = machineVariantInfo.getExpression(0);
+		Expression nextVarExpression = getAfterExpression(varExpression);
+		Info info = new Info(0, varExpression, nextVarExpression);
+
+		if (concreteConvergence == ANTICIPATED && info.nextExpression.equals(info.expression)) {
 			// The variant is not modified by this anticipated event,
 			// do not generate any proof obligation.
 			return;
 		}
 		
-		boolean isIntVariant = varExpression.getType() instanceof IntegerType;
-		Predicate varPredicate = getVarPredicate(nextVarExpression, varExpression, isIntVariant);
+		Predicate varPredicate = getVarPredicate(info);
 		
-		IRodinElement variantSource = machineVariantInfo.getVariant(0).getSource();
+		IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, variantSource),
 				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
@@ -106,7 +130,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		
-		String sequentNameVAR = machineVariantInfo.getPOName(0, concreteEventLabel, "VAR");
+		String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 		createPO(
 				target, 
 				sequentNameVAR, 
@@ -121,14 +145,14 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				accurate,
 				monitor);
 		
-		if (isIntVariant && concreteConvergence != ANTICIPATED) {
+		if (info.isNatural && concreteConvergence != ANTICIPATED) {
 			Predicate natPredicate = 
 				factory.makeRelationalPredicate(
 						IN, 
-						varExpression, 
+						info.expression,
 						factory.makeAtomicExpression(NATURAL, null), 
 						null);
-			String sequentNameNAT = machineVariantInfo.getPOName(0, concreteEventLabel, "NAT");
+			String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
 			createPO(
 					target, 
 					sequentNameNAT, 
@@ -157,18 +181,15 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		return nextVarExpression;
 	}
 	
-	private Predicate getVarPredicate(
-			Expression nextVarExpression, 
-			Expression varExpression, 
-			boolean isIntVariant) {
+	private Predicate getVarPredicate(Info info) {
 		int tag;
 		if (concreteConvergence == ANTICIPATED)
-			tag = isIntVariant ? LE : SUBSETEQ;
+			tag = info.isNatural ? LE : SUBSETEQ;
 		else
-			tag = isIntVariant ? LT : SUBSET;
+			tag = info.isNatural ? LT : SUBSET;
 		
 		Predicate varPredicate = 
-			factory.makeRelationalPredicate(tag, nextVarExpression, varExpression, null);
+			factory.makeRelationalPredicate(tag, info.nextExpression, info.expression, null);
 		return varPredicate;
 	}
 
