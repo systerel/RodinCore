@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,18 +198,13 @@ public class TestMachineVariant extends EventBPOTest {
 				
 				String[] hypotheses = invPredicates;
 		
-				if (convergence == ANTICIPATED) {
-					String diseq = "¬ " + item.varPost + " = " + item.variant;
-					hypotheses = append(hypotheses, diseq);
-				}
-
 				sequentHasHypotheses(sequent, environment, hypotheses);
 			
 				String rel = getRelationSymbol(convergence, item.kind);
 			
 				sequentHasGoal(sequent, environment, item.varPost + rel + item.variant);
 			
-				if (item.kind == INT_VARIANT) {
+				if (item.kind == INT_VARIANT && convergence != ANTICIPATED) {
 					sequent = getSequent(po, "evt/NAT");
 				
 					sequentHasHypotheses(sequent, environment, hypotheses);
