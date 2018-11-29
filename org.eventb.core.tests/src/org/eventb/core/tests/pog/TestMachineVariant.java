@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - Simplify PO for anticipated event (FR326)
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -17,13 +18,19 @@ import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Set;
 
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.Predicate;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
@@ -529,6 +536,91 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		noSequent(po, "ant/VAR");
 		noSequent(po, "ant/NAT");
+	}
+
+	/**
+	 * A VWD PO is generated for each potentially ill-defined variant (case of multi
+	 * variants).
+	 */
+	@Test
+	public void test_12_VWDmulti() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ", "A ⊆ ℤ", "f ∈ ℙ(BOOL) ↔ ℤ", "B ⊆ BOOL");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "x");
+		addVariant(mch, "vrn2", "1÷y");
+		addVariant(mch, "vrn3", "A");
+		addVariant(mch, "vrn4", "f(B)");
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		IPOSequent sequent;
+
+		noSequent(po, "VWD"); // No PO for unlabeled variant
+		noSequent(po, "vrn1/VWD");
+		sequent = getSequent(po, "vrn2/VWD");
+		sequentHasExactlyHypotheses(sequent, tenv, invs);
+		sequentHasGoal(sequent, tenv, "y≠0");
+		noSequent(po, "vrn3/VWD");
+		sequent = getSequent(po, "vrn4/VWD");
+		sequentHasExactlyHypotheses(sequent, tenv, invs);
+		sequentHasGoal(sequent, tenv, "B ∈ dom(f) ∧ f ∈ ℙ(BOOL) ⇸ ℤ");
+	}
+
+	/**
+	 * A FIN PO is generated for each potentially infinite set variant (case of
+	 * multi variants).
+	 */
+	@Test
+	public void test_13_FINmulti() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("A ⊆ ℤ", "B ⊆ BOOL", "x ∈ ℤ", "C ⊆ ℤ");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "A");
+		addVariant(mch, "vrn2", "B");
+		addVariant(mch, "vrn3", "x");
+		addVariant(mch, "vrn4", "C");
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		IPOSequent sequent;
+
+		noSequent(po, "VWD"); // No PO for unlabeled variant
+		sequent = getSequent(po, "vrn1/FIN");
+		sequentHasExactlyHypotheses(sequent, tenv, invs);
+		sequentHasGoal(sequent, tenv, "finite(A)");
+		noSequent(po, "vrn2/VWD");
+		noSequent(po, "vrn3/VWD");
+		sequent = getSequent(po, "vrn4/FIN");
+		sequentHasExactlyHypotheses(sequent, tenv, invs);
+		sequentHasGoal(sequent, tenv, "finite(C)");
+	}
+
+	/**
+	 * Adds all the given invariants to the machine, together with the variables
+	 * they contain and returns the resulting type environment.
+	 * 
+	 * @param mch       some Event-B machine
+	 * @param invImages array of predicate strings
+	 * @return the resulting type environment
+	 * @throws RodinDBException
+	 */
+	private ITypeEnvironment addInvariants(IMachineRoot mch, String[] invImages) throws RodinDBException {
+		final ITypeEnvironmentBuilder tenv = factory.makeTypeEnvironment();
+		for (int i = 0; i < invImages.length; ++i) {
+			addInvariant(mch, "inv" + i, invImages[i], false);
+			final Predicate p = factory.parsePredicate(invImages[i], null).getParsedPredicate();
+			final ITypeCheckResult tcResult = p.typeCheck(tenv);
+			assertTrue(p.isTypeChecked());
+			tenv.addAll(tcResult.getInferredEnvironment());
+		}
+		final Set<String> names = tenv.getNames();
+		addVariables(mch, names.toArray(new String[names.size()]));
+		return tenv;
 	}
 
 }

@@ -69,7 +69,11 @@ public class FwdMachineVariantModule extends UtilityModule {
 			return;
 		
 		IPORoot target = repository.getTarget();
-		generatePOs(target, 0, monitor);
+
+		int count = variantInfo.count();
+		for (int i = 0; i < count; ++i) {
+			generatePOs(target, i, monitor);
+		}
 	}
 
 	// Generate POs for the variant at the given index.
