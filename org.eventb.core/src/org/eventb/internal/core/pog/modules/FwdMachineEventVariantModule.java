@@ -87,13 +87,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		IPORoot target = repository.getTarget();
 		Expression varExpression = machineVariantInfo.getExpression(0);
 		
-		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
-		if (concreteEventActionTable.getDeltaPrime() != null)
-			substitution.add(concreteEventActionTable.getDeltaPrime());
-		Expression nextVarExpression = varExpression.applyAssignments(substitution);
-		substitution.clear();
-		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
-		nextVarExpression = nextVarExpression.applyAssignments(substitution);
+		Expression nextVarExpression = getAfterExpression(varExpression);
 
 		if (concreteConvergence == ANTICIPATED && nextVarExpression.equals(varExpression)) {
 			// The variant is not modified by this anticipated event,
@@ -149,6 +143,18 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					accurate,
 					monitor);
 		}
+	}
+
+	// Returns the value of the variant after this event has executed.
+	private Expression getAfterExpression(Expression varExpression) {
+		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
+		if (concreteEventActionTable.getDeltaPrime() != null)
+			substitution.add(concreteEventActionTable.getDeltaPrime());
+		Expression nextVarExpression = varExpression.applyAssignments(substitution);
+		substitution.clear();
+		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());	
+		nextVarExpression = nextVarExpression.applyAssignments(substitution);
+		return nextVarExpression;
 	}
 	
 	private Predicate getVarPredicate(
