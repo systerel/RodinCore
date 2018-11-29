@@ -69,11 +69,16 @@ public class FwdMachineVariantModule extends UtilityModule {
 			return;
 		
 		IPORoot target = repository.getTarget();
-		
-		IRodinElement source = variantInfo.getVariant(0).getSource();
-		Expression expression = variantInfo.getExpression(0);
+		generatePOs(target, 0, monitor);
+	}
 
-		String poName = variantInfo.getPOName(0, "", "VWD");
+	// Generate POs for the variant at the given index.
+	private void generatePOs(IPORoot target, int index, IProgressMonitor monitor)
+			throws CoreException {
+		IRodinElement source = variantInfo.getVariant(index).getSource();
+		Expression expression = variantInfo.getExpression(index);
+
+		String poName = variantInfo.getPOName(index, "", "VWD");
 		Predicate wdPredicate = expression.getWDPredicate();
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, source)
@@ -95,7 +100,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 				debugTraceTrivial(poName);
 		}
 		
-		poName = variantInfo.getPOName(0, "", "FIN");
+		poName = variantInfo.getPOName(index, "", "FIN");
 		if (mustProveFinite(expression)) {
 			Predicate finPredicate = 
 				factory.makeSimplePredicate(Formula.KFINITE, expression, null);
