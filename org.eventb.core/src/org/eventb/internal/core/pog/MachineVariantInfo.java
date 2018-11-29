@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import java.util.StringJoiner;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
@@ -54,6 +56,22 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	@Override
 	public ISCVariant getVariant(int index) {
 		return variants[index];
+	}
+
+	@Override
+	public String getPOName(int index, String prefix, String suffix) {
+		final StringJoiner joiner = new StringJoiner("/");
+		if (prefix.length() != 0) {
+			joiner.add(prefix);
+		}
+
+		if (count() != 1) {// Backward compatibility with Rodin 3.4
+			joiner.add(getLabel(index));
+		}
+		if (suffix.length() != 0) {
+			joiner.add(suffix);
+		}
+		return joiner.toString();
 	}
 
 	@Override

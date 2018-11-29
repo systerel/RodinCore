@@ -73,6 +73,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		IRodinElement source = variantInfo.getVariant(0).getSource();
 		Expression expression = variantInfo.getExpression(0);
 
+		String poName = variantInfo.getPOName(0, "", "VWD");
 		Predicate wdPredicate = expression.getWDPredicate();
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, source)
@@ -80,7 +81,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		if (!isTrivial(wdPredicate)) {
 			createPO(
 					target, 
-					"VWD", 
+					poName,
 					IPOGNature.VARIANT_WELL_DEFINEDNESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
@@ -91,15 +92,16 @@ public class FwdMachineVariantModule extends UtilityModule {
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial("VWD");
+				debugTraceTrivial(poName);
 		}
 		
+		poName = variantInfo.getPOName(0, "", "FIN");
 		if (mustProveFinite(expression)) {
 			Predicate finPredicate = 
 				factory.makeSimplePredicate(Formula.KFINITE, expression, null);
 			createPO(
 					target, 
-					"FIN", 
+					poName,
 					IPOGNature.VARIANT_FINITENESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
@@ -110,9 +112,8 @@ public class FwdMachineVariantModule extends UtilityModule {
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial("FIN");
+				debugTraceTrivial(poName);
 		}
-		
 	}
 	
 	protected IMachineVariantInfo variantInfo;

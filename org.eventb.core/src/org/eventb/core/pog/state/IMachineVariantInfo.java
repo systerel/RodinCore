@@ -67,6 +67,18 @@ public interface IMachineVariantInfo extends IPOGState {
 	ISCVariant getVariant(int index);
 	
 	/**
+	 * Returns the name for a variant PO.
+	 * 
+	 * @param index index of the variant
+	 * @param prefix the prefix of the PO name
+	 * @param suffix the suffix of the PO name
+	 * @return the name of the PO
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
+	 */
+	String getPOName(int index, String prefix, String suffix);
+	
+	/**
 	 * Returns whether the machine has a variant. This is shortcut fully equivalent
 	 * to <code>count() != 0</code>
 	 * 

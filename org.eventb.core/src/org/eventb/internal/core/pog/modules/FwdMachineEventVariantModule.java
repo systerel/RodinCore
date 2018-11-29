@@ -112,7 +112,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		
-		String sequentNameVAR = concreteEventLabel + "/VAR";
+		String sequentNameVAR = machineVariantInfo.getPOName(0, concreteEventLabel, "VAR");
 		createPO(
 				target, 
 				sequentNameVAR, 
@@ -134,7 +134,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						varExpression, 
 						factory.makeAtomicExpression(NATURAL, null), 
 						null);
-			String sequentNameNAT = concreteEventLabel + "/NAT";
+			String sequentNameNAT = machineVariantInfo.getPOName(0, concreteEventLabel, "NAT");
 			createPO(
 					target, 
 					sequentNameNAT, 
