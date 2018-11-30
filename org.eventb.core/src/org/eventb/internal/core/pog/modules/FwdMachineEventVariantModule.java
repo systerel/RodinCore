@@ -139,6 +139,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		final List<Info> infos = new LinkedList<>();
 		infos.add(new Info(0));
 
+		final List<IPOGSource> sourceList = new ArrayList<>();
+		sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
+
 		final Iterator<Info> iter = infos.iterator();
 		while (iter.hasNext()) {
 			final Info info = iter.next();
@@ -152,10 +155,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			
 			Predicate varPredicate = info.getVarPredicate(isConvergent);
 			
-			IPOGSource[] sources = new IPOGSource[] {
-					makeSource(IPOSource.DEFAULT_ROLE, info.source),
-					makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
-			};
+			sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, info.source));
+			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
+			sourceList.toArray(sources);
 			
 			ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 			
