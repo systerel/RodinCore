@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
@@ -26,9 +27,11 @@ import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,6 +42,7 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
@@ -141,6 +145,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 
 		final List<IPOGSource> sourceList = new ArrayList<>();
 		sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
+		
+		// Free identifiers specific to the PO.
+		final Set<FreeIdentifier> idents = new HashSet<>();
 
 		final Iterator<Info> iter = infos.iterator();
 		while (iter.hasNext()) {
@@ -159,7 +166,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
 			sourceList.toArray(sources);
 			
-			ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
+			idents.addAll(asList(varPredicate.getFreeIdentifiers()));
+			final ArrayList<IPOGPredicate> hyp = new ArrayList<>();
+			makeActionHypothesis(hyp, idents);
 			
 			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 			createPO(
