@@ -115,7 +115,7 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 				getSequentHypothesis(target, sequentName));
 	}
 
-	protected void makeActionHypothesis(ArrayList<IPOGPredicate> hyp, Set<FreeIdentifier> freeIdents) 
+	protected void makeActionHypothesis(List<IPOGPredicate> hyp, Set<FreeIdentifier> freeIdents) 
 	throws RodinDBException {
 		// create local hypothesis for nondeterministic assignments
 		

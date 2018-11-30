@@ -119,6 +119,45 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		}
 	}
 
+	/**
+	 * Allows to accumulate local hypotheses that are shared between several variant
+	 * proof obligations.
+	 * 
+	 * We could have alternatively used a POPredicateSet but this would generate
+	 * twice as many sets as variants and I am not sure we would have more compact
+	 * PO files, given that we do not expect to have that many local hypotheses.
+	 */
+	private class HypAccumulator {
+
+		// Hyps accumulated so far
+		private final List<IPOGPredicate> hyps;
+
+		// Free identifier for which before-after predicates have already been added
+		private final Set<FreeIdentifier> idents;
+
+		public HypAccumulator() {
+			this.hyps = new ArrayList<>();
+			this.idents = new HashSet<>();
+		}
+
+		// Returns the hypotheses accumulated so far.
+		public List<IPOGPredicate> getHyps() {
+			return hyps;
+		}
+
+		// Adds the before-after predicates for the primed variables of the given
+		// predicate.
+		public void addBAPredicates(Predicate target) throws RodinDBException {
+			final FreeIdentifier[] targetIdents = target.getFreeIdentifiers();
+			final Set<FreeIdentifier> newIdents = new HashSet<>(asList(targetIdents));
+
+			// Add only the BA predicates for the new primed variables.
+			newIdents.removeAll(idents);
+			makeActionHypothesis(hyps, newIdents);
+			idents.addAll(newIdents);
+		}
+	}
+
 	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
@@ -145,9 +184,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 
 		final List<IPOGSource> sourceList = new ArrayList<>();
 		sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
-		
-		// Free identifiers specific to the PO.
-		final Set<FreeIdentifier> idents = new HashSet<>();
+
+		final HypAccumulator hypAccumulator = new HypAccumulator();
 
 		final Iterator<Info> iter = infos.iterator();
 		while (iter.hasNext()) {
@@ -160,13 +198,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				continue;
 			}
 			
-			Predicate varPredicate = info.getVarPredicate(isConvergent);
-			
 			sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, info.source));
 			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
 			sourceList.toArray(sources);
-			
-			final ArrayList<IPOGPredicate> hyp = new ArrayList<>();
 			
 			if (info.isNatural && isConvergent) {
 				Predicate natPredicate = info.getNatPredicate();
@@ -176,7 +210,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						sequentNameNAT, 
 						IPOGNature.EVENT_VARIANT_IN_NAT, 
 						eventHypothesisManager.getFullHypothesis(), 
-						hyp, 
+						hypAccumulator.getHyps(), 
 						makePredicate(natPredicate, info.source), 
 						sources, 
 						new IPOGHint[] {
@@ -186,16 +220,15 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						monitor);
 			}
 
-			idents.addAll(asList(varPredicate.getFreeIdentifiers()));
-			makeActionHypothesis(hyp, idents);
-			
+			Predicate varPredicate = info.getVarPredicate(isConvergent);
+			hypAccumulator.addBAPredicates(varPredicate);
 			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 			createPO(
 					target, 
 					sequentNameVAR, 
 					IPOGNature.EVENT_VARIANT, 
 					eventHypothesisManager.getFullHypothesis(), 
-					hyp, 
+					hypAccumulator.getHyps(), 
 					makePredicate(varPredicate, info.source), 
 					sources, 
 					new IPOGHint[] {
