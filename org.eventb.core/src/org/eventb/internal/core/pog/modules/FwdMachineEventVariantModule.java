@@ -88,6 +88,18 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			this.isNatural = expression.getType() instanceof IntegerType;
 			this.nextExpression = nextExpression;
 		}
+
+		public Predicate getVarPredicate(boolean strict) {
+			int tag;
+			if (strict)
+				tag = isNatural ? LT : SUBSET;
+			else
+				tag = isNatural ? LE : SUBSETEQ;
+			
+			Predicate varPredicate = 
+				factory.makeRelationalPredicate(tag, nextExpression, expression, null);
+			return varPredicate;
+		}
 	}
 
 	@Override
@@ -120,7 +132,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		}
 		
-		Predicate varPredicate = getVarPredicate(info);
+		Predicate varPredicate = info.getVarPredicate(concreteConvergence == CONVERGENT);
 		
 		IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
 		IPOGSource[] sources = new IPOGSource[] {
@@ -181,18 +193,6 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		return nextVarExpression;
 	}
 	
-	private Predicate getVarPredicate(Info info) {
-		int tag;
-		if (concreteConvergence == ANTICIPATED)
-			tag = info.isNatural ? LE : SUBSETEQ;
-		else
-			tag = info.isNatural ? LT : SUBSET;
-		
-		Predicate varPredicate = 
-			factory.makeRelationalPredicate(tag, info.nextExpression, info.expression, null);
-		return varPredicate;
-	}
-
 	protected Convergence concreteConvergence;
 	protected Convergence abstractConvergence;
 	protected IMachineVariantInfo machineVariantInfo;
