@@ -166,24 +166,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
 			sourceList.toArray(sources);
 			
-			idents.addAll(asList(varPredicate.getFreeIdentifiers()));
 			final ArrayList<IPOGPredicate> hyp = new ArrayList<>();
-			makeActionHypothesis(hyp, idents);
-			
-			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
-			createPO(
-					target, 
-					sequentNameVAR, 
-					IPOGNature.EVENT_VARIANT, 
-					eventHypothesisManager.getFullHypothesis(), 
-					hyp, 
-					makePredicate(varPredicate, info.source), 
-					sources, 
-					new IPOGHint[] {
-							getLocalHypothesisSelectionHint(target, sequentNameVAR)
-						}, 
-					accurate,
-					monitor);
 			
 			if (info.isNatural && isConvergent) {
 				Predicate natPredicate = info.getNatPredicate();
@@ -202,6 +185,24 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						accurate,
 						monitor);
 			}
+
+			idents.addAll(asList(varPredicate.getFreeIdentifiers()));
+			makeActionHypothesis(hyp, idents);
+			
+			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
+			createPO(
+					target, 
+					sequentNameVAR, 
+					IPOGNature.EVENT_VARIANT, 
+					eventHypothesisManager.getFullHypothesis(), 
+					hyp, 
+					makePredicate(varPredicate, info.source), 
+					sources, 
+					new IPOGHint[] {
+							getLocalHypothesisSelectionHint(target, sequentNameVAR)
+						}, 
+					accurate,
+					monitor);
 		}
 	}
 

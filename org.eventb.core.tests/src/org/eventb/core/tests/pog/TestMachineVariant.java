@@ -539,11 +539,44 @@ public class TestMachineVariant extends EventBPOTest {
 	}
 
 	/**
+	 * Verify the local hypotheses of VAR and NAT POs.
+	 */
+	@Test
+	public void test_12_LocalHyps() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ", "z ∈ ℤ");
+		String grd1 = "p ∈ 1 ‥ 2";
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "x + y");
+		IEvent event = addEvent(mch, "evt", //
+				makeSList("p"), //
+				makeSList("grd1"), makeSList(grd1), //
+				makeSList("act1", "act2", "act3"), //
+				makeSList("x ≔ x + p", "y :∈ 3 ‥ 4", "z :∈ 5 ‥ 6"));
+		String baPred = "y' ∈ 3 ‥ 4";
+		setConvergence(event, CONVERGENT);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		IPOSequent sequent;
+
+		sequent = getSequent(po, "evt/VAR");
+		sequentHasExactlyHypotheses(sequent, tenv, concat(invs, grd1, baPred));
+		sequentHasGoal(sequent, tenv, "(x + p) + y' < x + y");
+
+		sequent = getSequent(po, "evt/NAT");
+		sequentHasExactlyHypotheses(sequent, tenv, concat(invs, grd1));
+		sequentHasGoal(sequent, tenv, "x + y ∈ ℕ");
+	}
+
+	/**
 	 * A VWD PO is generated for each potentially ill-defined variant (case of multi
 	 * variants).
 	 */
 	@Test
-	public void test_12_VWDmulti() throws Exception {
+	public void test_13_VWDmulti() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ", "A ⊆ ℤ", "f ∈ ℙ(BOOL) ↔ ℤ", "B ⊆ BOOL");
 		ITypeEnvironment tenv = addInvariants(mch, invs);
@@ -574,7 +607,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * multi variants).
 	 */
 	@Test
-	public void test_13_FINmulti() throws Exception {
+	public void test_14_FINmulti() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		String[] invs = makeSList("A ⊆ ℤ", "B ⊆ BOOL", "x ∈ ℤ", "C ⊆ ℤ");
 		ITypeEnvironment tenv = addInvariants(mch, invs);
