@@ -90,15 +90,14 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		}
 
 		public Predicate getVarPredicate(boolean strict) {
-			int tag;
-			if (strict)
-				tag = isNatural ? LT : SUBSET;
-			else
-				tag = isNatural ? LE : SUBSETEQ;
+			final int tag;
+			if (isNatural) {
+				tag = strict ? LT : LE;
+			} else {
+				tag = strict ? SUBSET : SUBSETEQ;
+			}
 			
-			Predicate varPredicate = 
-				factory.makeRelationalPredicate(tag, nextExpression, expression, null);
-			return varPredicate;
+			return factory.makeRelationalPredicate(tag, nextExpression, expression, null);
 		}
 	}
 
