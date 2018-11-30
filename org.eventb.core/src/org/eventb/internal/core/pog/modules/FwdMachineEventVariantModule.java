@@ -74,6 +74,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		// Index in machineVariantInfo
 		public final int index;
 
+		// Variant source object
+		public final IRodinElement source;
+
 		// Before expression
 		public final Expression expression;
 
@@ -83,8 +86,9 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		// After expression
 		public final Expression nextExpression;
 
-		public Info(int index) {
+		public Info(int index) throws RodinDBException {
 			this.index = index;
+			this.source = machineVariantInfo.getVariant(index).getSource();
 			this.expression = machineVariantInfo.getExpression(index);
 			this.isNatural = expression.getType() instanceof IntegerType;
 			this.nextExpression = getAfterExpression(expression);
@@ -148,9 +152,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			
 			Predicate varPredicate = info.getVarPredicate(isConvergent);
 			
-			IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
 			IPOGSource[] sources = new IPOGSource[] {
-					makeSource(IPOSource.DEFAULT_ROLE, variantSource),
+					makeSource(IPOSource.DEFAULT_ROLE, info.source),
 					makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
 			};
 			
@@ -163,7 +166,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					IPOGNature.EVENT_VARIANT, 
 					eventHypothesisManager.getFullHypothesis(), 
 					hyp, 
-					makePredicate(varPredicate, variantSource), 
+					makePredicate(varPredicate, info.source), 
 					sources, 
 					new IPOGHint[] {
 							getLocalHypothesisSelectionHint(target, sequentNameVAR)
@@ -180,7 +183,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						IPOGNature.EVENT_VARIANT_IN_NAT, 
 						eventHypothesisManager.getFullHypothesis(), 
 						hyp, 
-						makePredicate(natPredicate, variantSource), 
+						makePredicate(natPredicate, info.source), 
 						sources, 
 						new IPOGHint[] {
 								getLocalHypothesisSelectionHint(target, sequentNameNAT)
