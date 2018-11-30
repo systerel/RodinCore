@@ -130,6 +130,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return;
 		
 		IPORoot target = repository.getTarget();
+		final boolean isConvergent = concreteConvergence == CONVERGENT;
 
 		final List<Info> infos = new LinkedList<>();
 		infos.add(new Info(0));
@@ -138,13 +139,13 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		while (iter.hasNext()) {
 			final Info info = iter.next();
 
-			if (concreteConvergence == ANTICIPATED && info.isUnchanged()) {
+			if (!isConvergent && info.isUnchanged()) {
 				// The variant is not modified by this anticipated event,
 				// do not generate any proof obligation.
 				return;
 			}
 			
-			Predicate varPredicate = info.getVarPredicate(concreteConvergence == CONVERGENT);
+			Predicate varPredicate = info.getVarPredicate(isConvergent);
 			
 			IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
 			IPOGSource[] sources = new IPOGSource[] {
@@ -169,7 +170,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					accurate,
 					monitor);
 			
-			if (info.isNatural && concreteConvergence != ANTICIPATED) {
+			if (info.isNatural && isConvergent) {
 				Predicate natPredicate = info.getNatPredicate();
 				String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
 				createPO(
