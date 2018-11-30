@@ -103,6 +103,15 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			
 			return factory.makeRelationalPredicate(tag, nextExpression, expression, null);
 		}
+
+		public Predicate getNatPredicate() {
+			return factory.makeRelationalPredicate(
+					IN, 
+					expression,
+					factory.makeAtomicExpression(NATURAL, null), 
+					null);
+
+		}
 	}
 
 	@Override
@@ -159,12 +168,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				monitor);
 		
 		if (info.isNatural && concreteConvergence != ANTICIPATED) {
-			Predicate natPredicate = 
-				factory.makeRelationalPredicate(
-						IN, 
-						info.expression,
-						factory.makeAtomicExpression(NATURAL, null), 
-						null);
+			Predicate natPredicate = info.getNatPredicate();
 			String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
 			createPO(
 					target, 
