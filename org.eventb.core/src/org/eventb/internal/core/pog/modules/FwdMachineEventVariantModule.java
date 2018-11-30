@@ -89,6 +89,10 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			this.nextExpression = getAfterExpression(expression);
 		}
 
+		public boolean isUnchanged() {
+			return nextExpression.equals(expression);
+		}
+
 		public Predicate getVarPredicate(boolean strict) {
 			final int tag;
 			if (isNatural) {
@@ -123,7 +127,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 
 		Info info = new Info(0);
 
-		if (concreteConvergence == ANTICIPATED && info.nextExpression.equals(info.expression)) {
+		if (concreteConvergence == ANTICIPATED && info.isUnchanged()) {
 			// The variant is not modified by this anticipated event,
 			// do not generate any proof obligation.
 			return;
