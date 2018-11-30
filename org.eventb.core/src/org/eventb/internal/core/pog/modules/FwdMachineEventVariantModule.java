@@ -139,10 +139,11 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		while (iter.hasNext()) {
 			final Info info = iter.next();
 
-			if (!isConvergent && info.isUnchanged()) {
-				// The variant is not modified by this anticipated event,
-				// do not generate any proof obligation.
-				return;
+			// Remove the variant if it is not modified by this event, except the
+			// last one for a convergent event.
+			if (info.isUnchanged() && (!isConvergent || iter.hasNext())) {
+				iter.remove();
+				continue;
 			}
 			
 			Predicate varPredicate = info.getVarPredicate(isConvergent);
