@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static java.lang.System.arraycopy;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
@@ -203,9 +204,9 @@ public class TestMachineVariant extends EventBPOTest {
 			
 				sequent = getSequent(po, "evt/VAR");
 				
-				String[] hypotheses = invPredicates;
+				String[] hypotheses = concat(invPredicates, item.guards);
 		
-				sequentHasHypotheses(sequent, environment, hypotheses);
+				sequentHasExactlyHypotheses(sequent, environment, hypotheses);
 			
 				String rel = getRelationSymbol(convergence, item.kind);
 			
@@ -214,7 +215,7 @@ public class TestMachineVariant extends EventBPOTest {
 				if (item.kind == INT_VARIANT && convergence != ANTICIPATED) {
 					sequent = getSequent(po, "evt/NAT");
 				
-					sequentHasHypotheses(sequent, environment, hypotheses);
+					sequentHasExactlyHypotheses(sequent, environment, hypotheses);
 					sequentHasGoal(sequent, environment, item.variant + "∈ℕ");
 				}
 			}
@@ -222,7 +223,7 @@ public class TestMachineVariant extends EventBPOTest {
 			if (item.kind == SET_VARIANT) {
 				sequent = getSequent(po, "FIN");
 				
-				sequentHasHypotheses(sequent, environment, invPredicates);
+				sequentHasExactlyHypotheses(sequent, environment, invPredicates);
 				sequentHasGoal(sequent, environment, "finite(" + item.variant + ")");
 			}
 		}
@@ -233,6 +234,13 @@ public class TestMachineVariant extends EventBPOTest {
 		addVariables(mac, "A", "x", "y");
 		addInvariants(mac, invLabels, invPredicates, isTheorem);
 		return mac;
+	}
+
+	private String[] concat(String[] xs, String... ys) {
+		final String[] rs = new String[xs.length + ys.length];
+		arraycopy(xs, 0, rs, 0, xs.length);
+		arraycopy(ys, 0, rs, xs.length, ys.length);
+		return rs;
 	}
 
 	/*
@@ -264,7 +272,7 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		IPOSequent sequent = getSequent(po, "VWD");
 	
-		sequentHasHypotheses(sequent, environment, invPredicates);
+		sequentHasExactlyHypotheses(sequent, environment, invPredicates);
 		sequentHasGoal(sequent, environment, "x≠0");
 	}
 	
