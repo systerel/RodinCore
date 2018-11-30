@@ -235,14 +235,6 @@ public class TestMachineVariant extends EventBPOTest {
 		return mac;
 	}
 
-	private String[] append(String[] hypotheses, String diseq) {
-		final int length = hypotheses.length;
-		final String[] result = new String[length + 1];
-		System.arraycopy(hypotheses, 0, result, 0, length);
-		result[length] = diseq;
-		return result;
-	}
-
 	/*
 	 * ordinary event variants
 	 */
