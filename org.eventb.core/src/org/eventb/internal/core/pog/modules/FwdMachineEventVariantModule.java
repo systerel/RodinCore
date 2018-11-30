@@ -104,7 +104,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			return nextExpression.equals(expression);
 		}
 
-		public Predicate getVarPredicate(boolean strict) {
+		public IPOGPredicate getVarGoal(boolean strict) {
 			final int tag;
 			if (isNatural) {
 				tag = strict ? LT : LE;
@@ -112,12 +112,16 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				tag = strict ? SUBSET : SUBSETEQ;
 			}
 			
-			return factory.makeRelationalPredicate(tag, nextExpression, expression, null);
+			final Predicate pred;
+			pred = factory.makeRelationalPredicate(tag, nextExpression, expression, null);
+			return makePredicate(pred, source);
 		}
 
-		public Predicate getNatPredicate() {
+		public IPOGPredicate getNatGoal() {
 			final Expression nat = factory.makeAtomicExpression(NATURAL, null);
-			return factory.makeRelationalPredicate(IN, expression, nat, null);
+			final Predicate pred;
+			pred = factory.makeRelationalPredicate(IN, expression, nat, null);
+			return makePredicate(pred, source);
 		}
 
 		public IPOGPredicate getEqHyp() {
@@ -215,7 +219,6 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			sourceList.toArray(sources);
 			
 			if (info.isNatural && isConvergent) {
-				Predicate natPredicate = info.getNatPredicate();
 				String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
 				createPO(
 						target, 
@@ -223,7 +226,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						IPOGNature.EVENT_VARIANT_IN_NAT, 
 						eventHypothesisManager.getFullHypothesis(), 
 						hypAccumulator.getHyps(), 
-						makePredicate(natPredicate, info.source), 
+						info.getNatGoal(), 
 						sources, 
 						new IPOGHint[] {
 								getLocalHypothesisSelectionHint(target, sequentNameNAT)
@@ -232,8 +235,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						monitor);
 			}
 
-			Predicate varPredicate = info.getVarPredicate(isConvergent);
-			hypAccumulator.addBAPredicates(varPredicate);
+			IPOGPredicate varGoal = info.getVarGoal(isConvergent);
+			hypAccumulator.addBAPredicates(varGoal.getPredicate());
 			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 			createPO(
 					target, 
@@ -241,7 +244,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					IPOGNature.EVENT_VARIANT, 
 					eventHypothesisManager.getFullHypothesis(), 
 					hypAccumulator.getHyps(), 
-					makePredicate(varPredicate, info.source), 
+					varGoal, 
 					sources, 
 					new IPOGHint[] {
 							getLocalHypothesisSelectionHint(target, sequentNameVAR)
