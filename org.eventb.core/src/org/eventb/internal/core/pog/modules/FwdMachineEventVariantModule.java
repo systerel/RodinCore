@@ -26,6 +26,7 @@ import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -130,55 +131,61 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		IPORoot target = repository.getTarget();
 
-		Info info = new Info(0);
+		final List<Info> infos = new LinkedList<>();
+		infos.add(new Info(0));
 
-		if (concreteConvergence == ANTICIPATED && info.isUnchanged()) {
-			// The variant is not modified by this anticipated event,
-			// do not generate any proof obligation.
-			return;
-		}
-		
-		Predicate varPredicate = info.getVarPredicate(concreteConvergence == CONVERGENT);
-		
-		IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
-		IPOGSource[] sources = new IPOGSource[] {
-				makeSource(IPOSource.DEFAULT_ROLE, variantSource),
-				makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
-		};
-		
-		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
-		
-		String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
-		createPO(
-				target, 
-				sequentNameVAR, 
-				IPOGNature.EVENT_VARIANT, 
-				eventHypothesisManager.getFullHypothesis(), 
-				hyp, 
-				makePredicate(varPredicate, variantSource), 
-				sources, 
-				new IPOGHint[] {
-						getLocalHypothesisSelectionHint(target, sequentNameVAR)
-					}, 
-				accurate,
-				monitor);
-		
-		if (info.isNatural && concreteConvergence != ANTICIPATED) {
-			Predicate natPredicate = info.getNatPredicate();
-			String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
+		final Iterator<Info> iter = infos.iterator();
+		while (iter.hasNext()) {
+			final Info info = iter.next();
+
+			if (concreteConvergence == ANTICIPATED && info.isUnchanged()) {
+				// The variant is not modified by this anticipated event,
+				// do not generate any proof obligation.
+				return;
+			}
+			
+			Predicate varPredicate = info.getVarPredicate(concreteConvergence == CONVERGENT);
+			
+			IRodinElement variantSource = machineVariantInfo.getVariant(info.index).getSource();
+			IPOGSource[] sources = new IPOGSource[] {
+					makeSource(IPOSource.DEFAULT_ROLE, variantSource),
+					makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource())
+			};
+			
+			ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
+			
+			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 			createPO(
 					target, 
-					sequentNameNAT, 
-					IPOGNature.EVENT_VARIANT_IN_NAT, 
+					sequentNameVAR, 
+					IPOGNature.EVENT_VARIANT, 
 					eventHypothesisManager.getFullHypothesis(), 
 					hyp, 
-					makePredicate(natPredicate, variantSource), 
+					makePredicate(varPredicate, variantSource), 
 					sources, 
 					new IPOGHint[] {
-							getLocalHypothesisSelectionHint(target, sequentNameNAT)
+							getLocalHypothesisSelectionHint(target, sequentNameVAR)
 						}, 
 					accurate,
 					monitor);
+			
+			if (info.isNatural && concreteConvergence != ANTICIPATED) {
+				Predicate natPredicate = info.getNatPredicate();
+				String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
+				createPO(
+						target, 
+						sequentNameNAT, 
+						IPOGNature.EVENT_VARIANT_IN_NAT, 
+						eventHypothesisManager.getFullHypothesis(), 
+						hyp, 
+						makePredicate(natPredicate, variantSource), 
+						sources, 
+						new IPOGHint[] {
+								getLocalHypothesisSelectionHint(target, sequentNameNAT)
+							}, 
+						accurate,
+						monitor);
+			}
 		}
 	}
 
