@@ -139,6 +139,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 	 * twice as many sets as variants and I am not sure we would have more compact
 	 * PO files, given that we do not expect to have that many local hypotheses.
 	 */
+	@SuppressWarnings("synthetic-access")
 	private class HypAccumulator {
 
 		// Hyps accumulated so far
@@ -147,9 +148,15 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		// Free identifier for which before-after predicates have already been added
 		private final Set<FreeIdentifier> idents;
 
-		public HypAccumulator() {
+		// Sources of the PO
+		private final List<IPOGSource> sources;
+
+		public HypAccumulator() throws RodinDBException {
+			this.sources = new ArrayList<>();
 			this.hyps = new ArrayList<>();
 			this.idents = new HashSet<>();
+
+			sources.add(makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
 		}
 
 		// Returns the hypotheses accumulated so far.
@@ -171,6 +178,14 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 
 		public void addEqHyp(Info info) {
 			hyps.add(info.getEqHyp());
+		}
+
+		public void addSource(Info info) throws RodinDBException {
+			sources.add(makeSource(IPOSource.DEFAULT_ROLE, info.source));
+		}
+
+		public IPOGSource[] getSources() {
+			return sources.toArray(new IPOGSource[sources.size()]);
 		}
 	}
 
@@ -198,9 +213,6 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		final List<Info> infos = new LinkedList<>();
 		infos.add(new Info(0));
 
-		final List<IPOGSource> sourceList = new ArrayList<>();
-		sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, concreteEvent.getSource()));
-
 		final HypAccumulator hypAccumulator = new HypAccumulator();
 
 		final Iterator<Info> iter = infos.iterator();
@@ -213,10 +225,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				iter.remove();
 				continue;
 			}
-			
-			sourceList.add(makeSource(IPOSource.DEFAULT_ROLE, info.source));
-			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
-			sourceList.toArray(sources);
+
+			hypAccumulator.addSource(info);
 			
 			if (info.isNatural && (isConvergent || iter.hasNext())) {
 				String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
@@ -227,7 +237,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						eventHypothesisManager.getFullHypothesis(), 
 						hypAccumulator.getHyps(), 
 						info.getNatGoal(), 
-						sources, 
+						hypAccumulator.getSources(), 
 						new IPOGHint[] {
 								getLocalHypothesisSelectionHint(target, sequentNameNAT)
 							}, 
@@ -245,7 +255,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 					eventHypothesisManager.getFullHypothesis(), 
 					hypAccumulator.getHyps(), 
 					varGoal, 
-					sources, 
+					hypAccumulator.getSources(), 
 					new IPOGHint[] {
 							getLocalHypothesisSelectionHint(target, sequentNameVAR)
 						}, 
