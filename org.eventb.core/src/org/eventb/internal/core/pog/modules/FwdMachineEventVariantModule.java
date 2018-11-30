@@ -105,12 +105,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		}
 
 		public Predicate getNatPredicate() {
-			return factory.makeRelationalPredicate(
-					IN, 
-					expression,
-					factory.makeAtomicExpression(NATURAL, null), 
-					null);
-
+			final Expression nat = factory.makeAtomicExpression(NATURAL, null);
+			return factory.makeRelationalPredicate(IN, expression, nat, null);
 		}
 	}
 
