@@ -82,11 +82,11 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		// After expression
 		public final Expression nextExpression;
 
-		public Info(int index, Expression expression, Expression nextExpression) {
+		public Info(int index) {
 			this.index = index;
-			this.expression = expression;
+			this.expression = machineVariantInfo.getExpression(index);
 			this.isNatural = expression.getType() instanceof IntegerType;
-			this.nextExpression = nextExpression;
+			this.nextExpression = getAfterExpression(expression);
 		}
 
 		public Predicate getVarPredicate(boolean strict) {
@@ -121,9 +121,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		IPORoot target = repository.getTarget();
 
-		Expression varExpression = machineVariantInfo.getExpression(0);
-		Expression nextVarExpression = getAfterExpression(varExpression);
-		Info info = new Info(0, varExpression, nextVarExpression);
+		Info info = new Info(0);
 
 		if (concreteConvergence == ANTICIPATED && info.nextExpression.equals(info.expression)) {
 			// The variant is not modified by this anticipated event,
@@ -181,7 +179,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 	}
 
 	// Returns the value of the variant after this event has executed.
-	private Expression getAfterExpression(Expression varExpression) {
+	Expression getAfterExpression(Expression varExpression) {
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
 			substitution.add(concreteEventActionTable.getDeltaPrime());
