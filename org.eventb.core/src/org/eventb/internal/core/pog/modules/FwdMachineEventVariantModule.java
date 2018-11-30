@@ -218,7 +218,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			final IPOGSource[] sources = new IPOGSource[sourceList.size()];
 			sourceList.toArray(sources);
 			
-			if (info.isNatural && isConvergent) {
+			if (info.isNatural && (isConvergent || iter.hasNext())) {
 				String sequentNameNAT = machineVariantInfo.getPOName(info.index, concreteEventLabel, "NAT");
 				createPO(
 						target, 
@@ -235,7 +235,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						monitor);
 			}
 
-			IPOGPredicate varGoal = info.getVarGoal(isConvergent);
+			IPOGPredicate varGoal = info.getVarGoal(isConvergent && !iter.hasNext());
 			hypAccumulator.addBAPredicates(varGoal.getPredicate());
 			String sequentNameVAR = machineVariantInfo.getPOName(info.index, concreteEventLabel, "VAR");
 			createPO(
