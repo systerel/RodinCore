@@ -12,6 +12,7 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -97,19 +98,9 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 		super.endModule(element, repository, monitor);
 	}
 
-	protected Set<FreeIdentifier> addAllFreeIdents(
-			Set<FreeIdentifier> identSet, FreeIdentifier[] identifiers) {
-		for (FreeIdentifier identifier : identifiers) {
-			identSet.add(identifier);
-		}
-		return identSet;
-	}
-	
 	protected Set<FreeIdentifier> newFreeIdentsFromPredicate(Predicate predicate) {
-		FreeIdentifier[] identifiers = predicate.getFreeIdentifiers();
-		HashSet<FreeIdentifier> identSet = 
-			new HashSet<FreeIdentifier>(identifiers.length * 16 / 3 + 1);
-		return addAllFreeIdents(identSet, identifiers);
+		final FreeIdentifier[] identifiers = predicate.getFreeIdentifiers();
+		return new HashSet<FreeIdentifier>(Arrays.asList(identifiers));
 	}
 
 	protected ArrayList<IPOGPredicate> newLocalHypothesis() {
