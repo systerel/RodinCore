@@ -18,6 +18,7 @@ import static java.util.Arrays.asList;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.CONVERGENT;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LT;
@@ -74,6 +75,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 	/**
 	 * Stores information about variants for which POs should be generated.
 	 */
+	@SuppressWarnings("synthetic-access")
 	private class Info {
 		// Index in machineVariantInfo
 		public final int index;
@@ -117,6 +119,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			final Expression nat = factory.makeAtomicExpression(NATURAL, null);
 			return factory.makeRelationalPredicate(IN, expression, nat, null);
 		}
+
+		public IPOGPredicate getEqHyp() {
+			final Predicate pred;
+			pred = factory.makeRelationalPredicate(EQUAL, nextExpression, expression, null);
+			return makePredicate(pred, source);
+		}
 	}
 
 	/**
@@ -155,6 +163,10 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			newIdents.removeAll(idents);
 			makeActionHypothesis(hyps, newIdents);
 			idents.addAll(newIdents);
+		}
+
+		public void addEqHyp(Info info) {
+			hyps.add(info.getEqHyp());
 		}
 	}
 
@@ -236,6 +248,10 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						}, 
 					accurate,
 					monitor);
+
+			if (iter.hasNext()) {
+				hypAccumulator.addEqHyp(info);
+			}
 		}
 	}
 
