@@ -193,8 +193,6 @@ public class TestMachineVariant extends EventBPOTest {
 			runBuilder();
 			
 			IPORoot po = mac.getPORoot();
-		
-			IPOSequent sequent;
 			
 			if (convergence == ORDINARY)
 				
@@ -202,29 +200,17 @@ public class TestMachineVariant extends EventBPOTest {
 			
 			else {
 			
-				sequent = getSequent(po, "evt/VAR");
-				
-				String[] hypotheses = concat(invPredicates, item.guards);
-		
-				sequentHasExactlyHypotheses(sequent, environment, hypotheses);
-			
-				String rel = getRelationSymbol(convergence, item.kind);
-			
-				sequentHasGoal(sequent, environment, item.varPost + rel + item.variant);
+				final String rel = getRelationSymbol(convergence, item.kind);
+				final String goal = item.varPost + rel + item.variant;
+				hasSequent(po, "evt/VAR", environment, goal, invPredicates, item.guards);
 			
 				if (item.kind == INT_VARIANT && convergence != ANTICIPATED) {
-					sequent = getSequent(po, "evt/NAT");
-				
-					sequentHasExactlyHypotheses(sequent, environment, hypotheses);
-					sequentHasGoal(sequent, environment, item.variant + "∈ℕ");
+					hasSequent(po, "evt/NAT", environment, item.variant + "∈ℕ", invPredicates, item.guards);
 				}
 			}
 			
 			if (item.kind == SET_VARIANT) {
-				sequent = getSequent(po, "FIN");
-				
-				sequentHasExactlyHypotheses(sequent, environment, invPredicates);
-				sequentHasGoal(sequent, environment, "finite(" + item.variant + ")");
+				hasSequent(po, "FIN", environment, "finite(" + item.variant + ")", invPredicates);
 			}
 		}
 	}
@@ -269,11 +255,7 @@ public class TestMachineVariant extends EventBPOTest {
 		runBuilder();
 
 		IPORoot po = mac.getPORoot();
-		
-		IPOSequent sequent = getSequent(po, "VWD");
-	
-		sequentHasExactlyHypotheses(sequent, environment, invPredicates);
-		sequentHasGoal(sequent, environment, "x≠0");
+		hasSequent(po, "VWD", environment, "x≠0", invPredicates);
 	}
 	
 	/**
@@ -560,15 +542,8 @@ public class TestMachineVariant extends EventBPOTest {
 		runBuilder();
 
 		final IPORoot po = mch.getPORoot();
-		IPOSequent sequent;
-
-		sequent = getSequent(po, "evt/VAR");
-		sequentHasExactlyHypotheses(sequent, tenv, concat(invs, grd1, baPred));
-		sequentHasGoal(sequent, tenv, "(x + p) + y' < x + y");
-
-		sequent = getSequent(po, "evt/NAT");
-		sequentHasExactlyHypotheses(sequent, tenv, concat(invs, grd1));
-		sequentHasGoal(sequent, tenv, "x + y ∈ ℕ");
+		hasSequent(po, "evt/VAR", tenv, "(x + p) + y' < x + y", invs, grd1, baPred);
+		hasSequent(po, "evt/NAT", tenv, "x + y ∈ ℕ", invs, grd1);
 	}
 
 	/**
@@ -589,17 +564,11 @@ public class TestMachineVariant extends EventBPOTest {
 		runBuilder();
 
 		final IPORoot po = mch.getPORoot();
-		IPOSequent sequent;
-
 		noSequent(po, "VWD"); // No PO for unlabeled variant
 		noSequent(po, "vrn1/VWD");
-		sequent = getSequent(po, "vrn2/VWD");
-		sequentHasExactlyHypotheses(sequent, tenv, invs);
-		sequentHasGoal(sequent, tenv, "y≠0");
+		hasSequent(po, "vrn2/VWD", tenv, "y≠0", invs);
 		noSequent(po, "vrn3/VWD");
-		sequent = getSequent(po, "vrn4/VWD");
-		sequentHasExactlyHypotheses(sequent, tenv, invs);
-		sequentHasGoal(sequent, tenv, "B ∈ dom(f) ∧ f ∈ ℙ(BOOL) ⇸ ℤ");
+		hasSequent(po, "vrn4/VWD", tenv, "B ∈ dom(f) ∧ f ∈ ℙ(BOOL) ⇸ ℤ", invs);
 	}
 
 	/**
@@ -620,17 +589,11 @@ public class TestMachineVariant extends EventBPOTest {
 		runBuilder();
 
 		final IPORoot po = mch.getPORoot();
-		IPOSequent sequent;
-
 		noSequent(po, "VWD"); // No PO for unlabeled variant
-		sequent = getSequent(po, "vrn1/FIN");
-		sequentHasExactlyHypotheses(sequent, tenv, invs);
-		sequentHasGoal(sequent, tenv, "finite(A)");
+		hasSequent(po, "vrn1/FIN", tenv, "finite(A)", invs);
 		noSequent(po, "vrn2/VWD");
 		noSequent(po, "vrn3/VWD");
-		sequent = getSequent(po, "vrn4/FIN");
-		sequentHasExactlyHypotheses(sequent, tenv, invs);
-		sequentHasGoal(sequent, tenv, "finite(C)");
+		hasSequent(po, "vrn4/FIN", tenv, "finite(C)", invs);
 	}
 
 	/**
@@ -656,4 +619,17 @@ public class TestMachineVariant extends EventBPOTest {
 		return tenv;
 	}
 
+	public void hasSequent(IPORoot po, String name, ITypeEnvironment tenv, //
+			String goal, String[] globals, String... locals) throws Exception {
+		final IPOSequent sequent = getSequent(po, name);
+		sequentHasExactlyHypotheses(sequent, tenv, globals, locals);
+		sequentHasGoal(sequent, tenv, goal);
+	}
+
+	public void sequentHasExactlyHypotheses(IPOSequent sequent, //
+			ITypeEnvironment typeEnvironment, //
+			String[] globals, String... locals) throws Exception {
+		final String[] hyps = concat(globals, locals);
+		sequentHasExactlyHypotheses(sequent, typeEnvironment, hyps);
+	}
 }
