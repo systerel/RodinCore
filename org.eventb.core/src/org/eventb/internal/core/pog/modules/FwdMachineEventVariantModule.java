@@ -100,8 +100,8 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 			this.nextExpression = getAfterExpression(expression);
 		}
 
-		public boolean isUnchanged() {
-			return nextExpression.equals(expression);
+		public boolean isModified() {
+			return !nextExpression.equals(expression);
 		}
 
 		public IPOGPredicate getVarGoal(boolean strict) {
@@ -210,21 +210,13 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		IPORoot target = repository.getTarget();
 		final boolean isConvergent = concreteConvergence == CONVERGENT;
 
-		final List<Info> infos = new LinkedList<>();
-		infos.add(new Info(0));
+		final List<Info> infos = computeInfos(isConvergent);
 
 		final HypAccumulator hypAccumulator = new HypAccumulator();
 
 		final Iterator<Info> iter = infos.iterator();
 		while (iter.hasNext()) {
 			final Info info = iter.next();
-
-			// Remove the variant if it is not modified by this event, except the
-			// last one for a convergent event.
-			if (info.isUnchanged() && (!isConvergent || iter.hasNext())) {
-				iter.remove();
-				continue;
-			}
 
 			hypAccumulator.addSource(info);
 			
@@ -266,6 +258,26 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				hypAccumulator.addEqHyp(info);
 			}
 		}
+	}
+
+	private List<Info> computeInfos(final boolean isConvergent) throws RodinDBException {
+		final List<Info> infos = new LinkedList<>();
+		Info info = null;// To remember the last one
+		final int count = machineVariantInfo.count();
+		for (int i = 0; i < count; ++i) {
+			info = new Info(i);
+			if (info.isModified()) {
+				infos.add(info);
+			}
+		}
+
+		// Add back the last info for a convergent event
+		if (isConvergent && infos.size() == 0) {
+			// There should be at least one variant from the static checker.
+			assert(info != null);
+			infos.add(info);
+		}
+		return infos;
 	}
 
 	// Returns the value of the variant after this event has executed.

@@ -597,6 +597,216 @@ public class TestMachineVariant extends EventBPOTest {
 	}
 
 	/**
+	 * A VAR PO is generated for each set variant, when they are all modified by a
+	 * convergent or anticipated event.
+	 */
+	@Test
+	public void test_15_VARAllSet() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("A ⊆ ℤ", "B ⊆ BOOL");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "A");
+		addVariant(mch, "vrn2", "B");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("A :∈ ℙ(ℤ)", "B :∈ ℙ(BOOL)"));
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("A :∈ ℙ(ℤ)", "B :∈ ℙ(BOOL)"));
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		noSequent(po, "NAT"); // No PO for unlabeled variant
+		noSequent(po, "VAR"); // No PO for unlabeled variant
+		noSequent(po, "cvg/NAT"); // No PO for unlabeled variant
+		noSequent(po, "cvg/VAR"); // No PO for unlabeled variant
+		noSequent(po, "ant/NAT"); // No PO for unlabeled variant
+		noSequent(po, "ant/VAR"); // No PO for unlabeled variant
+
+		noSequent(po, "cvg/vrn1/NAT");
+		hasSequent(po, "cvg/vrn1/VAR", tenv, "A' ⊆ A", invs, "A' ∈ ℙ(ℤ)");
+
+		noSequent(po, "cvg/vrn2/NAT");
+		hasSequent(po, "cvg/vrn2/VAR", tenv, "B' ⊂ B", invs, "A' ∈ ℙ(ℤ)", "A' = A", "B' ∈ ℙ(BOOL)");
+
+		noSequent(po, "ant/vrn1/NAT");
+		hasSequent(po, "ant/vrn1/VAR", tenv, "A' ⊆ A", invs, "A' ∈ ℙ(ℤ)");
+
+		noSequent(po, "ant/vrn2/NAT");
+		hasSequent(po, "ant/vrn2/VAR", tenv, "B' ⊆ B", invs, "A' ∈ ℙ(ℤ)", "A' = A", "B' ∈ ℙ(BOOL)");
+	}
+
+	/**
+	 * A VAR and a NAT PO is generated for each natural variant, when they are all
+	 * modified by a convergent or anticipated event.
+	 */
+	@Test
+	public void test_16_VARAllInt() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "x");
+		addVariant(mch, "vrn2", "y");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("x :∈ ℤ", "y :∈ ℤ"));
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("x :∈ ℤ", "y :∈ ℤ"));
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		noSequent(po, "NAT"); // No PO for unlabeled variant
+		noSequent(po, "VAR"); // No PO for unlabeled variant
+		noSequent(po, "cvg/NAT"); // No PO for unlabeled variant
+		noSequent(po, "cvg/VAR"); // No PO for unlabeled variant
+		noSequent(po, "ant/NAT"); // No PO for unlabeled variant
+		noSequent(po, "ant/VAR"); // No PO for unlabeled variant
+
+		hasSequent(po, "cvg/vrn1/NAT", tenv, "x ∈ ℕ", invs);
+		hasSequent(po, "cvg/vrn1/VAR", tenv, "x' ≤ x", invs, "x' ∈ ℤ");
+
+		hasSequent(po, "cvg/vrn2/NAT", tenv, "y ∈ ℕ", invs, "x' ∈ ℤ", "x' = x");
+		hasSequent(po, "cvg/vrn2/VAR", tenv, "y' < y", invs, "x' ∈ ℤ", "x' = x", "y' ∈ ℤ");
+
+		hasSequent(po, "ant/vrn1/NAT", tenv, "x ∈ ℕ", invs);
+		hasSequent(po, "ant/vrn1/VAR", tenv, "x' ≤ x", invs, "x' ∈ ℤ");
+
+		noSequent(po, "ant/vrn2/NAT");
+		hasSequent(po, "ant/vrn2/VAR", tenv, "y' ≤ y", invs, "x' ∈ ℤ", "x' = x", "y' ∈ ℤ");
+	}
+
+	/**
+	 * A VAR (and a NAT PO) is generated for each variant which is modified by a
+	 * convergent or anticipated event.
+	 */
+	@Test
+	public void test_17_VARModOnly() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("A ⊆ ℤ", "B ⊆ BOOL", "x ∈ ℤ", "y ∈ ℤ", "z ∈ ℤ");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "A");
+		addVariant(mch, "vrn2", "x");
+		addVariant(mch, "vrn3", "y");
+		addVariant(mch, "vrn4", "B");
+		addVariant(mch, "vrn5", "z");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("x :∈ ℤ", "B :∈ ℙ(BOOL)"));
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1", "act2"), makeSList("A :∈ ℙ(ℤ)", "y :∈ ℤ"));
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		noSequent(po, "cvg/vrn1/NAT"); // Set variant
+		noSequent(po, "cvg/vrn1/VAR"); // Not modified
+
+		hasSequent(po, "cvg/vrn2/NAT", tenv, "x ∈ ℕ", invs);
+		hasSequent(po, "cvg/vrn2/VAR", tenv, "x' ≤ x", invs, "x' ∈ ℤ");
+
+		noSequent(po, "cvg/vrn3/NAT"); // Not modified
+		noSequent(po, "cvg/vrn3/VAR"); // Not modified
+
+		noSequent(po, "cvg/vrn4/NAT"); // Set variant
+		hasSequent(po, "cvg/vrn4/VAR", tenv, "B' ⊂ B", invs, "x' ∈ ℤ", "x' = x", "B' ∈ ℙ(BOOL)");
+
+		noSequent(po, "cvg/vrn5/NAT"); // Not modified
+		noSequent(po, "cvg/vrn5/VAR"); // Not modified
+		
+		noSequent(po, "ant/vrn1/NAT"); // Set variant
+		hasSequent(po, "ant/vrn1/VAR", tenv, "A' ⊆ A", invs, "A' ∈ ℙ(ℤ)");
+
+		noSequent(po, "ant/vrn2/NAT"); // Not modified
+		noSequent(po, "ant/vrn2/VAR"); // Not modified
+
+		noSequent(po, "ant/vrn3/NAT"); // Last modified variant for anticipated
+		hasSequent(po, "ant/vrn3/VAR", tenv, "y' ≤ y", invs, "A' ∈ ℙ(ℤ)", "A' = A", "y' ∈ ℤ");
+
+		noSequent(po, "ant/vrn4/NAT"); // Set variant
+		noSequent(po, "ant/vrn4/VAR"); // Not modified
+
+		noSequent(po, "ant/vrn5/NAT"); // Not modified
+		noSequent(po, "ant/vrn5/VAR"); // Not modified
+	}
+
+	/**
+	 * A VAR is generated for the last variant when no variant is modified by a
+	 * convergent event. For an anticipated event, there is no PO.
+	 */
+	@Test
+	public void test_17_VARSetUntouched() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("A ⊆ ℤ", "B ⊆ BOOL");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "A");
+		addVariant(mch, "vrn2", "B");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList(), makeSList());
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList(), makeSList());
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		noSequent(po, "cvg/vrn1/NAT"); // Set variant
+		noSequent(po, "cvg/vrn1/VAR"); // Not modified
+
+		noSequent(po, "cvg/vrn2/NAT"); // Set variant
+		hasSequent(po, "cvg/vrn2/VAR", tenv, "B ⊂ B", invs);
+
+		noSequent(po, "ant/vrn1/NAT"); // Set variant
+		noSequent(po, "ant/vrn1/VAR"); // Not modified
+
+		noSequent(po, "ant/vrn2/NAT"); // Set variant
+		noSequent(po, "ant/vrn2/VAR"); // Not modified
+	}
+
+	/**
+	 * A VAR and a NAT PO is generated for the last variant when no variant is
+	 * modified by a convergent event. For an anticipated event, there is no PO.
+	 */
+	@Test
+	public void test_18_NATSetUntouched() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "x");
+		addVariant(mch, "vrn2", "y");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList(), makeSList());
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList(), makeSList());
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+		noSequent(po, "cvg/vrn1/NAT"); // Not modified
+		noSequent(po, "cvg/vrn1/VAR"); // Not modified
+
+		hasSequent(po, "cvg/vrn2/NAT", tenv, "y ∈ ℕ", invs);
+		hasSequent(po, "cvg/vrn2/VAR", tenv, "y < y", invs);
+
+		noSequent(po, "ant/vrn1/NAT"); // Not modified
+		noSequent(po, "ant/vrn1/VAR"); // Not modified
+
+		noSequent(po, "ant/vrn2/NAT"); // Not modified
+		noSequent(po, "ant/vrn2/VAR"); // Not modified
+	}
+
+	/**
 	 * Adds all the given invariants to the machine, together with the variables
 	 * they contain and returns the resulting type environment.
 	 * 
