@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
+
+import static org.eventb.internal.core.pog.modules.FwdMachineVariantModule.FiniteTypeMatcher.isFinite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,9 +22,15 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCVariant;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeVisitor;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
@@ -60,47 +69,60 @@ public class FwdMachineVariantModule extends UtilityModule {
 			return;
 		
 		IPORoot target = repository.getTarget();
-		
-		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate();
+
+		int count = variantInfo.count();
+		for (int i = 0; i < count; ++i) {
+			generatePOs(target, i, monitor);
+		}
+	}
+
+	// Generate POs for the variant at the given index.
+	private void generatePOs(IPORoot target, int index, IProgressMonitor monitor)
+			throws CoreException {
+		IRodinElement source = variantInfo.getVariant(index).getSource();
+		Expression expression = variantInfo.getExpression(index);
+
+		String poName = variantInfo.getPOName(index, "", "VWD");
+		Predicate wdPredicate = expression.getWDPredicate();
 		IPOGSource[] sources = new IPOGSource[] {
-				makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource())
+				makeSource(IPOSource.DEFAULT_ROLE, source)
 		};
 		if (!isTrivial(wdPredicate)) {
 			createPO(
 					target, 
-					"VWD", 
+					poName,
 					IPOGNature.VARIANT_WELL_DEFINEDNESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					makePredicate(wdPredicate, variantInfo.getVariant().getSource()), 
+					makePredicate(wdPredicate, source), 
 					sources, 
 					NO_HINTS, 
 					machineHypothesisManager.machineIsAccurate(),
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial("VWD");
+				debugTraceTrivial(poName);
 		}
 		
-		if (mustProveFinite()) {
+		poName = variantInfo.getPOName(index, "", "FIN");
+		if (mustProveFinite(expression)) {
 			Predicate finPredicate = 
-				factory.makeSimplePredicate(Formula.KFINITE, variantInfo.getExpression(), null);
+				factory.makeSimplePredicate(Formula.KFINITE, expression, null);
 			createPO(
 					target, 
-					"FIN", 
+					poName,
 					IPOGNature.VARIANT_FINITENESS, 
 					machineHypothesisManager.getFullHypothesis(), 
 					emptyPredicates, 
-					makePredicate(finPredicate, variantInfo.getVariant().getSource()), 
+					makePredicate(finPredicate, source), 
 					sources, 
 					NO_HINTS, 
 					machineHypothesisManager.machineIsAccurate(),
 					monitor);
 		} else {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial("FIN");
+				debugTraceTrivial(poName);
 		}
-		
 	}
 	
 	protected IMachineVariantInfo variantInfo;
@@ -123,13 +145,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		ISCMachineRoot machineRoot = (ISCMachineRoot) machineFile.getRoot();
 		
 		ISCVariant[] variants = machineRoot.getSCVariants();
-		if (variants.length == 0) {
-			variantInfo = new MachineVariantInfo(null, null);
-		} else {
-			ISCVariant variant = variants[0];
-			Expression expression = variant.getExpression(typeEnvironment);
-			variantInfo = new MachineVariantInfo(expression, variant);
-		}
+		variantInfo = new MachineVariantInfo(variants, typeEnvironment);
 		repository.setState(variantInfo);
 	}
 	@Override
@@ -143,27 +159,59 @@ public class FwdMachineVariantModule extends UtilityModule {
 		super.endModule(element, repository, monitor);
 	}
 	
-	private boolean mustProveFinite() {
-		Type type = variantInfo.getExpression().getType();
-		if (type.equals(factory.makeIntegerType()))
-			return false;
-		if (derivedFromBoolean(type))
-			return false;
-		return true;
+	private boolean mustProveFinite(Expression expression) {
+		Type type = expression.getType();
+		return !(type instanceof IntegerType) && !isFinite(type);
 	}
 
-	private boolean derivedFromBoolean(Type type) {
-		if (type.equals(factory.makeBooleanType()))
-			return true;
-		Type baseType = type.getBaseType();
-		if (baseType != null)
-			return derivedFromBoolean(baseType);
-		if (type instanceof ProductType) {
-			ProductType productType = (ProductType) type;
-			return derivedFromBoolean(productType.getLeft()) 
-				&& derivedFromBoolean(productType.getRight());
+	// Recognize that a type is finite by construction.
+	static class FiniteTypeMatcher implements ITypeVisitor {
+
+		public static boolean isFinite(Type type) {
+			FiniteTypeMatcher matcher = new FiniteTypeMatcher();
+			type.accept(matcher);
+			return matcher.result;
 		}
-		return false;
+
+		// Can only change to false during traversal
+		private boolean result = true;
+
+		@Override
+		public void visit(BooleanType type) {
+			// OK
+		}
+
+		@Override
+		public void visit(GivenType type) {
+			// Can be infinite
+			result = false;
+		}
+
+		@Override
+		public void visit(IntegerType type) {
+			// Is infinite
+			result = false;
+		}
+
+		@Override
+		public void visit(ParametricType type) {
+			// Can be infinite, e.g. List(BOOL)
+			result = false;
+		}
+
+		@Override
+		public void visit(PowerSetType type) {
+			if (result)
+				type.getBaseType().accept(this);
+		}
+
+		@Override
+		public void visit(ProductType type) {
+			if (result)
+				type.getLeft().accept(this);
+			if (result)
+				type.getRight().accept(this);
+		}
 	}
-	
+
 }

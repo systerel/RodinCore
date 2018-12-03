@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import static org.eventb.internal.ui.utils.Messages.dialogs_variantAlreadyExists
 import static org.eventb.internal.ui.utils.Messages.title_variantExists;
 
 import org.eventb.core.IMachineRoot;
-import org.eventb.core.IVariant;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
@@ -32,7 +31,7 @@ public class NewVariantHandler extends AbstractCreationWizardHandler {
 		final IMachineRoot root = (IMachineRoot) editor.getRodinInput();
 		final int length;
 		try {
-			length = root.getChildrenOfType(IVariant.ELEMENT_TYPE).length;
+			length = root.getVariants().length;
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;

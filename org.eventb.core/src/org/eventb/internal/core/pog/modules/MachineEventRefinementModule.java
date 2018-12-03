@@ -11,6 +11,7 @@
 package org.eventb.internal.core.pog.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -62,9 +63,11 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 	}
 	
 	private void addFreeIdentsFromHypothesis(
-			Set<FreeIdentifier> identSet, List<IPOGPredicate> hyp) {
-		for (IPOGPredicate predicate : hyp) {
-			addAllFreeIdents(identSet, predicate.getPredicate().getFreeIdentifiers());
+			Set<FreeIdentifier> identSet, List<IPOGPredicate> hyps) {
+		for (IPOGPredicate hyp : hyps) {
+			final Predicate predicate = hyp.getPredicate();
+			final FreeIdentifier[] idents = predicate.getFreeIdentifiers();
+			identSet.addAll(Arrays.asList(idents));
 		}
 	}
 	

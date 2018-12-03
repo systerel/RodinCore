@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
@@ -17,7 +18,7 @@ import org.eventb.core.pog.POGCore;
 import org.eventb.core.tool.IStateType;
 
 /**
- * Protocol for accessing the variant of a machine.
+ * Protocol for accessing the variants of a machine.
  *
  * @author Stefan Hallerstede
  * @since 1.0
@@ -29,23 +30,57 @@ public interface IMachineVariantInfo extends IPOGState {
 		POGCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineVariantInfo");
 
 	/**
-	 * Returns the parsed and type-checked variant expression, or <code>null</code> 
-	 * if the machine does not have a variant.
+	 * Returns the number of variants of the machine.
 	 * 
-	 * @return the parsed and type-checked variant expression, or <code>null</code> 
-	 * 		if the machine does not have a variant
+	 * @return the number of variants of the machine
 	 */
-	Expression getExpression();
+	int count();
+
+	/**
+	 * Returns the label of a variant.
+	 * 
+	 * @param index index of the variant
+	 * @return the label of the variant
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
+	 */
+	String getLabel(int index);
 	
 	/**
-	 * Returns a handle to the variant, or <code>null</code> if the machine does not have a variant.
+	 * Returns the parsed and type-checked variant expression.
 	 * 
-	 * @return a handle to the variant, or <code>null</code> if the machine does not have a variant
+	 * @param index index of the variant
+	 * @return the parsed and type-checked variant expression
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
 	 */
-	ISCVariant getVariant();
+	Expression getExpression(int index);
 	
 	/**
-	 * Returns whether the machine has a variant.
+	 * Returns a handle to the variant.
+	 * 
+	 * @param index index of the variant
+	 * @return a handle to the variant
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
+	 */
+	ISCVariant getVariant(int index);
+	
+	/**
+	 * Returns the name for a variant PO.
+	 * 
+	 * @param index index of the variant
+	 * @param prefix the prefix of the PO name
+	 * @param suffix the suffix of the PO name
+	 * @return the name of the PO
+	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
+	 *                                   or equal to <code>count()</code>
+	 */
+	String getPOName(int index, String prefix, String suffix);
+	
+	/**
+	 * Returns whether the machine has a variant. This is shortcut fully equivalent
+	 * to <code>count() != 0</code>
 	 * 
 	 * @return whether the machine has a variant
 	 */

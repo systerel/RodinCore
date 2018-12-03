@@ -25,6 +25,7 @@ import static org.eventb.core.sc.GraphProblem.InitialisationNotOrdinaryWarning;
 import static org.eventb.core.sc.GraphProblem.InvalidVariantTypeError;
 import static org.eventb.core.sc.GraphProblem.InvariantLabelConflictWarning;
 import static org.eventb.core.sc.GraphProblem.NoConvergentEventButVariantWarning;
+import static org.eventb.core.sc.GraphProblem.UndeclaredFreeIdentifierError;
 import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
 import static org.eventb.core.sc.GraphProblem.VariantLabelConflictError;
 import static org.eventb.core.sc.GraphProblem.VariantLabelConflictWarning;
@@ -430,7 +431,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	 */
 	@Test
 	public void testVariant_16() throws Exception {
-		variantInvariantLabelConflict("user-defined-label");
+		variantEventLabelConflict("user-defined-label");
 	}
 
 	private void variantEventLabelConflict(String label) throws CoreException {
@@ -452,6 +453,126 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		ITypeEnvironment typeEnv = mTypeEnvironment("V1=ℤ", factory);
 		containsVariant(file, typeEnv, label, "V1");
+	}
+
+	/**
+	 * There can be a conflict between the default label of two variants.
+	 */
+	@Test
+	public void testVariant_17() throws Exception {
+		variantVariantLabelConflict(IVariant.DEFAULT_LABEL);
+	}
+
+	/**
+	 * There can be a conflict between two variants having the same label.
+	 */
+	@Test
+	public void testVariant_18() throws Exception {
+		variantVariantLabelConflict("user-defined-label");
+	}
+
+	private void variantVariantLabelConflict(String label) throws CoreException {
+		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		IVariant vrn1 = addVariant(mac, label, "1");
+		IVariant vrn2 = addVariant(mac, label, "2");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(vrn1, LABEL_ATTRIBUTE, VariantLabelConflictWarning, label),
+				marker(vrn2, LABEL_ATTRIBUTE, VariantLabelConflictError, label),
+				marker(vrn1, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariant(file, emptyEnv, label, "1");
+	}
+
+	/**
+	 * One can have two variants in the same machine.
+	 */
+	@Test
+	public void testVariant_19() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		final IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		addVariant(mac, "vrn1", "1");
+		addVariant(mac, "vrn2", "2");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariants(file, emptyEnv, makeSList("vrn1", "vrn2"), makeSList("1", "2"));
+	}
+
+	/**
+	 * If one of two variants is incorrect, it is ignored, but the valid variant is
+	 * kept.
+	 */
+	@Test
+	public void testVariant_20() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		final IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		addVariant(mac, "vrn1", "1");
+		IVariant vrn2 = addVariant(mac, "vrn2", "invalid");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(vrn2, EXPRESSION_ATTRIBUTE, 0, 7, UndeclaredFreeIdentifierError, "invalid"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariants(file, emptyEnv, makeSList("vrn1"), makeSList("1"));
+	}
+
+	/**
+	 * If both variants are incorrect, they are removed and a warning is issued to
+	 * indicate that a variant is missing.
+	 */
+	@Test
+	public void testVariant_21() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		final IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		IVariant vrn1 = addVariant(mac, "vrn1", "invalid1");
+		IVariant vrn2 = addVariant(mac, "vrn2", "invalid2");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(vrn1, EXPRESSION_ATTRIBUTE, 0, 8, UndeclaredFreeIdentifierError, "invalid1"),
+				marker(vrn2, EXPRESSION_ATTRIBUTE, 0, 8, UndeclaredFreeIdentifierError, "invalid2"),
+				marker(evt, CONVERGENCE_ATTRIBUTE, ConvergentEventNoVariantWarning, "evt"));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsNoVariant(file);
+	}
+
+	/**
+	 * With two valid variants and no convergent event, both variants are marked as
+	 * not necessary.
+	 */
+	@Test
+	public void testVariant_22() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
+		IVariant vrn1 = addVariant(mac, "vrn1", "1");
+		IVariant vrn2 = addVariant(mac, "vrn2", "2");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(//
+				marker(vrn1, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning),
+				marker(vrn2, EXPRESSION_ATTRIBUTE, NoConvergentEventButVariantWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariants(file, emptyEnv, makeSList("vrn1", "vrn2"), makeSList("1", "2"));
 	}
 
 }
