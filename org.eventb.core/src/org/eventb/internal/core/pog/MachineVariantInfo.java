@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import static org.eventb.core.IVariant.DEFAULT_LABEL;
+
 import java.util.StringJoiner;
 
 import org.eclipse.core.runtime.CoreException;
@@ -65,8 +67,10 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 			joiner.add(prefix);
 		}
 
-		if (count() != 1) {// Backward compatibility with Rodin 3.4
-			joiner.add(getLabel(index));
+		String label = getLabel(index);
+		if (count() != 1 || !DEFAULT_LABEL.equals(label)) {
+			// Backward compatibility with Rodin 3.4
+			joiner.add(label);
 		}
 		if (suffix.length() != 0) {
 			joiner.add(suffix);

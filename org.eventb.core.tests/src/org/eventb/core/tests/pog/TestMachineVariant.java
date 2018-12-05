@@ -529,7 +529,7 @@ public class TestMachineVariant extends EventBPOTest {
 		String[] invs = makeSList("x ∈ ℤ", "y ∈ ℤ", "z ∈ ℤ");
 		String grd1 = "p ∈ 1 ‥ 2";
 		ITypeEnvironment tenv = addInvariants(mch, invs);
-		addVariant(mch, "vrn1", "x + y");
+		addVariant(mch, "x + y");
 		IEvent event = addEvent(mch, "evt", //
 				makeSList("p"), //
 				makeSList("grd1"), makeSList(grd1), //
@@ -804,6 +804,40 @@ public class TestMachineVariant extends EventBPOTest {
 
 		noSequent(po, "ant/vrn2/NAT"); // Not modified
 		noSequent(po, "ant/vrn2/VAR"); // Not modified
+	}
+
+	/**
+	 * A VAR and a NAT PO is generated for a single labeled variant.
+	 */
+	@Test
+	public void test_19_VARsingle() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		String[] invs = makeSList("x ∈ ℤ");
+		ITypeEnvironment tenv = addInvariants(mch, invs);
+		addVariant(mch, "vrn1", "x");
+		IEvent cvg = addEvent(mch, "cvg", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1"), makeSList("x :∈ ℤ"));
+		setConvergence(cvg, CONVERGENT);
+		IEvent ant = addEvent(mch, "ant", makeSList(), makeSList(), makeSList(), //
+				makeSList("act1"), makeSList("x :∈ ℤ"));
+		setConvergence(ant, ANTICIPATED);
+		saveRodinFileOf(mch);
+
+		runBuilder();
+
+		final IPORoot po = mch.getPORoot();
+
+		// POs should carry the variant label
+		noSequent(po, "cvg/NAT");
+		noSequent(po, "cvg/VAR");
+		noSequent(po, "ant/NAT");
+		noSequent(po, "ant/VAR");
+
+		hasSequent(po, "cvg/vrn1/NAT", tenv, "x ∈ ℕ", invs);
+		hasSequent(po, "cvg/vrn1/VAR", tenv, "x' < x", invs, "x' ∈ ℤ");
+
+		noSequent(po, "ant/vrn1/NAT"); // Anticipated
+		hasSequent(po, "ant/vrn1/VAR", tenv, "x' ≤ x", invs, "x' ∈ ℤ");
 	}
 
 	/**
