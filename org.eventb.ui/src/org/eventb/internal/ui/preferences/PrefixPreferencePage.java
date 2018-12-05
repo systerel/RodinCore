@@ -76,21 +76,21 @@ public class PrefixPreferencePage extends
 		groupData.horizontalAlignment = GridData.FILL;
 		groupData.grabExcessHorizontalSpace = true;
 
-		final Set<IInternalElementType<?>> rmi = PreferenceUtils
+		final Set<IInternalElementType<?>> rci = PreferenceUtils
 				.getCtxElementsPrefixes();
 		final Group ctxGroup = new Group(parent, SWT.SHADOW_OUT);
 		ctxGroup.setLayout(groupLayout);
 		ctxGroup.setLayoutData(groupData);
 		ctxGroup.setText("Context prefixes");
-		createFields(ctxGroup, rmi);
+		createFields(ctxGroup, rci);
 
-		final Set<IInternalElementType<?>> rci = PreferenceUtils
+		final Set<IInternalElementType<?>> rmi = PreferenceUtils
 				.getMchElementsPrefixes();
 		final Group mchGroup = new Group(parent, SWT.SHADOW_OUT);
 		mchGroup.setText("Machine prefixes");
 		mchGroup.setLayout(GridLayoutFactory.copyLayout(groupLayout));
 		mchGroup.setLayoutData(GridDataFactory.copyData(groupData));
-		createFields(mchGroup, rci);
+		createFields(mchGroup, rmi);
 	}
 
 	private void createFields(Composite parent, Set<IInternalElementType<?>> rci) {
