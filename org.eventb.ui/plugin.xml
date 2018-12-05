@@ -2513,9 +2513,9 @@
             typeId="org.eventb.core.invariant">
       </element>
       <element
-            defaultColumn="0"
+            defaultColumn="1"
             imagePath="icons/sample.gif"
-            prefix="VARIANT"
+            prefix="VARIANTS"
             prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.VariantsPrettyPrinter"
             typeId="org.eventb.core.variant">
       </element>
@@ -2817,6 +2817,10 @@
             elementTypeId="org.eventb.core.variant">
          <attributeReference
                column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
                descriptionId="org.eventb.ui.expression">
          </attributeReference>
          <attributeReference
