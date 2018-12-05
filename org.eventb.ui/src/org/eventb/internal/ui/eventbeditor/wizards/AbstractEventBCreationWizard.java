@@ -110,7 +110,7 @@ public abstract class AbstractEventBCreationWizard {
 	 * 
 	 * @param dialog
 	 *            the dialog requesting the creation operation and having the
-	 *            necesseray information to do it
+	 *            necessary information to do it
 	 * 
 	 * @return the created operation
 	 */
