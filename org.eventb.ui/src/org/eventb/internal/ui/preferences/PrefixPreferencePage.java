@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static java.util.Comparator.comparing;
 import static org.eclipse.jface.layout.GridDataFactory.copyData;
 import static org.eclipse.jface.layout.GridLayoutFactory.copyLayout;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
@@ -18,7 +19,9 @@ import static org.eventb.internal.ui.preferences.PreferenceUtils.getMchElementsP
 import static org.eventb.internal.ui.preferences.PreferenceUtils.getPrefixPreferenceKey;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_prefixSettings_description;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -95,8 +98,8 @@ public class PrefixPreferencePage extends
 		createFields(mchGroup, rmi);
 	}
 
-	private void createFields(Composite parent, Set<IInternalElementType<?>> rci) {
-		for (IInternalElementType<?> item : rci) {
+	private void createFields(Composite parent, Set<IInternalElementType<?>> items) {
+		for (final IInternalElementType<?> item : sortByName(items)) {
 			final String name = getPrefixPreferenceKey(item);
 			keys.add(name);
 			final Label label = new Label(parent, NONE);
@@ -105,4 +108,9 @@ public class PrefixPreferencePage extends
 		}
 	}
 
+	private static List<IInternalElementType<?>> sortByName(Set<IInternalElementType<?>> items) {
+		final List<IInternalElementType<?>> result = new ArrayList<>(items);
+		result.sort(comparing(IInternalElementType<?>::getName));
+		return result;
+	}
 }
