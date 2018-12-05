@@ -120,9 +120,8 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree createVariant(IInternalElement root, String expression) {
-		return createElementOneStringAttribute(root, IVariant.ELEMENT_TYPE,
-				null, EXPRESSION_ATTRIBUTE, expression);
+	public OperationTree createVariant(IInternalElement root, String label, String expression) {
+		return createElementLabelExpression(root, IVariant.ELEMENT_TYPE, label, expression);
 	}
 
 	/**
@@ -358,6 +357,18 @@ class OperationBuilder {
 		if (isTheorem) {
 			values.add(THEOREM_ATTRIBUTE.makeValue(isTheorem));
 		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, type, null, array);
+	}
+
+	private <T extends IInternalElement> OperationCreateElement createElementLabelExpression(
+			IInternalElement parent, IInternalElementType<T> type,
+			String label, String expression) {
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (label != null) {
+			values.add(LABEL_ATTRIBUTE.makeValue(label));
+		}
+		values.add(EXPRESSION_ATTRIBUTE.makeValue(expression));
 		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
 		return getCreateElement(parent, type, null, array);
 	}

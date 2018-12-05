@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,9 +124,11 @@ public abstract class OperationTest extends EventBUITest {
 				label, predicate, false);
 	}
 
-	protected Element addVariant(Element parent, String expression) {
-		return addElementWithStringAttribute(parent, IVariant.ELEMENT_TYPE,
+	protected Element addVariant(Element parent, String label, String expression) {
+		final Element result = addElementWithStringAttribute(parent, IVariant.ELEMENT_TYPE,
 				EventBAttributes.EXPRESSION_ATTRIBUTE, expression);
+		result.addAttribute(LABEL_ATTRIBUTE.makeValue(label));
+		return result;
 	}
 
 	/**

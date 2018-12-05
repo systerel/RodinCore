@@ -207,8 +207,8 @@ public class TestElementDescRegistry {
 		final AttributeDesc expectedExpression = getExpressionDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "VARIANTS", "", defaultImgProvider, nullPrefix,
-				nullAttribute, 1);
+		assertElementDesc(desc, "VARIANTS", "", defaultImgProvider, "vrn",
+				expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedExpression, expectedComment);

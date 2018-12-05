@@ -2960,6 +2960,11 @@
             namePrefix="inv">
       </autoNaming>
       <autoNaming
+            elementTypeId="org.eventb.core.variant"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="vrn">
+      </autoNaming>
+      <autoNaming
             elementTypeId="org.eventb.core.event"
             attributeDescriptionId="org.eventb.ui.label"
             namePrefix="evt">
