@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,25 +71,21 @@ public class PrefixPreferencePage extends
 	@Override
 	protected void createFieldEditors(Composite parent) {
 		super.createFieldEditors(parent);
-		// create a composite with two column
-		// final Composite table = getComposite(parent, 2);
-		// get the contributed machine elements
 		final GridLayout groupLayout = new GridLayout(2, false);
 		final GridData groupData = new GridData();
 		groupData.horizontalAlignment = GridData.FILL;
 		groupData.grabExcessHorizontalSpace = true;
+
 		final Set<IInternalElementType<?>> rmi = PreferenceUtils
 				.getCtxElementsPrefixes();
-		// final Composite ctxComp = getComposite(parent, 2);
 		final Group ctxGroup = new Group(parent, SWT.SHADOW_OUT);
 		ctxGroup.setLayout(groupLayout);
 		ctxGroup.setLayoutData(groupData);
 		ctxGroup.setText("Context prefixes");
 		createFields(ctxGroup, rmi);
-		// get the contributed context elements
+
 		final Set<IInternalElementType<?>> rci = PreferenceUtils
 				.getMchElementsPrefixes();
-		// final Composite mchComp = getComposite(parent, 2);
 		final Group mchGroup = new Group(parent, SWT.SHADOW_OUT);
 		mchGroup.setText("Machine prefixes");
 		mchGroup.setLayout(GridLayoutFactory.copyLayout(groupLayout));
