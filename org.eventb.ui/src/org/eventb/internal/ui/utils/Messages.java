@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 ETH Zurich and others.
+ * Copyright (c) 2007, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,6 @@ public final class Messages {
 	public static String dialogs_readOnlyElement;
 	public static String dialogs_nothingToPaste;
 	public static String dialogs_pasteNotAllowed;
-	public static String dialogs_variantAlreadyExists;
 	public static String dialogs_canNotGetChildren;
 	public static String dialogs_elementDoesNotExist;
 	public static String dialogs_po_Deleted;
@@ -221,7 +220,6 @@ public final class Messages {
 	public static String title_unexpectedError;
 	public static String title_nothingToPaste;
 	public static String title_canNotPaste;
-	public static String title_variantExists;
 	public static String title_po_Deleted;
 	public static String title_prover_editor;
 	
