@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,9 +120,9 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree createVariant(IInternalElement root, String predicate) {
+	public OperationTree createVariant(IInternalElement root, String expression) {
 		return createElementOneStringAttribute(root, IVariant.ELEMENT_TYPE,
-				null, EXPRESSION_ATTRIBUTE, predicate);
+				null, EXPRESSION_ATTRIBUTE, expression);
 	}
 
 	/**
