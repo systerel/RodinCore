@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static org.eclipse.jface.layout.GridDataFactory.copyData;
+import static org.eclipse.jface.layout.GridLayoutFactory.copyLayout;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
+import static org.eventb.internal.ui.preferences.PreferenceUtils.getCtxElementsPrefixes;
+import static org.eventb.internal.ui.preferences.PreferenceUtils.getMchElementsPrefixes;
+import static org.eventb.internal.ui.preferences.PreferenceUtils.getPrefixPreferenceKey;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_prefixSettings_description;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -38,7 +42,7 @@ import org.rodinp.core.IInternalElementType;
 public class PrefixPreferencePage extends
 		AbstractFieldPreferenceAndPropertyPage {
 
-	public static final String PAGE_ID = PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
+	public static final String PAGE_ID = PREFIX_PREFERENCE_PAGE_ID;
 
 	public static final Set<String> keys = new HashSet<String>();
 
@@ -76,26 +80,24 @@ public class PrefixPreferencePage extends
 		groupData.horizontalAlignment = GridData.FILL;
 		groupData.grabExcessHorizontalSpace = true;
 
-		final Set<IInternalElementType<?>> rci = PreferenceUtils
-				.getCtxElementsPrefixes();
+		final Set<IInternalElementType<?>> rci = getCtxElementsPrefixes();
 		final Group ctxGroup = new Group(parent, SWT.SHADOW_OUT);
 		ctxGroup.setLayout(groupLayout);
 		ctxGroup.setLayoutData(groupData);
 		ctxGroup.setText("Context prefixes");
 		createFields(ctxGroup, rci);
 
-		final Set<IInternalElementType<?>> rmi = PreferenceUtils
-				.getMchElementsPrefixes();
+		final Set<IInternalElementType<?>> rmi = getMchElementsPrefixes();
 		final Group mchGroup = new Group(parent, SWT.SHADOW_OUT);
 		mchGroup.setText("Machine prefixes");
-		mchGroup.setLayout(GridLayoutFactory.copyLayout(groupLayout));
-		mchGroup.setLayoutData(GridDataFactory.copyData(groupData));
+		mchGroup.setLayout(copyLayout(groupLayout));
+		mchGroup.setLayoutData(copyData(groupData));
 		createFields(mchGroup, rmi);
 	}
 
 	private void createFields(Composite parent, Set<IInternalElementType<?>> rci) {
 		for (IInternalElementType<?> item : rci) {
-			final String name = PreferenceUtils.getPrefixPreferenceKey(item);
+			final String name = getPrefixPreferenceKey(item);
 			keys.add(name);
 			final Label label = new Label(parent, NONE);
 			label.setText(item.getName());
