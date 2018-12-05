@@ -368,7 +368,9 @@ class OperationBuilder {
 		if (label != null) {
 			values.add(LABEL_ATTRIBUTE.makeValue(label));
 		}
-		values.add(EXPRESSION_ATTRIBUTE.makeValue(expression));
+		if (expression != null) {
+			values.add(EXPRESSION_ATTRIBUTE.makeValue(expression));
+		}
 		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
 		return getCreateElement(parent, type, null, array);
 	}

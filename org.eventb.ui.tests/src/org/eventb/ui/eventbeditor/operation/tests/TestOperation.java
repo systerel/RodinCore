@@ -384,12 +384,28 @@ public class TestOperation extends OperationTest {
 		verifyOperation(op, mch, mchElement);
 	}
 
+	/**
+	 * Ensures that a variant can be created with specific attribute values.
+	 */
 	@Test
 	public void testCreateVariantWizard() throws Exception {
 		addVariant(mchElement, "myvariant", "expression");
 
 		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
 				"myvariant", "expression");
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	/**
+	 * Ensures that a variant can be created with default attribute values.
+	 */
+	@Test
+	public void testCreateVariantWizardDefaults() throws Exception {
+		addVariant(mchElement, "vrn1", "0");
+
+		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
+				null, null);
 
 		verifyOperation(op, mch, mchElement);
 	}

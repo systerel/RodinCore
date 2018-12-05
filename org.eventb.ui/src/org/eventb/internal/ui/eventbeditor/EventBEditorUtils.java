@@ -478,7 +478,7 @@ public class EventBEditorUtils {
 	public static void addVariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createVariantWizard(editor
-				.getRodinInput(), null, "");
+				.getRodinInput(), null, null);
 		addOperationToHistory(op, editor, viewer);
 	}
 
