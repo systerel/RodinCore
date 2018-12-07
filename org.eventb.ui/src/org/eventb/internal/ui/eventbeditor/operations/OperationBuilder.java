@@ -124,6 +124,10 @@ class OperationBuilder {
 		return createElementLabelExpression(root, IVariant.ELEMENT_TYPE, label, expression);
 	}
 
+	public OperationTree createVariant(IInternalElement root, String[] labels, String[] expressions) {
+		return createElementLabelExpression(root, IVariant.ELEMENT_TYPE, labels, expressions);
+	}
+
 	/**
 	 * create an axiom which define an enumerated set. the axiom is
 	 * "partition(Set, {element1},..., {elementN})
@@ -359,6 +363,16 @@ class OperationBuilder {
 		}
 		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
 		return getCreateElement(parent, type, null, array);
+	}
+
+	private <T extends IInternalElement> OperationTree createElementLabelExpression(
+			IInternalElement parent, IInternalElementType<T> type,
+			String[] labels, String[] expressions) {
+		final OperationNode op = new OperationNode();
+		for (int i = 0; i < labels.length; i++) {
+			op.addCommand(createElementLabelExpression(parent, type, labels[i], expressions[i]));
+		}
+		return op;
 	}
 
 	private <T extends IInternalElement> OperationCreateElement createElementLabelExpression(

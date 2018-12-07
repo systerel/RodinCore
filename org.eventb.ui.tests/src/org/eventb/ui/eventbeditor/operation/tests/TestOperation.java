@@ -411,6 +411,23 @@ public class TestOperation extends OperationTest {
 	}
 
 	/**
+	 * Ensures that several variants can be created at the same time.
+	 */
+	@Test
+	public void testCreateVariantsWizard() throws Exception {
+		final String[] labels = new String[] { "vrn1", "vrn2", "vrn3" };
+		final String[] expressions = new String[] { "expr1", "expr2", "expr3" };
+		for (int i = 0; i < labels.length; ++i) {
+			addVariant(mchElement, labels[i], expressions[i]);
+		}
+
+		final AtomicOperation op = OperationFactory.createVariantsWizard(mch,
+				labels, expressions);
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	/**
 	 * ensures that an element is deleted when execute and redo operation.<br>
 	 * ensures that the deleted element is created and that the orders is kept
 	 * when undo

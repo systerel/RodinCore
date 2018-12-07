@@ -109,6 +109,16 @@ public class OperationFactory {
 		return op;
 	}
 
+	public static AtomicOperation createVariantsWizard(IMachineRoot root,
+			String[] labels, String[] expressions) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createVariant(root,
+						labels, expressions));
+		op.setLabel("Create Variant");
+		return op;
+	}
+
 	/**
 	 * Returns a command that creates a new variable with the given invariants
 	 * and initialization.

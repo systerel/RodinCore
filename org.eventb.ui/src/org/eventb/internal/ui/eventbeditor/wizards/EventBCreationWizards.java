@@ -131,17 +131,17 @@ public class EventBCreationWizards {
 
 		@Override
 		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
-			return new NewVariantDialog((IMachineRoot) root, shell,
-					"New Variant", "Expression");
+			return new NewVariantDialog((IMachineRoot) root, shell, "New Variant");
 		}
 
 		@Override
 		public AtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewVariantDialog variantDialog = (NewVariantDialog) dialog;
-			final String expression = variantDialog.getExpression();
-			return OperationFactory.createVariantWizard((IMachineRoot) root,
-					null, expression);
+			final String[] labels = variantDialog.getNewLabels();
+			final String[] expressions = variantDialog.getNewExpressions();
+			return OperationFactory.createVariantsWizard((IMachineRoot) root,
+					labels, expressions);
 		}
 
 	}
