@@ -296,6 +296,11 @@
             name="%commands.editor.rename.autoInvariantLabel.name">
       </command>
       <command
+            description="%commands.editor.rename.autoVariantLabel.description"
+            id="org.eventb.ui.editor.rename.autoVariantLabel"
+            name="%commands.editor.rename.autoVariantLabel.name">
+      </command>
+      <command
             description="%commands.editor.rename.customizePrefixes.description"
             id="org.eventb.ui.editor.rename.customizePrefixes"
             name="%commands.editor.rename.customizePrefixes.name">
@@ -468,6 +473,18 @@
                </visibleWhen>
             </command>
             <command
+                  commandId="org.eventb.ui.editor.rename.autoVariantLabel"
+                  mnemonic="%commands.editor.rename.autoVariantLabel.mnemonic"
+                  style="push"
+                  tooltip="%commands.editor.rename.autoVariantLabel.tooltip">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="org.eventb.ui.editor.rename.autoAxiomLabel"
                   mnemonic="%commands.editor.rename.autoAxiomLabel.mnemonic"
                   style="push"
@@ -601,6 +618,15 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoInvariantRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoInvariantLabel">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoVariantRenameHandler"
+            commandId="org.eventb.ui.editor.rename.autoVariantLabel">
          <enabledWhen>
             <reference
                   definitionId="org.eventb.ui.definition.activeEditorInputEditable">
