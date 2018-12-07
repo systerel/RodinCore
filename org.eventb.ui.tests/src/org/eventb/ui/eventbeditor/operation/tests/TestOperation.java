@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -384,12 +384,45 @@ public class TestOperation extends OperationTest {
 		verifyOperation(op, mch, mchElement);
 	}
 
+	/**
+	 * Ensures that a variant can be created with specific attribute values.
+	 */
 	@Test
 	public void testCreateVariantWizard() throws Exception {
-		addVariant(mchElement, "expression");
+		addVariant(mchElement, "myvariant", "expression");
 
 		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
-				"expression");
+				"myvariant", "expression");
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	/**
+	 * Ensures that a variant can be created with default attribute values.
+	 */
+	@Test
+	public void testCreateVariantWizardDefaults() throws Exception {
+		addVariant(mchElement, "vrn1", "0");
+
+		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
+				null, null);
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	/**
+	 * Ensures that several variants can be created at the same time.
+	 */
+	@Test
+	public void testCreateVariantsWizard() throws Exception {
+		final String[] labels = new String[] { "vrn1", "vrn2", "vrn3" };
+		final String[] expressions = new String[] { "expr1", "expr2", "expr3" };
+		for (int i = 0; i < labels.length; ++i) {
+			addVariant(mchElement, labels[i], expressions[i]);
+		}
+
+		final AtomicOperation op = OperationFactory.createVariantsWizard(mch,
+				labels, expressions);
 
 		verifyOperation(op, mch, mchElement);
 	}

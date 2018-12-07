@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,17 +131,17 @@ public class EventBCreationWizards {
 
 		@Override
 		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
-			return new NewVariantDialog((IMachineRoot) root, shell,
-					"New Variant", "Expression");
+			return new NewVariantDialog((IMachineRoot) root, shell, "New Variant");
 		}
 
 		@Override
 		public AtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewVariantDialog variantDialog = (NewVariantDialog) dialog;
-			final String expression = variantDialog.getExpression();
-			return OperationFactory.createVariantWizard((IMachineRoot) root,
-					expression);
+			final String[] labels = variantDialog.getNewLabels();
+			final String[] expressions = variantDialog.getNewExpressions();
+			return OperationFactory.createVariantsWizard((IMachineRoot) root,
+					labels, expressions);
 		}
 
 	}

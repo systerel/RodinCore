@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -68,6 +69,10 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				if (node.getChildrenType().equals(IInvariant.ELEMENT_TYPE)) {
 					return EventBImage
 							.getImage(IEventBSharedImages.IMG_INVARIANT);
+				}
+				if (node.getChildrenType().equals(IVariant.ELEMENT_TYPE)) {
+					return EventBImage
+							.getImage(IEventBSharedImages.IMG_VARIANT);
 				}
 				if (node.getChildrenType().equals(IEvent.ELEMENT_TYPE)) {
 					return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);

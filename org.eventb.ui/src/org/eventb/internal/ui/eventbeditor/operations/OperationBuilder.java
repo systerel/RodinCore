@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,9 +120,12 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree createVariant(IInternalElement root, String predicate) {
-		return createElementOneStringAttribute(root, IVariant.ELEMENT_TYPE,
-				null, EXPRESSION_ATTRIBUTE, predicate);
+	public OperationTree createVariant(IInternalElement root, String label, String expression) {
+		return createElementLabelExpression(root, IVariant.ELEMENT_TYPE, label, expression);
+	}
+
+	public OperationTree createVariant(IInternalElement root, String[] labels, String[] expressions) {
+		return createElementLabelExpression(root, IVariant.ELEMENT_TYPE, labels, expressions);
 	}
 
 	/**
@@ -357,6 +360,30 @@ class OperationBuilder {
 		values.add(PREDICATE_ATTRIBUTE.makeValue(predicate));
 		if (isTheorem) {
 			values.add(THEOREM_ATTRIBUTE.makeValue(isTheorem));
+		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, type, null, array);
+	}
+
+	private <T extends IInternalElement> OperationTree createElementLabelExpression(
+			IInternalElement parent, IInternalElementType<T> type,
+			String[] labels, String[] expressions) {
+		final OperationNode op = new OperationNode();
+		for (int i = 0; i < labels.length; i++) {
+			op.addCommand(createElementLabelExpression(parent, type, labels[i], expressions[i]));
+		}
+		return op;
+	}
+
+	private <T extends IInternalElement> OperationCreateElement createElementLabelExpression(
+			IInternalElement parent, IInternalElementType<T> type,
+			String label, String expression) {
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (label != null) {
+			values.add(LABEL_ATTRIBUTE.makeValue(label));
+		}
+		if (expression != null) {
+			values.add(EXPRESSION_ATTRIBUTE.makeValue(expression));
 		}
 		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
 		return getCreateElement(parent, type, null, array);

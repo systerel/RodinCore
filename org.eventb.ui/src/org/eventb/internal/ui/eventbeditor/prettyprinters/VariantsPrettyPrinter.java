@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - fixed bug #2884774 : display guards marked as theorems
  *     Systerel - fixed bug #2936324 : Extends clauses in pretty print
  *     Systerel - Extracted and refactored from AstConverter
+ *     Systerel - lexicographic variants
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.prettyprinters;
 
@@ -32,7 +33,10 @@ import org.rodinp.core.RodinDBException;
 
 public class VariantsPrettyPrinter extends DefaultPrettyPrinter {
 
+	private static final String VARIANT_LABEL = "variantLabel";
 	private static final String VARIANT_EXPRESSION = "variantExpression";
+	private static final String VARIANT_LABEL_SEPARATOR_BEGIN = null;
+	private static final String VARIANT_LABEL_SEPARATOR_END = ":";
 	private static final String VARIANT_EXPRESSION_SEPARATOR_BEGIN = null;
 	private static final String VARIANT_EXPRESSION_SEPARATOR_END = null;
 
@@ -42,6 +46,8 @@ public class VariantsPrettyPrinter extends DefaultPrettyPrinter {
 		if (elt instanceof IVariant) {
 			final IVariant variant = (IVariant) elt;
 			try {
+				final String label = wrapString(variant.getLabel());
+				appendVariantLabel(ps, label);
 				appendVariantExpression(ps, wrapString(variant
 						.getExpressionString()));
 			} catch (RodinDBException e) {
@@ -50,6 +56,19 @@ public class VariantsPrettyPrinter extends DefaultPrettyPrinter {
 								+ variant.getElementName());
 			}
 		}
+	}
+
+	private static void appendVariantLabel(IPrettyPrintStream ps, String label) {
+		final String cssClass = VARIANT_LABEL;
+		ps.appendString(label, //
+				getHTMLBeginForCSSClass(cssClass, //
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), //
+				getHTMLEndForCSSClass(cssClass, //
+						HorizontalAlignment.LEFT, //
+						VerticalAlignement.MIDDLE), //
+				VARIANT_LABEL_SEPARATOR_BEGIN, //
+				VARIANT_LABEL_SEPARATOR_END);
 	}
 
 	private static void appendVariantExpression(IPrettyPrintStream ps,

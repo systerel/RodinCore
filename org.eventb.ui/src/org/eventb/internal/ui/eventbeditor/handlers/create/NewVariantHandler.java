@@ -15,33 +15,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers.create;
 
-import static org.eventb.internal.ui.utils.Messages.dialogs_variantAlreadyExists;
-import static org.eventb.internal.ui.utils.Messages.title_variantExists;
-
-import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
-import org.rodinp.core.RodinDBException;
 
 public class NewVariantHandler extends AbstractCreationWizardHandler {
 
 	@Override
 	protected void openCreationWizard() {
-		final IMachineRoot root = (IMachineRoot) editor.getRodinInput();
-		final int length;
-		try {
-			length = root.getVariants().length;
-		} catch (RodinDBException e) {
-			EventBUIExceptionHandler.handleGetChildrenException(e);
-			return;
-		}
-		if (length != 0) {
-			UIUtils
-			.showError(title_variantExists,
-					dialogs_variantAlreadyExists);
-			return;
-		}
 		new EventBCreationWizards.NewVariantWizard().openDialog(editor);
 	}
 
