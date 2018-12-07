@@ -90,6 +90,8 @@ import static org.eventb.ui.IEventBSharedImages.IMG_UP_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE;
 import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLES;
 import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_VARIANT;
+import static org.eventb.ui.IEventBSharedImages.IMG_VARIANT_PATH;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -254,6 +256,7 @@ public class EventBImage {
 		registerImage(registry, IMG_CARRIER_SET, IMG_CARRIER_SET_PATH);
 		registerImage(registry, IMG_VARIABLE, IMG_VARIABLE_PATH);
 		registerImage(registry, IMG_INVARIANT, IMG_INVARIANT_PATH);
+		registerImage(registry, IMG_VARIANT, IMG_VARIANT_PATH);
 		registerImage(registry, IMG_AXIOM, IMG_AXIOM_PATH);
 		registerImage(registry, IMG_THEOREM, IMG_THEOREM_PATH);
 		registerImage(registry, IMG_CONSTANT, IMG_CONSTANT_PATH);

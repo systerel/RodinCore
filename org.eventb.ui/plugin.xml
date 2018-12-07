@@ -2514,7 +2514,7 @@
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/sample.gif"
+            imagePath="icons/full/obj16/vrn_obj.gif"
             prefix="VARIANTS"
             prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.VariantsPrettyPrinter"
             typeId="org.eventb.core.variant">
