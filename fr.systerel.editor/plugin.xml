@@ -259,6 +259,15 @@
             </reference>
          </enabledWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoVariantLabelRenaming"
+            commandId="fr.systerel.editor.rename.variant">
+         <enabledWhen>
+            <reference
+                  definitionId="org.eventb.ui.definition.activeEditorInputEditable">
+            </reference>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -342,6 +351,11 @@
             categoryId="fr.systerel.editor.renamingCommandsCategory"
             id="fr.systerel.editor.rename.invariant"
             name="Automatic Invariant Labelling">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.variant"
+            name="Automatic Variant Labelling">
       </command>
       <command
             categoryId="fr.systerel.editor.renamingCommandsCategory"
@@ -551,6 +565,17 @@
             <command
                   commandId="fr.systerel.editor.rename.invariant"
                   label="Automatic Invariant Labelling"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="fr.systerel.editor.definition.isEditableMachine">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="fr.systerel.editor.rename.variant"
+                  label="Automatic Variant Labelling"
                   style="push">
                <visibleWhen
                      checkEnabled="false">

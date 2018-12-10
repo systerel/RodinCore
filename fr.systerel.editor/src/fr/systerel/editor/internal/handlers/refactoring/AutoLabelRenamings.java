@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IVariant;
 
 /**
  * {@link AbstractRenameElementHandler} subclasses
@@ -50,6 +51,14 @@ public class AutoLabelRenamings {
 
 		public AutoInvariantLabelRenaming() {
 			type = IInvariant.ELEMENT_TYPE;
+		}
+		
+	}
+
+	public static class AutoVariantLabelRenaming extends AbstractRenameElementHandler {
+
+		public AutoVariantLabelRenaming() {
+			type = IVariant.ELEMENT_TYPE;
 		}
 		
 	}
