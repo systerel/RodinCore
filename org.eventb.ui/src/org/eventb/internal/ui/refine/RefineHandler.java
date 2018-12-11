@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.refine;
 
 import static org.eclipse.jface.window.Window.CANCEL;
+import static org.eventb.internal.ui.refine.RefineProposer.getTentativeName;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -128,9 +129,10 @@ public class RefineHandler extends AbstractHandler {
 	public static IRodinFile askRefinementFileFor(IRodinFile abs,
 			Shell parentShell, RefinementUI refUI, String extension) {
 		final IRodinProject prj = abs.getRodinProject();
+		final RodinFileInputValidator validator = new RodinFileInputValidator(prj);
 		final InputDialog dialog = new InputDialog(parentShell, refUI.title,
-				refUI.message, abs.getBareName() + "0",
-				new RodinFileInputValidator(prj));
+				refUI.message, getTentativeName(abs.getBareName(), validator),
+				validator);
 		final int code = dialog.open();
 		if (code == CANCEL) {
 			return null;
