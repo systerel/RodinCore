@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.refinement;
 
-import static org.eventb.core.EventBAttributes.GENERATED_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
@@ -27,9 +26,7 @@ import org.eventb.core.IVariable;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRefinementParticipant;
 import org.rodinp.core.IRodinDB;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,7 +35,7 @@ import org.rodinp.core.RodinDBException;
  * @author Nicolas Beauger
  * 
  */
-public class RefineMachine implements IRefinementParticipant {
+public class RefineMachine extends AbstractRefine {
 
 	@Override
 	public void process(IInternalElement refinedRoot,
@@ -79,15 +76,6 @@ public class RefineMachine implements IRefinementParticipant {
 			throws RodinDBException {
 		for (IAttributeValue value : original.getAttributeValues()) {
 			destination.setAttributeValue(value, monitor);
-		}
-	}
-
-	private static void removeGenerated(IInternalElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		element.removeAttribute(GENERATED_ATTRIBUTE, monitor);
-		final IRodinElement[] children = element.getChildren();
-		for (IRodinElement child : children) {
-			removeGenerated((IInternalElement) child, monitor);
 		}
 	}
 

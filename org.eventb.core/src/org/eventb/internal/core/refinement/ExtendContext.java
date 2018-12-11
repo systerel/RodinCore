@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRefinementParticipant;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -23,7 +22,7 @@ import org.rodinp.core.RodinDBException;
  * @author Nicolas Beauger
  * 
  */
-public class ExtendContext implements IRefinementParticipant {
+public class ExtendContext extends AbstractRefine {
 
 	@Override
 	public void process(IInternalElement refinedRoot,
@@ -33,7 +32,7 @@ public class ExtendContext implements IRefinementParticipant {
 		final IContextRoot abs = (IContextRoot) sourceRoot;
 		con.setConfiguration(abs.getConfiguration(), null);
 		createExtendsContextClause(con, abs, monitor);
-		// FIXME should remove generated, just like machine refinement
+		removeGenerated(con, monitor);
 	}
 
 	private void createExtendsContextClause(IInternalElement con,

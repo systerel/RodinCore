@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
@@ -292,7 +293,6 @@ public class ProverUI extends EventBFormEditor implements
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		saving = true;
 		IProofState[] proofStates = userSupport.getUnsavedPOs();
 
 		final ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
@@ -302,7 +302,12 @@ public class ProverUI extends EventBFormEditor implements
 
 		dlg.setInitialSelections(proofStates);
 		dlg.setTitle("Save Proofs");
-		dlg.open();
+		final int code = dlg.open();
+		if (code == CANCEL) {
+			return;
+		}
+
+		saving = true;
 		final Object[] objects = dlg.getResult();
 		if (objects != null && objects.length != 0) {
 			final int length = objects.length;

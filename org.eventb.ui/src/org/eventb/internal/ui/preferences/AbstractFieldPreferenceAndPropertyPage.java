@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_enableProjectSpecifixSettings;
 
 import org.eclipse.core.resources.IProject;
@@ -164,7 +165,10 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	private IProject getSelectedProject() {
 		final ProjectSelectionDialog sel = new ProjectSelectionDialog(getShell(),
 				RodinCore.getRodinDB().getWorkspaceRoot());
-		sel.open();
+		final int result = sel.open();
+		if (result == CANCEL) {
+			return null;
+		}
 		final Object[] projectSelection = sel.getResult();
 		if (projectSelection != null && projectSelection.length > 0
 				&& projectSelection[0] instanceof IProject) {
