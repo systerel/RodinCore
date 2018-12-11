@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.refine;
+
+import static org.eclipse.jface.window.Window.CANCEL;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -129,7 +131,10 @@ public class RefineHandler extends AbstractHandler {
 		final InputDialog dialog = new InputDialog(parentShell, refUI.title,
 				refUI.message, abs.getBareName() + "0",
 				new RodinFileInputValidator(prj));
-		dialog.open();
+		final int code = dialog.open();
+		if (code == CANCEL) {
+			return null;
+		}
 
 		final String name = dialog.getValue();
 		if (name == null) {

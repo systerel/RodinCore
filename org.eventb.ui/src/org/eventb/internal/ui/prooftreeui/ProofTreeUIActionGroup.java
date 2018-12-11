@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
+import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT;
 import static org.eclipse.ui.ISharedImages.IMG_TOOL_BACK;
 import static org.eclipse.ui.ISharedImages.IMG_TOOL_FORWARD;
@@ -53,7 +54,10 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		public void run() {
 			final ProofTreeUIFiltersDialog dialog = new ProofTreeUIFiltersDialog(
 					null, proofTreeUI);
-			dialog.open();
+			final int code = dialog.open();
+			if (code == CANCEL) {
+				return;
+			}
 			final Object[] results = dialog.getResult();
 			if (results != null) {
 				proofTreeUI.setFilters(results);

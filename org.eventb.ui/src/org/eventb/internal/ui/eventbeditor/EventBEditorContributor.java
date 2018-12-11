@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eclipse.jface.window.Window.OK;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -132,9 +134,9 @@ public class EventBEditorContributor extends
 								InputDialog dialog = new InputDialog(part
 										.getSite().getShell(), "Rename",
 										"Rename element", name, null);
-								dialog.open();
+								final int result = dialog.open();
 								String text = dialog.getValue();
-								if (text != null) {
+								if (result == OK && text != null) {
 									if (element instanceof IIdentifierElement) {
 										IIdentifierElement identifierElement = (IIdentifierElement) element;
 										if (!identifierElement

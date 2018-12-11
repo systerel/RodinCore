@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static java.util.Arrays.asList;
+import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eclipse.swt.layout.GridData.FILL_BOTH;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_AUTO_TACTIC;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_POST_TACTIC;
@@ -408,7 +409,10 @@ public class PostAutoTacticPreferencePage extends
 		final ListSelectionDialog select = ProfileImportExport
 				.makeProfileSelectionDialog(getShell(), cache.getEntries(),
 						"Export profiles", getSelectedProfiles());
-		select.open();
+		final int code = select.open();
+		if (code == CANCEL) {
+			return;
+		}
 		final Object[] result = select.getResult();
 		if (result == null) {
 			return;
@@ -467,7 +471,10 @@ public class PostAutoTacticPreferencePage extends
 				.makeProfileSelectionDialog(getShell(), available.getEntries(),
 						"Import profiles", initSelected);
 
-		select.open();
+		final int code = select.open();
+		if (code == CANCEL) {
+			return null;
+		}
 		final Object[] result = select.getResult();
 		if (result == null) {
 			return null;
