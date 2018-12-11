@@ -32,7 +32,7 @@ public class ExtendContext extends AbstractRefine {
 		final IContextRoot abs = (IContextRoot) sourceRoot;
 		con.setConfiguration(abs.getConfiguration(), null);
 		createExtendsContextClause(con, abs, monitor);
-		// FIXME should remove generated, just like machine refinement
+		removeGenerated(con, monitor);
 	}
 
 	private void createExtendsContextClause(IInternalElement con,
