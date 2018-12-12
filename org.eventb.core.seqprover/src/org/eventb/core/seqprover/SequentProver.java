@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.core.seqprover;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.seqprover.xprover.AbstractXProverReasoner;
+import org.eventb.internal.core.seqprover.AutoTacticChecker;
 import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ProverSequent;
@@ -50,6 +51,8 @@ public class SequentProver extends Plugin {
 			+ "/debug/autoRewriter"; //$NON-NLS-1$
 	private static final String MEMBERSHIP_GOAL_TRACE = PLUGIN_ID
 			+ "/debug/mbGoal"; //$NON-NLS-1$
+	private static final String AUTO_TACTIC_CHECKER_TRACE = PLUGIN_ID
+			+ "/debug/autoTacticChecker"; //$NON-NLS-1$
 	
 	/**
 	 * The shared instance.
@@ -92,6 +95,7 @@ public class SequentProver extends Plugin {
 		AbstractXProverReasoner.DEBUG = parseOption(XPROVER_TRACE);
 		AutoRewriterImpl.DEBUG = parseOption(AUTO_REWRITER_TRACE);
 		MembershipGoal.DEBUG = parseOption(MEMBERSHIP_GOAL_TRACE);
+		AutoTacticChecker.DEBUG = parseOption(AUTO_TACTIC_CHECKER_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
