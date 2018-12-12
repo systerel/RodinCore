@@ -11,12 +11,14 @@
 package org.eventb.internal.core.seqprover;
 
 import static java.util.Collections.emptyList;
+import static org.eclipse.core.runtime.preferences.InstanceScope.INSTANCE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.osgi.framework.FrameworkUtil.getBundle;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -29,6 +31,8 @@ import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.TacticDescriptors.DynTacticProviderRef;
 import org.osgi.framework.Bundle;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Allows to check that auto tactics seem to work (see bug #779).
@@ -39,21 +43,42 @@ public class AutoTacticChecker {
 
 	public static boolean DEBUG = false;
 
+	// Node name in the preferences
+	private static final String NODE_ID = "autoTacticChecker";// $NON-NLS-0$
+
 	/**
 	 * Checks all auto tactics provided by other plugins.
+	 * 
+	 * @param ignoreCache if <code>true</code>, ignores the cache and runs all
+	 *                    tactics again
 	 */
-	public static void checkAutoTactics() {
-		final AutoTacticChecker checker = new AutoTacticChecker();
+	public static void checkAutoTactics(boolean ignoreCache) {
+		final AutoTacticChecker checker = new AutoTacticChecker(ignoreCache);
 		checker.checkRegularTactics();
 		checker.checkDynamicTactics();
+		checker.flushCache();
 	}
 
 	private final AutoTacticRegistry registry;
 	private final Bundle sequentProverBundle;
+	private final Preferences prefNode;
+	private boolean prefNodeChanged;
 
-	private AutoTacticChecker() {
+	private AutoTacticChecker(boolean ignoreCache) {
 		this.registry = (AutoTacticRegistry) getAutoTacticRegistry();
 		this.sequentProverBundle = SequentProver.getDefault().getBundle();
+
+		final IEclipsePreferences root = INSTANCE.getNode(SequentProver.PLUGIN_ID);
+		this.prefNode = root.node(NODE_ID);
+		this.prefNodeChanged = false;
+		if (ignoreCache) {
+			try {
+				prefNode.clear();
+				prefNodeChanged = true;
+			} catch (BackingStoreException e) {
+				Util.log(e, "clearing the cache for autoTacticChecker");
+			}
+		}
 	}
 
 	/*
@@ -121,6 +146,11 @@ public class AutoTacticChecker {
 			trace("with version: " + bundle.getVersion());
 		}
 
+		if (isCached(descriptor, bundle)) {
+			trace("      status: OK (cached)");
+			return;
+		}
+
 		final ITactic tactic = getTactic(descriptor);
 		if (tactic == null) {
 			return;
@@ -132,6 +162,7 @@ public class AutoTacticChecker {
 				trace("tactic " + descriptor.getTacticID() + " is broken");
 			} else {
 				trace("      status: " + "OK");
+				setCached(descriptor, bundle);
 			}
 		}
 	}
@@ -167,6 +198,42 @@ public class AutoTacticChecker {
 		final IProverSequent sequent = makeSequent(typenv, emptyList(), goal);
 		final IProofTree tree = makeProofTree(sequent, this);
 		return tree.getRoot();
+	}
+
+	private boolean isCached(ITacticDescriptor descriptor, Bundle bundle) {
+		final String key = descriptor.getTacticID();
+		final String value = prefNode.get(key, null);
+		if (getPreferenceValue(bundle).equals(value)) {
+			return true;
+		}
+		return false;
+	}
+
+	private void setCached(ITacticDescriptor descriptor, Bundle bundle) {
+		final String key = descriptor.getTacticID();
+		final String value = getPreferenceValue(bundle);
+		prefNode.put(key, value);
+		prefNodeChanged = true;
+	}
+
+	private void flushCache() {
+		if (!prefNodeChanged) {
+			return;
+		}
+		try {
+			prefNode.flush();
+		} catch (BackingStoreException e) {
+			Util.log(e, "Saving cache of autoTacticChecker");
+		}
+	}
+
+	/*
+	 * In the preference cache, we store the contributing plugin ID + version. This
+	 * is deemed enough to consider that if this information has not changed, then
+	 * the auto tactic shall still work.
+	 */
+	private String getPreferenceValue(Bundle bundle) {
+		return bundle.getSymbolicName() + ":" + bundle.getVersion();
 	}
 
 	private static final void trace(String message) {
