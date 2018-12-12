@@ -12,10 +12,12 @@
  *     Systerel - handled user support saving state
  *     Systerel - redirected dialog opening and externalized strings
  *     INP Toulouse - use of generics for adapters
+ *     Systerel - open the selected PO if any
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import static org.eclipse.jface.window.Window.CANCEL;
+import static org.eventb.internal.ui.UIUtils.runWithProgressDialog;
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
@@ -28,14 +30,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.FileEditorInput;
@@ -125,6 +132,11 @@ public class ProverUI extends EventBFormEditor implements
 
 	private ContextHelper editorScopeHelper;
 
+	// The PS status that was selected when this editor has been initialized.
+	// When non-null, it should be used to select the corresponding PO when
+	// we get the focus.
+	private IPSStatus startStatus;
+
 	/**
 	 * Constructor: Create a new UserSupport.
 	 */
@@ -140,6 +152,43 @@ public class ProverUI extends EventBFormEditor implements
 			throws PartInitException {
 		super.init(site, input);
 		editorScopeHelper = ContextHelper.activateContext(site, PROVERUI_SCOPE);
+
+		// We need to fetch this information now, as it will be lost when
+		// we finally get the focus (the selection would have been cleared).
+		startStatus = getSelectedStatus(site, input);
+	}
+
+	/*
+	 * Gets the currently selected status, if there is any.
+	 */
+	private IPSStatus getSelectedStatus(IEditorSite site, IEditorInput originalInput) {
+		final IFile originalFile = originalInput.getAdapter(IFile.class);
+		if (originalFile == null) {
+			return null;
+		}
+		final Object object = getCurrentSelection(site);
+		if (!(object instanceof IPSStatus)) {
+			return null;
+		}
+		final IPSStatus selected = (IPSStatus) object;
+		final IFile file = selected.getResource();
+		if (originalFile.equals(file)) {
+			return selected;
+		}
+		return null;
+	}
+
+	/*
+	 *  Returns the first selected object, if any.
+	 */
+	private Object getCurrentSelection(IEditorSite site) {
+		final IWorkbenchWindow window = site.getWorkbenchWindow();
+		final ISelectionService service = window.getSelectionService();
+		final ISelection selection = service.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			return ((IStructuredSelection) selection).getFirstElement();
+		}
+		return null;
 	}
 
 	/*
@@ -409,6 +458,12 @@ public class ProverUI extends EventBFormEditor implements
 	 */
 	@Override
 	public void setFocus() {
+		if (startStatus != null) {
+			final IPSStatus status = startStatus;
+			startStatus = null;
+			final Shell shell = getSite().getShell();
+			runWithProgressDialog(shell, monitor -> setCurrentPO(status, monitor));
+		}
 		// if (userSupport.isOutOfDate()) {
 		// updateUserSupport();
 		// }
