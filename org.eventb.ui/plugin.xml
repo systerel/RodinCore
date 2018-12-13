@@ -2214,6 +2214,13 @@
          		id="org.eclipse.ui.commands.toggleState">
    			</state>
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.checkExternalProvers.description"
+            defaultHandler="org.eventb.internal.ui.prover.handlers.CheckExternalProvers"
+            id="org.eventb.ui.checkExternalProvers"
+            name="%commands.checkExternalProvers.name">
+      </command>
       <category
             description="%categories.ProvingDescription"
             id="org.eventb.ui.categories.prove"
@@ -3127,6 +3134,14 @@
                commandId="org.eventb.ui.project.autoTactic"
                id="autoTactic"
                style="toggle">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.run">
+         <command
+               commandId="org.eventb.ui.checkExternalProvers"
+               id="checkExternalProvers"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution
