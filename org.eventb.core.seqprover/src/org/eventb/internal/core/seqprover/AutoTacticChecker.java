@@ -19,8 +19,11 @@ import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.osgi.framework.FrameworkUtil.getBundle;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -57,13 +60,15 @@ public class AutoTacticChecker {
 	 * 
 	 * @param ignoreCache if <code>true</code>, ignores the cache and runs all
 	 *                    tactics again
+	 * @param monitor     progress monitor, may be {@code null}
 	 */
-	public static List<IAutoTacticCheckResult> checkAutoTactics(boolean ignoreCache) {
+	public static List<IAutoTacticCheckResult> checkAutoTactics(boolean ignoreCache, IProgressMonitor monitor) {
+		final SubMonitor progress = SubMonitor.convert(monitor, 100);
 		final AutoTacticChecker checker = new AutoTacticChecker(ignoreCache);
-		checker.addRegularTactics();
-		checker.addDynamicTactics();
-		checker.checkTactics();
-		checker.flushCache();
+		checker.addRegularTactics(progress.split(5));
+		checker.addDynamicTactics(progress.split(10));
+		checker.checkTactics(progress.split(80));
+		checker.flushCache(progress.split(5));
 		return checker.getResults();
 	}
 
@@ -120,6 +125,10 @@ public class AutoTacticChecker {
 
 		public boolean isExternal() {
 			return isExternalBundle(origin);
+		}
+
+		public String getName() {
+			return descriptor.getTacticName();
 		}
 
 		public String getPrefKey() {
@@ -206,7 +215,8 @@ public class AutoTacticChecker {
 	/*
 	 * Adds regular tactics.
 	 */
-	private void addRegularTactics() {
+	private void addRegularTactics(SubMonitor progress) {
+		progress.setTaskName("Extracting regular tactics");
 		for (final String id : registry.getRegisteredIDs()) {
 			final ITacticDescriptor descriptor = registry.getTacticDescriptor(id);
 			addTactic(new ExternalTactic(descriptor));
@@ -216,8 +226,12 @@ public class AutoTacticChecker {
 	/*
 	 * Adds dynamic tactics.
 	 */
-	private void addDynamicTactics() {
-		for (final DynTacticProviderRef providerRef : registry.getDynTacticProviderRefs()) {
+	private void addDynamicTactics(SubMonitor progress) {
+		final Collection<DynTacticProviderRef> refs = registry.getDynTacticProviderRefs();
+		progress.setWorkRemaining(refs.size());
+		for (final DynTacticProviderRef providerRef : refs) {
+			progress.setTaskName("Extracting tactics contributed by " + providerRef.getID());
+
 			// The bundle must be fetched from the class contributed by the client plug-in.
 			final IDynTacticProvider provider = providerRef.getProvider();
 			final Bundle bundle = getBundle(provider.getClass());
@@ -225,6 +239,7 @@ public class AutoTacticChecker {
 			for (final ITacticDescriptor descriptor : providerRef.getDynTactics()) {
 				addTactic(new ExternalTactic(descriptor, bundle));
 			}
+			progress.worked(1);
 		}
 	}
 
@@ -234,15 +249,21 @@ public class AutoTacticChecker {
 		}
 	}
 
-	private void checkTactics() {
+	/*
+	 * Checks all external tactics.
+	 */
+	private void checkTactics(SubMonitor progress) {
+		progress.setWorkRemaining(tactics.size());
 		for (final ExternalTactic tactic : tactics) {
+			if (progress.isCanceled()) {
+				return;
+			}
+			progress.setTaskName("Checking " + tactic.getName());
 			checkTactic(tactic);
+			progress.worked(1);
 		}
 	}
 
-	/*
-	 * Checks an external tactic.
-	 */
 	private void checkTactic(ExternalTactic tactic) {
 		final AutoTacticCheckResult result = tactic.check(isCached(tactic));
 		if (result == null) {
@@ -270,7 +291,7 @@ public class AutoTacticChecker {
 		prefNodeChanged = true;
 	}
 
-	private void flushCache() {
+	private void flushCache(SubMonitor progress) {
 		if (!prefNodeChanged) {
 			return;
 		}
