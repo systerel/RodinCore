@@ -18,10 +18,14 @@ import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.osgi.framework.FrameworkUtil.getBundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IAutoTacticCheckResult;
 import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -52,17 +56,20 @@ public class AutoTacticChecker {
 	 * @param ignoreCache if <code>true</code>, ignores the cache and runs all
 	 *                    tactics again
 	 */
-	public static void checkAutoTactics(boolean ignoreCache) {
+	public static List<IAutoTacticCheckResult> checkAutoTactics(boolean ignoreCache) {
 		final AutoTacticChecker checker = new AutoTacticChecker(ignoreCache);
 		checker.checkRegularTactics();
 		checker.checkDynamicTactics();
 		checker.flushCache();
+		return checker.getResults();
 	}
 
 	private final AutoTacticRegistry registry;
 	private final Bundle sequentProverBundle;
 	private final Preferences prefNode;
 	private boolean prefNodeChanged;
+
+	private final List<IAutoTacticCheckResult> results;
 
 	private AutoTacticChecker(boolean ignoreCache) {
 		this.registry = (AutoTacticRegistry) getAutoTacticRegistry();
@@ -79,6 +86,8 @@ public class AutoTacticChecker {
 				Util.log(e, "clearing the cache for autoTacticChecker");
 			}
 		}
+
+		this.results = new ArrayList<>();
 	}
 
 	/*
@@ -148,6 +157,7 @@ public class AutoTacticChecker {
 
 		if (isCached(descriptor, bundle)) {
 			trace("      status: OK (cached)");
+			results.add(new AutoTacticCheckResult(descriptor));
 			return;
 		}
 
@@ -156,6 +166,7 @@ public class AutoTacticChecker {
 			return;
 		}
 		final Object result = runTactic(tactic);
+		results.add(new AutoTacticCheckResult(descriptor, result));
 
 		if (DEBUG) {
 			if (result != null) {
@@ -234,6 +245,10 @@ public class AutoTacticChecker {
 	 */
 	private String getPreferenceValue(Bundle bundle) {
 		return bundle.getSymbolicName() + ":" + bundle.getVersion();
+	}
+
+	public List<IAutoTacticCheckResult> getResults() {
+		return results;
 	}
 
 	private static final void trace(String message) {
