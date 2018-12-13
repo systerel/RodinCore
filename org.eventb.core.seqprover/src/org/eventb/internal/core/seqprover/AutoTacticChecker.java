@@ -269,7 +269,7 @@ public class AutoTacticChecker {
 		if (result == null) {
 			return;
 		}
-		if (result.getResult() != null) {
+		if (result.getStatus().isOK()) {
 			setCached(tactic);
 		}
 		results.add(result);

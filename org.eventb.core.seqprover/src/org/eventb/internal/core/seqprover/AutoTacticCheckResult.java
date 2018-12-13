@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.eclipse.core.runtime.Status.OK_STATUS;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eventb.core.seqprover.IAutoTacticCheckResult;
 import org.eventb.core.seqprover.ITacticDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 
 /**
  * Internal implementation of the published interface.
@@ -21,21 +27,38 @@ import org.eventb.core.seqprover.ITacticDescriptor;
 public class AutoTacticCheckResult implements IAutoTacticCheckResult {
 
 	private final ITacticDescriptor descriptor;
-	private final Object result;
 	private final boolean fresh;
+	private final IStatus status;
 
 	// Creates a cached result
 	public AutoTacticCheckResult(ITacticDescriptor descriptor) {
 		this.descriptor = descriptor;
-		this.result = null;
 		this.fresh = false;
+		this.status = OK_STATUS;
 	}
 
 	// Creates a fresh result
 	public AutoTacticCheckResult(ITacticDescriptor descriptor, Object result) {
 		this.descriptor = descriptor;
-		this.result = result;
 		this.fresh = true;
+		this.status = statusFromResult(result);
+	}
+
+	private static IStatus statusFromResult(Object result) {
+		if (result == null) {
+			return OK_STATUS;
+		}
+
+		final Throwable reason;
+		final String message;
+		if (result instanceof Throwable) {
+			reason = (Throwable) result;
+			message = reason.getLocalizedMessage();
+		} else {
+			reason = null;
+			message = result.toString();
+		}
+		return new Status(ERROR, SequentProver.PLUGIN_ID, message, reason);
 	}
 
 	@Override
@@ -44,8 +67,8 @@ public class AutoTacticCheckResult implements IAutoTacticCheckResult {
 	}
 
 	@Override
-	public Object getResult() {
-		return result;
+	public IStatus getStatus() {
+		return status;
 	}
 
 	@Override
@@ -59,9 +82,10 @@ public class AutoTacticCheckResult implements IAutoTacticCheckResult {
 		if (!fresh) {
 			return descriptor.getTacticID() + ": OK (cached)";
 		}
-		if (result == null) {
+		if (status.isOK()) {
 			return descriptor.getTacticID() + ": OK";
+			
 		}
-		return descriptor.getTacticID() + ": " + result;
+		return descriptor.getTacticID() + ": ERROR: " + status.getMessage();
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
+import org.eclipse.core.runtime.IStatus;
+
 /**
  * Common protocol for reporting the result of checking an auto tactic.
  * 
@@ -28,21 +30,17 @@ public interface IAutoTacticCheckResult {
 	ITacticDescriptor getDescriptor();
 
 	/**
-	 * Returns the result of the check, that is the object returned by the tactic
-	 * when applied to a trivial sequent. If the tactic has thrown an exception, the
-	 * result is that exception.
+	 * Returns the result of the check as an Eclipse status.
 	 * 
-	 * A <code>null</code> result indicates success.
-	 * 
-	 * @return the result of the check, may be <code>null</code>
+	 * @return the result of the check
 	 */
-	Object getResult();
+	IStatus getStatus();
 
 	/**
-	 * Tells whether the result is fresh, that is just obtained from the check as
+	 * Tells whether the status is fresh, that is just obtained from the check as
 	 * opposed to taken from a cache of a previous check.
 	 * 
-	 * @return whether the result is fresh
+	 * @return whether the status is fresh
 	 */
 	boolean isFresh();
 
