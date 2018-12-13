@@ -47,6 +47,8 @@ public class AutoTacticChecker {
 
 	public static boolean DEBUG = false;
 
+	private static final Bundle SEQUENT_PROVER_BUNDLE = SequentProver.getDefault().getBundle();
+
 	// Node name in the preferences
 	private static final String NODE_ID = "autoTacticChecker";// $NON-NLS-0$
 
@@ -58,22 +60,132 @@ public class AutoTacticChecker {
 	 */
 	public static List<IAutoTacticCheckResult> checkAutoTactics(boolean ignoreCache) {
 		final AutoTacticChecker checker = new AutoTacticChecker(ignoreCache);
-		checker.checkRegularTactics();
-		checker.checkDynamicTactics();
+		checker.addRegularTactics();
+		checker.addDynamicTactics();
+		checker.checkTactics();
 		checker.flushCache();
 		return checker.getResults();
 	}
 
+	static boolean isExternalBundle(Bundle bundle) {
+		return bundle != null && bundle != SEQUENT_PROVER_BUNDLE;
+	}
+
+	private static class ExternalTactic {
+
+		private final ITacticDescriptor descriptor;
+		private final Bundle origin;
+
+		public ExternalTactic(ITacticDescriptor descriptor, Bundle origin) {
+			this.descriptor = descriptor;
+			this.origin = origin;
+		}
+
+		public ExternalTactic(ITacticDescriptor descriptor) {
+			this.descriptor = descriptor;
+			this.origin = getTacticBundle();
+		}
+
+		/*
+		 * Attempts at finding the bundle that contributed this tactic descriptor. We
+		 * first try the descriptor, then an instance if the descriptor comes from the
+		 * sequent prover itself. Can return null.
+		 */
+		private Bundle getTacticBundle() {
+			final Bundle bundle = getBundle(descriptor.getClass());
+			if (isExternalBundle(bundle)) {
+				return bundle;
+			}
+			final ITactic instance = getInstance();
+			if (instance == null) {
+				return null;
+			}
+			return getBundle(instance.getClass());
+		}
+
+		/*
+		 * Returns the tactic or null in case of error.
+		 */
+		private ITactic getInstance() {
+			try {
+				if (descriptor.isInstantiable()) {
+					return descriptor.getTacticInstance();
+				}
+			} catch (Throwable t) {
+				Util.log(t, "while instantiating the auto tactic " + descriptor.getTacticID());
+			}
+			// No chance to run this tactic
+			return null;
+		}
+
+		public boolean isExternal() {
+			return isExternalBundle(origin);
+		}
+
+		public String getPrefKey() {
+			return descriptor.getTacticID();
+		}
+
+		/*
+		 * In the preference cache, we store the contributing plugin ID + version. This
+		 * is deemed enough to consider that if this information has not changed, then
+		 * the auto tactic shall still work.
+		 */
+		public String getPrefValue() {
+			return origin.getSymbolicName() + ":" + origin.getVersion();
+		}
+
+		public AutoTacticCheckResult check(boolean isCached) {
+			trace("");
+			trace("Found tactic: " + descriptor.getTacticID());
+			trace("        name: " + descriptor.getTacticName());
+			trace(" provided by: " + origin.getSymbolicName());
+			trace("with version: " + origin.getVersion());
+
+			if (isCached) {
+				trace("      status: OK (cached)");
+				return new AutoTacticCheckResult(descriptor);
+			}
+
+			final Object result = runTactic();
+			trace("      status: " + (result == null ? "OK" : result.toString()));
+			return new AutoTacticCheckResult(descriptor, result);
+		}
+
+		private Object runTactic() {
+			final ITactic instance = getInstance();
+			if (instance == null) {
+				return "Cannot instantiate the tactic";
+			}
+
+			final IProofTreeNode node = makeTrivialNode();
+			try {
+				return instance.apply(node, null);
+			} catch (Throwable t) {
+				return t;
+			}
+		}
+
+		private IProofTreeNode makeTrivialNode() {
+			final FormulaFactory ff = FormulaFactory.getDefault();
+			final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+			final Predicate goal = ff.makeLiteralPredicate(BTRUE, null);
+			final IProverSequent sequent = makeSequent(typenv, emptyList(), goal);
+			final IProofTree tree = makeProofTree(sequent, this);
+			return tree.getRoot();
+		}
+
+	}
+
 	private final AutoTacticRegistry registry;
-	private final Bundle sequentProverBundle;
 	private final Preferences prefNode;
 	private boolean prefNodeChanged;
 
+	private final List<ExternalTactic> tactics;
 	private final List<IAutoTacticCheckResult> results;
 
 	private AutoTacticChecker(boolean ignoreCache) {
 		this.registry = (AutoTacticRegistry) getAutoTacticRegistry();
-		this.sequentProverBundle = SequentProver.getDefault().getBundle();
 
 		final IEclipsePreferences root = INSTANCE.getNode(SequentProver.PLUGIN_ID);
 		this.prefNode = root.node(NODE_ID);
@@ -87,142 +199,73 @@ public class AutoTacticChecker {
 			}
 		}
 
+		this.tactics = new ArrayList<>();
 		this.results = new ArrayList<>();
 	}
 
 	/*
-	 * Checks regular tactics.
+	 * Adds regular tactics.
 	 */
-	private void checkRegularTactics() {
+	private void addRegularTactics() {
 		for (final String id : registry.getRegisteredIDs()) {
-			checkTacticDescriptor(registry.getTacticDescriptor(id));
+			final ITacticDescriptor descriptor = registry.getTacticDescriptor(id);
+			addTactic(new ExternalTactic(descriptor));
 		}
 	}
 
 	/*
-	 * Checks dynamic tactics.
+	 * Adds dynamic tactics.
 	 */
-	private void checkDynamicTactics() {
+	private void addDynamicTactics() {
 		for (final DynTacticProviderRef providerRef : registry.getDynTacticProviderRefs()) {
 			// The bundle must be fetched from the class contributed by the client plug-in.
 			final IDynTacticProvider provider = providerRef.getProvider();
 			final Bundle bundle = getBundle(provider.getClass());
 
 			for (final ITacticDescriptor descriptor : providerRef.getDynTactics()) {
-				checkTacticDescriptor(descriptor, bundle);
+				addTactic(new ExternalTactic(descriptor, bundle));
 			}
 		}
 	}
 
-	/*
-	 * Checks a tactic descriptor with yet unknown bundle
-	 */
-	private void checkTacticDescriptor(ITacticDescriptor descriptor) {
-		final Bundle bundle = getTacticBundle(descriptor);
-		checkTacticDescriptor(descriptor, bundle);
+	private void addTactic(ExternalTactic tactic) {
+		if (tactic.isExternal()) {
+			tactics.add(tactic);
+		}
+	}
+
+	private void checkTactics() {
+		for (final ExternalTactic tactic : tactics) {
+			checkTactic(tactic);
+		}
 	}
 
 	/*
-	 * Attempts at finding the bundle that contributed this tactic descriptor. We
-	 * first try the descriptor, then an instance if the descriptor comes from the
-	 * sequent prover itself. Can return null.
+	 * Checks an external tactic.
 	 */
-	private Bundle getTacticBundle(ITacticDescriptor descriptor) {
-		final Bundle bundle = getBundle(descriptor.getClass());
-		if (bundle != sequentProverBundle) {
-			return bundle;
-		}
-		final ITactic tactic = getTactic(descriptor);
-		if (tactic == null) {
-			return null;
-		}
-		return getBundle(tactic.getClass());
-	}
-
-	/*
-	 * Checks a tactic descriptor from a known bundle.
-	 */
-	private void checkTacticDescriptor(ITacticDescriptor descriptor, Bundle bundle) {
-		if (bundle == null || bundle == sequentProverBundle) {
+	private void checkTactic(ExternalTactic tactic) {
+		final AutoTacticCheckResult result = tactic.check(isCached(tactic));
+		if (result == null) {
 			return;
 		}
-
-		if (DEBUG) {
-			trace("");
-			trace("Found tactic: " + descriptor.getTacticID());
-			trace("        name: " + descriptor.getTacticName());
-			trace(" provided by: " + bundle.getSymbolicName());
-			trace("with version: " + bundle.getVersion());
+		if (result.getResult() != null) {
+			setCached(tactic);
 		}
-
-		if (isCached(descriptor, bundle)) {
-			trace("      status: OK (cached)");
-			results.add(new AutoTacticCheckResult(descriptor));
-			return;
-		}
-
-		final ITactic tactic = getTactic(descriptor);
-		if (tactic == null) {
-			return;
-		}
-		final Object result = runTactic(tactic);
-		results.add(new AutoTacticCheckResult(descriptor, result));
-
-		if (DEBUG) {
-			if (result != null) {
-				trace("tactic " + descriptor.getTacticID() + " is broken");
-			} else {
-				trace("      status: " + "OK");
-				setCached(descriptor, bundle);
-			}
-		}
+		results.add(result);
 	}
 
-	private Object runTactic(ITactic tactic) {
-		final IProofTreeNode node = makeTrivialNode();
-		try {
-			return tactic.apply(node, null);
-		} catch (Throwable t) {
-			return t;
-		}
-	}
-
-	/*
-	 * Returns the tactic or null in case of error.
-	 */
-	private static ITactic getTactic(ITacticDescriptor descriptor) {
-		try {
-			if (descriptor.isInstantiable()) {
-				return descriptor.getTacticInstance();
-			}
-		} catch (Throwable t) {
-			Util.log(t, "while instantiating the auto tactic " + descriptor.getTacticID());
-		}
-		// No chance to run this tactic
-		return null;
-	}
-
-	private IProofTreeNode makeTrivialNode() {
-		final FormulaFactory ff = FormulaFactory.getDefault();
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
-		final Predicate goal = ff.makeLiteralPredicate(BTRUE, null);
-		final IProverSequent sequent = makeSequent(typenv, emptyList(), goal);
-		final IProofTree tree = makeProofTree(sequent, this);
-		return tree.getRoot();
-	}
-
-	private boolean isCached(ITacticDescriptor descriptor, Bundle bundle) {
-		final String key = descriptor.getTacticID();
+	private boolean isCached(ExternalTactic tactic) {
+		final String key = tactic.getPrefKey();
 		final String value = prefNode.get(key, null);
-		if (getPreferenceValue(bundle).equals(value)) {
+		if (tactic.getPrefValue().equals(value)) {
 			return true;
 		}
 		return false;
 	}
 
-	private void setCached(ITacticDescriptor descriptor, Bundle bundle) {
-		final String key = descriptor.getTacticID();
-		final String value = getPreferenceValue(bundle);
+	private void setCached(ExternalTactic tactic) {
+		final String key = tactic.getPrefKey();
+		final String value = tactic.getPrefValue();
 		prefNode.put(key, value);
 		prefNodeChanged = true;
 	}
@@ -238,20 +281,11 @@ public class AutoTacticChecker {
 		}
 	}
 
-	/*
-	 * In the preference cache, we store the contributing plugin ID + version. This
-	 * is deemed enough to consider that if this information has not changed, then
-	 * the auto tactic shall still work.
-	 */
-	private String getPreferenceValue(Bundle bundle) {
-		return bundle.getSymbolicName() + ":" + bundle.getVersion();
-	}
-
 	public List<IAutoTacticCheckResult> getResults() {
 		return results;
 	}
 
-	private static final void trace(String message) {
+	static final void trace(String message) {
 		if (DEBUG) {
 			System.out.println(message);
 		}
