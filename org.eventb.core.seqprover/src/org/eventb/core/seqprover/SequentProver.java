@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.seqprover.xprover.AbstractXProverReasoner;
@@ -139,6 +142,25 @@ public class SequentProver extends Plugin {
 	 */
 	public static IAutoTacticRegistry getAutoTacticRegistry() {
 		return AutoTacticRegistry.getTacticRegistry();
+	}
+
+	/**
+	 * Checks that all externally provided auto tactics seem to work by running them
+	 * on a trivial sequent. The result of the last run is persisted across platform
+	 * restart, so that the check is not performed again for an external tactic that
+	 * has already succeeded in the past.
+	 * 
+	 * The result of the checks is provided as a {@link MultiStatus}, with one
+	 * entry for each external auto tactic.
+	 * 
+	 * @param force   ignore the cache and check all tactics again
+	 * @param monitor a progress monitor, or {@code null} if progress reporting and
+	 *                cancellation are not desired.
+	 * 
+	 * @return the results of the checks as a {@link MultiStatus}
+	 */
+	public static IStatus checkAutoTactics(boolean force, IProgressMonitor monitor) {
+		return AutoTacticChecker.checkAutoTactics(force, monitor);
 	}
 
 	/**
