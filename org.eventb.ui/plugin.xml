@@ -281,26 +281,31 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.editor.rename.autoActionLabel.description"
             id="org.eventb.ui.editor.rename.autoActionLabel"
             name="%commands.editor.rename.autoActionLabel.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.editor.rename.autoGuardLabel.description"
             id="org.eventb.ui.editor.rename.autoGuardLabel"
             name="%commands.editor.rename.autoGuardLabel.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.editor.rename.autoInvariantLabel.description"
             id="org.eventb.ui.editor.rename.autoInvariantLabel"
             name="%commands.editor.rename.autoInvariantLabel.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.editor.rename.autoVariantLabel.description"
             id="org.eventb.ui.editor.rename.autoVariantLabel"
             name="%commands.editor.rename.autoVariantLabel.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.editor.rename.customizePrefixes.description"
             id="org.eventb.ui.editor.rename.customizePrefixes"
             name="%commands.editor.rename.customizePrefixes.name">
@@ -668,6 +673,7 @@
             name="%commands.resource.rename.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.model"
             description="%commands.resource.refine.description"
             id="org.eventb.ui.refine"
             name="%commands.resource.refine.name">
@@ -2187,16 +2193,19 @@
          </commandParameter>
       </command>
       <command
+            categoryId="org.eventb.ui.category.prove"
             description="%commands.highlight.description"
             id="org.eventb.ui.prove.highlight"
             name="%commands.highlight.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.prove"
             description="%commands.restoreStyles.description"
             id="org.eventb.ui.prove.restoreStyles"
             name="%commands.restoreStyles.name">
       </command>
       <command
+            categoryId="org.eventb.ui.category.prove"
             description="%commands.toggleHighlighting.description"
             id="org.eventb.ui.prove.toggleHighlight"
             name="%commands.toggleHighlighting.name">
@@ -2204,6 +2213,13 @@
          		class="org.eclipse.ui.handlers.RegistryToggleState:false"
          		id="org.eclipse.ui.commands.toggleState">
    			</state>
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.checkExternalProvers.description"
+            defaultHandler="org.eventb.internal.ui.prover.handlers.CheckExternalProvers"
+            id="org.eventb.ui.checkExternalProvers"
+            name="%commands.checkExternalProvers.name">
       </command>
       <category
             description="%categories.ProvingDescription"
@@ -3118,6 +3134,14 @@
                commandId="org.eventb.ui.project.autoTactic"
                id="autoTactic"
                style="toggle">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.run">
+         <command
+               commandId="org.eventb.ui.checkExternalProvers"
+               id="checkExternalProvers"
+               style="push">
          </command>
       </menuContribution>
       <menuContribution

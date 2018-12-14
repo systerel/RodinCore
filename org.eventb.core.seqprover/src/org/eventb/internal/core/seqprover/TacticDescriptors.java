@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2018 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static java.util.Collections.singleton;
 import static org.eventb.internal.core.seqprover.AutoTacticRegistry.getTacticRegistry;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IDynamicTacticRef;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
@@ -153,6 +155,54 @@ public class TacticDescriptors {
 
 	}
 	
+	/**
+	 * Encapsulates a dynamic tactic provider provided by an external plug-in. All
+	 * accesses are thus protected against ill-behavior from the plug-in.
+	 */
+	public static class DynTacticProviderRef {
+
+		private final String id;
+		private final IDynTacticProvider provider;
+
+		public DynTacticProviderRef(String id, IDynTacticProvider provider) {
+			this.id = id;
+			this.provider = provider;
+		}
+
+		/*
+		 * Returns the id of the extension.
+		 */
+		public String getID() {
+			return id;
+		}
+
+		/*
+		 * Returns the class provided by the external plug-in.
+		 */
+		public IDynTacticProvider getProvider() {
+			return provider;
+		}
+
+		/*
+		 * Encapsulates the call to the eponymous contributed method. Returns an empty
+		 * collection in case of error.
+		 */
+		public Collection<ITacticDescriptor> getDynTactics() {
+			final Collection<ITacticDescriptor> dynTactics;
+			try {
+				dynTactics = provider.getDynTactics();
+				if (dynTactics.contains(null)) {
+					Util.log(null, "null tactics provided by dynamic tactic provider " + id);
+					dynTactics.removeAll(singleton(null));
+				}
+				return dynTactics;
+			} catch (Throwable t) {
+				Util.log(t, "while getting dynamic tactics from " + id);
+				return Collections.emptyList();
+			}
+		}
+	}
+
 	/**
 	 * Loads the dynamic tactic from the registry upon tactic instance creation.
 	 */

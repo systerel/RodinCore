@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.prover.handlers.CheckExternalProvers;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.eventb.ui.itemdescription.IElementDescRegistry;
 import org.osgi.framework.BundleContext;
@@ -204,6 +205,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		ToggleAutoTacticPreference.registerListener();
 		
 		RodinCore.addElementChangedListener(new EditorManager());
+
+		CheckExternalProvers.checkExternalProversLazily();
 	}
 
 	/**

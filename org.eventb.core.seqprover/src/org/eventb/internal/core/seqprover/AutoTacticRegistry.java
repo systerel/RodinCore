@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *     Systerel - added dynamically provided auto tactics
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
-
-import static java.util.Collections.singleton;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +37,7 @@ import org.eventb.internal.core.seqprover.Placeholders.CombinatorDescriptorPlace
 import org.eventb.internal.core.seqprover.Placeholders.ParameterizerPlaceholder;
 import org.eventb.internal.core.seqprover.Placeholders.TacticPlaceholder;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.DynTacticProviderRef;
 import org.eventb.internal.core.seqprover.TacticDescriptors.DynamicTacticRef;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
@@ -388,20 +387,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 
 	public ITacticDescriptor[] getDynTactics() {
 		final Collection<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
-		for (Entry<String, IDynTacticProvider> entry : dynTacticProviders.entrySet()) {
-			final String id = entry.getKey();
-			final IDynTacticProvider dynTacticProv = entry.getValue();
-			try {
-				final Collection<ITacticDescriptor> dynTactics = dynTacticProv
-						.getDynTactics();
-				if (dynTactics.contains(null)) {
-					Util.log(null, "null tactics provided by dynamic tactic provider " + id);
-					dynTactics.removeAll(singleton(null));
-				}
-				result.addAll(dynTactics);
-			} catch (Throwable t) {
-				Util.log(t, "while getting dynamic tactics from " + id);
-			}
+		for (DynTacticProviderRef providerRef : getDynTacticProviderRefs()) {
+			result.addAll(providerRef.getDynTactics());
 		}
 		return result.toArray(new ITacticDescriptor[result.size()]) ;
 	}
@@ -439,4 +426,18 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		final ITacticDescriptor dynTactic = getDynTactic(id);
 		return new DynamicTacticRef(dynTactic);
 	}
+
+	/**
+	 * Returns references to all the dynamic tactic providers that have been registered.
+	 * 
+	 * @return references to all the registered dynamic tactic providers
+	 */
+	public Collection<DynTacticProviderRef> getDynTacticProviderRefs() {
+		final Collection<DynTacticProviderRef> result = new ArrayList<>();
+		for (Entry<String, IDynTacticProvider> entry : dynTacticProviders.entrySet()) {
+			result.add(new DynTacticProviderRef(entry.getKey(), entry.getValue()));
+		}
+		return result;
+	}
+
 }
