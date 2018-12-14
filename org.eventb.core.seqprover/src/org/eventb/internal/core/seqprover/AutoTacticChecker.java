@@ -16,6 +16,9 @@ import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
+import static org.eventb.internal.core.seqprover.Messages.autoTacticChecker_error;
+import static org.eventb.internal.core.seqprover.Messages.autoTacticChecker_ok;
+import static org.eventb.internal.core.seqprover.TacticCheckStatus.newStatus;
 import static org.osgi.framework.FrameworkUtil.getBundle;
 
 import java.util.ArrayList;
@@ -23,12 +26,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IAutoTacticCheckResult;
+import org.eventb.core.seqprover.ITacticCheckStatus;
 import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -62,14 +67,14 @@ public class AutoTacticChecker {
 	 *                    tactics again
 	 * @param monitor     progress monitor, may be {@code null}
 	 */
-	public static List<IAutoTacticCheckResult> checkAutoTactics(boolean ignoreCache, IProgressMonitor monitor) {
+	public static IStatus checkAutoTactics(boolean ignoreCache, IProgressMonitor monitor) {
 		final SubMonitor progress = SubMonitor.convert(monitor, 100);
 		final AutoTacticChecker checker = new AutoTacticChecker(ignoreCache);
 		checker.addRegularTactics(progress.split(5));
 		checker.addDynamicTactics(progress.split(10));
 		checker.checkTactics(progress.split(80));
 		checker.flushCache(progress.split(5));
-		return checker.getResults();
+		return checker.getStatus();
 	}
 
 	static boolean isExternalBundle(Bundle bundle) {
@@ -144,7 +149,7 @@ public class AutoTacticChecker {
 			return origin.getSymbolicName() + ":" + origin.getVersion();
 		}
 
-		public AutoTacticCheckResult check(boolean isCached) {
+		public TacticCheckStatus check(boolean isCached) {
 			trace("");
 			trace("Found tactic: " + descriptor.getTacticID());
 			trace("        name: " + descriptor.getTacticName());
@@ -153,12 +158,12 @@ public class AutoTacticChecker {
 
 			if (isCached) {
 				trace("      status: OK (cached)");
-				return new AutoTacticCheckResult(descriptor);
+				return newStatus(descriptor);
 			}
 
 			final Object result = runTactic();
 			trace("      status: " + (result == null ? "OK" : result.toString()));
-			return new AutoTacticCheckResult(descriptor, result);
+			return newStatus(descriptor, result);
 		}
 
 		private Object runTactic() {
@@ -191,7 +196,7 @@ public class AutoTacticChecker {
 	private boolean prefNodeChanged;
 
 	private final List<ExternalTactic> tactics;
-	private final List<IAutoTacticCheckResult> results;
+	private final List<ITacticCheckStatus> statuses;
 
 	private AutoTacticChecker(boolean ignoreCache) {
 		this.registry = (AutoTacticRegistry) getAutoTacticRegistry();
@@ -209,7 +214,7 @@ public class AutoTacticChecker {
 		}
 
 		this.tactics = new ArrayList<>();
-		this.results = new ArrayList<>();
+		this.statuses = new ArrayList<>();
 	}
 
 	/*
@@ -265,14 +270,14 @@ public class AutoTacticChecker {
 	}
 
 	private void checkTactic(ExternalTactic tactic) {
-		final AutoTacticCheckResult result = tactic.check(isCached(tactic));
-		if (result == null) {
+		final TacticCheckStatus status = tactic.check(isCached(tactic));
+		if (status == null) {
 			return;
 		}
-		if (result.getStatus().isOK()) {
+		if (status.isOK()) {
 			setCached(tactic);
 		}
-		results.add(result);
+		statuses.add(status);
 	}
 
 	private boolean isCached(ExternalTactic tactic) {
@@ -302,8 +307,24 @@ public class AutoTacticChecker {
 		}
 	}
 
-	public List<IAutoTacticCheckResult> getResults() {
-		return results;
+	public IStatus getStatus() {
+		final String message;
+		if (hasError()) {
+			message = autoTacticChecker_error;
+		} else {
+			message = autoTacticChecker_ok;
+		}
+		final IStatus[] array = statuses.toArray(new IStatus[statuses.size()]);
+		return new MultiStatus(SequentProver.PLUGIN_ID, 0, array, message, null);
+	}
+
+	private boolean hasError() {
+		for (ITacticCheckStatus status : statuses) {
+			if (!status.isOK()) {
+				return true;
+			}
+		}
+		return true;
 	}
 
 	static final void trace(String message) {

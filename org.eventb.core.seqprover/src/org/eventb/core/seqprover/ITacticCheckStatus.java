@@ -13,28 +13,21 @@ package org.eventb.core.seqprover;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Common protocol for reporting the result of checking an auto tactic.
+ * Common protocol for reporting the result of checking a tactic.
  * 
  * @author Laurent Voisin
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IAutoTacticCheckResult {
+public interface ITacticCheckStatus extends IStatus {
 
 	/**
-	 * Returns the descriptor of the auto tactic.
+	 * Returns the descriptor of the tactic.
 	 * 
-	 * @return the descriptor of the auto tactic
+	 * @return the descriptor of the tactic
 	 */
 	ITacticDescriptor getDescriptor();
-
-	/**
-	 * Returns the result of the check as an Eclipse status.
-	 * 
-	 * @return the result of the check
-	 */
-	IStatus getStatus();
 
 	/**
 	 * Tells whether the status is fresh, that is just obtained from the check as

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2018 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,9 @@ public final class Messages {
 	public static String tactic_cancelled;
 	public static String tactic_illegalOneOrMore;
 	
+	public static String autoTacticChecker_ok;
+	public static String autoTacticChecker_error;
+
 	// Messages with parameter(s)
 	public static String reasonerDesc_unknown;
 	

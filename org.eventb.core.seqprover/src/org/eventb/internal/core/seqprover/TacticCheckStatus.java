@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
-import static org.eclipse.core.runtime.IStatus.ERROR;
-import static org.eclipse.core.runtime.Status.OK_STATUS;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eventb.core.seqprover.IAutoTacticCheckResult;
+import org.eventb.core.seqprover.ITacticCheckStatus;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -24,51 +21,48 @@ import org.eventb.core.seqprover.SequentProver;
  * 
  * @author Laurent Voisin
  */
-public class AutoTacticCheckResult implements IAutoTacticCheckResult {
+public class TacticCheckStatus extends Status implements ITacticCheckStatus {
 
-	private final ITacticDescriptor descriptor;
-	private final boolean fresh;
-	private final IStatus status;
-
-	// Creates a cached result
-	public AutoTacticCheckResult(ITacticDescriptor descriptor) {
-		this.descriptor = descriptor;
-		this.fresh = false;
-		this.status = OK_STATUS;
+	// Creates a cached status
+	public static TacticCheckStatus newStatus(ITacticDescriptor descriptor) {
+		return new TacticCheckStatus(IStatus.OK, "OK (cached)", null, descriptor, false);
 	}
 
-	// Creates a fresh result
-	public AutoTacticCheckResult(ITacticDescriptor descriptor, Object result) {
-		this.descriptor = descriptor;
-		this.fresh = true;
-		this.status = statusFromResult(result);
-	}
-
-	private static IStatus statusFromResult(Object result) {
-		if (result == null) {
-			return OK_STATUS;
-		}
-
-		final Throwable reason;
+	// Creates a fresh status
+	public static TacticCheckStatus newStatus(ITacticDescriptor descriptor, Object result) {
+		final int severity;
 		final String message;
+		final Throwable reason;
 		if (result instanceof Throwable) {
+			severity = IStatus.ERROR;
 			reason = (Throwable) result;
 			message = reason.getLocalizedMessage();
 		} else {
 			reason = null;
-			message = result.toString();
+			severity = result == null ? IStatus.OK : IStatus.ERROR;
+			message = result == null ? "OK" : result.toString();
 		}
-		return new Status(ERROR, SequentProver.PLUGIN_ID, message, reason);
+		return new TacticCheckStatus(severity, message, reason, descriptor, true);
+	}
+
+	private final ITacticDescriptor descriptor;
+	private final boolean fresh;
+
+	private TacticCheckStatus(int severity, String message, Throwable exception, //
+			ITacticDescriptor descriptor, boolean fresh) {
+		super(severity, SequentProver.PLUGIN_ID, message, exception);
+		this.descriptor = descriptor;
+		this.fresh = fresh;
+	}
+
+	@Override
+	public String getMessage() {
+		return descriptor.getTacticName() + ": " + super.getMessage();
 	}
 
 	@Override
 	public ITacticDescriptor getDescriptor() {
 		return descriptor;
-	}
-
-	@Override
-	public IStatus getStatus() {
-		return status;
 	}
 
 	@Override
@@ -82,10 +76,11 @@ public class AutoTacticCheckResult implements IAutoTacticCheckResult {
 		if (!fresh) {
 			return descriptor.getTacticID() + ": OK (cached)";
 		}
-		if (status.isOK()) {
+		if (isOK()) {
 			return descriptor.getTacticID() + ": OK";
-			
+
 		}
-		return descriptor.getTacticID() + ": ERROR: " + status.getMessage();
+		return descriptor.getTacticID() + ": ERROR: " + getMessage();
 	}
+
 }
