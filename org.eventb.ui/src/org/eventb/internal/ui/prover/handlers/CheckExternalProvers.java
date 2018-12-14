@@ -20,15 +20,19 @@ import static org.eventb.internal.ui.UIUtils.log;
 import static org.eventb.internal.ui.handlers.Messages.proof_checkExternalProvers_error_message;
 import static org.eventb.internal.ui.handlers.Messages.proof_checkExternalProvers_ok_message;
 import static org.eventb.internal.ui.handlers.Messages.proof_checkExternalProvers_title;
+import static org.eventb.ui.EventBUIPlugin.getActiveWorkbenchWindow;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.IProgressService;
@@ -37,6 +41,8 @@ import org.eventb.ui.EventBUIPlugin;
 
 /**
  * Default handler for the check external prover command.
+ * 
+ * Also includes a lazy check to be run at startup.
  *
  * @author Laurent Voisin
  */
@@ -66,10 +72,40 @@ public class CheckExternalProvers extends AbstractHandler {
 				openInformation(shell, proof_checkExternalProvers_title, //
 						proof_checkExternalProvers_ok_message);
 			} else {
-				log(status);
-				openError(shell, proof_checkExternalProvers_title, //
-						proof_checkExternalProvers_error_message, status);
+				reportError(shell, status);
 			}
+		});
+	}
+
+	/**
+	 * Launch an external prover check asynchronously.
+	 */
+	public static void checkExternalProversLazily() {
+		final Job checker = Job.create("External prover check", monitor -> {
+			final IStatus status = checkAutoTactics(false, monitor);
+			if (!status.isOK()) {
+				reportError(null, status);
+			}
+			return Status.OK_STATUS;
+		});
+		checker.setPriority(Job.BUILD);
+
+		// Prevent the check from running concurrently with a build
+		// to avoid concurrency issues and potential timeouts.
+		checker.setRule(ResourcesPlugin.getWorkspace().getRoot());
+
+		// Delay the scheduling of the job in order to not interfere with the
+		// Rodin startup.
+		checker.schedule(10_000);
+	}
+
+	static void reportError(Shell shell, IStatus status) {
+		log(status);
+
+		Display.getDefault().asyncExec(() -> {
+			Shell realShell = shell != null ? shell : getActiveWorkbenchWindow().getShell();
+			openError(realShell, proof_checkExternalProvers_title, //
+					proof_checkExternalProvers_error_message, status);
 		});
 	}
 
