@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2019 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,9 +170,11 @@ public abstract class BMath extends AbstractGrammar {
 		addCompatibility(MUL_ID, MOD_ID);
 		addAssociativity(MUL_ID);
 		addCompatibility(DIV_ID, MUL_ID);
+		addCompatibility(DIV_ID, DIV_ID);
 		addCompatibility(DIV_ID, MOD_ID);
-		addCompatibility(MOD_ID, DIV_ID);
 		addCompatibility(MOD_ID, MUL_ID);
+		addCompatibility(MOD_ID, DIV_ID);
+		addCompatibility(MOD_ID, MOD_ID);
 		addCompatibility(NEG_LIT.getImage(), PLUS_ID);
 		addCompatibility(NEG_LIT.getImage(), MINUS_ID);
 		

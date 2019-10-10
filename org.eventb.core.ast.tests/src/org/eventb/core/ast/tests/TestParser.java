@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2019 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -884,10 +884,6 @@ public class TestParser extends AbstractTests {
 					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.MUL, id_x, id_y)
 			), new ExprTestPair(
-					"x\u2217y\u2217z", 
-					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1, id_z_V1), null),
-					mAssociativeExpression(Formula.MUL, id_x, id_y, id_z)
-			), new ExprTestPair(
 					"x\u00f7y", 
 					ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.DIV, id_x, id_y)
@@ -895,6 +891,50 @@ public class TestParser extends AbstractTests {
 					"x mod y", 
 					ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.MOD, id_x, id_y)
+			), new ExprTestPair(
+					"x\u2217y\u2217z", 
+					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1, id_z_V1), null),
+					mAssociativeExpression(Formula.MUL, id_x, id_y, id_z)
+			), new ExprTestPair(
+					"x\u2217y\u00f7z", 
+					ffV1.makeBinaryExpression(Formula.DIV,
+							ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1), null), id_z_V1, null),
+					mBinaryExpression(Formula.DIV, mAssociativeExpression(Formula.MUL, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x\u2217y mod z", 
+					ffV1.makeBinaryExpression(Formula.MOD,
+							ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1), null), id_z_V1, null),
+					mBinaryExpression(Formula.MOD, mAssociativeExpression(Formula.MUL, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x\u00f7y\u2217z", 
+					ffV1.makeAssociativeExpression(Formula.MUL,
+							mList(ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null), id_z_V1), null),
+					mAssociativeExpression(Formula.MUL, mBinaryExpression(Formula.DIV, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x\u00f7y\u00f7z", 
+					ffV1.makeBinaryExpression(Formula.DIV,
+							ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null), id_z_V1, null),
+					mBinaryExpression(Formula.DIV, mBinaryExpression(Formula.DIV, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x\u00f7y mod z", 
+					ffV1.makeBinaryExpression(Formula.MOD,
+							ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null), id_z_V1, null),
+					mBinaryExpression(Formula.MOD, mBinaryExpression(Formula.DIV, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x mod y\u2217z", 
+					ffV1.makeAssociativeExpression(Formula.MUL,
+							mList(ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null), id_z_V1), null),
+					mAssociativeExpression(Formula.MUL, mBinaryExpression(Formula.MOD, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x mod y\u00f7z", 
+					ffV1.makeBinaryExpression(Formula.DIV,
+							ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null), id_z_V1, null),
+					mBinaryExpression(Formula.DIV, mBinaryExpression(Formula.MOD, id_x, id_y), id_z)
+			), new ExprTestPair(
+					"x mod y mod z", 
+					ffV1.makeBinaryExpression(Formula.MOD,
+							ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null), id_z_V1, null),
+					mBinaryExpression(Formula.MOD, mBinaryExpression(Formula.MOD, id_x, id_y), id_z)
 			), 
 			
 			// ArithmeticExpr
@@ -1704,7 +1744,6 @@ public class TestParser extends AbstractTests {
 	@Test 
 	public void testInvalidExprs() throws Exception {
 		doTestInvalidExpr("x/x/x");
-		doTestInvalidExpr("x mod x mod x");
 		doTestInvalidExpr("x domsub y + z");
 		doTestInvalidExpr("x setminus y inter z");
 		doTestInvalidExpr("x\u2225y\u2225z");
