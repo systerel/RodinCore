@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added checkAutoTactics
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -151,13 +152,14 @@ public class SequentProver extends Plugin {
 	 * has already succeeded in the past.
 	 * 
 	 * The result of the checks is provided as a {@link MultiStatus}, with one
-	 * entry for each external auto tactic.
+	 * {@link ITacticCheckStatus} entry for each external auto tactic.
 	 * 
 	 * @param force   ignore the cache and check all tactics again
 	 * @param monitor a progress monitor, or {@code null} if progress reporting and
 	 *                cancellation are not desired.
 	 * 
-	 * @return the results of the checks as a {@link MultiStatus}
+	 * @return the results of the checks as a {@link MultiStatus} of
+	 *         {@link ITacticCheckStatus}
 	 * @since 3.3
 	 */
 	public static IStatus checkAutoTactics(boolean force, IProgressMonitor monitor) {

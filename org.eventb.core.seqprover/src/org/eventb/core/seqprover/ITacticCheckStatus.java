@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 3.3
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @see SequentProver#checkAutoTactics(boolean, org.eclipse.core.runtime.IProgressMonitor)
  */
 public interface ITacticCheckStatus extends IStatus {
 
