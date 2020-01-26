@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * Returns the number of variants of the machine.
 	 * 
 	 * @return the number of variants of the machine
+	 * @since 3.4
 	 */
 	int count();
 
@@ -43,6 +44,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * @return the label of the variant
 	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
 	 *                                   or equal to <code>count()</code>
+	 * @since 3.4
 	 */
 	String getLabel(int index);
 	
@@ -53,6 +55,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * @return the parsed and type-checked variant expression
 	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
 	 *                                   or equal to <code>count()</code>
+	 * @since 3.4
 	 */
 	Expression getExpression(int index);
 	
@@ -63,6 +66,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * @return a handle to the variant
 	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
 	 *                                   or equal to <code>count()</code>
+	 * @since 3.4
 	 */
 	ISCVariant getVariant(int index);
 	
@@ -75,6 +79,7 @@ public interface IMachineVariantInfo extends IPOGState {
 	 * @return the name of the PO
 	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
 	 *                                   or equal to <code>count()</code>
+	 * @since 3.4
 	 */
 	String getPOName(int index, String prefix, String suffix);
 	

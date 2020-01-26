@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,8 +120,6 @@ public enum GraphProblem implements IRodinProblem {
 	AxiomLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomLabelConflict),
 	InvariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_InvariantLabelConflict),
 	InvariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InvariantLabelConflict),
-	VariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_VariantLabelConflict),
-	VariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariantLabelConflict),
 	EventLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_EventLabelConflict),
 	EventLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventLabelConflict),
 	GuardLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_GuardLabelConflict),
@@ -147,7 +145,11 @@ public enum GraphProblem implements IRodinProblem {
 	/**
 	 * @since 2.0
 	 */
-	EventInitLabelMisspellingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventInitLabelMisspelling);
+	EventInitLabelMisspellingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventInitLabelMisspelling),
+	/** @since 3.4 */
+	VariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_VariantLabelConflict),
+	/** @since 3.4 */
+	VariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariantLabelConflict);
 	
 	private final String errorCode;
 	
