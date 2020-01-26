@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,6 +158,7 @@ public class SequentProver extends Plugin {
 	 *                cancellation are not desired.
 	 * 
 	 * @return the results of the checks as a {@link MultiStatus}
+	 * @since 3.3
 	 */
 	public static IStatus checkAutoTactics(boolean force, IProgressMonitor monitor) {
 		return AutoTacticChecker.checkAutoTactics(force, monitor);
