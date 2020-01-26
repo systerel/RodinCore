@@ -51,6 +51,20 @@ public interface IMachineVariantInfo extends IPOGState {
 	/**
 	 * Returns the parsed and type-checked variant expression.
 	 * 
+	 * This method has been retained for backward compatibility only. It will return
+	 * a result only if the machine contains a single variant carrying the default
+	 * label.
+	 * 
+	 * @return the parsed and type-checked variant expression
+	 * @throws IndexOutOfBoundsException if there is not exactly one default variant
+	 * @deprecated Use {@link #getExpression(int)}
+	 */
+	@Deprecated
+	Expression getExpression();
+ 	
+	/**
+	 * Returns the parsed and type-checked variant expression.
+	 * 
 	 * @param index index of the variant
 	 * @return the parsed and type-checked variant expression
 	 * @throws IndexOutOfBoundsException if index is less than zero or greater than
@@ -59,6 +73,20 @@ public interface IMachineVariantInfo extends IPOGState {
 	 */
 	Expression getExpression(int index);
 	
+ 	/**
+	 * Returns a handle to the variant.
+	 * 
+	 * This method has been retained for backward compatibility only. It will return
+	 * a result only if the machine contains a single variant carrying the default
+	 * label.
+	 * 
+	 * @return a handle to the variant
+	 * @throws IndexOutOfBoundsException if there is no variant
+	 * @deprecated Use {@link #getVariant(int)}
+	 */
+	@Deprecated
+	ISCVariant getVariant();
+
 	/**
 	 * Returns a handle to the variant.
 	 * 

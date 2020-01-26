@@ -51,10 +51,28 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	}
 	
 	@Override
+	@Deprecated
+	public Expression getExpression() {
+		if (hasSingleDefaultVariant()) {
+			return varExpressions[0];
+		}
+		throw new IndexOutOfBoundsException("not backward compatible");
+	}
+
+	@Override
 	public Expression getExpression(int index) {
 		return varExpressions[index];
 	}
 	
+	@Override
+	@Deprecated
+	public ISCVariant getVariant() {
+		if (hasSingleDefaultVariant()) {
+			return variants[0];
+		}
+		throw new IndexOutOfBoundsException("not backward compatible");
+	}
+
 	@Override
 	public ISCVariant getVariant(int index) {
 		return variants[index];
