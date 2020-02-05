@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.rodinp.core.emf" version="2">
+    <resource path="src/org/rodinp/core/emf/api/itf/ImplicitChildProviderManager.java" type="org.rodinp.core.emf.api.itf.ImplicitChildProviderManager">
+        <filter comment="Should have never been published, and should not be used by plugins" id="421572723">
+            <message_arguments>
+                <message_argument value="org.rodinp.core.emf.api.itf.ImplicitChildProviderManager"/>
+                <message_argument value="addProviderFor(IInternalElementType&lt;? extends IInternalElement&gt;, IImplicitProvidingAssociation)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

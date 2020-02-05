@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,10 +51,28 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	}
 	
 	@Override
+	@Deprecated
+	public Expression getExpression() {
+		if (hasSingleDefaultVariant()) {
+			return varExpressions[0];
+		}
+		throw new IndexOutOfBoundsException("not backward compatible");
+	}
+
+	@Override
 	public Expression getExpression(int index) {
 		return varExpressions[index];
 	}
 	
+	@Override
+	@Deprecated
+	public ISCVariant getVariant() {
+		if (hasSingleDefaultVariant()) {
+			return variants[0];
+		}
+		throw new IndexOutOfBoundsException("not backward compatible");
+	}
+
 	@Override
 	public ISCVariant getVariant(int index) {
 		return variants[index];
@@ -67,11 +85,13 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 			joiner.add(prefix);
 		}
 
-		String label = getLabel(index);
-		if (count() != 1 || !DEFAULT_LABEL.equals(label)) {
+		if (hasSingleDefaultVariant()) {
 			// Backward compatibility with Rodin 3.4
-			joiner.add(label);
+			// Do not add the variant label
+		} else {
+			joiner.add(getLabel(index));
 		}
+
 		if (suffix.length() != 0) {
 			joiner.add(suffix);
 		}
@@ -98,4 +118,10 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		return varExpressions.length != 0;
 	}
 
+	// Are we backward compatible with Rodin 3.4 : a single variant carrying the
+	// default label?
+	private boolean hasSingleDefaultVariant() {
+		return count() == 1 && DEFAULT_LABEL.equals(getLabel(0));
+	}
+	
 }
