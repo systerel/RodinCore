@@ -110,6 +110,7 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_INVARIANT = "Invariant";
 	
+	/** @since 3.4 */
 	public static final String IMG_VARIANT = "Variant";
 	
 	public static final String IMG_THEOREM = "Theorem";
@@ -231,6 +232,7 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_INVARIANT_PATH = "icons/full/obj16/inv_obj.gif";
 
+	/** @since 3.4 */
 	public static final String IMG_VARIANT_PATH = "icons/full/obj16/vrn_obj.gif";
 	
 	public static final String IMG_THEOREM_PATH = "icons/full/obj16/thm_obj.gif";
