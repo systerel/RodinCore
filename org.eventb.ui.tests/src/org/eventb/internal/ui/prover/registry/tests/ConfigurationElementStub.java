@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Update to be compatible with Eclipse 4.16
  *******************************************************************************/
 package org.eventb.internal.ui.prover.registry.tests;
 
@@ -139,4 +140,11 @@ public class ConfigurationElementStub implements IConfigurationElement {
 	private RuntimeException notImplemented() {
 		return new UnsupportedOperationException();
 	}
+
+	@Override
+	// @htson: Update to be compatible with Eclipse 4.16
+	public int getHandleId() {
+		throw notImplemented();
+	}
+	
 }
