@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added the static method copyToClipboard
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
@@ -33,11 +34,11 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eventb.internal.ui.DragAndCopyUtil;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -77,7 +78,7 @@ public class CopyHandler extends AbstractHandler {
 				.selectionIsOfTypeRodinFile(elements);
 
 		// Get the clipboard for the current workbench display.
-		IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		Clipboard clipboard = new Clipboard(workbench.getDisplay());
 		
 		// Copies projects into the clipboard
@@ -176,7 +177,7 @@ public class CopyHandler extends AbstractHandler {
 	 */
 	private void setClipboard(Collection<IResource> resources,
 			Collection<String> fileNames, String names) {
-		IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		Clipboard clipboard = new Clipboard(workbench.getDisplay());
 		try {
 			// if there are some file names then set the File transfer.

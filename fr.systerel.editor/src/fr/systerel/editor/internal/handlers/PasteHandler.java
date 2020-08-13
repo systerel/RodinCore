@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IEventBRoot;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -101,7 +102,7 @@ public class PasteHandler extends AbstractEditionHandler {
 			return false;
 		}
 		// Create the clipboard associated with the workbench.
-		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
 		// Try to handle by using a rodin handle transfer.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added history support
  *     Systerel - added check before pasting element
  *     Systerel - redirected dialog opening
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -46,7 +48,7 @@ public class PasteHandler extends AbstractHandler {
 		final ISelection selection = getCurrentSelectionChecked(event);
 		
 		// Create the clipboard associated with the workbench.
-		IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
 		// Try to handle by using a rodin handle transfer.
