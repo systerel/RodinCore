@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Remove unused import
  *******************************************************************************/
 package org.eventb.internal.pptrans.translator;
 
@@ -15,7 +16,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
-import org.eventb.internal.pptrans.translator.Translator;
 import org.eventb.pptrans.Translator.Option;
 
 /**
