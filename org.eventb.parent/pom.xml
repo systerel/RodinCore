@@ -10,18 +10,19 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<www-basedir>/tmp/rodin-build/rodin-3.4</www-basedir>
+		<www-basedir>/tmp/rodin-build/rodin-3.5</www-basedir>
 
 		<!-- Plug-in versions -->
-		<tycho-version>1.1.0</tycho-version>
-		<maven-resources-plugin-version>3.0.2</maven-resources-plugin-version>
+		<tycho-version>2.0.0</tycho-version>
+		<maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
+		<maven-antrun-plugin-version>3.0.0</maven-antrun-plugin-version>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>oxygen-4.7</id>
+			<id>2020-06-4.16</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.7/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.16/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
@@ -75,7 +76,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.7</version>
+					<version>${maven-antrun-plugin-version}</version>
 				</plugin>
 				<!-- Deactivate the Maven resource plug-in -->
 				<plugin>
