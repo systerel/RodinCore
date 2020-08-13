@@ -24,10 +24,13 @@ else
 fi
 if [[ "$_java" ]]; then
     version=$("$_java" -version 2>&1 | grep 'version' | sed 's/.*version .*\.\(.*\)\..*/\1/; 1q')
+    if [[ "$version" -eq "0" ]]; then
+        version=$("$_java" -version 2>&1 | grep 'version' | sed 's/.*version \"\(.*\)\..*\..*/\1/; 1q')
+    fi
     echo "Java version: $version"
     if [[ "$version" -lt "8" ]]; then
         echo "Java 8 is required"
-	exit 1
+        exit 1
     fi
 fi
 
