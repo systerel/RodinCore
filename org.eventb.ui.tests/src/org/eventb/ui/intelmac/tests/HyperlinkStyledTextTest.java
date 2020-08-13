@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     University of Southampton - remove the usage of deprecated methods
  *******************************************************************************/
 package org.eventb.ui.intelmac.tests;
 
@@ -126,11 +127,8 @@ public class HyperlinkStyledTextTest {
 	static int getCharacterOffset(Point pt) {
 		if (text.isDisposed())
 			return -1;
-		int offset;
-		try {
-			offset = text.getOffsetAtLocation(pt);
-		}
-		catch (IllegalArgumentException e) {
+		int offset = text.getOffsetAtPoint(pt);
+		if (offset < 0) {
 			return -1;
 		}
 		Point location = text.getLocationAtOffset(offset);

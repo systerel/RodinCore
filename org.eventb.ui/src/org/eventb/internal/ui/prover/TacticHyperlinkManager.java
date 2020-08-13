@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - fixed menu bug
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     University of Southampton - remove the usage of deprecated methods
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -314,11 +315,8 @@ public class TacticHyperlinkManager {
 	int getCharacterOffset(Point pt) {
 		if (text.isDisposed())
 			return -1;
-		int offset;
-		try {
-			offset = text.getOffsetAtLocation(pt);
-		}
-		catch (IllegalArgumentException e) {
+		int offset = text.getOffsetAtPoint(pt);
+		if (offset < 0) {
 			return -1;
 		}
 		final Point location = text.getLocationAtOffset(offset);

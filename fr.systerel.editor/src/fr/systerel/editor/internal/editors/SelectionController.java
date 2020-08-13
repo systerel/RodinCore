@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Systerel and others.
+ * Copyright (c) 2008, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     INP Toulouse - use of generics for listeners
+ *     University of Southampton - remove the usage of deprecated methods
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
@@ -222,18 +223,19 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	public int getOffset(Point p) {
-		try {
-			return styledText.getOffsetAtLocation(p);
-		} catch (IllegalArgumentException exc) {
-			// not over a character
-			final int lineIndex = styledText.getLineIndex(p.y);
-			final int offset;
-			if (lineIndex < styledText.getLineCount() - 1) {
-				offset = styledText.getOffsetAtLine(lineIndex + 1);
-				return offset - 1;
-			}
-			return styledText.getOffsetAtLine(lineIndex);
+		final int result = styledText.getOffsetAtPoint(p);
+		if (result >= 0) {
+			return result;
 		}
+
+		// not over a character
+		final int lineIndex = styledText.getLineIndex(p.y);
+		final int offset;
+		if (lineIndex < styledText.getLineCount() - 1) {
+			offset = styledText.getOffsetAtLine(lineIndex + 1);
+			return offset - 1;
+		}
+		return styledText.getOffsetAtLine(lineIndex);
 	}
 	
 	private boolean handleHandleSelection(final int offset) {
