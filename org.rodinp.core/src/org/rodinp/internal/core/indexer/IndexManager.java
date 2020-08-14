@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -438,6 +438,12 @@ public final class IndexManager {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		indexingEnabled = false;
 		indexing.cancel();
+		// Ensure that the indexing job has actually stopped.
+		try {
+			indexing.join();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	static void printVerbose(String message) {
