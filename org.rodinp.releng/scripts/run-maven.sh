@@ -13,7 +13,9 @@
 #
 #  This script must be run from a working copy of the Rodin platform sources.
 #  Since Rodin 3.3, Java 8 is required for building.
+#  Since Rodin 3.5, Java 11 is required for building.
 #
+minJavaVersion=11
 
 # Use the template script from https://gist.github.com/neatshell/5283811
 # Declare the number of mandatory args
@@ -73,9 +75,9 @@ function margs_check {
 margs_precheck $# $1
 
 # Default values for optional arguments
-RC=""
-DEBUG=""
-ERROR=""
+RC=""    # Release candidate tag
+DEBUG="" # produce debug information (empty to disable)
+ERROR="" # Produce error information (empty to disable)
 
 # Args while-loop
 while [ "$1" != "" ];
@@ -93,7 +95,6 @@ do
                                     RC="-RC$1"
                                     ;;
     -st  | --skip-tests  )
-                                    shift
                                     SKIP_TESTS="-DskipTests"
                                     ;;
     -X   | --debug  )
@@ -126,8 +127,8 @@ if [[ "$_java" ]]; then
         version=$("$_java" -version 2>&1 | grep 'version' | sed 's/.*version \"\(.*\)\..*\..*/\1/; 1q')
     fi
     echo "Java version: $version"
-    if [[ "$version" -lt "8" ]]; then
-        echo "Java 8 is required"
+    if [[ "$version" -lt "$minJavaVersion" ]]; then
+        echo "Java $minJavaVersion is required"
         exit 1
     fi
 else
