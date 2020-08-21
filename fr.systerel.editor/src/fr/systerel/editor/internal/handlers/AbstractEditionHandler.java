@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
@@ -16,8 +17,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eventb.ui.EventBUIPlugin;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -46,7 +47,7 @@ public abstract class AbstractEditionHandler extends AbstractEditorHandler {
 	protected abstract String handleSelection(RodinEditor editor, int offset);
 
 	protected static Clipboard getClipBoard() {
-		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
 		return new Clipboard(workbench.getDisplay());
 	}
 	

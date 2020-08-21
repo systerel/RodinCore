@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added new localized methods for Eclipse 3.6
+ *     University of Southampton - Update to be compatible with Eclipse 4.16
  *******************************************************************************/
 package org.rodinp.core.tests.version.conf;
 
@@ -89,4 +90,10 @@ public abstract class ConfElement implements IConfigurationElement {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	// @htson: Update to be compatible with Eclipse 4.16
+	public int getHandleId() {
+		throw new UnsupportedOperationException();
+	}
+	
 }

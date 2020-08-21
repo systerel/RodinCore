@@ -3,10 +3,17 @@
 <target name="eclipse">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+			<repository location="http://download.eclipse.org/eclipse/updates/4.16"/>
 			<unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.ui.views.log" version="0.0.0"/>
 			<unit id="org.junit" version="0.0.0"/>
+			<!--
+			     The following dependencies seem to be required
+			     to launch tests from the Eclipse IDE, although they are not used
+			-->
+			<unit id="org.eclipse.pde.core" version="0.0.0"/>
+			<unit id="org.eclipse.jdt.junit4.runtime" version="0.0.0"/>
+			<unit id="org.eclipse.pde.junit.runtime" version="0.0.0"/>
 		</location>
 	</locations>
 </target>

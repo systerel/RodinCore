@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.xprover.XProverInput;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -212,6 +213,7 @@ public class XProverReasonerTests extends XProverTests {
 	 * Ensures that an external prover fails if this thread is interrupted.
 	 */
 	@Test
+	@Ignore("flaky test")
 	public void interrupt() {
 		final IProverSequent sequent = mSequent(mList(px), mList(), px);
 		final IReasonerInput input = new XProverInput(false, 100);

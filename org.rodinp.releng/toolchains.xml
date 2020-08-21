@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!--
+
+    Template for declaring toolchains for the Maven build
+
+    You need to define the location of the Java toolchain to use for building Rodin.
+
+    For that, copy this file to the ${user.home}/.m2/ directory
+    and set the <jdkHome> element below to the ${java.home} for your Java 1.8
+    installation.
+
+    For further information about toolchain configuration in Maven,
+    have a look at
+
+      http://maven.apache.org/guides/mini/guide-using-toolchains.html
+
+-->
+<toolchains>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>1.8</version>
+      <vendor>openjdk</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>/path/to/openjdk-8-jre</jdkHome>
+    </configuration>
+  </toolchain>
+</toolchains>

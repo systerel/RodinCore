@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - redirected dialog opening and externalized strings
  *     INP Toulouse - use of generics for adapters
  *     Systerel - open the selected PO if any
+ *     University of Southampton - Add an implicit cast to avoid warnings
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -349,7 +350,7 @@ public class ProverUI extends EventBFormEditor implements
 				proofStates), new ProofStateLabelProvider(),
 				"Select the proof obligation(s) to save.");
 
-		dlg.setInitialSelections(proofStates);
+		dlg.setInitialSelections((Object []) proofStates);
 		dlg.setTitle("Save Proofs");
 		final int code = dlg.open();
 		if (code == CANCEL) {

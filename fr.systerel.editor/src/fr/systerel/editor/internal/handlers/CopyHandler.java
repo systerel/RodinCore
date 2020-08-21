@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
@@ -19,7 +20,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
-import org.eventb.ui.EventBUIPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -50,7 +51,7 @@ public class CopyHandler extends AbstractEditorHandler {
 				ems.add(element);
 		}
 		// Get the clipboard for the current workbench display.
-		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
 		if (ems.isEmpty()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 ETH Zurich and others.
+ * Copyright (c) 2008, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     University of Southampton - remove the usage of deprecated methods
  *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
@@ -224,11 +225,8 @@ public abstract class HyperlinkManager {
 	}
 
 	int getCharacterOffset(Point pt) {
-		int offset;
-		try {
-			offset = text.getOffsetAtLocation(pt);
-		}
-		catch (IllegalArgumentException e) {
+		int offset = text.getOffsetAtPoint(pt);
+		if (offset < 0) {
 			return -1;
 		}
 		Point location = text.getLocationAtOffset(offset);

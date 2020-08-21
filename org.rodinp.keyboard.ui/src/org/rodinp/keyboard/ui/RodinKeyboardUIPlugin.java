@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 ETH Zurich and others.
+ * Copyright (c) 2006, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added enableRodinModifyListener() method
  *     Systerel - moved the keyboard view modify listenere here
+ *     University of Southampton - Remove the usage of deprecated methods
  *******************************************************************************/
 package org.rodinp.keyboard.ui;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -135,7 +137,7 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 	 * @return current active workbench page
 	 */
 	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
 	public ModifyListener getRodinModifyListener() {
@@ -184,7 +186,7 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 	 * currently available.
 	 */
 	private void loadFont() {
-		final Display display = this.getWorkbench().getDisplay();
+		final Display display = PlatformUI.getWorkbench().getDisplay();
 		if (isMathFontAvailable(display)) {
 			return;
 		}
