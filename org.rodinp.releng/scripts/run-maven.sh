@@ -136,6 +136,17 @@ else
     exit 1
 fi
 
+# Check for the presence of toolchain configuration
+if ! [[ -f "$HOME/.m2/toolchains.xml" ]]; then
+    cat <<EOT >&2
+Missing file: $HOME/.m2/toolchains.xml
+
+Look at the toolchains.xml file in the org.rodinp.releng project
+for instructions on how to declare your toolchain location.
+EOT
+    exit 1
+fi
+
 # Check Git repository
 if ! git rev-parse --is-inside-work-tree > /dev/null; then
     echo "This script must be run from a Git working copy." >&2
