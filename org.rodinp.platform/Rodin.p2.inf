@@ -1,7 +1,7 @@
 instructions.configure=\
   mkdir(path:${installFolder}/dropins);\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/eclipse/updates/4.16,name:Eclipse 2020-06);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/eclipse/updates/4.16,name:Eclipse 2020-06);\
+  addRepository(type:0,location:http${#58}//download.eclipse.org/releases/2020-06,name:Eclipse 2020-06);\
+  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/2020-06,name:Eclipse 2020-06);\
   addRepository(type:0,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:1,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
