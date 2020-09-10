@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+This Ant script allows to create the compositeArtifacts.jar and
+compositeContent.jar files for populating the update site
+for the core Rodin platform.
+
+To use this script, click "Run as > Ant build...",
+then select "Run in the same JRE as the workspace"
+in the "JRE" tab of the popup,
+and click "Run".
+
+Once the build has completed, upload the three files from the temporary
+directory ${dest} to the Core_Update_Site directory of SourceForge.
+
+-->
+<project name="Composite site" default="create" basedir=".">
+
+	<!-- Temporary directory where to store the output files -->
+	<property name="dest" value="/tmp/compo" />
+
+	<target name="create">
+		<delete dir="${dest}"/>
+		<p2.composite.repository>
+			<repository location="file://${dest}" name="Rodin Core Updates" />
+			<add>
+				<!-- For old releases prior to 3.5 -->
+				<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/old/" />
+
+				<!-- For Rodin 3.5 -->
+				<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/3.5/" />
+				<repository location="http://download.eclipse.org/eclipse/updates/4.16/" />
+			</add>
+		</p2.composite.repository>
+		<copy file="p2.index" todir="${dest}" />
+	</target>
+</project>
