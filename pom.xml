@@ -75,7 +75,6 @@
 		<!-- #################################################### -->
 		<!-- TARGET PLATFORM FOR OTHER PLUG-IN DEVELOPMENT -->
 		<!-- #################################################### -->
-		<module>org.rodinp.platform.sources-feature</module>
 		<module>org.rodinp.platform.tests-feature</module>
 		<module>org.rodinp.dev</module>
 	</modules>

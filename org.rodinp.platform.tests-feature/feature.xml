@@ -22,7 +22,7 @@
    </url>
 
    <requires>
-      <import plugin="org.junit"/>
+      <import plugin="org.junit.source"/>
       <import plugin="org.hamcrest.core"/>
    </requires>
 
