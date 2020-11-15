@@ -122,9 +122,14 @@ else
     _java=java
 fi
 if [[ "$_java" ]]; then
-    version=$("$_java" -version 2>&1 | grep 'version' | sed 's/.*version .*\.\(.*\)\..*/\1/; 1q')
-    if [[ "$version" -eq "0" ]]; then
-        version=$("$_java" -version 2>&1 | grep 'version' | sed 's/.*version \"\(.*\)\..*\..*/\1/; 1q')
+    # First detect a new style java version string: openjdk version "12" 2019-03-19
+    # or: openjdk version "11.0.1" 2018-10-16
+    version=$("$_java" -version 2>&1 | grep 'version' | grep -o '".*"' | tr -d '"' | cut -f 1 -d '.')
+    # We now have 9 to 15, or just a 1.
+    if [[ "$version" -eq "1" ]]; then
+        # Ah, this was a pre jdk 9 release, where the version looks like: java version "1.8.0_151"
+        # Lets extract the second digit instead, ie 8.
+        version=$("$_java" -version 2>&1 | grep 'version' | grep -o '".*"' | tr -d '"' | cut -f 2 -d '.')
     fi
     echo "Java version: $version"
     if [[ "$version" -lt "$minJavaVersion" ]]; then
