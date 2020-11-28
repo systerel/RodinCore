@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,9 +61,9 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				newSuccessGoal("∀x,y· x=y ⇒ x+y=2∗x", "∀x·x+x=2∗x", "⊤"),
 
 				// Replacement expression is not trivial => more complex WD
-				newSuccessGoal("∀x,y· x = prj1(0↦1) ∧ x+1=y ⇒ y=1",
-						"∀y·prj1(0 ↦ 1)+1=y⇒y=1",
-						"0 ↦ 1∈dom(prj1)∧prj1∈ℤ × ℤ ⇸ ℤ"),
+				newSuccessGoal("∀x,y· x = f(0) ∧ x+1=y ⇒ y=1",
+						"∀y·f(0)+1=y⇒y=1",
+						"0∈dom(f) ∧ f∈ℤ ⇸ ℤ"),
 
 				// One Point Rule in hyp => forward inference hyp action
 				new SuccessfullReasonerApplication(
