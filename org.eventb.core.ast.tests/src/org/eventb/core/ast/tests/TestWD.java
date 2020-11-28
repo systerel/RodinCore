@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2020 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,6 +266,33 @@ public class TestWD extends AbstractTests {
 		assertWDLemma("∀x·x=a÷b", "b≠0");
 		// (∃x·A) ⇔ A provided x nfin A
 		assertWDLemma("a=(⋂x⦂ℙ(ℙ(ℤ))·1=2∣x)", "1=2");
+	}
+
+	/**
+	 * Shows that the WD predicate is true for the functional image through a
+	 * built-in total function, and only in that case.
+	 * 
+	 * Cf. FR #357: Simpler WD for built-in total functions
+	 */
+	@Test 
+	public void testBuiltinTotalFunctionApplication() {
+		final ITypeEnvironment env = mTypeEnvironment(//
+				"S=ℙ(S); T=ℙ(T); x=S; y=T; n=ℤ", ff);
+		// Cases that get simplified
+		assertWDLemma(env, "prj1(x↦y) = x", "⊤");
+		assertWDLemma(env, "prj2(x↦y) = y", "⊤");
+		assertWDLemma(env, "id(x) = x", "⊤");
+		assertWDLemma(env, "succ(n) = 0", "⊤");
+		assertWDLemma(env, "pred(n) = 0", "⊤");
+		assertWDLemma(env, "id(prj1(x↦y)) = x", "⊤");
+
+		// Cases that are not simplified
+		assertWDLemma(env, "((S×T) ◁ prj1)(x↦y) = x", //
+				"x↦y ∈ dom((S×T) ◁ prj1) ∧ (S×T) ◁ prj1 ∈ S×T ⇸ S");
+		assertWDLemma(env, "(id;prj1)(x↦y) = x", //
+				"x↦y ∈ dom(id;prj1) ∧ id;prj1 ∈ S×T ⇸ S");
+		assertWDLemma(env, "(succ;succ)(n) = 0", //
+				"n ∈ dom(succ;succ) ∧ succ;succ ∈ ℤ ⇸ ℤ");
 	}
 
 	/**
