@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2020 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,14 @@ import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.KCARD;
+import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
+import static org.eventb.core.ast.Formula.KPRED;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
+import static org.eventb.core.ast.Formula.KSUCC;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LIMP;
@@ -181,10 +186,19 @@ public class WDComputer implements ISimpleVisitor2 {
 		case EXPN:
 			return fb.land(fb.nonNegative(left), fb.nonNegative(right));
 		case FUNIMAGE:
+			if (isBuiltinTotalFunction(left)) {
+				return fb.btrue;
+			}
 			return fb.land(fb.inDomain(left, right), fb.partial(left));
 		default:
 			return fb.btrue;
 		}
+	}
+
+	private boolean isBuiltinTotalFunction(Expression expr) {
+		final int tag = expr.getTag();
+		return tag == KPRED || tag == KSUCC //
+				|| tag == KPRJ1_GEN || tag == KPRJ2_GEN || tag == KID_GEN;
 	}
 
 	@Override
