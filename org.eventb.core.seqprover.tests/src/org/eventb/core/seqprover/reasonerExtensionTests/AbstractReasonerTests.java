@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -750,6 +750,11 @@ public abstract class AbstractReasonerTests {
 	/**
 	 * This class contains the inputs to a successfull call to the {@link IReasoner#apply()} method 
 	 * and its expected result.
+	 * 
+	 * The syntax of a sequent is {@code {typeEnv}[hiddenHyps][defaultHyps][selectedHyps] |- goal};
+	 * it is parsed with a specific method in this class. If other classes need to parse sequents,
+	 * they should use {@link TestLib#genFullSeq(String, FormulaFactory)}. See FR #358 (Export sequent
+	 * parsing method in reasoner tests) for details on the equivalence between these two syntaxes.
 	 * 
 	 * @author Farhad Mehta
 	 *
