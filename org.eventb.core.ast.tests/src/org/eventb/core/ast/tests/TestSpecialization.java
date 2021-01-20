@@ -263,12 +263,66 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that a type expression substitution which is overridden by a type
+	 * substitution is rejected.
+	 */
+	@Test
+	public void testOverriddenTypeExpressionWithType() {
+		spec.put(S, Z.toExpression());
+		try {
+			spec.put(S, T);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that a type substitution which is overridden by a type expression
+	 * substitution is rejected.
+	 */
+	@Test
+	public void testOverriddenTypeWithTypeExpression() {
+		spec.put(S, Z);
+		try {
+			spec.put(S, T.toExpression());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
 	 * Ensures that a inserting a type substitution identical to one already
 	 * registered is accepted.
 	 */
 	@Test
 	public void testOverridenSameTypeExpression() {
 		spec.put(S, Z.toExpression());
+		spec.put(S, Z.toExpression());
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that inserting a type substitution identical to a type expression
+	 * substitution already registered is accepted.
+	 */
+	@Test
+	public void testOverridenSameTypeExpressionAndType() {
+		spec.put(S, Z.toExpression());
+		spec.put(S, Z);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that inserting a type expression substitution identical to a type
+	 * substitution already registered is accepted.
+	 */
+	@Test
+	public void testOverridenSameTypeAndTypeExpression() {
+		spec.put(S, Z);
 		spec.put(S, Z.toExpression());
 		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
 	}
