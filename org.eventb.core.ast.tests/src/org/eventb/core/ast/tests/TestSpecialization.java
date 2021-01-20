@@ -734,6 +734,17 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that a type expression substitution which is overridden is rejected.
+	 */
+	@Test
+	public void testCanPut_OverriddenTypeExpression() {
+		spec.put(S, Z.toExpression());
+		boolean ok = spec.canPut(S, T.toExpression());
+		assertFalse("Should reject overriding type substitution", ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
 	 * Ensures that a inserting a type substitution identical to one already
 	 * registered is accepted.
 	 * 
@@ -743,6 +754,20 @@ public class TestSpecialization extends AbstractTests {
 	public void testCanPut_OverridenSameType() {
 		spec.put(S, Z);
 		boolean ok = spec.canPut(S, Z);
+		assertTrue(
+				"Should accept overriding type substitution with the same identical substitution",
+				ok);
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that a inserting a type expression substitution identical to one already
+	 * registered is accepted.
+	 */
+	@Test
+	public void testCanPut_OverridenSameTypeExpression() {
+		spec.put(S, Z.toExpression());
+		boolean ok = spec.canPut(S, Z.toExpression());
 		assertTrue(
 				"Should accept overriding type substitution with the same identical substitution",
 				ok);
