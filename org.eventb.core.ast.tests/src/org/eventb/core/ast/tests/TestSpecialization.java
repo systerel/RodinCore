@@ -89,7 +89,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testNullTypeValue() {
 		try {
-			spec.put(S, null);
+			spec.put(S, (Type) null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
 			// pass
@@ -171,7 +171,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testNullIdentifier() {
 		try {
-			spec.put(null, one);
+			spec.put((FreeIdentifier) null, one);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
 			// pass
@@ -217,6 +217,103 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(S, Z);
 		spec.put(S.toExpression(), Z.toExpression());
 		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that a null type expression value is rejected.
+	 */
+	@Test
+	public void testNullTypeExpressionValue() {
+		try {
+			spec.put(S, (Expression) null);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that a type expression value from another factory is rejected.
+	 */
+	@Test
+	public void testWrongFactoryTypeExpressionValue() {
+		try {
+			spec.put(S, LIST_FAC.makeIntegerType().toExpression());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that a type expression substitution which is overridden is rejected.
+	 */
+	@Test
+	public void testOverriddenTypeExpression() {
+		spec.put(S, Z.toExpression());
+		try {
+			spec.put(S, T.toExpression());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that a inserting a type substitution identical to one already
+	 * registered is accepted.
+	 */
+	@Test
+	public void testOverridenSameTypeExpression() {
+		spec.put(S, Z.toExpression());
+		spec.put(S, Z.toExpression());
+		assertSpecialization("S=ℙ(S)", "S := ℤ", "");
+	}
+
+	/**
+	 * Ensures that a null given type is rejected.
+	 */
+	@Test
+	public void testNullGivenTypeExpression() {
+		try {
+			spec.put((GivenType) null, Z.toExpression());
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that an untyped type expression is rejected.
+	 */
+	@Test
+	public void testUntypedTypeExpression() {
+		try {
+			spec.put(S, untyped);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that a type substitution with an expression that
+	 * is not a type is rejected.
+	 */
+	@Test
+	public void testTypeSubstitutionNotTypeExpression() {
+		try {
+			spec.put(S, one);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertEmptySpecialization();
 	}
 
 	/**
@@ -545,7 +642,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testCanPut_NullTypeValue() {
 		try {
-			spec.canPut(S, null);
+			spec.canPut(S, (Type) null);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
 			// pass
@@ -656,7 +753,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testCanPut_NullIdentifier() {
 		try {
-			spec.canPut(null, one);
+			spec.canPut((FreeIdentifier) null, one);
 			fail("Shall have raised an exception");
 		} catch (NullPointerException e) {
 			// pass

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Systerel and others.
+ * Copyright (c) 2012, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.REL;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -22,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
@@ -317,6 +320,32 @@ public class TestTypeSpecialization extends AbstractTests {
 				"S=ℙ(S)", //
 				"S := T || $P := S=0", //
 				"T=ℙ(T); S=ℤ");
+	}
+
+	/**
+	 * Ensures that specializing a type with a relation works.
+	 *
+	 * The specificity of relations is that they can be expressed with two
+	 * different, but equivalent, expressions: T ↔ U and ℙ(T × U). When these type
+	 * expressions are converted in types, they both yield the type ℙ(T × U).
+	 * Therefore, specializing a type S with an expression like T ↔ U requires
+	 * special care to use T ↔ U in expressions and ℙ(T × U) in types.
+	 */
+	@Test
+	public void testRelationType() {
+		final ISpecialization spe = ff.makeSpecialization();
+		final GivenType src = ff.makeGivenType("S");
+		final GivenType dst1 = ff.makeGivenType("T");
+		final GivenType dst2 = ff.makeGivenType("U");
+		final Expression dst = mBinaryExpression(REL, dst1.toExpression(), dst2.toExpression());
+		final Type dstType = ff.makePowerSetType(ff.makeProductType(dst1, dst2));
+		// We specialize S with T ↔ U
+		spe.put(src, dst);
+		// In types, S becomes ℙ(T × U)...
+		assertEquals(dstType, src.specialize(spe));
+		// ... and in expressions, S becomes T ↔ U
+		assertEquals(dst, src.toExpression().specialize(spe));
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := T ↔ U", "T=ℙ(T); U=ℙ(U)");
 	}
 
 	private static void assertSpecialization(String typeImage,
