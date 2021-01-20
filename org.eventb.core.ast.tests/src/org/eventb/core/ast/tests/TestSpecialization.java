@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Systerel and others.
+ * Copyright (c) 2010, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -383,7 +383,7 @@ public class TestSpecialization extends AbstractTests {
 	public void testTypeSwap() {
 		spec.put(S, T);
 		spec.put(T, S);
-		assertSpecialization("S=ℙ(S); T=ℙ(T)", "S := T || T := S", "");
+		assertSpecialization("S=ℙ(S); T=ℙ(T)", "S := T || T := S", "S=ℙ(S); T=ℙ(T)");
 	}
 
 	/**
@@ -897,7 +897,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
 		assertSpecialization("a=S; T=ℙ(T)", //
 				"S := T || T := S || a := b", //
-				"b=T");
+				"b=T; S=ℙ(S)");
 	}
 
 	/**
@@ -915,7 +915,7 @@ public class TestSpecialization extends AbstractTests {
 		assertTrue("Should accept substitution that swapping identifiers and their types", ok);
 		assertSpecialization("a=S; T=ℙ(T)", //
 				"S := T || T := S || a := b", //
-				"b=T");
+				"b=T; S=ℙ(S)");
 	}
 
 	/**
@@ -1198,12 +1198,12 @@ public class TestSpecialization extends AbstractTests {
 		spec.put(T, S);
 		assertSpecialization("a=S; T=ℙ(T)", //
 				"S := T || a := b || T := S", //
-				"b=T");
+				"b=T; S=ℙ(S)");
 
 		spec.put(P, Q);
 		assertSpecialization("a=S; T=ℙ(T)", //
 				"S := T || a := b || T := S || $P := $Q", //
-				"b=T");
+				"b=T; S=ℙ(S)");
 
 		spec.put(bT, aS);
 		assertSpecialization("a=S; b=T", //
