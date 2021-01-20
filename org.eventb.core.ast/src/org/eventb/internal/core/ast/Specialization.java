@@ -318,56 +318,21 @@ public class Specialization implements ISpecialization {
 
 	@Override
 	public boolean canPut(GivenType type, Type value) {
-		return canPutInternal(type, value) == null;
+		return canPutInternal(type, value.toExpression()) == null;
 	}
 
 	@Override
 	public void put(GivenType type, Type value) {
-		final String errorMessage = canPutInternal(type, value);
+		final String errorMessage = canPutInternal(type, value.toExpression());
 		if (errorMessage != null) {
 			throw new IllegalArgumentException(errorMessage);
 		}
-		addTypeSubstitution(type, value);
-	}
-
-	private String canPutInternal(GivenType type, Type value) {
-		if (type == null)
-			throw new NullPointerException("Null given type");
-		if (value == null)
-			throw new NullPointerException("Null type");
-		if (ff != value.getFactory()) {
-			throw new IllegalArgumentException("Wrong factory for value: "
-					+ value.getFactory() + ", should be " + ff);
-		}
-		if (!verifySrcTypenv(type.toExpression())) {
-			return "Identifier " + type
-					+ " already entered with a different type";
-		}
-		final String error = isCompatibleFormula(dstTypenv,
-				value.toExpression());
-		if (error != null) {
-			return error;
-		}
-		final Type oldValue = speTypeRewriter.get(type);
-		if (oldValue != null && !oldValue.equals(value)) {
-			return "Type substitution for " + type + " already registered";
-		}
-		return null;
-	}
-
-	private void addTypeSubstitution(GivenType type, Type value) {
-		final FreeIdentifier ident = type.toExpression();
-		srcTypenv.add(ident);
-		speTypeRewriter.put(type, value);
-		formRewriter.put(ident, value.toExpression());
-		for (final GivenType given : value.getGivenTypes()) {
-			dstTypenv.addGivenSet(given.getName());
-		}
+		addTypeSubstitution(type, value.toExpression());
 	}
 
 	private void maybeAddTypeIdentitySubstitution(GivenType type) {
 		if (!srcTypenv.contains(type.getName())) {
-			addTypeSubstitution(type, type.translate(ff));
+			addTypeSubstitution(type, type.translate(ff).toExpression());
 		}
 	}
 	
