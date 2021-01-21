@@ -162,7 +162,17 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 			final GivenType key = entry.getKey();
 			final Type expected = entry.getValue();
 			assertEquals(expected, spe.get(key));
-			assertTrue(spe.canPut(key, expected));
+
+			/*
+			 * A type can be represented by several equivalent but different
+			 * expressions: we check that the original expression is a type
+			 * expression equal to the expected type and that we can put it.
+			 */
+			final Expression expr = spe.get(key.toExpression());
+			assertTrue(expr.isATypeExpression());
+			assertEquals(expected, expr.toType());
+			assertTrue(spe.canPut(key, expr));
+
 			assertEquals(expected, key.specialize(spe));
 		}
 	}

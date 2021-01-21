@@ -333,19 +333,51 @@ public class TestTypeSpecialization extends AbstractTests {
 	 */
 	@Test
 	public void testRelationType() {
+		assertSpecialization("S", "S := T ↔ U", "T ↔ U");
+	}
+
+	/**
+	 * Ensures that if a relation has been put, a powerset expression that
+	 * represents the same type can't replace it.
+	 */
+	@Test
+	public void testRelationTypeThenPowerset() {
 		final ISpecialization spe = ff.makeSpecialization();
 		final GivenType src = ff.makeGivenType("S");
-		final GivenType dst1 = ff.makeGivenType("T");
-		final GivenType dst2 = ff.makeGivenType("U");
-		final Expression dst = mBinaryExpression(REL, dst1.toExpression(), dst2.toExpression());
-		final Type dstType = ff.makePowerSetType(ff.makeProductType(dst1, dst2));
-		// We specialize S with T ↔ U
+		final Expression dst = mBinaryExpression(REL,
+				ff.makeGivenType("T").toExpression(),
+				ff.makeGivenType("U").toExpression());
 		spe.put(src, dst);
-		// In types, S becomes ℙ(T × U)...
-		assertEquals(dstType, src.specialize(spe));
-		// ... and in expressions, S becomes T ↔ U
-		assertEquals(dst, src.toExpression().specialize(spe));
-		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := T ↔ U", "T=ℙ(T); U=ℙ(U)");
+		try {
+			spe.put(src, parseType("ℙ(T × U)"));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := T ↔ U",
+				"T=ℙ(T); U=ℙ(U)");
+	}
+
+	/**
+	 * Ensures that a relation can't replace a powerset that represents the same
+	 * type.
+	 */
+	@Test
+	public void testPowersetTypeThenRelation() {
+		final ISpecialization spe = ff.makeSpecialization();
+		final GivenType src = ff.makeGivenType("S");
+		spe.put(src, parseType("ℙ(T × U)"));
+		try {
+			final Expression dst = mBinaryExpression(REL,
+					ff.makeGivenType("T").toExpression(),
+					ff.makeGivenType("U").toExpression());
+			spe.put(src, dst);
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		SpecializationChecker.verify(spe, "S=ℙ(S)", "S := ℙ(T × U)",
+				"T=ℙ(T); U=ℙ(U)");
 	}
 
 	private static void assertSpecialization(String typeImage,

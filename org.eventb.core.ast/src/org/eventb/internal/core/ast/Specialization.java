@@ -382,13 +382,9 @@ public class Specialization implements ISpecialization {
 			return "Type substitution for " + type + " already registered";
 		}
 		final Expression oldValueExpr = formRewriter.get(type.toExpression());
-		// We compare expressions as types because some types can be expressed
-		// by different equivalent expressions (e.g., S ↔ T and ℙ(S × T))
-		if (oldValueExpr != null) {
-			if (!(oldValueExpr.isATypeExpression() && oldValueExpr.toType().equals(newValue))) {
-				return "Identifier substitution for " + type
-						+ " already registered";
-			}
+		if (oldValueExpr != null && !oldValueExpr.equals(value)) {
+			return "Identifier substitution for " + type
+					+ " already registered";
 		}
 		return null;
 	}
