@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Systerel and others.
+ * Copyright (c) 2012, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southampton - added support for predicate variables
+ *     CentraleSupélec - substitution of type with expression
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -139,6 +140,34 @@ public interface ISpecialization extends Cloneable {
 	void put(GivenType type, Type value);
 
 	/**
+	 * Adds a new type substitution to this specialization. All substitutions will
+	 * be applied in parallel when specializing a formula. The value must be a
+	 * type-checked type expression. The added substitution must be compatible with
+	 * already registered substitutions (for both given types and free identifiers).
+	 * The value must have been created by the same formula factory as this
+	 * instance.
+	 * </p>
+	 * <p>
+	 * This method can have side-effects, as described in
+	 * {@link ISpecialization}.
+	 * </p>
+	 * 
+	 * @param type  given type to specialize
+	 * @param value typed type expression replacement for the given type
+	 * @throws IllegalArgumentException
+	 *             if the value is not typed or is not a type expression, or if
+	 *             this substitution is not compatible with already registered
+	 *             substitutions or the value has been created by another formula
+	 *             factory
+	 * @see Type#getFactory()
+	 * @see Formula#isTypeChecked()
+	 * @see Expression#isATypeExpression()
+	 * @see #canPut(GivenType, Expression)
+	 * @since 3.5
+	 */
+	void put(GivenType type, Expression value);
+
+	/**
 	 * Returns the type to be substituted for the given given type.
 	 * 
 	 * @param type
@@ -213,6 +242,29 @@ public interface ISpecialization extends Cloneable {
 	 * @since 3.3
 	 */
 	boolean canPut(GivenType type, Type value);
+
+	/**
+	 * Checks whether the proposed type substitution is compatible with already
+	 * registered substitutions (for given types, free identifiers, and
+	 * predicate variables), i.e., if the precondition for
+	 * {@link #put(GivenType, Expression)} is satisfied. The value must by a typed
+	 * type expression and must have been created by the same formula factory as
+	 * this instance. This method does <em>not</em> modify the specialization
+	 * instance.
+	 * 
+	 * @param type
+	 *            given type to specialize
+	 * @param value
+	 *            typed type expression replacement for the given type
+	 * @return <code>true</code> if the proposed type substitution is compatible
+	 *         with already registered substitutions, <code>false</code>
+	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             if the value is not typed, is not a type expression or has
+	 *             been created by another formula factory
+	 * @since 3.5
+	 */
+	boolean canPut(GivenType type, Expression value);
 	
 	/**
 	 * Checks whether the proposed free-identifier substitution is compatible

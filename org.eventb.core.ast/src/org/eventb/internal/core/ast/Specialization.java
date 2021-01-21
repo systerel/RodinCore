@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southamtpon - added support for predicate varialbes.
+ *     CentraleSupélec - substitution of type with expression
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -317,11 +318,36 @@ public class Specialization implements ISpecialization {
 
 	@Override
 	public boolean canPut(GivenType type, Type value) {
-		return canPutInternal(type, value) == null;
+		return canPutInternal(type, value.toExpression()) == null;
 	}
 
 	@Override
 	public void put(GivenType type, Type value) {
+		final String errorMessage = canPutInternal(type, value.toExpression());
+		if (errorMessage != null) {
+			throw new IllegalArgumentException(errorMessage);
+		}
+		addTypeSubstitution(type, value.toExpression());
+	}
+
+	private void maybeAddTypeIdentitySubstitution(GivenType type) {
+		if (!srcTypenv.contains(type.getName())) {
+			addTypeSubstitution(type, type.translate(ff).toExpression());
+		}
+	}
+	
+	@Override
+	public Type get(GivenType key) {
+		return speTypeRewriter.get(key);
+	}
+
+	@Override
+	public boolean canPut(GivenType type, Expression value) {
+		return canPutInternal(type, value) == null;
+	}
+
+	@Override
+	public void put(GivenType type, Expression value) {
 		final String errorMessage = canPutInternal(type, value);
 		if (errorMessage != null) {
 			throw new IllegalArgumentException(errorMessage);
@@ -329,50 +355,48 @@ public class Specialization implements ISpecialization {
 		addTypeSubstitution(type, value);
 	}
 
-	private String canPutInternal(GivenType type, Type value) {
+	private String canPutInternal(GivenType type, Expression value) {
 		if (type == null)
 			throw new NullPointerException("Null given type");
 		if (value == null)
-			throw new NullPointerException("Null type");
+			throw new NullPointerException("Null type expression");
 		if (ff != value.getFactory()) {
 			throw new IllegalArgumentException("Wrong factory for value: "
 					+ value.getFactory() + ", should be " + ff);
 		}
+		if (!value.isTypeChecked())
+			throw new IllegalArgumentException("Untyped value");
+		if (!value.isATypeExpression())
+			throw new IllegalArgumentException("Value is not a type expression");
 		if (!verifySrcTypenv(type.toExpression())) {
 			return "Identifier " + type
 					+ " already entered with a different type";
 		}
-		final String error = isCompatibleFormula(dstTypenv,
-				value.toExpression());
+		final String error = isCompatibleFormula(dstTypenv, value);
 		if (error != null) {
 			return error;
 		}
+		final Type newValue = value.toType();
 		final Type oldValue = speTypeRewriter.get(type);
-		if (oldValue != null && !oldValue.equals(value)) {
+		if (oldValue != null && !oldValue.equals(newValue)) {
 			return "Type substitution for " + type + " already registered";
+		}
+		final Expression oldValueExpr = formRewriter.get(type.toExpression());
+		if (oldValueExpr != null && !oldValueExpr.equals(value)) {
+			return "Identifier substitution for " + type
+					+ " already registered";
 		}
 		return null;
 	}
 
-	private void addTypeSubstitution(GivenType type, Type value) {
+	private void addTypeSubstitution(GivenType type, Expression value) {
 		final FreeIdentifier ident = type.toExpression();
 		srcTypenv.add(ident);
-		speTypeRewriter.put(type, value);
-		formRewriter.put(ident, value.toExpression());
+		speTypeRewriter.put(type, value.toType());
+		formRewriter.put(ident, value);
 		for (final GivenType given : value.getGivenTypes()) {
 			dstTypenv.addGivenSet(given.getName());
 		}
-	}
-
-	private void maybeAddTypeIdentitySubstitution(GivenType type) {
-		if (!srcTypenv.contains(type.getName())) {
-			addTypeSubstitution(type, type.translate(ff));
-		}
-	}
-	
-	@Override
-	public Type get(GivenType key) {
-		return speTypeRewriter.get(key);
 	}
 
 	@Override

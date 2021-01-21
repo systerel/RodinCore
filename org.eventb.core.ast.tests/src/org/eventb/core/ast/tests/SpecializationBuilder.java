@@ -24,9 +24,11 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.GivenTypeHelper;
 
 /**
  * Utility class for building specialization objects from simple strings.
@@ -57,7 +59,10 @@ public class SpecializationBuilder extends AbstractSpecializationHelper {
 	protected void addTypeSpecialization(String srcImage, String dstImage) {
 		final GivenType src = srcFac.makeGivenType(srcImage);
 		final Type dst = parseType(dstImage, dstFac);
-		result.put(src, dst);
+		ITypeEnvironmentBuilder dstenv = dstFac.makeTypeEnvironment();
+		dstenv.addAll(GivenTypeHelper.getGivenTypeIdentifiers(dst));
+		final Expression dstexpr = parseExpression(dstImage, dstenv);
+		result.put(src, dstexpr);
 	}
 
 	/**

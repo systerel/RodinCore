@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Systerel and others.
+ * Copyright (c) 2017, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,12 +85,13 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 	protected void addTypeSpecialization(String srcImage, String dstImage) {
 		final GivenType src = srcFac.makeGivenType(srcImage);
 		final Type dst = parseType(dstImage, dstFac);
+		final Expression dstexpr = parseExpression(dstImage, dstTypenv);
 
 		// Ensure that the right-hand side given types are compatible.
 		for (final GivenType given : dst.getGivenTypes()) {
 			dstTypenv.addGivenSet(given.getName());
 		}
-		addTypeSubstitution(src, dst);
+		addTypeSubstitution(src, dst, dstexpr);
 	}
 
 	@Override
@@ -113,14 +114,15 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		// the left-hand side.
 		for (final GivenType given : src.getGivenTypes()) {
 			if (typeMap.get(given) == null) {
-				addTypeSubstitution(given, given.translate(dstFac));
+				Type givenTrans = given.translate(dstFac);
+				addTypeSubstitution(given, givenTrans, givenTrans.toExpression());
 			}
 		}
 	}
 
-	private void addTypeSubstitution(GivenType src, Type dst) {
+	private void addTypeSubstitution(GivenType src, Type dst, Expression dstexpr) {
 		typeMap.put(src, dst);
-		identMap.put(src.toExpression(), dst.toExpression());
+		identMap.put(src.toExpression(), dstexpr);
 	}
 
 	/**
@@ -160,7 +162,17 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 			final GivenType key = entry.getKey();
 			final Type expected = entry.getValue();
 			assertEquals(expected, spe.get(key));
-			assertTrue(spe.canPut(key, expected));
+
+			/*
+			 * A type can be represented by several equivalent but different
+			 * expressions: we check that the original expression is a type
+			 * expression equal to the expected type and that we can put it.
+			 */
+			final Expression expr = spe.get(key.toExpression());
+			assertTrue(expr.isATypeExpression());
+			assertEquals(expected, expr.toType());
+			assertTrue(spe.canPut(key, expr));
+
 			assertEquals(expected, key.specialize(spe));
 		}
 	}
