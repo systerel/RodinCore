@@ -163,7 +163,7 @@ public interface ISpecialization extends Cloneable {
 	 * @see Formula#isTypeChecked()
 	 * @see Expression#isATypeExpression()
 	 * @see #canPut(GivenType, Expression)
-	 * @since 3.6
+	 * @since 3.5
 	 */
 	void put(GivenType type, Expression value);
 
@@ -262,7 +262,7 @@ public interface ISpecialization extends Cloneable {
 	 * @throws IllegalArgumentException
 	 *             if the value is not typed, is not a type expression or has
 	 *             been created by another formula factory
-	 * @since 3.6
+	 * @since 3.5
 	 */
 	boolean canPut(GivenType type, Expression value);
 	
