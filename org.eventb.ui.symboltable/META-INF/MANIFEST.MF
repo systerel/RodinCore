@@ -9,7 +9,7 @@ Require-Bundle: org.rodinp.keyboard.ui,
  org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %BundleVendor
 Bundle-Localization: plugin
 Export-Package: org.eventb.ui.symboltable,

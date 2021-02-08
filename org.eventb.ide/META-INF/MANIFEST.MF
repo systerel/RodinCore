@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui.cheatsheets,
  org.eclipse.core.runtime,
  org.eventb.ui,
  fr.systerel.explorer
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.ide
 Automatic-Module-Name: org.eventb.ide

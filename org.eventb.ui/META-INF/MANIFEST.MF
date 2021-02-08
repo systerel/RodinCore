@@ -53,5 +53,5 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.ui.manipulation,
  org.eventb.ui.prettyprint,
  org.eventb.ui.prover
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eventb.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
