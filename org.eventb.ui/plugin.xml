@@ -703,7 +703,7 @@
             <visibleWhen
                   checkEnabled="false">
                <reference
-                     definitionId="org.eventb.ui.definition.isIEventBRoot">
+                     definitionId="org.eventb.ui.definition.isContextOrMachineRoot">
                </reference>
             </visibleWhen>
          </command>
@@ -3286,6 +3286,20 @@
              </instanceof>
           </iterate>
        </and>
+     </definition>
+     <definition
+           id="org.eventb.ui.definition.isContextOrMachineRoot">
+        <iterate
+              operator="or">
+           <or>
+              <instanceof
+                    value="org.eventb.core.IContextRoot">
+              </instanceof>
+              <instanceof
+                    value="org.eventb.core.IMachineRoot">
+              </instanceof>
+           </or>
+        </iterate>
      </definition>
      <definition
        id="org.eventb.ui.definition.isProofTreeNode">
