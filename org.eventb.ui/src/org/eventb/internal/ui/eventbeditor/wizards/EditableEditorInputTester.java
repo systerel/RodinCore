@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import static org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreation
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -30,10 +30,10 @@ public class EditableEditorInputTester extends PropertyTester {
 	@Override
 	public boolean test(Object toTest, String property, Object[] args,
 			Object expectedValue) {
-		if (!(toTest instanceof FileEditorInput)) {
+		if (!(toTest instanceof IFileEditorInput)) {
 			return false;
 		}
-		final IFile file = ((FileEditorInput) toTest).getFile();
+		final IFile file = ((IFileEditorInput) toTest).getFile();
 		final IRodinFile rodinFile = RodinCore.valueOf(file);
 		if (rodinFile == null) {
 			return false;
