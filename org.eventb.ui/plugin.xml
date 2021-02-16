@@ -3373,7 +3373,7 @@
             id="org.eventb.ui.isEditableTester"
             namespace="org.eventb.ui.property"
             properties="isEditable"
-            type="org.eclipse.ui.part.FileEditorInput">
+            type="org.eclipse.ui.IEditorInput">
       </propertyTester>
    </extension>
   <extension
