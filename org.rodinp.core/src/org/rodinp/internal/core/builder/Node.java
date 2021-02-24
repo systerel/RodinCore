@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class Node implements Serializable, Comparable<Node> {
 
 	private File target; // name of the resource (full name in workspace!)
 	private File creator; // name of the resource whose extractor created this node
-	private LinkedList<Link> predessorLinks; // the predecessor list
+	private LinkedList<Link> predecessorLinks; // the predecessor list
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
 	private boolean phantom; // a node that was created by a dependency requirement
@@ -127,7 +127,7 @@ public class Node implements Serializable, Comparable<Node> {
 		toolId = null;
 		dated = true;
 		done = false;
-		predessorLinks = new LinkedList<Link>();
+		predecessorLinks = new LinkedList<Link>();
 		successorNodes = new ArrayList<Node>(3);
 		successorLinks = new ArrayList<Link>(3);
 	}
@@ -142,14 +142,14 @@ public class Node implements Serializable, Comparable<Node> {
 		return target.getName().compareTo(o.target.getName());
 	}
 
-	protected List<Link> getPredessorLinks() {
-		return predessorLinks;
+	protected List<Link> getPredecessorLinks() {
+		return predecessorLinks;
 	}
 	
 	protected void addPredecessorLink(Link link) { 
-		if(predessorLinks.contains(link))
+		if(predecessorLinks.contains(link))
 			return;
-		predessorLinks.add(link);
+		predecessorLinks.add(link);
 		if(link.source.successorPos <= link.source.getSuccessorCount())
 			count++;
 		
@@ -168,10 +168,10 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected void removeAllLinks(String id) {
-		LinkedList<Link> predCopy = new LinkedList<Link>(predessorLinks);
+		LinkedList<Link> predCopy = new LinkedList<Link>(predecessorLinks);
 		for(Link link : predCopy) {
 			if(link.id.equals(id)) {
-				predessorLinks.remove(link);
+				predecessorLinks.remove(link);
 				count--;
 				
 				link.source.successorNodes.remove(this);
@@ -181,8 +181,8 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected Collection<IPath> getSources(String id) {
-		ArrayList<IPath> sources = new  ArrayList<IPath>(predessorLinks.size());
-		for(Link link : predessorLinks) {
+		ArrayList<IPath> sources = new  ArrayList<IPath>(predecessorLinks.size());
+		for(Link link : predecessorLinks) {
 			if(link.id.equals(id))
 				sources.add(link.source.getTarget().getPath());
 		}
@@ -198,7 +198,7 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected int getPredecessorCount() {
-		return predessorLinks.size();
+		return predecessorLinks.size();
 	}
 	
 	protected boolean isDerived() {
@@ -288,7 +288,7 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected void unlinkNode() {
-		for(Link link : predessorLinks) {
+		for(Link link : predecessorLinks) {
 			
 			link.source.successorNodes.remove(this);
 			link.source.successorLinks.remove(link);
@@ -297,7 +297,7 @@ public class Node implements Serializable, Comparable<Node> {
 		for(int pos = 0; pos < size; pos++) {
 			Node node = successorNodes.get(pos);
 			node.dated = true;
-			node.predessorLinks.remove(successorLinks.get(pos));
+			node.predecessorLinks.remove(successorLinks.get(pos));
 			node.count--;
 		}
 	}
@@ -313,7 +313,7 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected void addOriginToCycle() {
-		for(Link link : predessorLinks) {
+		for(Link link : predecessorLinks) {
 			if(link.source.count > 0) {
 				IFile originFile = link.origin.target.getFile();
 				link.origin.dated = true;
@@ -330,7 +330,7 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected boolean dependsOnPhantom() {
-		for(Link link : predessorLinks) {
+		for(Link link : predecessorLinks) {
 			if(link.source.isPhantom())
 				return true;
 		}
@@ -338,7 +338,7 @@ public class Node implements Serializable, Comparable<Node> {
 	}
 	
 	protected void printPhantomProblem() {
-		for(Link link : predessorLinks) {
+		for(Link link : predecessorLinks) {
 			if(link.source.isPhantom())
 				if(link.prov == Link.Provider.USER && link.origin != null) {
 					IFile originFile = link.origin.target.getFile();
@@ -409,7 +409,7 @@ public class Node implements Serializable, Comparable<Node> {
 		if(preferred)
 			return;
 		preferred = true;
-		for(Link link : predessorLinks)
+		for(Link link : predecessorLinks)
 			link.source.markReachablePredecessorsPreferred();
 
 	}
