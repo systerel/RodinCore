@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     CentraleSupelec - Add valueOf call to avoid warnings about deprecated method
  *******************************************************************************/
 package org.eventb.internal.pp.loader.ordering;
 
@@ -33,7 +34,7 @@ public class LiteralOrderer implements Comparator<SignedFormula<?>> {
 	public int compare(SignedFormula<?> o1, SignedFormula<?> o2) {
 //		if (o1.equals(o2)) return 0;
 			
-		int signComp = -new Boolean(o1.isPositive()).compareTo(o2.isPositive());
+		int signComp = -Boolean.valueOf(o1.isPositive()).compareTo(o2.isPositive());
 		if (o1.getFormula() instanceof PredicateFormula) {
 			if (o2.getFormula() instanceof PredicateFormula) {
 				PredicateFormula pred1 = (PredicateFormula)o1.getFormula();

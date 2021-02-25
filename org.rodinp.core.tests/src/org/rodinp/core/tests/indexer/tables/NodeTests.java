@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     CentraleSupelec - Add valueOf call to avoid warnings about deprecated method
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
@@ -20,9 +21,9 @@ import junit.framework.TestCase;
 
 public class NodeTests extends TestCase {
 
-	private static final Integer ONE = new Integer(1);
-	private static final Integer TWO = new Integer(2);
-	private static final Integer THREE = new Integer(3);
+	private static final Integer ONE = Integer.valueOf(1);
+	private static final Integer TWO = Integer.valueOf(2);
+	private static final Integer THREE = Integer.valueOf(3);
 	private static final Node<Integer> NODE_ONE = new Node<Integer>(ONE);
 	private static final Node<Integer> NODE_TWO = new Node<Integer>(TWO);
 	private static final Node<Integer> NODE_THREE = new Node<Integer>(THREE);
