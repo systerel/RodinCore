@@ -18,7 +18,7 @@ Export-Package: org.eventb.core.ast,
  org.eventb.internal.core.parser.operators;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.typecheck;x-friends:="org.eventb.core.ast.tests"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Activator: org.eventb.internal.core.ast.ASTPlugin
 Require-Bundle: org.eclipse.core.runtime
 Eclipse-ExtensibleAPI: true

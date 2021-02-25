@@ -29,5 +29,5 @@ Export-Package: org.eventb.core.seqprover,
  org.eventb.internal.core.seqprover.proofSimplifier2;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.reasonerInputs;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.transformer;x-friends:="org.eventb.core.seqprover.tests"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: org.eventb.core.seqprover

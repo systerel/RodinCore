@@ -7,6 +7,6 @@ Bundle-Vendor: %providerName
 Require-Bundle: org.eventb.core.ast,
  org.junit
 Export-Package: org.eventb.core.ast.tests
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eventb.core.ast.tests
