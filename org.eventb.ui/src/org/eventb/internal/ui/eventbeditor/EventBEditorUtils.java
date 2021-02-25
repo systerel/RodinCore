@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  *     Systerel - replaced Messages.bind() by a static method
  *     Systerel - add widget to edit theorem attribute in new dialogs
  *     Systerel - moved wizard behaviour to dedicated classes
+ *     CentraleSupelec - remove unnecessary @SuppressWarnings labels
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -261,7 +262,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
@@ -289,7 +289,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
@@ -324,7 +323,6 @@ public class EventBEditorUtils {
 		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
@@ -353,7 +351,6 @@ public class EventBEditorUtils {
 		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
@@ -379,7 +376,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
@@ -406,7 +402,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory.createElementGeneric(
 						editor.getRodinInput(), IVariable.ELEMENT_TYPE,
@@ -495,7 +490,6 @@ public class EventBEditorUtils {
 			final IEventBEditor<IMachineRoot> editor, final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory.createElementGeneric(
 						editor.getRodinInput(), IRefinesMachine.ELEMENT_TYPE,
@@ -520,7 +514,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory
 						.createElementGeneric(editor.getRodinInput(),
@@ -621,7 +614,6 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory
 						.createElementGeneric(editor.getRodinInput(),
