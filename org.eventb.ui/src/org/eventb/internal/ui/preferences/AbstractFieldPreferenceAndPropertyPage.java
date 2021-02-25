@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Systerel and others.
+ * Copyright (c) 2010, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     CentraleSupelec - The call newInstance() is replaced by getDeclaredConstructor().newInstance()
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_enableProjectSpecifixSettings;
+
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -205,7 +208,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		try {
 			// create a new instance of the current class
 			final AbstractFieldPreferenceAndPropertyPage page = this.getClass()
-					.newInstance();
+					.getDeclaredConstructor().newInstance();
 			page.project = handled;
 			page.workspacePreferencePage = this;
 			page.setTitle(getTitle());
@@ -216,6 +219,14 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
 	}
