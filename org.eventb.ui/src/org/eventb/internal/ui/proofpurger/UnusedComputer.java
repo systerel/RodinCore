@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     CentraleSupelec - Add valueOf call to avoid warnings about deprecated method
  *******************************************************************************/
 package org.eventb.internal.ui.proofpurger;
 
@@ -71,7 +72,7 @@ public class UnusedComputer implements IWorkspaceRunnable {
 	private static void debugHook() {
 		if (DEBUG) {
 			for (int i = 0; i < 80000000; i++) {
-				Integer g = new Integer(i);
+				Integer g = Integer.valueOf(i);
 				g = g + 1;
 			}
 		}

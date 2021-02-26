@@ -6,7 +6,7 @@
     You need to define the location of the Java toolchain to use for building Rodin.
 
     For that, copy this file to the ${user.home}/.m2/ directory
-    and set the <jdkHome> element below to the ${java.home} for your Java 1.8
+    and set the <jdkHome> element below to the ${java.home} for your Java 11
     installation.
 
     For further information about toolchain configuration in Maven,
@@ -19,11 +19,11 @@
   <toolchain>
     <type>jdk</type>
     <provides>
-      <version>1.8</version>
+      <version>11</version>
       <vendor>openjdk</vendor>
     </provides>
     <configuration>
-      <jdkHome>/path/to/openjdk-8-jre</jdkHome>
+      <jdkHome>/path/to/openjdk-11-jre</jdkHome>
     </configuration>
   </toolchain>
 </toolchains>

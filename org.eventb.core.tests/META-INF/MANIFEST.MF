@@ -14,7 +14,7 @@ Require-Bundle: org.eventb.core,
  org.rodinp.core.tests,
  org.hamcrest.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eventb.core.tests
 Bundle-Localization: plugin
 Automatic-Module-Name: org.eventb.core.tests

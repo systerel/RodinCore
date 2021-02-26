@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Systerel - refactored automatic file conversion
  *     Systerel - fix file not closed on erroneous XML
  *     Systerel - fix upgrade deadlock
+ *     CentraleSupelec - remove unnecessary @SuppressWarnings labels
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -616,7 +617,7 @@ public class Buffer {
 			final IFile file = owner.getResource();
 			final IWorkspaceRunnable action = new IWorkspaceRunnable() {
 				@Override
-				@SuppressWarnings("synthetic-access")
+				
 				public void run(IProgressMonitor monitor) throws CoreException {
 					file.setContents(stream, force, keepHistory, monitor);
 					stamp = file.getModificationStamp();

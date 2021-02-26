@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Systerel and others.
+ * Copyright (c) 2010, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     CentraleSupelec - The call newInstance() is replaced by getDeclaredConstructor().newInstance()
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -205,7 +206,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		try {
 			// create a new instance of the current class
 			final AbstractFieldPreferenceAndPropertyPage page = this.getClass()
-					.newInstance();
+					.getDeclaredConstructor().newInstance();
 			page.project = handled;
 			page.workspacePreferencePage = this;
 			page.setTitle(getTitle());
@@ -213,9 +214,11 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 			// and show it
 			page.setDescription(this.getDescription());
 			showPropertiesPage(prefPageId, page, page.project);
-		} catch (InstantiationException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
 	}

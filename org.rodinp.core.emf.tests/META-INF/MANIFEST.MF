@@ -12,6 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core.tests,
  org.rodinp.core,
  org.eclipse.core.resources
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.rodinp.core.emf.tests

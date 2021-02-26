@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Systerel and others.
+ * Copyright (c) 2008, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     INP Toulouse - use of generics for listeners
+ *     CentraleSupelec - remove unnecessary @SuppressWarnings labels
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
 
@@ -366,7 +367,6 @@ public class ModelController implements IElementChangedListener {
 		final ArrayList<IRodinElement> toRemove = processor.getToRemove();
 		final Runnable operation = new Runnable() {
 			@Override
-			@SuppressWarnings("synthetic-access")
 			public void run() {
 				cleanUpModel(toRemove);
 				// refresh the model

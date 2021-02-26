@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
+ *     CentraleSupelec - remove unnecessary @SuppressWarnings labels
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -26,7 +27,6 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  *
  */
-@SuppressWarnings("synthetic-access")
 public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	
 	private abstract class OptAttrTest<F extends IInternalElement> {

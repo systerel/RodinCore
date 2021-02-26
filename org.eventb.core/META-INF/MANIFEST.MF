@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core; singleton:=true
-Bundle-Version: 3.4.0.qualifier
+Bundle-Version: 3.5.0.qualifier
 Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -38,6 +38,6 @@ Export-Package: org.eventb.core,
  org.eventb.internal.core.tool.graph;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.state;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.upgrade;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-ExtensibleAPI: true
 Automatic-Module-Name: org.eventb.core

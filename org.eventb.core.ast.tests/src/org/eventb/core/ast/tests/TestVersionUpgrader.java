@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     CentraleSupelec - Add valueOf call to avoid warnings about deprecated method
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -366,7 +367,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	/* verify that special space characters do not interfere with the upgrade */
 	@Test 
 	public void testSpecialCharacters() throws Exception {
-		final char spec = new Character('\u2029');
+		final char spec = Character.valueOf('\u2029');
 
 		assertTrue(isEventBWhiteSpace(spec));
 
