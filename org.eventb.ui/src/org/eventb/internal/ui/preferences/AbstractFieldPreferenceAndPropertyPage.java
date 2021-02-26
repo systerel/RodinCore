@@ -14,8 +14,6 @@ package org.eventb.internal.ui.preferences;
 import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_enableProjectSpecifixSettings;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
@@ -216,15 +214,9 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 			// and show it
 			page.setDescription(this.getDescription());
 			showPropertiesPage(prefPageId, page, page.project);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			e.printStackTrace();
