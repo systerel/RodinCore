@@ -57,9 +57,16 @@ public class HistoryActionUpdater implements IOperationHistoryListener {
 		case OperationHistoryEvent.OPERATION_REMOVED:
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
-			updateUndoRedoActions();
-			updateHandlersEnablement();
+			// Lazy update is enough
+			RodinEditorUtils.asyncExec(() -> updateActionsAndHandlers());
 		}
+	}
+
+	// These updates may access UI elements and must thus be executed in the UI
+	// thread.
+	private void updateActionsAndHandlers() {
+		updateUndoRedoActions();
+		updateHandlersEnablement();
 	}
 
 	private void updateHandlersEnablement() {
