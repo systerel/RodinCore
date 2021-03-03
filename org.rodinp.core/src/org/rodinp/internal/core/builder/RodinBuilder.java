@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added builder performance trace
  *     Systerel - build only direct children of project
  *     Systerel - rework traces
+ *     CentraleSupélec - dependencies between projects
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -229,7 +230,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				System.out.println("##############################################");
 			}
 		}
-		return null;
+		return state.graph.getProjectDependencies(project);
 	}
 
 	/**
@@ -261,8 +262,12 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		assert resource instanceof IFile;
 		if (ignoredFiles.contains(resource.getName()))
 			return;
+		boolean nodeInProject = resource.getProject().equals(getProject());
 		Node node = state.graph.getNode(resource.getFullPath());
 		if(node == null) {
+			if (!nodeInProject) {
+				return;
+			}
 			if(DEBUG)
 				System.out.println(getClass().getName() + ": Node not in dependency graph " + resource.getName()); //$NON-NLS-1$
 			node = createNode(resource);
@@ -272,10 +277,21 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 				state.graph.builderSetPreferredNode(node);
 				node.setPhantom(false);
 			}
-			try {
-				state.graph.builderExtractNode(node, manager);
-			} catch (CoreException e) {
-				Util.log(e, "during extraction after change");
+
+			/**
+			 * If the resource is in the current project, run the extractor;
+			 * if it's a dependency from another project, do not touch it
+			 * but mark nodes that depend on it as dated so that they will
+			 * be rebuilt.
+			 */
+			if (nodeInProject) {
+				try {
+					state.graph.builderExtractNode(node, manager);
+				} catch (CoreException e) {
+					Util.log(e, "during extraction after change");
+				}
+			} else {
+				node.markSuccessorsDated(false);
 			}
 		} else if(DEBUG)
 			System.out.println(getClass().getName() + ": Cannot create node " + resource.getName()); //$NON-NLS-1$
@@ -355,7 +371,14 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	protected void incrementalBuild(IResourceDelta delta, ProgressManager manager) throws CoreException {
 
 		// the visitor does the work.
-		delta.accept(new RodinBuilderDeltaVisitor(manager));
+		var visitor = new RodinBuilderDeltaVisitor(manager);
+		delta.accept(visitor);
+		for (IProject depProject : state.graph.getProjectDependencies(getProject())) {
+			IResourceDelta depDelta = getDelta(depProject);
+			if (depDelta != null) {
+				depDelta.accept(visitor);
+			}
+		}
 		
 		manager.makeSlices(state.graph);
 		

@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -397,67 +396,6 @@ public class CBuilderTest extends AbstractBuilderTest {
 
 		runBuilderClean(project);
 		ToolTrace.assertTrace("CSC clean /P/x.csc");
-	}
-
-	/**
-	 * Ensures dependency is followed if target of dependency is created in
-	 * another project before source
-	 */
-	@Test
-	public void testDependenciesProjectsOneTwo() throws Exception {
-		IRodinProject otherProject = createRodinProject("P2");
-		try {
-			IRodinFile ctx = createRodinFile("P2/x.ctx");
-			createData(ctx, "one");
-			ctx.save(null, true);
-			runBuilder(otherProject,
-					"CSC extract /P2/x.ctx",
-					"CSC run /P2/x.csc");
-
-			IRodinFile cty = createRodinFile("P/y.ctx");
-			createDependency(cty, "P2/x");
-			createData(cty, "two");
-			cty.save(null, true);
-			runBuilder(project,
-					"CSC extract /P2/x.ctx",
-					"CSC run /P2/x.csc",
-					"CSC extract /P/y.ctx",
-					"CSC run /P/y.csc");
-		} finally {
-			otherProject.getProject().delete(true, true, null);
-		}
-	}
-
-	/**
-	 * Ensures dependency is followed if source of dependency is created before
-	 * target in another project
-	 *
-	 * It seems that currently the builder does not support dependencies between
-	 * files in different projects. It builds them in creation order, which
-	 * causes this test to fail.
-	 */
-	@Ignore
-	@Test
-	public void testDependenciesProjectsTwoOne() throws Exception {
-		IRodinProject otherProject = createRodinProject("P2");
-		try {
-			IRodinFile cty = createRodinFile("P/y.ctx");
-			createDependency(cty, "P2/x");
-			createData(cty, "two");
-			cty.save(null, true);
-			runBuilder(project);
-
-			IRodinFile ctx = createRodinFile("P2/x.ctx");
-			createData(ctx, "one");
-			ctx.save(null, true);
-			runBuilder(otherProject,
-					"CSC extract /P2/x.ctx",
-					"CSC run /P2/x.csc",
-					"CSC extract /P/y.ctx",
-					"CSC run /P/y.csc");
-		} finally {
-			otherProject.getProject().delete(true, true, null);
-		}
 	}
 
 }

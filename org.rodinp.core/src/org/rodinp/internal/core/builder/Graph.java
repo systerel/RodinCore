@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - on tool error, put marker on creator file instead of target
  *     Systerel - added builder performance trace
  *     Systerel - rework traces
+ *     CentraleSupélec - projects dependencies
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IFile;
@@ -647,6 +650,17 @@ public class Graph implements Serializable, Iterable<Node> {
 
 	private void trace(String msg) {
 		System.out.println(getClass().getName() + ": " + msg);
+	}
+
+	public IProject[] getProjectDependencies(IProject project) {
+		Set<IProject> deps = new HashSet<IProject>();
+		for (Node node : nodePreList) {
+			IProject nodeProject = node.getTarget().getFile().getProject();
+			if (!nodeProject.equals(project)) {
+				deps.add(nodeProject);
+			}
+		}
+		return deps.toArray(new IProject[deps.size()]);
 	}
 
 }
