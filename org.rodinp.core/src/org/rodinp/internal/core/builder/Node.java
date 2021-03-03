@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class Node implements Serializable, Comparable<Node> {
 
 	private File target; // name of the resource (full name in workspace!)
 	private File creator; // name of the resource whose extractor created this node
-	private LinkedList<Link> predessorLinks; // the predecessor list
+	private LinkedList<Link> predessorLinks; // the predecessor list; do not fix the typo: it breaks serialization
 	private String toolId; // toolId to be run to produce the resource of this node
 	private boolean dated; // true if the resource of this node needs to be (re-)created
 	private boolean phantom; // a node that was created by a dependency requirement
@@ -142,7 +142,7 @@ public class Node implements Serializable, Comparable<Node> {
 		return target.getName().compareTo(o.target.getName());
 	}
 
-	protected List<Link> getPredessorLinks() {
+	protected List<Link> getPredecessorLinks() {
 		return predessorLinks;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,7 @@ public class GraphModifier {
 		final HashSet<Node> targetSet = new HashSet<Node>(targets.size() * 4 / 3 + 1);
 		targetSet.addAll(targets);
 		for (Node target : targetSet) {
-			List<Link> targetLinkList = target.getPredessorLinks();
+			List<Link> targetLinkList = target.getPredecessorLinks();
 			for (Link arc : targetLinkList)
 				if (arc.id.equals(toolId) && !links.contains(arc)) {
 					return true;
