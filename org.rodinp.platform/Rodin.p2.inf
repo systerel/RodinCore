@@ -2,8 +2,8 @@ instructions.configure=\
   mkdir(path:${installFolder}/dropins);\
   addRepository(type:0,location:http${#58}//download.eclipse.org/releases/2020-12,name:Eclipse 2020-12);\
   addRepository(type:1,location:http${#58}//download.eclipse.org/releases/2020-12,name:Eclipse 2020-12);\
-  addRepository(type:0,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
-  addRepository(type:1,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:0,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:1,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
@@ -18,10 +18,6 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//dl.bintray.com/subclipse/releases/subclipse/latest,name:Subclipse);\
   addRepository(type:0,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:1,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
-  addRepository(type:0,location:http${#58}//www3.hhu.de/stups/handbook/rodin/updatesite/,name:Rodin Handbook);\
-  addRepository(type:1,location:http${#58}//www3.hhu.de/stups/handbook/rodin/updatesite/,name:Rodin Handbook);\
   addRepository(type:0,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);\
-  addRepository(type:1,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/modeling/tmf/xtext/updates/composite/releases,name:XText);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/modeling/tmf/xtext/updates/composite/releases,name:XText);
+  addRepository(type:1,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);
 # BEWARE ! THE PREVIOUS LINE MUST NOT END WITH A BACKSLASH
