@@ -19,7 +19,5 @@ instructions.configure=\
   addRepository(type:0,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:1,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:0,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);\
-  addRepository(type:1,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/modeling/tmf/xtext/updates/composite/releases,name:XText);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/modeling/tmf/xtext/updates/composite/releases,name:XText);
+  addRepository(type:1,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);
 # BEWARE ! THE PREVIOUS LINE MUST NOT END WITH A BACKSLASH
