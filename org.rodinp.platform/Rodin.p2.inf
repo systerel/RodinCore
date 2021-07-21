@@ -14,8 +14,6 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
   addRepository(type:0,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
-  addRepository(type:0,location:http${#58}//dl.bintray.com/subclipse/releases/subclipse/latest,name:Subclipse);\
-  addRepository(type:1,location:http${#58}//dl.bintray.com/subclipse/releases/subclipse/latest,name:Subclipse);\
   addRepository(type:0,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:1,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
   addRepository(type:0,location:http${#58}//eventb-soton.github.io/updateSite/releases,name:Soton Plug-ins);\
