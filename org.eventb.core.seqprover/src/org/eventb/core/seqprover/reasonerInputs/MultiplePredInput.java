@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.ITranslatableReasonerInput;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
-import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner.Input;
 
 /**
  * @since 1.0
@@ -94,7 +93,7 @@ public class MultiplePredInput implements IReasonerInput, ITranslatableReasonerI
 		for (int i = 0; i < predicates.length; i++) {
 			trPreds[i] = predicates[i].translate(factory);
 		}
-		return new Input(trPreds);
+		return new MultiplePredInput(trPreds);
 	}
 
 	/**
