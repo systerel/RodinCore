@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
@@ -671,7 +670,7 @@ public class AutoTactics {
 		}
 		
 		private static ITactic negEnum(Predicate shyp, Predicate hyp) {
-			return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
+			return BasicTactics.reasonerTac(new NegEnum(), new NegEnum.Input(
 					new Predicate[] { shyp, hyp }));
 		}
 	

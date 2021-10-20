@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Université de Lorraine - versioned reasoner without serialized input
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -26,27 +27,27 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInputReasoner;
+import org.eventb.core.seqprover.reasonerInputs.ForwardInfHypsReasoner;
 
 /**
  * 
  * @author htson, Farhad Mehta
- * 
- * TODO : make this an empty input reasoner, similar to AutoImpF
  *
  */
-public class NegEnum extends MultiplePredInputReasoner {
+public class NegEnum extends ForwardInfHypsReasoner implements IVersionedReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";
+
+	private static final int REASONER_VERSION = 0;
 
 	@Override
 	public String getReasonerID() {
@@ -54,14 +55,19 @@ public class NegEnum extends MultiplePredInputReasoner {
 	}
 
 	@Override
+	public int getVersion() {
+		return REASONER_VERSION;
+	}
+
+	@Override
 	@ProverRule( { "NEG_IN_L", "NEG_IN_R" })
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		if (!(input instanceof MultiplePredInput)) {
+		if (!(input instanceof Input)) {
 			return ProverFactory.reasonerFailure(this, input,
-					"Input is not a multiple predicate input");
+					"Input is not valid");
 		}
-		MultiplePredInput mInput = (MultiplePredInput) input;
+		Input mInput = (Input) input;
 		Predicate[] predicates = mInput.getPredicates();
 		if (predicates.length != 2) {
 			return ProverFactory.reasonerFailure(this, input,
@@ -69,9 +75,21 @@ public class NegEnum extends MultiplePredInputReasoner {
 		}
 		Predicate pred0 = predicates[0];
 		Predicate pred1 = predicates[1];
+		if (!seq.containsHypothesis(pred0)) {
+			return ProverFactory.reasonerFailure(this, input, "Input " + pred0 + " is not an hypothesis");
+		}
+		if (!seq.containsHypothesis(pred1)) {
+			return ProverFactory.reasonerFailure(this, input, "Input " + pred1 + " is not an hypothesis");
+		}
 		if (!Lib.isInclusion(pred0)) {
-			return ProverFactory.reasonerFailure(this, input, "Hypothesis "
-					+ pred0 + " is not an inclusion");
+			if (Lib.isInclusion(pred1)) {
+				// The two inputs may be in the "wrong" order; swap them
+				pred0 = predicates[1];
+				pred1 = predicates[0];
+			} else {
+				return ProverFactory.reasonerFailure(this, input, "Hypothesis "
+						+ pred0 + " is not an inclusion");
+			}
 		}
 		Expression right = ((RelationalPredicate) pred0).getRight();
 		if (!Lib.isSetExtension(right)) {

@@ -10,9 +10,9 @@ package org.eventb.core.seqprover.eventbExtensionTests;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
-import org.junit.Ignore;
+import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.junit.Test;
 
 /**
@@ -27,8 +27,8 @@ public class NegEnumTests extends AbstractReasonerTests {
 		return "org.eventb.core.seqprover.negEnum";
 	}
 
-	protected MultiplePredInput input(String in1, String in2) {
-		return new MultiplePredInput(new Predicate[] { genPred(in1), genPred(in2) });
+	protected IReasonerInput input(String in1, String in2) {
+		return new NegEnum.Input(new Predicate[] { genPred(in1), genPred(in2) });
 	}
 
 	@Test
@@ -52,19 +52,10 @@ public class NegEnumTests extends AbstractReasonerTests {
 		// Mismatched variable name
 		assertReasonerFailure("x∈{1,3} ;; ¬y=2 |- ⊥", input("x∈{1,3}", "¬y=2"),
 				"Negation enumeration is not applicable for hypotheses x∈{1,3} and ¬y=2");
-	}
-
-	@Ignore
-	public void dubious_cases() throws Exception {
-		/*
-		 * It seems that the reasoner should fail when given inputs that do not exist.
-		 * Instead, the reasoner itself succeeds, but generates a proof rule that is not
-		 * applicable. It is unclear whether this is the expected behavior or not.
-		 */
 		// First hypothesis missing
-		assertReasonerFailure("¬x=2 |- ⊥", input("x∈{1,2,3}", "¬x=2"), "An error message");
+		assertReasonerFailure("¬x=2 |- ⊥", input("x∈{1,2,3}", "¬x=2"), "Input x∈{1,2,3} is not an hypothesis");
 		// Second hypothesis missing
-		assertReasonerFailure("x∈{1,2,3} |- ⊥", input("x∈{1,2,3}", "¬x=2"), "An error message");
+		assertReasonerFailure("x∈{1,2,3} |- ⊥", input("x∈{1,2,3}", "¬x=2"), "Input ¬x=2 is not an hypothesis");
 	}
 
 }
