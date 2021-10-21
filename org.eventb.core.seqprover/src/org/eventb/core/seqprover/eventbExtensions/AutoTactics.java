@@ -636,7 +636,6 @@ public class AutoTactics {
 	 * 
 	 * @author htson, Farhad Mehta
 	 *
-	 * TODO : do search in reasoner instead of tactic
 	 */
 	public static class ShrinkEnumHypTac implements ITactic  {
 
