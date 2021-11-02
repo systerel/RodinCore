@@ -9,8 +9,12 @@
  *     Systerel - initial API and implementation
  *     University of Southampton - added support for predicate variables
  *     CentraleSupélec - substitution of type with expression
+ *     Université de Lorraine - substitution of extensions
  *******************************************************************************/
 package org.eventb.core.ast;
+
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 
 /**
  * Common protocol for describing a specialization, which groups together type
@@ -85,6 +89,7 @@ package org.eventb.core.ast;
  * 
  * @author Laurent Voisin
  * @author htson - added support for predicate variables.
+ * @author Guillaume Verdier - added substitution of extensions
  * 
  * @see FormulaFactory#makeSpecialization()
  * @see Type#specialize(ISpecialization)
@@ -222,6 +227,58 @@ public interface ISpecialization extends Cloneable {
 	Expression get(FreeIdentifier ident);
 
 	/**
+	 * Adds a new expression extension substitution to this specialization.
+	 *
+	 * The extensions must not be {@code null}, the destination extension has to be
+	 * in the specialization's factory, and the two extensions must have the same
+	 * arity.
+	 *
+	 * @param srcExt extended to substitute
+	 * @param dstExt extension that should replace the source extension
+	 * @throws IllegalArgumentException if the preconditions are not satisfied
+	 * @see #canPut(IExpressionExtension, IExpressionExtension)
+	 * @since 3.6
+	 */
+	void put(IExpressionExtension srcExt, IExpressionExtension dstExt);
+
+	/**
+	 * Returns the expression extension to be substituted for the given extension.
+	 *
+	 * @param srcExt extension to be substituted
+	 * @return the expression extension to be substituted for the given extension or
+	 *         {@code null} if no substitution has been defined for the given
+	 *         extension
+	 * @since 3.6
+	 */
+	IExpressionExtension get(IExpressionExtension srcExt);
+
+	/**
+	 * Adds a new predicate extension substitution to this specialization.
+	 *
+	 * The extensions must not be {@code null}, the destination extension has to be
+	 * in the specialization's factory, and the two extensions must have the same
+	 * arity.
+	 *
+	 * @param srcExt extended to substitute
+	 * @param dstExt extension that should replace the source extension
+	 * @throws IllegalArgumentException if the preconditions are not satisfied
+	 * @see #canPut(IPredicateExtension, IPredicateExtension)
+	 * @since 3.6
+	 */
+	void put(IPredicateExtension srcExt, IPredicateExtension dstExt);
+
+	/**
+	 * Returns the predicate extension to be substituted for the given extension.
+	 *
+	 * @param srcExt extension to be substituted
+	 * @return the predicate extension to be substituted for the given extension or
+	 *         {@code null} if no substitution has been defined for the given
+	 *         extension
+	 * @since 3.6
+	 */
+	IPredicateExtension get(IPredicateExtension srcExt);
+
+	/**
 	 * Checks whether the proposed type substitution is compatible with already
 	 * registered substitutions (for given types, free identifiers, and
 	 * predicate variables), i.e., if the precondition for
@@ -289,6 +346,40 @@ public interface ISpecialization extends Cloneable {
 	 * @since 3.3
 	 */
 	boolean canPut(FreeIdentifier ident, Expression value);
+
+	/**
+	 * Checks whether the proposed expression extension substitution can be added to
+	 * this specialization, i.e., if the precondition of
+	 * {@link #put(IExpressionExtension, IExpressionExtension)} is satisfied.
+	 *
+	 * Note that even if this returns true, it does not guarantee that the
+	 * specialization will always succeed: some incompatibilities can't be detected
+	 * before doing the specialization (for example if the types of the children of
+	 * an extended expression made with the source extension are rejected by the
+	 * destination extension).
+	 *
+	 * This method does <em>not</em> modify the specialization instance.
+	 *
+	 * @param srcExt extended to substitute
+	 * @param dstExt extension that should replace the source extension
+	 * @return {@code true} if the substitution can be added to the specialization
+	 * @since 3.6
+	 */
+	boolean canPut(IExpressionExtension srcExt, IExpressionExtension dstExt);
+
+	/**
+	 * Checks whether the proposed predicate extension substitution can be added to
+	 * this specialization, i.e., if the precondition of
+	 * {@link #put(IPredicateExtension, IPredicateExtension)} is satisfied.
+	 *
+	 * This method does <em>not</em> modify the specialization instance.
+	 *
+	 * @param srcExt extended to substitute
+	 * @param dstExt extension that should replace the source extension
+	 * @return {@code true} if the substitution can be added to the specialization
+	 * @since 3.6
+	 */
+	boolean canPut(IPredicateExtension srcExt, IPredicateExtension dstExt);
 
 	/**
 	 * Adds a new predicate variable substitution to this specialization. All
@@ -362,5 +453,21 @@ public interface ISpecialization extends Cloneable {
 	 * @since 3.3
 	 */
 	PredicateVariable[] getPredicateVariables();
+
+	/**
+	 * Returns the set of expression extensions to be substituted.
+	 *
+	 * @return the set of expression extensions to be substituted
+	 * @since 3.6
+	 */
+	IExpressionExtension[] getExpressionExtensions();
+
+	/**
+	 * Returns the set of predicate extensions to be substituted.
+	 *
+	 * @return the set of predicate extensions to be substituted
+	 * @since 3.6
+	 */
+	IPredicateExtension[] getPredicateExtensions();
 
 }

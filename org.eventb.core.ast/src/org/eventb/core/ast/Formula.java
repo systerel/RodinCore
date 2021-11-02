@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2021 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2399,7 +2399,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             if the given specialization is not compatible with this
 	 *             formula, that is the specialization contains a substitution
 	 *             for an identifier with the same name as an identifier in this
-	 *             formula, but with a different type
+	 *             formula, but with a different type, or a substitution for an
+	 *             extension with incompatible children types
 	 * 
 	 * @since 2.6
 	 */

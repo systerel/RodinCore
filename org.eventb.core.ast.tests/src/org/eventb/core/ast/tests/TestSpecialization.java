@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southampton - added tests related to predicate variables
+ *     Université de Lorraine - tests for extension specialization
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -46,6 +47,7 @@ import org.junit.Test;
  * 
  * @author Laurent Voisin
  * @author htson - added tests related to predicate variables
+ * @author Guillaume Verdier - tests for extension specialization
  */
 public class TestSpecialization extends AbstractTests {
 
@@ -1392,6 +1394,48 @@ public class TestSpecialization extends AbstractTests {
 				"b=T; a=S");
 	}
 
+	/**
+	 * Ensures that a null destination expression extension is rejected.
+	 */
+	@Test
+	public void testNullDstExprExt() {
+		try {
+			spec.put(null, EXT_LIST);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that a null new expression extension is rejected.
+	 */
+	@Test
+	public void testNullSrcExprExt() {
+		try {
+			spec.put(EXT_LIST, null);
+			fail("Shall have raised an exception");
+		} catch (NullPointerException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
+	/**
+	 * Ensures that an extension can't be specialized with an extension that has a different arity.
+	 */
+	@Test
+	public void testExprExtArity() {
+		try {
+			spec.put(ExtensionHelper.DIRECT_PRODUCT, ExtensionHelper.getGenericOperatorExtension());
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+		assertEmptySpecialization();
+	}
+
 	@SafeVarargs
 	private final <T extends Object> void assertSet(T[] actuals, T...expected) {
 		final Set<T> exp = new HashSet<T>(Arrays.asList(expected));
@@ -1404,6 +1448,8 @@ public class TestSpecialization extends AbstractTests {
 		assertSet(spec.getTypes());
 		assertSet(spec.getFreeIdentifiers());
 		assertSet(spec.getPredicateVariables());
+		assertSet(spec.getExpressionExtensions());
+		assertSet(spec.getPredicateExtensions());
 	}
 
 	// Verifies that the specialization contains the expected substitutions

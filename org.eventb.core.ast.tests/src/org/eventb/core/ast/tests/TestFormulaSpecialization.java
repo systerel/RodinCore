@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Systerel and others.
+ * Copyright (c) 2012, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,15 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southampton - added tests for predicate variables
+ *     Université de Lorraine - tests for extension specialization
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.ExtensionHelper.DIFFERENT;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIFFERENT_PREFIX;
 import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT_FALSE_WD;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT_PREFIX;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
@@ -64,6 +69,7 @@ import org.junit.Test;
  * @author Thomas Muller
  * @author Laurent Voisin
  * @author htson - Added tests for specializing predicate variables
+ * @author Guillaume Verdier - tests for extension specialization
  */
 public class TestFormulaSpecialization extends AbstractTests {
 
@@ -692,29 +698,98 @@ public class TestFormulaSpecialization extends AbstractTests {
 		SpecializationChecker.verify(spe, "", "$P := b=0", "b=ℤ");
 	}
 
+	/**
+	 * Tests that an extended expression can be specialized with the same extension.
+	 */
+	@Test
+	public void testSpecializeExprExtWithItself() {
+		final FormulaFactory extFac = FormulaFactory.getInstance(DIRECT_PRODUCT);
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); T=ℙ(T); A=ℙ(S×T); B=ℙ(S×T)", extFac);
+		assertExpressionSpecialization(teb, "A§B", "@DirectProduct := @DirectProduct", "A§B",
+				extFac.withExtensions(OTHER_EXTNS));
+	}
+
+	/**
+	 * Tests that an extended expression can be specialized with an extension that
+	 * has a different WD.
+	 */
+	@Test
+	public void testSpecializeExprExtDifferentWD() {
+		final FormulaFactory extFac = FormulaFactory.getInstance(DIRECT_PRODUCT);
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); T=ℙ(T); A=ℙ(S×T); B=ℙ(S×T)", extFac);
+		assertExpressionSpecialization(teb, "A§B", "@DirectProduct := @DirectProductFalseWD", "A§B",
+				FormulaFactory.getInstance(DIRECT_PRODUCT_FALSE_WD));
+	}
+
+	/**
+	 * Tests that an extended infix expression can be specialized with the same
+	 * extension, but prefixed.
+	 */
+	@Test
+	public void testSpecializeExprExtInfixPrefix() {
+		final FormulaFactory extFac = FormulaFactory.getInstance(DIRECT_PRODUCT);
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); T=ℙ(T); A=ℙ(S×T); B=ℙ(S×T)", extFac);
+		assertExpressionSpecialization(teb, "A§B", "@DirectProduct := @DirectProductPrefix", "§(A,B)",
+				FormulaFactory.getInstance(DIRECT_PRODUCT_PREFIX));
+	}
+
+	/**
+	 * Tests that an extended predicate can be specialized with the same extension.
+	 */
+	@Test
+	public void testSpecializePredExtWithItself() {
+		final FormulaFactory extFac = FormulaFactory.getInstance(DIFFERENT);
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); x=S; y=S", extFac);
+		assertPredicateSpecialization(teb, "x<>y", "@Different := @Different", "x<>y",
+				extFac.withExtensions(OTHER_EXTNS));
+	}
+
+	/**
+	 * Tests that an extended infix predicate can be specialized with the same
+	 * extension, but prefixed.
+	 */
+	@Test
+	public void testSpecializePredExtInfixPrefix() {
+		final FormulaFactory extFac = FormulaFactory.getInstance(DIFFERENT);
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); x=S; y=S", extFac);
+		assertPredicateSpecialization(teb, "x<>y", "@Different := @DifferentPrefix", "<>(x, y)",
+				FormulaFactory.getInstance(DIFFERENT_PREFIX));
+	}
+
 	private static void assertExpressionSpecialization(ITypeEnvironment typenv,
-			String srcImage, String specImage, String expectedImage) {
+			String srcImage, String specImage, String expectedImage, FormulaFactory dstFac) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Expression src = parseExpression(srcImage, fac);
 		final ITypeEnvironmentBuilder typenvb = typeCheck(src, typenv);
-		final FormulaFactory dstFac = fac.withExtensions(OTHER_EXTNS);
 		final ISpecialization spec = mSpecialization(typenvb, specImage, dstFac);
 		final Expression expected = parseExpression(expectedImage, dstFac);
 		typeCheck(expected, typenvb.specialize(spec));
 		assertSpecialization(typenvb, src, spec, expected);
 	}
 
+	private static void assertExpressionSpecialization(ITypeEnvironment typenv,
+			String srcImage, String specImage, String expectedImage) {
+		FormulaFactory dstFac = typenv.getFormulaFactory().withExtensions(OTHER_EXTNS);
+		assertExpressionSpecialization(typenv, srcImage, specImage, expectedImage, dstFac);
+	}
+
 	private static void assertPredicateSpecialization(
 			ITypeEnvironment baseTypenv, String srcImage, String specImage,
-			String expectedImage) {
+			String expectedImage, FormulaFactory dstFac) {
 		final FormulaFactory fac = baseTypenv.getFormulaFactory();
 		final Predicate src = parsePredicate(srcImage, fac);
 		final ITypeEnvironment typenv = typeCheck(src, baseTypenv);
-		final FormulaFactory dstFac = fac.withExtensions(OTHER_EXTNS);
 		final ISpecialization spec = mSpecialization(typenv, specImage, dstFac);
 		final Predicate expected = parsePredicate(expectedImage, dstFac);
 		typeCheck(expected, typenv.specialize(spec));
 		assertSpecialization(typenv, src, spec, expected);
+	}
+
+	private static void assertPredicateSpecialization(
+			ITypeEnvironment baseTypenv, String srcImage, String specImage,
+			String expectedImage) {
+		FormulaFactory dstFac = baseTypenv.getFormulaFactory().withExtensions(OTHER_EXTNS);
+		assertPredicateSpecialization(baseTypenv, srcImage, specImage, expectedImage, dstFac);
 	}
 
 	private static <T extends Formula<T>> void assertSpecialization(

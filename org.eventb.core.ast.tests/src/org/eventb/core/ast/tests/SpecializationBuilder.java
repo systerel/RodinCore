@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Systerel and others.
+ * Copyright (c) 2012, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southampton - added support for predicate variables.
+ *     Université de Lorraine - extension specialization
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -28,6 +29,8 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.GivenTypeHelper;
 
 /**
@@ -106,6 +109,16 @@ public class SpecializationBuilder extends AbstractSpecializationHelper {
 					+ tcResult.getProblems());
 		}
 		result.put(src, dst);
+	}
+
+	@Override
+	protected void addExpressionExtension(IExpressionExtension srcExt, IExpressionExtension dstExt) {
+		result.put(srcExt, dstExt);
+	}
+
+	@Override
+	protected void addPredicateExtension(IPredicateExtension srcExt, IPredicateExtension dstExt) {
+		result.put(srcExt, dstExt);
 	}
 
 }

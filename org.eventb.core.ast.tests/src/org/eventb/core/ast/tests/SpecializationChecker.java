@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Université de Lorraine - extension specialization
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -36,6 +37,8 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Specialization;
 
 /**
@@ -71,6 +74,8 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 	final Map<GivenType, Type> typeMap;
 	final Map<FreeIdentifier, Expression> identMap;
 	final Map<PredicateVariable, Predicate> predMap;
+	final Map<IExpressionExtension, IExpressionExtension> exprExtMap;
+	final Map<IPredicateExtension, IPredicateExtension> predExtMap;
 
 	private SpecializationChecker(FormulaFactory srcFac, String srcTypenvImage,
 			FormulaFactory dstFac, String dstTypenvImage) {
@@ -79,6 +84,8 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		typeMap = new HashMap<GivenType, Type>();
 		identMap = new HashMap<FreeIdentifier, Expression>();
 		predMap = new HashMap<PredicateVariable, Predicate>();
+		exprExtMap = new HashMap<IExpressionExtension, IExpressionExtension>();
+		predExtMap = new HashMap<IPredicateExtension, IPredicateExtension>();
 	}
 
 	@Override
@@ -120,6 +127,16 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		}
 	}
 
+	@Override
+	protected void addExpressionExtension(IExpressionExtension srcExt, IExpressionExtension dstExt) {
+		exprExtMap.put(srcExt, dstExt);
+	}
+
+	@Override
+	protected void addPredicateExtension(IPredicateExtension srcExt, IPredicateExtension dstExt) {
+		predExtMap.put(srcExt, dstExt);
+	}
+
 	private void addTypeSubstitution(GivenType src, Type dst, Expression dstexpr) {
 		typeMap.put(src, dst);
 		identMap.put(src.toExpression(), dstexpr);
@@ -140,6 +157,8 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 		verifyTypeSubstitutions(spe);
 		verifyIdentSubstitutions(spe);
 		verifyPredSubstitutions(spe);
+		verifyExpressionExtensionSubstitutions(spe);
+		verifyPredicateExtensionSubstitutions(spe);
 	}
 
 	private void verifySourceTypenv(Specialization spe) {
@@ -198,6 +217,20 @@ public class SpecializationChecker extends AbstractSpecializationHelper {
 			assertEquals(expected, spe.get(key));
 			assertEquals(expected, key.specialize(spe));
 			assertTrue(spe.put(key, expected));
+		}
+	}
+
+	private void verifyExpressionExtensionSubstitutions(ISpecialization spe) {
+		assertSet(exprExtMap, spe.getExpressionExtensions());
+		for (Entry<IExpressionExtension, IExpressionExtension> entry : exprExtMap.entrySet()) {
+			assertEquals(entry.getValue(), spe.get(entry.getKey()));
+		}
+	}
+
+	private void verifyPredicateExtensionSubstitutions(ISpecialization spe) {
+		assertSet(predExtMap, spe.getPredicateExtensions());
+		for (Entry<IPredicateExtension, IPredicateExtension> entry : predExtMap.entrySet()) {
+			assertEquals(entry.getValue(), spe.get(entry.getKey()));
 		}
 	}
 

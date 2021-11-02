@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Systerel and others.
+ * Copyright (c) 2012, 2021 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,8 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 
 /**
  * Default implementation of a type-checking rewriter that does not perform any
@@ -201,24 +203,31 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	@Override
 	public Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		return rewrite(src, changed, src.getExtension(), newChildExprs, newChildPreds);
+	}
+
+	protected Expression rewrite(ExtendedExpression src, boolean changed, IExpressionExtension dstExt,
+			Expression[] newChildExprs, Predicate[] newChildPreds) {
 		final Type srcType = src.getType();
 		final Type trgType = typeRewriter.rewrite(srcType);
-		if (trgType == srcType && !changed && ff == src.getFactory()) {
+		if (trgType == srcType && !changed && ff == src.getFactory() && dstExt.equals(src.getExtension())) {
 			return src;
 		}
-		return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
-				newChildPreds, src.getSourceLocation(),
-				trgType);
+		return ff.makeExtendedExpression(dstExt, newChildExprs, newChildPreds, src.getSourceLocation(), trgType);
 	}
 
 	@Override
 	public Predicate rewrite(ExtendedPredicate src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed && ff == src.getFactory()) {
+		return rewrite(src, changed, src.getExtension(), newChildExprs, newChildPreds);
+	}
+
+	protected Predicate rewrite(ExtendedPredicate src, boolean changed, IPredicateExtension dstExt,
+			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		if (!changed && ff == src.getFactory() && dstExt.equals(src.getExtension())) {
 			return src;
 		}
-		return ff.makeExtendedPredicate(src.getExtension(), newChildExprs,
-				newChildPreds, src.getSourceLocation());
+		return ff.makeExtendedPredicate(dstExt, newChildExprs, newChildPreds, src.getSourceLocation());
 	}
 
 	@Override
