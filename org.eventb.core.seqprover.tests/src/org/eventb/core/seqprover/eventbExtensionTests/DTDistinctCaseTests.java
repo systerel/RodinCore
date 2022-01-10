@@ -37,6 +37,13 @@ public class DTDistinctCaseTests extends AbstractManualInferenceTests {
 	protected String resultP3_2 = "{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}" +
 			"[][][l1=ind2(p_ind2_0, p_ind2_1)] |- ∀ l⦂Induc(ℤ) · l=l1";
 
+	protected String P4 = "⊥";
+	protected String P4Hyp = "l1∈SD";
+	protected String resultP4_0 = "{l1=SD}[][][l1∈SD;;l1=cons0] |- ⊥";
+	protected String resultP4_1 = "{l1=SD; p_destr1=ℤ}[][][l1∈SD;;l1=cons1(p_destr1)] |- ⊥";
+	protected String resultP4_2 = "{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}" +
+		"[][][l1∈SD;;l1=cons2(p_destr2_0, p_destr2_1)] |- ⊥";
+
 	public DTDistinctCaseTests() {
 		super(DT_FAC);
 	}
@@ -64,6 +71,7 @@ public class DTDistinctCaseTests extends AbstractManualInferenceTests {
 		return new SuccessfulTest[] {
 				new SuccessfulTest(" |- " + P1, null, "1.1", resultP1_0, resultP1_1, resultP1_2),
 				new SuccessfulTest(" |- " + P3, null, "1.1", resultP3_0, resultP3_1, resultP3_2),
+				new SuccessfulTest(P4Hyp + " |- " + P4, P4Hyp, "0", resultP4_0, resultP4_1, resultP4_2),
 		};
 	}
 
