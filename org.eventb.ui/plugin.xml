@@ -2118,7 +2118,7 @@
             priority="5"
             skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
-            target="goal"
+            target="any"
             tooltip="%proofTactic.dtDistinctCase.tooltip">
       </tactic>
       <tactic
