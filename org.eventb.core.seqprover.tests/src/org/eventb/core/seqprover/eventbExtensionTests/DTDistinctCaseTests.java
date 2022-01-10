@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,19 +22,19 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
  */
 public class DTDistinctCaseTests extends AbstractManualInferenceTests {
 
-	private static final String P1 = "∀ l⦂SD · l=l1";
-	private static final String resultP1_0 = "{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1";
-	private static final String resultP1_1 = "{l1=SD; p_destr1=ℤ}[][][l1=cons1(p_destr1)] |- ∀ l⦂SD · l=l1";
-	private static final String resultP1_2 = "{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}" +
+	protected String P1 = "∀ l⦂SD · l=l1";
+	protected String resultP1_0 = "{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1";
+	protected String resultP1_1 = "{l1=SD; p_destr1=ℤ}[][][l1=cons1(p_destr1)] |- ∀ l⦂SD · l=l1";
+	protected String resultP1_2 = "{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}" +
 			"[][][l1=cons2(p_destr2_0, p_destr2_1)] |- ∀ l⦂SD · l=l1";
-	
-	private static final String P2 = "∀ l ⦂ SD · destr1(l) = 0";
-		
-	private static final String P3 = "∀ l⦂Induc(ℤ) · l=l1";
-	private static final String resultP3_0 = "{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1";
-	private static final String resultP3_1 = "{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}" +
+
+	protected String P2 = "∀ l ⦂ SD · destr1(l) = 0";
+
+	protected String P3 = "∀ l⦂Induc(ℤ) · l=l1";
+	protected String resultP3_0 = "{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1";
+	protected String resultP3_1 = "{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}" +
 			"[][][l1=ind1(p_ind1_0)] |- ∀ l⦂Induc(ℤ) · l=l1";
-	private static final String resultP3_2 = "{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}" +
+	protected String resultP3_2 = "{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}" +
 			"[][][l1=ind2(p_ind2_0, p_ind2_1)] |- ∀ l⦂Induc(ℤ) · l=l1";
 
 	public DTDistinctCaseTests() {
