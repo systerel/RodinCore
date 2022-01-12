@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Université de Lorraine - additional hypotheses for set membership
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static java.util.Collections.singleton;
-
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ParametricType;
@@ -43,9 +45,16 @@ public class DTDistinctCase extends DTReasoner {
 	@Override
 	protected Set<Predicate> makeNewHyps(FreeIdentifier ident,
 			IExpressionExtension constr, ParametricType type,
-			FreeIdentifier[] params, Predicate goal, FormulaFactory ff) {
-		return singleton(makeIdentEqualsConstr(ident, constr, type,
-				params, ff));
+			FreeIdentifier[] params, Expression[] paramSets, Predicate goal, FormulaFactory ff) {
+		final Set<Predicate> newHyps = new LinkedHashSet<Predicate>();
+		if (paramSets != null) {
+			assert params.length == paramSets.length;
+			for (int i = 0; i < params.length; ++i) {
+				newHyps.add(ff.makeRelationalPredicate(Formula.IN, params[i], paramSets[i], null));
+			}
+		}
+		newHyps.add(makeIdentEqualsConstr(ident, constr, type, params, ff));
+		return newHyps;
 	}
 
 }
