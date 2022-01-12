@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,11 +75,10 @@ public abstract class DTReasoner extends AbstractManualInference {
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition position) {
-		if (pred != null) {
-			return null;
+		if (pred == null) {
+			pred = seq.goal();
 		}
-		final Predicate goal = seq.goal();
-		final Formula<?> subFormula = goal.getSubFormula(position);
+		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Formula.FREE_IDENT) {
 			return null;
 		}
