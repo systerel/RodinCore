@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1174,6 +1174,29 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedPredicate_WrongNumberOfPredicates() {
 		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(EFFP), null);
+	}
+
+	@Test
+	public void extendedPredicate_InvalidType() {
+		var pred = EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT),
+				mList(EFFP, EFFP), null);
+		assertFalse(pred.isTypeChecked());
+	}
+
+	@Test
+	public void extendedPredicateBound_InvalidType() {
+		var eb0 = EFF.makeBoundIdentifier(0, null, POW(EFFtS));
+		var pred = EFF.makeExtendedPredicate(fooS, mList(eb0, EFFeT),
+				mList(EFFP, EFFP), null);
+		assertFalse(pred.isTypeChecked());
+	}
+
+	@Test
+	public void extendedPredicateBound_TypeChecked() {
+		var eb0 = EFF.makeBoundIdentifier(0, null, POW(EFFtT));
+		var pred = EFF.makeExtendedPredicate(fooS, mList(eb0, EFFeT),
+				mList(EFFP, EFFP), null);
+		assertTrue(pred.isTypeChecked());
 	}
 
 	@Test

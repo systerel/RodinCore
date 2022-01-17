@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,7 +200,20 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				return;
 			}
 		}
-		typeChecked = true;
+
+		final FormulaFactory ff = getFactory();
+		BoundIdentDecl[] boundDecls;
+		if (boundIdents.length > 0) {
+			boundDecls = new BoundIdentDecl[boundIdents.length];
+			for (int i = 0; i < boundIdents.length; i++) {
+				boundDecls[i] = new BoundIdentDecl("b" + i, null, boundIdents[i].getType(), ff);
+			}
+		} else {
+			boundDecls = NO_BOUND_IDENT_DECL;
+		}
+		TypeCheckResult tcRes = new TypeCheckResult(ff.makeTypeEnvironment().makeSnapshot());
+		typeCheck(tcRes, boundDecls);
+		typeChecked = !tcRes.hasProblem();
 	}
 
 	@Override

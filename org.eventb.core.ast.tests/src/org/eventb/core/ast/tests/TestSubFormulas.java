@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -506,6 +506,8 @@ public class TestSubFormulas{
 	private static FreeIdentifier eid_x = mFreeIdentifier("x", eINT, ff_extns);
 	private static FreeIdentifier eid_X = mFreeIdentifier("X", eINT, ff_extns);
 	private static FreeIdentifier eid_y = mFreeIdentifier("y", eINT, ff_extns);
+	private static FreeIdentifier eid_S = mFreeIdentifier("S", ff_extns.makePowerSetType(eINT), ff_extns);
+	private static FreeIdentifier eid_T = mFreeIdentifier("T", ff_extns.makePowerSetType(eINT), ff_extns);
 
 	private static Expression b0 = mBoundIdentifier(0, INT);
 	private static Expression b1 = mBoundIdentifier(1, INT);
@@ -1033,8 +1035,8 @@ public class TestSubFormulas{
 				mUnaryPredicate(NOT, btrue)
 		);
 		checkRootPosition(
-				mExtendedPredicate(eid_x),
-				mExtendedPredicate(eid_y));
+				mExtendedPredicate(eid_S),
+				mExtendedPredicate(eid_T));
 		checkRootPosition(
 				mExtendedExpression(eid_x, eid_y),
 				mExtendedExpression(eid_y, eid_x));
