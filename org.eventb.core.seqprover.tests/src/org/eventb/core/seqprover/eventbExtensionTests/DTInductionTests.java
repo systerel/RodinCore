@@ -17,16 +17,12 @@ package org.eventb.core.seqprover.eventbExtensionTests;
  */
 public class DTInductionTests extends DTDistinctCaseTests {
 
-	public DTInductionTests() {
-		/*
-		 * In one test case, the induction tactic adds more hypotheses than the distinct
-		 * case tactic, so we update the expected sequents. In all other cases, they
-		 * produce the same results.
-		 */
-		resultP3_1 = "{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}" +
-				"[][][l1=ind1(p_ind1_0) ;; ∀ l⦂Induc(ℤ) · l=p_ind1_0] |- ∀ l⦂Induc(ℤ) · l=l1";
-		resultP3_2 = "{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}" +
-				"[][][l1=ind2(p_ind2_0, p_ind2_1) ;; ∀ l⦂Induc(ℤ) · l=p_ind2_0 ;; ∀ l⦂Induc(ℤ) · l=p_ind2_1] |- ∀ l⦂Induc(ℤ) · l=l1";
+	protected void successSpecific() throws Exception {
+		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1", input("1.1"),
+				"{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1",
+				"{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l1=ind1(p_ind1_0) ;; ∀ l⦂Induc(ℤ) · l=p_ind1_0] |- ∀ l⦂Induc(ℤ) · l=l1",
+				"{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l1=ind2(p_ind2_0, p_ind2_1) ;; "
+						+ "∀ l⦂Induc(ℤ) · l=p_ind2_0 ;; ∀ l⦂Induc(ℤ) · l=p_ind2_1]|- ∀ l⦂Induc(ℤ) · l=l1");
 	}
 	
 	@Override
