@@ -343,12 +343,17 @@ public class UIUtils {
 		}
 		try {
 			IEditorInput fileInput = new FileEditorInput(psFile.getResource());
-			final ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
+			final IEditorPart part = EventBUIPlugin.getActivePage()
 					.openEditor(fileInput, ProverUI.EDITOR_ID, activateEditor);
-			if (editor == null) {
+			if (part == null) {
 				MessageDialog.openError(null, null, Messages.uiUtils_errorOpeningProvingEditor);
 				return;
 			}
+			if (!(part instanceof ProverUI)) {
+				MessageDialog.openError(null, null, Messages.uiUtils_errorBPSAlreadyOpen);
+				return;
+			}
+			final ProverUI editor = (ProverUI) part;
 			if (obj instanceof IPSStatus)
 				UIUtils.runWithProgressDialog(editor.getSite().getShell(),
 						new IRunnableWithProgress() {
