@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -254,4 +254,13 @@ public interface IEventBSharedImages {
 	public static final String IMG_ACTION_PATH = "icons/full/obj16/act_obj.gif";
 	
 	public static final String IMG_SH_PROVER_PATH = "icons/full/ctool16/sh_prover.gif";
+
+	/** @since 3.6 */
+	public static final String IMG_NEXT_PENDING_PATH = "icons/full/ctool16/next_pd.gif";
+
+	/** @since 3.6 */
+	public static final String IMG_NEXT_REVIEW_PATH = "icons/full/ctool16/next_rv.gif";
+
+	/** @since 3.6 */
+	public static final String IMG_INFO_PROVER_PATH = "icons/full/ctool16/info_prover.gif";
 }

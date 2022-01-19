@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,19 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Université de Lorraine - add next pending, next review and info actions
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
+import static org.eclipse.jface.dialogs.MessageDialog.openError;
 import static org.eclipse.jface.window.Window.CANCEL;
 import static org.eclipse.ui.ISharedImages.IMG_OBJ_ELEMENT;
 import static org.eclipse.ui.ISharedImages.IMG_TOOL_BACK;
 import static org.eclipse.ui.ISharedImages.IMG_TOOL_FORWARD;
+import static org.eventb.internal.ui.EventBImage.getImageDescriptor;
+import static org.eventb.ui.IEventBSharedImages.IMG_INFO_PROVER_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_NEXT_PENDING_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_NEXT_REVIEW_PATH;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,6 +38,10 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.tactics.Info;
+import org.eventb.internal.ui.prover.tactics.NextPending;
+import org.eventb.internal.ui.prover.tactics.NextReview;
+import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -99,10 +109,72 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		}
 	}
 
+	/**
+	 * Action wrapper around {@link IProofCommand}.
+	 *
+	 * The action is enabled/disabled based on the proof command's
+	 * {@code isApplicable()} and it runs the proof command's {@code apply()}. It is
+	 * possible to force the {@code apply()} to run in the UI thread if needed.
+	 *
+	 * This only works with implementations of {@link IProofCommand} that accept
+	 * {@code null} parameters for their hypothesis predicate and inputs.
+	 */
+	private static final class ProofCommandAction extends Action {
+		private final IProofCommand command;
+
+		private final ProofTreeUIPage proofTreeUI;
+
+		private boolean forceInUIThread;
+
+		public ProofCommandAction(IProofCommand command, ProofTreeUIPage proofTreeUI, boolean forceInUIThread) {
+			this.command = command;
+			this.proofTreeUI = proofTreeUI;
+			this.forceInUIThread = forceInUIThread;
+			updateEnabledState();
+		}
+
+		@Override
+		public void run() {
+			final IUserSupport us = proofTreeUI.getUserSupport();
+			final Shell shell = proofTreeUI.getControl().getShell();
+			UIUtils.runWithProgressDialog(shell, new IRunnableWithProgress() {
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					if (forceInUIThread) {
+						shell.getDisplay().syncExec(() -> {
+							try {
+								command.apply(us, null, null, monitor);
+							} catch (RodinDBException e) {
+								// We can't throw the exception through syncExec, so we just display it
+								openError(shell, "Error", e.getLocalizedMessage());
+							}
+						});
+					} else {
+						try {
+							command.apply(us, null, null, monitor);
+						} catch (RodinDBException e) {
+							throw new InvocationTargetException(e);
+						}
+					}
+				}
+			});
+		}
+
+		public void updateEnabledState() {
+			setEnabled(command.isApplicable(proofTreeUI.getUserSupport(), null, null));
+		}
+	}
+
 	// Different actions.
 	protected Action prevPOAction;
 
 	protected Action nextPOAction;
+
+	protected ProofCommandAction infoAction;
+
+	protected ProofCommandAction nextPendingAction;
+
+	protected ProofCommandAction nextReviewAction;
 
 	protected Action filterAction;
 
@@ -132,6 +204,21 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 		prevPOAction.setText("Previous PO");
 		prevPOAction.setToolTipText("Previous Proof Obligation");
 		prevPOAction.setImageDescriptor(getSharedImageDesc(IMG_TOOL_BACK));
+
+		infoAction = new ProofCommandAction(new Info(), proofTreeUI, true);
+		infoAction.setText("Proof Information");
+		infoAction.setToolTipText("Show information related to this proof obligation");
+		infoAction.setImageDescriptor(getImageDescriptor(IMG_INFO_PROVER_PATH));
+
+		nextPendingAction = new ProofCommandAction(new NextPending(), proofTreeUI, false);
+		nextPendingAction.setText("Next Pending Subgoal");
+		nextPendingAction.setToolTipText("Select the next pending subgoal");
+		nextPendingAction.setImageDescriptor(getImageDescriptor(IMG_NEXT_PENDING_PATH));
+
+		nextReviewAction = new ProofCommandAction(new NextReview(), proofTreeUI, false);
+		nextReviewAction.setText("Next Review Subgoal");
+		nextReviewAction.setToolTipText("Select the next review subgoal");
+		nextReviewAction.setImageDescriptor(getImageDescriptor(IMG_NEXT_REVIEW_PATH));
 	}
 
 	private static ImageDescriptor getSharedImageDesc(String symbolicName) {
@@ -153,6 +240,15 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			super.fillContextMenu(menu);
 		}
+	}
+
+	/**
+	 * Update actions to enable/disable them if something changed.
+	 */
+	public void updateEnabledState() {
+		infoAction.updateEnabledState();
+		nextPendingAction.updateEnabledState();
+		nextReviewAction.updateEnabledState();
 	}
 
 }

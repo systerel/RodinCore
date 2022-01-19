@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,6 +261,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				control.setRedraw(true);
 			}
 		}
+		if (groupActionSet != null) {
+			groupActionSet.updateEnabledState();
+		}
 	}
 
 	@Override
@@ -310,6 +313,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		manager.add(new Separator());
 		manager.add(groupActionSet.nextPOAction);
 		manager.add(groupActionSet.prevPOAction);
+		manager.add(groupActionSet.infoAction);
+		manager.add(groupActionSet.nextPendingAction);
+		manager.add(groupActionSet.nextReviewAction);
 	}
 
 	/**
