@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2021 Systerel and others.
+ * Copyright (c) 2012, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.junit.Test;
 
 /**
@@ -224,7 +224,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testExtendedPredicate() {
-		final IPredicateExtension alphaExt = getAlphaExtension();
+		final IPredicateExtension2 alphaExt = getAlphaExtension();
 		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
 		ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); a=S", extFac);
 		te = teb.makeSnapshot();

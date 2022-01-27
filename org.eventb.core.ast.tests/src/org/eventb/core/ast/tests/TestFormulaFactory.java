@@ -64,12 +64,12 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension;
+import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension2;
 import org.junit.Test;
 
 /**
@@ -121,7 +121,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 */
 	@Test
 	public void getTagForUnknownExtension() {
-		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		final IPredicateExtension2 dummy = new PredicateExtension2("dummy", false);
 		final int actual = FormulaFactory.getTag(dummy);
 		assertEquals(Formula.NO_TAG, actual);
 	}
@@ -172,7 +172,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 */
 	@Test
 	public void hasExtensionForUnknownExtension() {
-		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		final IPredicateExtension2 dummy = new PredicateExtension2("dummy", false);
 		assertFalse(ff.hasExtension(dummy));
 	}
 
@@ -1342,7 +1342,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * factory.
 	 */
 	private static final class UnknownExtension implements
-			IExpressionExtension, IPredicateExtension {
+			IExpressionExtension, IPredicateExtension2 {
 
 		public UnknownExtension() {
 			// Do nothing
@@ -1391,6 +1391,11 @@ public class TestFormulaFactory extends AbstractTests {
 
 		@Override
 		public void addPriorities(IPriorityMediator mediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
 			throw new AssertionError("Must never be called");
 		}
 

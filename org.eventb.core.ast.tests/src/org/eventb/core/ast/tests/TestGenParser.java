@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -2345,7 +2345,7 @@ public class TestGenParser extends AbstractTests {
 						" (expected to find an assignment operator)"));
 	}
 
-	private static class DummyExtn implements IPredicateExtension {
+	private static class DummyExtn implements IPredicateExtension2 {
 
 		private String symbol;
 		private String id;
@@ -2405,6 +2405,11 @@ public class TestGenParser extends AbstractTests {
 		public void typeCheck(ExtendedPredicate predicate,
 				ITypeCheckMediator tcMediator) {
 			// nothing
+		}
+
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return true;
 		}
 		
 	}

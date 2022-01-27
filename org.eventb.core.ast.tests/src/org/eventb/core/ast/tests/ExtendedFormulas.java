@@ -268,7 +268,7 @@ public class ExtendedFormulas {
 	 * Example: <code>fooS(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
-	public static final IPredicateExtension fooS = new PredicateExtension(
+	public static final IPredicateExtension2 fooS = new PredicateExtension2(
 			"fooS", true);
 
 	/**
@@ -277,7 +277,7 @@ public class ExtendedFormulas {
 	 * Example: <code>fooL(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
-	public static final IPredicateExtension fooL = new PredicateExtension(
+	public static final IPredicateExtension2 fooL = new PredicateExtension2(
 			"fooL", false);
 
 	/**
