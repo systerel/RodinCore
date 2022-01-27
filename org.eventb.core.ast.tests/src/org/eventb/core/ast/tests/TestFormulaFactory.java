@@ -33,6 +33,7 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
+import static org.eventb.core.ast.tests.ExtendedFormulas.old_fooS;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
@@ -1207,6 +1208,25 @@ public class TestFormulaFactory extends AbstractTests {
 				EFF.makeExtendedPredicate(fooS, exprs, preds, null), exprs);
 		assertArrayProtected(
 				EFF.makeExtendedPredicate(fooS, exprs, preds, null), preds);
+	}
+
+	// Same test as above, but using the obsolescent IPredicateExtension class.
+	@Test
+	public void extendedPredicate_InvalidType_old() {
+		var pred = EFF.makeExtendedPredicate(old_fooS, mList(EFFeS, EFFeT),
+				mList(EFFP, EFFP), null);
+		assertFalse(pred.isTypeChecked());
+	}
+
+	// Same test as above, but using the obsolescent IPredicateExtension class.
+	@Test
+	public void extendedPredicate_ArrayParameter_old() {
+		final Expression[] exprs = { EFFeS, EFFeT };
+		final Predicate[] preds = { EFFP, EFFP };
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(old_fooS, exprs, preds, null), exprs);
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(old_fooS, exprs, preds, null), preds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

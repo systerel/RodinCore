@@ -30,6 +30,7 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
@@ -154,9 +155,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	/**
 	 * Must never be called directly: use the factory method instead.
 	 * 
-	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension,
+	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension2,
 	 *      Expression[], Predicate[], SourceLocation)
-	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension,
+	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension2,
 	 *      java.util.Collection, java.util.Collection, SourceLocation)
 	 */
 	protected ExtendedPredicate(int tag, Expression[] expressions,
@@ -211,9 +212,14 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		} else {
 			boundDecls = NO_BOUND_IDENT_DECL;
 		}
-		TypeCheckResult tcRes = new TypeCheckResult(ff.makeTypeEnvironment().makeSnapshot());
-		typeCheck(tcRes, boundDecls);
-		typeChecked = !tcRes.hasProblem();
+
+		if (extension instanceof IPredicateExtension2) {
+			typeChecked = ((IPredicateExtension2) extension).verifyType(childExpressions, childPredicates);
+		} else {
+			TypeCheckResult tcRes = new TypeCheckResult(ff.makeTypeEnvironment().makeSnapshot());
+			typeCheck(tcRes, boundDecls);
+			typeChecked = !tcRes.hasProblem();
+		}
 	}
 
 	@Override

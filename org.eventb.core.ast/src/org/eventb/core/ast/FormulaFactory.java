@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.datatype.DatatypeBuilder;
@@ -622,11 +623,71 @@ public class FormulaFactory {
 	 *             verified
 	 * @throws IllegalArgumentException
 	 *             if some given child has been built with a different factory
+	 * @since 3.6
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
+	 */
+	public ExtendedPredicate makeExtendedPredicate(
+			IPredicateExtension2 extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
+		final int tag = getCheckedExtensionTag(extension);
+		return new ExtendedPredicate(tag, expressions.clone(),
+				predicates.clone(), location, this, extension);
+	}
+
+	/**
+	 * Returns a new extended predicate.
+	 * 
+	 * @param extension
+	 *            the predicate extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
+	 * @throws IllegalArgumentException
+	 *             if some given child has been built with a different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Collection<Expression> expressions,
+			Collection<Predicate> predicates, SourceLocation location) {
+		final int tag = getCheckedExtensionTag(extension);
+		return new ExtendedPredicate(tag, toExprArray(expressions),
+				toPredArray(predicates), location, this, extension);
+	}
+
+	/**
+	 * Returns a new extended predicate.
+	 * 
+	 * @param extension
+	 *            the predicate extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
+	 * @throws IllegalArgumentException
+	 *             if some given child has been built with a different factory
+	 * @since 3.6
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
+	 */
+	public ExtendedPredicate makeExtendedPredicate(
+			IPredicateExtension2 extension, Collection<Expression> expressions,
 			Collection<Predicate> predicates, SourceLocation location) {
 		final int tag = getCheckedExtensionTag(extension);
 		return new ExtendedPredicate(tag, toExprArray(expressions),

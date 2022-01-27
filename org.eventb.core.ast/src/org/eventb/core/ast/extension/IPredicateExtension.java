@@ -14,6 +14,8 @@ import org.eventb.core.ast.ExtendedPredicate;
 
 /**
  * Common protocol for predicate extensions.
+ * 
+ * Please use {@link IPredicateExtension2} instead which is more efficient.
  *
  * @author "Nicolas Beauger"
  * @since 2.0
