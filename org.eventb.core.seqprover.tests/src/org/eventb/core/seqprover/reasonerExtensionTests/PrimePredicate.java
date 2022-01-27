@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,12 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -32,7 +33,7 @@ import org.eventb.core.ast.extension.IWDMediator;
  * 
  * @author Laurent Voisin
  */
-class PrimePredicate implements IPredicateExtension {
+class PrimePredicate implements IPredicateExtension2 {
 
 	public static PrimePredicate getInstance() {
 		return new PrimePredicate();
@@ -96,6 +97,11 @@ class PrimePredicate implements IPredicateExtension {
 			ITypeCheckMediator tcMediator) {
 		final Expression child = predicate.getChildExpressions()[0];
 		tcMediator.sameType(child.getType(), tcMediator.makeIntegerType());
+	}
+
+	@Override
+	public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+		return childExprs[0].getType() instanceof IntegerType;
 	}
 
 }
