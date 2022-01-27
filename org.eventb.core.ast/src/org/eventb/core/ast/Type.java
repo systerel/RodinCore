@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 ETH Zurich and others.
+ * Copyright (c) 2005, 2017 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,8 +300,7 @@ public abstract class Type {
 	 *             if the given specialization is not compatible with this type,
 	 *             that is the specialization contains a substitution for an
 	 *             identifier with the same name as a given type in this type,
-	 *             but with a different type, or a substitution for an extension
-	 *             with incompatible children types
+	 *             but with a different type
 	 * @since 2.6
 	 */
 	public final Type specialize(ISpecialization specialization) {

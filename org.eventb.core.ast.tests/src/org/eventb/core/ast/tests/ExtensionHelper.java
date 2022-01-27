@@ -31,7 +31,6 @@ import java.math.BigInteger;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
@@ -43,7 +42,6 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
@@ -244,7 +242,7 @@ public class ExtensionHelper {
 		return new GenericOperatorExtension();
 	}
 
-	public static class DirectProduct implements IExpressionExtension {
+	public static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
 		@Override
 		public Predicate getWDPredicate(IExtendedFormula formula,
@@ -360,42 +358,7 @@ public class ExtensionHelper {
 			return null;
 		}
 
-		@Override
-		public String toString() {
-			return "@DirectProduct";
-		}
-
-	}
-
-	public static class DirectProductWithFalseWD extends DirectProduct {
-		@Override
-		public Predicate getWDPredicate(IExtendedFormula formula,
-				IWDMediator wdMediator) {
-			return wdMediator.getFormulaFactory().makeLiteralPredicate(Formula.BFALSE, null);
-		}
-
-		@Override
-		public String toString() {
-			return "@DirectProductFalseWD";
-		}
-	}
-
-	public static class DirectProductPrefix extends DirectProduct {
-		@Override
-		public IExtensionKind getKind() {
-			return PARENTHESIZED_BINARY_EXPRESSION;
-		}
-
-		@Override
-		public String toString() {
-			return "@DirectProductPrefix";
-		}
-	}
-
-	public static final IExpressionExtension DIRECT_PRODUCT = new DirectProduct();
-	public static final IExpressionExtension DIRECT_PRODUCT_FALSE_WD = new DirectProductWithFalseWD();
-	public static final IExpressionExtension DIRECT_PRODUCT_PREFIX = new DirectProductPrefix();
-
+	};
 	public static final IExpressionExtension EMAX = new IExpressionExtension() {
 		private static final String SYNTAX_SYMBOL = "emax";
 		private static final String OPERATOR_ID = "Extension Maximum";
@@ -650,7 +613,7 @@ public class ExtensionHelper {
 	public static final IExpressionExtension MONEY = new Money(true);
 
 	
-	public static class DifferentExtension implements IPredicateExtension2 {
+	public static final IPredicateExtension2 DIFFERENT = new IPredicateExtension2() {
 
 		@Override
 		public IExtensionKind getKind() {
@@ -710,26 +673,6 @@ public class ExtensionHelper {
 			// none
 		}
 
-		@Override
-		public String toString() {
-			return "@Different";
-		}
-
-	}
-
-	public static class DifferentExtensionPrefix extends DifferentExtension {
-		@Override
-		public IExtensionKind getKind() {
-			return makePrefixKind(PREDICATE, TWO_EXPRS);
-		}
-
-		@Override
-		public String toString() {
-			return "@DifferentPrefix";
-		}
-	}
-
-	public static final IPredicateExtension DIFFERENT = new DifferentExtension();
-	public static final IPredicateExtension DIFFERENT_PREFIX = new DifferentExtensionPrefix();
+	};
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2021 Systerel and others.
+ * Copyright (c) 2012, 2017 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     University of Southampton - added support for predicate variables.
- *     Université de Lorraine - added support for extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -22,9 +21,6 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
 
 /**
  * Common implementation for building and verifying specialization instances.
@@ -32,8 +28,6 @@ import org.eventb.core.ast.extension.IPredicateExtension;
  * @author Laurent Voisin
  */
 public abstract class AbstractSpecializationHelper {
-
-	public static final String EXTENSION_PREFIX = "@";
 
 	private static final Pattern LIST_SPLITTER = compile("\\s*\\|\\|\\s*");
 	private static final Pattern PAIR_SPLITTER = compile("\\s*:=\\s*");
@@ -65,11 +59,6 @@ public abstract class AbstractSpecializationHelper {
 				addTypeSpecialization(srcImage, dstImage);
 			} else if (isPredicateVariable(srcImage)) {
 				addPredicateSpecialization(srcImage, dstImage);
-			} else if (isExtension(srcImage)) {
-				if (!isExtension(dstImage)) {
-					throw new IllegalArgumentException("Can only specialize an extension with an extension");
-				}
-				addExtension(srcImage, dstImage);
 			} else {
 				addIdentSpecialization(srcImage, dstImage);
 			}
@@ -102,19 +91,6 @@ public abstract class AbstractSpecializationHelper {
 		return srcImage.startsWith(PredicateVariable.LEADING_SYMBOL);
 	}
 
-	private boolean isExtension(String srcImage) {
-		return srcImage.startsWith(EXTENSION_PREFIX);
-	}
-
-	protected IFormulaExtension findExtension(FormulaFactory fac, String image) {
-		for (IFormulaExtension ext : fac.getExtensions()) {
-			if (ext.toString().equals(image)) {
-				return ext;
-			}
-		}
-		return null;
-	}
-
 	public void addTypeSpecializations(String list) {
 		final String[] pairImages = splitList(list);
 		for (final String pairImage : pairImages) {
@@ -131,38 +107,6 @@ public abstract class AbstractSpecializationHelper {
 
 	protected abstract void addIdentSpecialization(String srcImage,
 			String dstImage);
-
-	protected abstract void addExpressionExtension(IExpressionExtension srcExt, IExpressionExtension dstExt);
-
-	protected abstract void addPredicateExtension(IPredicateExtension srcExt, IPredicateExtension dstExt);
-
-	protected void addExtension(String srcImage, String dstImage) {
-		IFormulaExtension srcExt = findExtension(srcFac, srcImage);
-		if (srcExt == null) {
-			throw new IllegalArgumentException("Source extension " + srcImage + " not found");
-		}
-		IFormulaExtension dstExt = findExtension(dstFac, dstImage);
-		if (dstExt == null) {
-			throw new IllegalArgumentException("Destination extension " + dstImage + " not found");
-		}
-		if (srcExt instanceof IExpressionExtension) {
-			if (dstExt instanceof IExpressionExtension) {
-				addExpressionExtension((IExpressionExtension) srcExt, (IExpressionExtension) dstExt);
-			} else {
-				throw new IllegalArgumentException(
-						"Expression extension can only be specialized by an expression extension");
-			}
-		} else if (srcExt instanceof IPredicateExtension) {
-			if (dstExt instanceof IPredicateExtension) {
-				addPredicateExtension((IPredicateExtension) srcExt, (IPredicateExtension) dstExt);
-			} else {
-				throw new IllegalArgumentException(
-						"Predicate extension can only be specialized by a predicate extension");
-			}
-		} else {
-			throw new IllegalStateException("Found an extension that is neither an expression nor a predicate");
-		}
-	}
 
 	private static String[] splitList(String list) {
 		final String trimmed = list.trim();

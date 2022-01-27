@@ -9,7 +9,6 @@
  *     Systerel - initial API and implementation
  *     University of Southamtpon - added support for predicate varialbes.
  *     CentraleSupélec - substitution of type with expression
- *     Université de Lorraine - substitution of extensions
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -21,8 +20,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -34,10 +31,6 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
@@ -49,7 +42,6 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * 
  * @author Laurent Voisin
  * @author htson - added support for predicate variables.
- * @author Guillaume Verdier - added substitution of extensions
  */
 public class Specialization implements ISpecialization {
 
@@ -136,18 +128,10 @@ public class Specialization implements ISpecialization {
 		// Predicate variable substitutions
 		private final Map<PredicateVariable, Substitute<Predicate>> predSubst;
 
-		// Expression extension substitution
-		private final Map<IExpressionExtension, IExpressionExtension> exprExtSubst;
-
-		// Predicate extension substitution
-		private final Map<IPredicateExtension, IPredicateExtension> predExtSubst;
-
 		public SpecializationFormulaRewriter(SpecializationTypeRewriter typeRewriter) {
 			super(typeRewriter);
 			identSubst = new HashMap<FreeIdentifier, Substitute<Expression>>();
 			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>();
-			exprExtSubst = new HashMap<IExpressionExtension, IExpressionExtension>();
-			predExtSubst = new HashMap<IPredicateExtension, IPredicateExtension>();
 		}
 
 		public SpecializationFormulaRewriter(
@@ -158,8 +142,6 @@ public class Specialization implements ISpecialization {
 					other.identSubst);
 			predSubst = new HashMap<PredicateVariable, Substitute<Predicate>>(
 					other.predSubst);
-			exprExtSubst = new HashMap<IExpressionExtension, IExpressionExtension>(other.exprExtSubst);
-			predExtSubst = new HashMap<IPredicateExtension, IPredicateExtension>(other.predExtSubst);
 		}
 
 		public Expression get(FreeIdentifier ident) {
@@ -170,14 +152,6 @@ public class Specialization implements ISpecialization {
 		public Predicate get(PredicateVariable predVar) {
 			final Substitute<Predicate> subst = predSubst.get(predVar);
 			return subst == null ? null : subst.getSubstitute(predVar, 0);
-		}
-
-		public IExpressionExtension get(IExpressionExtension srcExt) {
-			return exprExtSubst.get(srcExt);
-		}
-
-		public IPredicateExtension get(IPredicateExtension srcExt) {
-			return predExtSubst.get(srcExt);
 		}
 
 		public Expression getWithDefault(FreeIdentifier ident) {
@@ -212,16 +186,6 @@ public class Specialization implements ISpecialization {
 			return keySet.toArray(new PredicateVariable[keySet.size()]);
 		}
 
-		public IExpressionExtension[] getExpressionExtensions() {
-			final Set<IExpressionExtension> keySet = exprExtSubst.keySet();
-			return keySet.toArray(new IExpressionExtension[keySet.size()]);
-		}
-
-		public IPredicateExtension[] getPredicateExtensions() {
-			final Set<IPredicateExtension> keySet = predExtSubst.keySet();
-			return keySet.toArray(new IPredicateExtension[keySet.size()]);
-		}
-
 		public void put(FreeIdentifier ident, Expression value) {
 			final Substitute<Expression> subst = makeSubstitute(value);
 			final Substitute<Expression> oldSubst = identSubst.put(ident,
@@ -245,24 +209,6 @@ public class Specialization implements ISpecialization {
 			return true;
 		}
 
-		public void put(IExpressionExtension srcExt, IExpressionExtension dstExt) {
-			IExpressionExtension previousValue = exprExtSubst.put(srcExt, dstExt);
-			if (previousValue != null && !previousValue.equals(dstExt)) {
-				exprExtSubst.put(srcExt, previousValue);
-				throw new IllegalArgumentException(
-						"Expression extension substitution for " + srcExt.getId() + " already registered");
-			}
-		}
-
-		public void put(IPredicateExtension srcExt, IPredicateExtension dstExt) {
-			IPredicateExtension previousValue = predExtSubst.put(srcExt, dstExt);
-			if (previousValue != null && !previousValue.equals(dstExt)) {
-				predExtSubst.put(srcExt, previousValue);
-				throw new IllegalArgumentException(
-						"Predicate extension substitution for " + srcExt.getId() + " already registered");
-			}
-		}
-
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
 			final Expression newIdent = getWithDefault(identifier);
@@ -279,22 +225,6 @@ public class Specialization implements ISpecialization {
 				return super.rewrite(predVar);
 			}
 			return newPred;
-		}
-
-		@Override
-		public Expression rewrite(ExtendedExpression src, boolean changed, Expression[] newChildExprs,
-				Predicate[] newChildPreds) {
-			IExpressionExtension srcExt = src.getExtension();
-			IExpressionExtension dstExt = exprExtSubst.getOrDefault(srcExt, srcExt);
-			return rewrite(src, changed, dstExt, newChildExprs, newChildPreds);
-		}
-
-		@Override
-		public Predicate rewrite(ExtendedPredicate src, boolean changed, Expression[] newChildExprs,
-				Predicate[] newChildPreds) {
-			IPredicateExtension srcExt = src.getExtension();
-			IPredicateExtension dstExt = predExtSubst.getOrDefault(srcExt, srcExt);
-			return rewrite(src, changed, dstExt, newChildExprs, newChildPreds);
 		}
 
 		// For debugging purpose
@@ -766,74 +696,6 @@ public class Specialization implements ISpecialization {
 	@Override
 	public PredicateVariable[] getPredicateVariables() {
 		return formRewriter.getPredicateVariables();
-	}
-
-	@Override
-	public boolean canPut(IExpressionExtension oldExt, IExpressionExtension newExt) {
-		return canPutInternal(oldExt, newExt) == null;
-	}
-
-	/*
-	 * Common implementation of canPut for both expression and predicate extensions.
-	 */
-	private String canPutInternal(IFormulaExtension srcExt, IFormulaExtension dstExt) {
-		if (srcExt == null)
-			throw new NullPointerException("Source extension is null");
-		if (dstExt == null)
-			throw new NullPointerException("Destination extension is null");
-		int tag = FormulaFactory.getTag(dstExt);
-		if (tag == Formula.NO_TAG)
-			return "Destination extension unknown";
-		if (ff.getExtension(tag) == null)
-			return "Destination extension not in destination factory";
-		final IOperatorProperties oldProps = srcExt.getKind().getProperties();
-		final IOperatorProperties newProps = dstExt.getKind().getProperties();
-		if (!oldProps.getChildTypes().getExprArity().equals(newProps.getChildTypes().getExprArity()))
-			return "Incompatible arities";
-		return null;
-	}
-
-	@Override
-	public void put(IExpressionExtension srcExt, IExpressionExtension dstExt) {
-		final String errorMessage = canPutInternal(srcExt, dstExt);
-		if (errorMessage != null) {
-			throw new IllegalArgumentException(errorMessage);
-		}
-		formRewriter.put(srcExt, dstExt);
-	}
-
-	@Override
-	public IExpressionExtension get(IExpressionExtension srcExt) {
-		return formRewriter.get(srcExt);
-	}
-
-	@Override
-	public IExpressionExtension[] getExpressionExtensions() {
-		return formRewriter.getExpressionExtensions();
-	}
-
-	@Override
-	public boolean canPut(IPredicateExtension oldExt, IPredicateExtension newExt) {
-		return canPutInternal(oldExt, newExt) == null;
-	}
-
-	@Override
-	public void put(IPredicateExtension srcExt, IPredicateExtension dstExt) {
-		final String errorMessage = canPutInternal(srcExt, dstExt);
-		if (errorMessage != null) {
-			throw new IllegalArgumentException(errorMessage);
-		}
-		formRewriter.put(srcExt, dstExt);
-	}
-
-	@Override
-	public IPredicateExtension get(IPredicateExtension srcExt) {
-		return formRewriter.get(srcExt);
-	}
-
-	@Override
-	public IPredicateExtension[] getPredicateExtensions() {
-		return formRewriter.getPredicateExtensions();
 	}
 
 }
