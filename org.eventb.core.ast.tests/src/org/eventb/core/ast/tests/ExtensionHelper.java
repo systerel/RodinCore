@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2021 Systerel and others.
+ * Copyright (c) 2012, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeDistribution;
@@ -143,7 +144,7 @@ public class ExtensionHelper {
 	 * </p>
 	 */
 	public static class AlphaPredicateExtension extends BasicFormulaExtension
-			implements IPredicateExtension {
+			implements IPredicateExtension2 {
 
 		private static ITypeDistribution CHILD_SIGNATURE = makeChildTypes(
 				PREDICATE, EXPRESSION);
@@ -172,6 +173,11 @@ public class ExtensionHelper {
 			typeCheckChildExprs(predicate.getChildExpressions(), tcMediator);
 		}
 
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return true;
+		}
+
 	}
 
 	/**
@@ -181,7 +187,7 @@ public class ExtensionHelper {
 	 * This operator can be used to build predicates of the form "α(a ∈ A, a)".
 	 * </p>
 	 */
-	public static IPredicateExtension getAlphaExtension() {
+	public static IPredicateExtension2 getAlphaExtension() {
 		return new AlphaPredicateExtension();
 	}
 
@@ -475,7 +481,7 @@ public class ExtensionHelper {
 		}
 
 	};
-	public static final IPredicateExtension EXT_PRIME = new IPredicateExtension() {
+	public static final IPredicateExtension2 EXT_PRIME = new IPredicateExtension2() {
 		private static final String SYMBOL = "prime";
 		private static final String ID = "Ext Prime";
 
@@ -525,6 +531,11 @@ public class ExtensionHelper {
 		}
 
 		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return childExprs[0].getType().getBaseType() instanceof IntegerType;
+		}
+
+		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
 		}
@@ -533,6 +544,7 @@ public class ExtensionHelper {
 		public Object getOrigin() {
 			return null;
 		}
+
 	};
 
 	public static class Money implements IExpressionExtension {
@@ -638,7 +650,7 @@ public class ExtensionHelper {
 	public static final IExpressionExtension MONEY = new Money(true);
 
 	
-	public static class DifferentExtension implements IPredicateExtension {
+	public static class DifferentExtension implements IPredicateExtension2 {
 
 		@Override
 		public IExtensionKind getKind() {
@@ -651,6 +663,11 @@ public class ExtensionHelper {
 			final Type alpha = tcMediator.newTypeVariable();
 			tcMediator.sameType(alpha, childExprs[0].getType());
 			tcMediator.sameType(alpha, childExprs[1].getType());
+		}
+
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return childExprs[0].getType().equals(childExprs[1].getType());
 		}
 
 		@Override

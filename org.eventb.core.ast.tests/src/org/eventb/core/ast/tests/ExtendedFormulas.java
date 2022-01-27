@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeDistribution;
@@ -174,7 +175,24 @@ public class ExtendedFormulas {
 				ITypeCheckMediator tcMediator) {
 			typeCheckChildExprs(predicate.getChildExpressions(), tcMediator);
 		}
+	}
 
+	public static class PredicateExtension2 extends PredicateExtension implements
+			IPredicateExtension2 {
+
+		public PredicateExtension2(String symbol, boolean wdStrict) {
+			super(symbol, wdStrict);
+		}
+
+		public PredicateExtension2(String symbol, boolean wdStrict, IExtensionKind kind) {
+			super(symbol, wdStrict, kind);
+		}
+
+		// All children must bear the same type.
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return childExprs[0].getType().equals(childExprs[1].getType());
+		}
 	}
 
 	/**
@@ -239,12 +257,18 @@ public class ExtendedFormulas {
 	}
 	
 	/**
+	 * Old version of fooS with obsolescent interface.
+	 */
+	public static final IPredicateExtension old_fooS = new PredicateExtension(
+			"old_fooS", true);
+
+	/**
 	 * WD strict predicate extension with four children.
 	 * <p>
 	 * Example: <code>fooS(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
-	public static final IPredicateExtension fooS = new PredicateExtension(
+	public static final IPredicateExtension2 fooS = new PredicateExtension2(
 			"fooS", true);
 
 	/**
@@ -253,7 +277,7 @@ public class ExtendedFormulas {
 	 * Example: <code>fooL(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
-	public static final IPredicateExtension fooL = new PredicateExtension(
+	public static final IPredicateExtension2 fooL = new PredicateExtension2(
 			"fooL", false);
 
 	/**
@@ -280,7 +304,7 @@ public class ExtendedFormulas {
 	/**
 	 * Formula factory with the extensions described above.
 	 */
-	public static final FormulaFactory EFF = getInstance(fooS, fooL, barS,
+	public static final FormulaFactory EFF = getInstance(old_fooS, fooS, fooL, barS,
 			barL, asso);
 
 }

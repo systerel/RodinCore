@@ -33,6 +33,7 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
+import static org.eventb.core.ast.tests.ExtendedFormulas.old_fooS;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
@@ -63,12 +64,12 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension;
+import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension2;
 import org.junit.Test;
 
 /**
@@ -120,7 +121,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 */
 	@Test
 	public void getTagForUnknownExtension() {
-		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		final IPredicateExtension2 dummy = new PredicateExtension2("dummy", false);
 		final int actual = FormulaFactory.getTag(dummy);
 		assertEquals(Formula.NO_TAG, actual);
 	}
@@ -171,7 +172,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 */
 	@Test
 	public void hasExtensionForUnknownExtension() {
-		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		final IPredicateExtension2 dummy = new PredicateExtension2("dummy", false);
 		assertFalse(ff.hasExtension(dummy));
 	}
 
@@ -1209,6 +1210,25 @@ public class TestFormulaFactory extends AbstractTests {
 				EFF.makeExtendedPredicate(fooS, exprs, preds, null), preds);
 	}
 
+	// Same test as above, but using the obsolescent IPredicateExtension class.
+	@Test
+	public void extendedPredicate_InvalidType_old() {
+		var pred = EFF.makeExtendedPredicate(old_fooS, mList(EFFeS, EFFeT),
+				mList(EFFP, EFFP), null);
+		assertFalse(pred.isTypeChecked());
+	}
+
+	// Same test as above, but using the obsolescent IPredicateExtension class.
+	@Test
+	public void extendedPredicate_ArrayParameter_old() {
+		final Expression[] exprs = { EFFeS, EFFeT };
+		final Predicate[] preds = { EFFP, EFFP };
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(old_fooS, exprs, preds, null), exprs);
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(old_fooS, exprs, preds, null), preds);
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_Unknown() {
 		ff.makeExtendedExpression(new UnknownExtension(), NO_EXPRS, NO_PREDS,
@@ -1322,7 +1342,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * factory.
 	 */
 	private static final class UnknownExtension implements
-			IExpressionExtension, IPredicateExtension {
+			IExpressionExtension, IPredicateExtension2 {
 
 		public UnknownExtension() {
 			// Do nothing
@@ -1371,6 +1391,11 @@ public class TestFormulaFactory extends AbstractTests {
 
 		@Override
 		public void addPriorities(IPriorityMediator mediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
 			throw new AssertionError("Must never be called");
 		}
 

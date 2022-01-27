@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 Systerel and others.
+ * Copyright (c) 2014, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPredicateExtension2;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -127,7 +127,7 @@ public class Extensions {
 	}
 
 	private static class And extends AbstractExtension implements
-			IPredicateExtension {
+			IPredicateExtension2 {
 
 		public And() {
 			super("∧∧");
@@ -145,10 +145,15 @@ public class Extensions {
 			// nothing to do
 		}
 
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return true;
+		}
+
 	}
 
 	private static class Belongs extends AbstractExtension implements
-			IPredicateExtension {
+			IPredicateExtension2 {
 
 		public Belongs() {
 			super("belongs");
@@ -168,6 +173,11 @@ public class Extensions {
 			final Type powType = tcMediator.makePowerSetType(alpha);
 			tcMediator.sameType(alpha, childExprs[0].getType());
 			tcMediator.sameType(powType, childExprs[1].getType());
+		}
+
+		@Override
+		public boolean verifyType(Expression[] childExprs, Predicate[] childPreds) {
+			return childExprs[1].getType().getBaseType().equals(childExprs[0].getType());
 		}
 
 	}
