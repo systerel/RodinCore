@@ -15,4 +15,21 @@
 
   <packaging>eclipse-feature</packaging>  
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>feature-source</id>
+            <goals>
+              <goal>feature-source</goal>
+            </goals>
+          </execution>
+         </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
