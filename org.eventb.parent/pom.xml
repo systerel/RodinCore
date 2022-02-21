@@ -127,6 +127,12 @@
 				<version>${tycho-version}</version>
 				<executions>
 					<execution>
+						<id>default-p2-metadata-default</id>
+						<configuration>
+							<attachP2Metadata>false</attachP2Metadata>
+						</configuration>
+					</execution>
+					<execution>
 						<id>attach-p2-metadata</id>
 						<phase>package</phase>
 						<goals>
