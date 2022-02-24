@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,7 @@ import org.rodinp.core.IRodinProject;
  * 
  * <pre>
  *    IRodinProject rodinProject = ...;
- *    IEventBProject evbProject =
- *            (IEventBProject) rodinProject.getAdapter(IEventBProject.class);
+ *    IEventBProject evbProject = rodinProject.getAdapter(IEventBProject.class);
  * </pre>
  * 
  * </p>
@@ -110,7 +109,7 @@ public interface IEventBProject extends IAdaptable {
 	 * 
 	 * @param componentName
 	 *            name of the component (i.e, without any extension)
-	 * @return a handle to the unchecked version of the context
+	 * @return a handle to the statically checked version of the context
 	 */
 	IRodinFile getSCContextFile(String componentName);
 
@@ -123,7 +122,7 @@ public interface IEventBProject extends IAdaptable {
 	 * 
 	 * @param componentName
 	 *            name of the component (i.e, without any extension)
-	 * @return a handle to the root of the unchecked version of the context
+	 * @return a handle to the root of the statically checked version of the context
 	 */
 	ISCContextRoot getSCContextRoot(String componentName);
 
@@ -136,7 +135,7 @@ public interface IEventBProject extends IAdaptable {
 	 * 
 	 * @param componentName
 	 *            name of the component (i.e, without any extension)
-	 * @return a handle to the unchecked version of the machine
+	 * @return a handle to the statically checked version of the machine
 	 */
 	IRodinFile getSCMachineFile(String componentName);
 
@@ -149,7 +148,7 @@ public interface IEventBProject extends IAdaptable {
 	 * 
 	 * @param componentName
 	 *            name of the component (i.e, without any extension)
-	 * @return a handle to the root of the unchecked version of the machine
+	 * @return a handle to the root of the statically checked version of the machine
 	 */
 	ISCMachineRoot getSCMachineRoot(String componentName);
 
