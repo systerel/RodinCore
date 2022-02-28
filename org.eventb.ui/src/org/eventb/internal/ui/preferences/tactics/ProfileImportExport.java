@@ -94,9 +94,10 @@ public class ProfileImportExport {
 	public static ListSelectionDialog makeProfileSelectionDialog(
 			Shell parentShell, List<IPrefMapEntry<ITacticDescriptor>> entries,
 			String message, List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
-		final ListSelectionDialog dialog = new ListSelectionDialog(parentShell,
-				entries, new ProfileContentProvider(),
-				new ProfileLabelProvider(), message);
+		final ListSelectionDialog dialog = ListSelectionDialog.of(entries)
+				.contentProvider(new ProfileContentProvider())
+				.labelProvider(new ProfileLabelProvider())
+				.message(message).create(parentShell);
 		dialog.setInitialElementSelections(initSelected);
 		return dialog;
 	}

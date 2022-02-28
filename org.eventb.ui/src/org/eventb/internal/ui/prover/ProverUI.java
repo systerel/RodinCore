@@ -345,10 +345,12 @@ public class ProverUI extends EventBFormEditor implements
 	public void doSave(IProgressMonitor monitor) {
 		IProofState[] proofStates = userSupport.getUnsavedPOs();
 
-		final ListSelectionDialog dlg = new ListSelectionDialog(this.getSite()
-				.getShell(), userSupport, new ProofStateContentProvider(
-				proofStates), new ProofStateLabelProvider(),
-				"Select the proof obligation(s) to save.");
+		final ListSelectionDialog dlg = 
+				ListSelectionDialog.of(userSupport)
+				.contentProvider(new ProofStateContentProvider(proofStates))
+				.labelProvider(new ProofStateLabelProvider())
+				.message("Select the proof obligation(s) to save.")
+				.create(this.getSite().getShell());
 
 		dlg.setInitialSelections((Object []) proofStates);
 		dlg.setTitle("Save Proofs");
