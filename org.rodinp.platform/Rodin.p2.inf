@@ -1,7 +1,7 @@
 instructions.configure=\
   mkdir(path:${installFolder}/dropins);\
   addRepository(type:0,location:http${#58}//download.eclipse.org/releases/2021-12,name:Eclipse 2021-12);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/2021-12,name:Eclipse 2020-12);\
+  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/2021-12,name:Eclipse 2021-12);\
   addRepository(type:0,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:1,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
