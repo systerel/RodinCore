@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public class PredicateRow {
 		final Color bgColor = odd ? SOFT_BG_COLOR : WHITE;
 		if (!isGoal) {
 			checkBoxHolder = new ControlHolder(this, checkBoxMaker,
-					checkBoxOffset, false, bgColor);
+					checkBoxOffset, false);
 			checkBoxHolder.addListener(checkboxListener);
 		}
 		final int menuOffset = checkBoxOffset + 1;
