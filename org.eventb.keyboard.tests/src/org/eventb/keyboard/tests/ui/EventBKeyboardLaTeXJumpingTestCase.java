@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,11 @@ public class EventBKeyboardLaTeXJumpingTestCase extends AbstractKeyboardJumpingT
 
 	/**
 	 * Checks that insertion of "eq" (i.e. =) after "\\subset" (i.e. "⊂") is
-	 * correclty translated as "\\subseteq" (i.e. "⊆")
+	 * correctly translated as "\\subseteq" (i.e. "⊆")
 	 */
 	@Test
 	public void testSHWTInvariant() {
-		testJumping("bm \\subset NODE", 4, "eq", "bm \u2286 NODE");
+		testJumping("bm \\subsetNODE", 4, "eq ", "bm \u2286 NODE");
 	}
 
 	/**
@@ -40,7 +40,8 @@ public class EventBKeyboardLaTeXJumpingTestCase extends AbstractKeyboardJumpingT
 	 */
 	@Test
 	public void testMarkActions() {
-		testJumping("bm \\meq cl[{tp}]", 4, "bc", "bm \u2254 cl[{tp}]");
+		testJumping("bm \\meqcl[{tp}]", new int [] { 4, 9 } , new String[] { "bc", " " },
+					"bm \u2254 cl[{tp}]");
 	}
 
 	/**
@@ -50,8 +51,8 @@ public class EventBKeyboardLaTeXJumpingTestCase extends AbstractKeyboardJumpingT
 	 */
 	@Test
 	public void testProg11Actions() {
-		testJumping("bl eq bl", new int[] { 3, 7, 9 }, new String[] { "\\bcm",
-				" \\ {yy}", "bunion" }, "bl \u2254 bl \u222a {yy}");
+		testJumping("bl eq bl", new int[] { 3, 12, 9 }, new String[] { "\\bcm",
+				" \\{yy}", "bunion " }, "bl \u2254 bl \u222a {yy}");
 	}
 
 }

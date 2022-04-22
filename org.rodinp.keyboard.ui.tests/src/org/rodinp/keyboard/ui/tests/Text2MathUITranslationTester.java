@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 ETH Zurich and others.
+ * Copyright (c) 2009, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,16 +40,28 @@ public class Text2MathUITranslationTester implements IKeyboardTranslationTester 
 	 * We use this method to simulate the action of typing a character into the
 	 * text area.
 	 */
-	public void insert(String s) {
+	public void insert(String s, int caretOffset) {
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
-			insert(c);
+			insert(c, caretOffset);
 		}
 	}
 
-	private void insert(char c) {
+	public void insert(String s) {
+		insert(s, -1);
+	}
+
+	private void insert(char c, int caretOffset) {
 		String tmp = "" + c;
-		widget.insert(tmp);
+		if (caretOffset >= 0) {
+			// Insert at the end
+			widget.setSelection(widget.getCharCount());
+			widget.insert(tmp);
+			// Try to put back cursor at its desired position if provided
+			widget.setSelection(Math.min(caretOffset, widget.getCharCount()));
+		} else {
+			widget.insert(tmp);
+		}
 		Event e = new Event();
 		e.widget = widget;
 		// Force the listener to modify the text then remove it again
@@ -57,13 +69,13 @@ public class Text2MathUITranslationTester implements IKeyboardTranslationTester 
 		widget.removeModifyListener(listener);
 	}
 
-	public void doTest(String expected, String input) {
-		doTest(input, expected, input);
+	public void doTest(String expected, String input, int caretOffset) {
+		doTest(input, expected, input, caretOffset);
 	}
 
-	public void doTest(String message, String expected, String input) {
+	public void doTest(String message, String expected, String input, int caretOffset) {
 		widget.setText("");
-		insert(input);
+		insert(input, caretOffset);
 		compare(message, expected);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,17 +26,17 @@ import org.rodinp.keyboard.core.RodinKeyboardCore;
 public class Text2MathTranslationTester implements IKeyboardTranslationTester {
 
 	public void doTest(final String message, final String expected,
-			final String input) {
-		assertEquals("1. " + message, expected, translate(input));
-		assertEquals("2. " + message, expected + " ", translate(input + " "));
-		assertEquals("3. " + message, " " + expected, translate(" " + input));
+			final String input, int caretOffset) {
+		assertEquals("1. " + message, expected, translate(input, caretOffset));
+		assertEquals("2. " + message, expected + " ", translate(input + " ", caretOffset));
+		assertEquals("3. " + message, " " + expected, translate(" " + input, caretOffset + 1));
 		assertEquals("4. " + message, " " + expected + " ", translate(" "
-				+ input + " "));
+				+ input + " ", caretOffset + 1));
 	}
 
 	@Override
-	public void doTest(final String expectedOutput, final String input) {
-		doTest(input, expectedOutput, input);
+	public void doTest(final String expectedOutput, final String input, int caretOffset) {
+		doTest(input, expectedOutput, input, caretOffset);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class Text2MathTranslationTester implements IKeyboardTranslationTester {
 		for (int i = 0; i + 1 < strings.length; i += 2) {
 			final String expected = strings[i];
 			final String input = strings[i + 1];
-			doTest(expected, input);
+			doTest(expected, input, -1);
 		}
 	}
 

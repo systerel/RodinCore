@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2020 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,6 +179,21 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 
 	public String translate(String text) {
 		return RodinKeyboardCore.translate(text);
+	}
+
+	/**
+	 * Returns the given string where symbols have been translated.
+	 *
+	 * @param text
+	 *            the text to translate symbols from
+	 * @param caretOffset
+	 *            the offset of the caret in the text
+	 * @return the text where symbols (both mathematical and textual) have been
+	 *         translated
+	 * @since 2.4
+	 */
+	public String translate(String text, int caretOffset) {
+		return RodinKeyboardCore.translate(text, caretOffset);
 	}
 
 	/**

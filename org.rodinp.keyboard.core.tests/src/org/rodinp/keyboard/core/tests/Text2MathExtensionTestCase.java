@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,24 @@ public class Text2MathExtensionTestCase extends AbstractText2EventBMathTestCase 
 		} finally {
 			TestSymbolProvider.reset();
 		}
+	}
+
+	@Test
+	public void testCaretOnWord() {
+		// On the first letter of the word
+		testTranslation("CaretOnWord", "x alpha p", "x alpha p", 2);
+		// Somewhere in the middle of the word
+		testTranslation("CaretOnWord", "x alpha p", "x alpha p", 4);
+		// On the last letter of the word
+		testTranslation("CaretOnWord", "x alpha p", "x alpha p", 7);
+	}
+
+	@Test
+	public void testCaretOutsideWord() {
+		// Before the word
+		testTranslation("CaretOnWord", "x \u03b1 p", "x alpha p", 1);
+		// After the word
+		testTranslation("CaretOnWord", "x \u03b1 p", "x alpha p", 8);
 	}
 
 }

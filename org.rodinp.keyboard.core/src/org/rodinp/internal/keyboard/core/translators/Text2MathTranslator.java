@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,13 +29,17 @@ public class Text2MathTranslator {
 	/**
 	 * Translate the input string into Event-B Mathematical Language.
 	 * <p>
+	 * If the caret position is not available (or should be ignored),
+	 * any out of bounds value can be provided (e.g., -1).
 	 * 
 	 * @param str
 	 *            input string
+	 * @param caretOffset
+	 *            offset of the caret in the input
 	 * @return a string corresponds to the input in Event-B Mathematical
 	 *         Language
 	 */
-	public static String translate(String str) {
+	public static String translate(String str, int caretOffset) {
 		final ISymbolRegistry registry = SymbolRegistry.getDefault();
 		// Math
 		String test = null;
@@ -46,11 +50,11 @@ public class Text2MathTranslator {
 				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
 					int index = str.indexOf(test);
-					if (index != -1) {
-						return translate(str.substring(0, index))
+					if (index != -1 && !caretOnWord(str, caretOffset, test, index)) {
+						return translate(str.substring(0, index), caretOffset)
 								+ symbol.getTranslation()
 								+ translate(str.substring(index
-										+ test.length()));
+										+ test.length()), caretOffset - index);
 					}
 				}
 			}
@@ -64,15 +68,18 @@ public class Text2MathTranslator {
 				for (ISymbol symbol : collection) {
 					String combo = symbol.getCombo();
 					int index = comboIndex(str, combo);
+					if (caretOnWord(str, caretOffset, combo, index)) {
+						continue;
+					}
 					if (index == 0) {
 						return symbol.getTranslation()
 								+ translate(str.substring(combo
-										.length()));
+										.length()), caretOffset);
 					} else if (index != -1) {
-						return translate(str.substring(0, index))
+						return translate(str.substring(0, index), caretOffset)
 								+ symbol.getTranslation()
 								+ translate(str.substring(index
-										+ combo.length()));
+										+ combo.length()), caretOffset - index);
 					}
 
 				}
@@ -123,6 +130,10 @@ public class Text2MathTranslator {
 			}
 			return index;
 		}
+	}
+
+	private static boolean caretOnWord(String str, int caretOffset, String word, int index) {
+		return caretOffset >= index && caretOffset <= index + word.length();
 	}
 
 }

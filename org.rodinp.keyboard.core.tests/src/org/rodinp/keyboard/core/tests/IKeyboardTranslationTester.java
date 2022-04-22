@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,38 @@ public interface IKeyboardTranslationTester {
 	 *            the expected string that should match the translated input
 	 * @param input
 	 *            the input string to be translated
+	 * @param caretOffset
+	 *            the position of the caret in the input (or a negative number if unavailable)
 	 */
-	void doTest(String testName, String expectedOutput, String input);
+	void doTest(String testName, String expectedOutput, String input, int caretOffset);
+
+	/**
+	 * Translates the given input string and compares the result with expected
+	 * output.
+	 * 
+	 * @param testName
+	 *            the name of the test
+	 * @param expectedOutput
+	 *            the expected string that should match the translated input
+	 * @param input
+	 *            the input string to be translated
+	 */
+	default void doTest(String testName, String expectedOutput, String input) {
+		doTest(testName, expectedOutput, input, -1);
+	}
+
+	/**
+	 * Translates the given input string and compares the result with expected
+	 * output.
+	 * 
+	 * @param expectedOutput
+	 *            the expected string that should match the translated input
+	 * @param input
+	 *            the input string to be translated
+	 * @param caretOffset
+	 *            the position of the caret in the input (or a negative number if unavailable)
+	 */
+	void doTest(String expectedOutput, String input, int caretOffset);
 
 	/**
 	 * Translates the given input string and compares the result with expected
@@ -43,7 +73,9 @@ public interface IKeyboardTranslationTester {
 	 * @param input
 	 *            the input string to be translated
 	 */
-	void doTest(String expectedOutput, String input);
+	default void doTest(String expectedOutput, String input) {
+		doTest(expectedOutput, input, -1);
+	}
 
 	/**
 	 * Translates and compares the given strings pairwise.

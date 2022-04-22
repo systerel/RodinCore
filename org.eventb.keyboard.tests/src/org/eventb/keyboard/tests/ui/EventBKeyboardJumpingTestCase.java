@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 	 */
 	@Test
 	public void testSHWTInvariant() {
-		testJumping("bm < NODE", 4, ":", "bm \u2286 NODE");
+		testJumping("bm <NODE", 4, ": ", "bm \u2286 NODE");
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 	 */
 	@Test
 	public void testMarkActions() {
-		testJumping("bm : cl[{tp}]", 4, "=", "bm \u2254 cl[{tp}]");
+		testJumping("bm :cl[{tp}]", 4, "= ", "bm \u2254 cl[{tp}]");
 	}
 
 	/**
@@ -47,8 +47,8 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 	 */
 	@Test
 	public void testProg11Actions() {
-		testJumping("bl = bl", new int[] { 3, 7, 9 }, new String[] { ":",
-				" \\ {yy}", "/" }, "bl \u2254 bl \u222a {yy}");
+		testJumping("bl = bl", new int[] { 3, 8, 9 }, new String[] { ":",
+				" \\{yy}", "/ " }, "bl \u2254 bl \u222a {yy}");
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 	 */
 	@Test
 	public void testBug686Translation() {
-		testJumping("order=2 o order=3", new int[] { 9 }, new String[] { "r" },
+		testJumping("order=2 oorder=3", new int[] { 9 }, new String[] { "r " },
 				"order=2 \u2228 order=3");
 	}
 	

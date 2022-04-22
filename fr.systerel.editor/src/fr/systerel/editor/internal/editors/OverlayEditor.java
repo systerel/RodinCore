@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Systerel and others.
+ * Copyright (c) 2008, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -543,7 +543,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final String text;
 		if (!COMMENT_TYPE.equals(contentType.getName())) {
 			// force translation
-			text = translateAllText(original);
+			// this is called when focus is lost, so we want to translate
+			// everything, regardless of the caret position
+			text = translateAllText(original, -1);
 		} else {
 			text = original;
 		}
@@ -585,13 +587,13 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		try {
 			modifyingText = true;
 			final String text = editorText.getText();
-			modifyText(text);
+			modifyText(text, editorText.getCaretOffset());
 		} finally {
 			modifyingText = false;
 		}
 	}
 
-	private void modifyText(String text) {
+	private void modifyText(String text, int caretOffset) {
 		final IAttributeDesc attrDesc = getAttributeDesc(interval.getElement(),
 				((AttributeContentType) interval.getContentType())
 						.getAttributeType());
@@ -599,14 +601,14 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		// force one-pass translation to avoid registering useless translation
 		// operations to the undo history
 		if (attrDesc.isMath()) {
-			toSynchronize = translateAllText(text);
+			toSynchronize = translateAllText(text, caretOffset);
 		}
 		mapper.synchronizeInterval(interval, toSynchronize);
 		resizeAndPositionOverlay(editorText, parent, interval);
 	}
 
-	private String translateAllText(String text) {
-		return RodinKeyboardUIPlugin.getDefault().translate(text);
+	private String translateAllText(String text, int caretOffset) {
+		return RodinKeyboardUIPlugin.getDefault().translate(text, caretOffset);
 	}
 
 	private void resizeAndPositionOverlay(StyledText overlay,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,11 +32,23 @@ public abstract class AbstractText2EventBMathTestCase {
 	 *            the expected string that should match the translated input
 	 * @param input
 	 *            the input string to be translated
+	 * @param caretOffset
+	 *             offset of the caret in the input string
+	 */
+	public void testTranslation(String message, String expectedOutput,
+			String input, int caretOffset) {
+		final IKeyboardTranslationTester tester = getTranslatorTester();
+		tester.doTest(message, expectedOutput, input, caretOffset);
+	}
+
+	/**
+	 * Checks the translation of <code>input</code> while ignoring caret position.
+	 *
+	 * @see #testTranslation(String, String, String, int)
 	 */
 	public void testTranslation(String message, String expectedOutput,
 			String input) {
-		final IKeyboardTranslationTester tester = getTranslatorTester();
-		tester.doTest(message, expectedOutput, input);
+		testTranslation(message, expectedOutput, input, -1);
 	}
 
 	/**

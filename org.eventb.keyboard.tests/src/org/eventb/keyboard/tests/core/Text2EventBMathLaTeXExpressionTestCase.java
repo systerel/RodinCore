@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,10 @@ public class Text2EventBMathLaTeXExpressionTestCase extends
 	public void testMarriageInvariants() {
 		testTranslation("MarriageInvariant", //
 				"p \u2286 P \u2227\n" + "s \u2208 P \u2914 P \u2227\n"
-						+ "s = s\u223c \u2227\n" + "s \u2229 id(P) = \u2205", //
+						+ "s = s\u223c \u2227\n" + "s \u2229 id(P) = \u2205 ", //
 				"p \\subseteq P \\land\n" + "s \\in P \\pinj P \\land\n"
 						+ "s = s\\conv \\land\n"
-						+ "s \\binter id(P) = \\emptyset" //
+						+ "s \\binter id(P) = \\emptyset " //
 		);
 	}
 

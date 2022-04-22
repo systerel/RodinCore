@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class LegacyRodinKeyboardTranslator extends AbstractRodinKeyboardTranslat
 						}
 					}
 
-					if (index != -1) {
+					if (index != -1 && !caretOnWord(text, currentPos, combo, beginIndex + index)) {
 						result = symbol.getTranslation();
 						realIndex = beginIndex + index;
 						widget.setSelection(realIndex,
@@ -145,6 +145,10 @@ public class LegacyRodinKeyboardTranslator extends AbstractRodinKeyboardTranslat
 			}
 		}
 		return false;
+	}
+
+	private static boolean caretOnWord(String str, int caretOffset, String word, int index) {
+		return caretOffset >= index && caretOffset <= index + word.length();
 	}
 
 	public static class LegacyMathTranslator extends
