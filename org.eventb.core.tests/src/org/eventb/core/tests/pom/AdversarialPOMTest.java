@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.tests.extension.PrimeFormulaExtensionProvider;
+import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -183,5 +188,16 @@ public class AdversarialPOMTest extends AutoPOMTest {
 		} catch (CoreException e) {
 			// as expected
 		}
+	}
+
+	/**
+	 * Ensures that runtime exceptions are caught by the provider registry.
+	 */
+	@Test
+	public void testGetExtensionsFromRootProblem() throws Exception {
+		PrimeFormulaExtensionProvider.erroneousGetExtensions = true;
+		Set<IFormulaExtension> exts = FormulaExtensionProviderRegistry.getExtensionProviderRegistry()
+				.getFormulaExtensions(poRoot);
+		assertEquals("empty set should be returned on error", Collections.emptySet(), exts);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,10 +74,12 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 
 	public static boolean erroneousLoadFormulaFactory = false;
 	public static boolean erroneousSaveFormulaFactory = false;
+	public static boolean erroneousGetExtensions = false;
 
 	public static void reset() {
 		erroneousLoadFormulaFactory = false;
 		erroneousSaveFormulaFactory = false;
+		erroneousGetExtensions = false;
 	}
 
 	static void maybeFail(boolean condition) {
@@ -94,6 +96,7 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
+		maybeFail(erroneousGetExtensions);
 		final FormulaFactory factory;
 		if (rootsWithPrime.contains(root)) {
 			factory = EXT_FACTORY;

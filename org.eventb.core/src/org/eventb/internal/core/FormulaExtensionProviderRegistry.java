@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,15 @@ public class FormulaExtensionProviderRegistry {
 		if (provider == null) {
 			return Collections.emptySet();
 		}
-		return provider.getFormulaExtensions(root);
+		try {
+			return provider.getFormulaExtensions(root);
+		} catch (Exception e) {
+			// This method is not expected to throw, so we can only log the error and return
+			// an empty set. In a future major version, the API could be changed to throw a
+			// CoreException (like #getFormulaFactory(ILanguage, IProgressMonitor))
+			log(e, "while getting formula extensions");
+			return Collections.emptySet();
+		}
 	}
 
 	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) {
