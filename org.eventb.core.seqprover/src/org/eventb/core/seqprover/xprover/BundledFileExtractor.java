@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.xprover;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -88,6 +89,12 @@ public class BundledFileExtractor {
 		
 		public IPath extract() {
 			URL url = FileLocator.find(bundle, path, null);
+			if (url == null && isAppleSilicon()) {
+				// For macOS on Apple Silicon, we can use an Intel binary instead, expecting
+				// Rosetta 2 to be installed,
+				var override = Map.of("$arch$", "x86_64");
+				url = FileLocator.find(bundle, path, override);
+			}
 			if (url == null) {
 				log("File " + path + " not found in plug-in "
 						+ bundle.getSymbolicName(), null);
@@ -183,6 +190,11 @@ public class BundledFileExtractor {
 
 	private static boolean isWin32() {
 		return Platform.getOS().equals(Platform.OS_WIN32);
+	}
+
+	private static boolean isAppleSilicon() {
+		return Platform.getOS().equals(Platform.OS_MACOSX) //
+				&& Platform.getOSArch().equals(Platform.ARCH_AARCH64);
 	}
 
 }
