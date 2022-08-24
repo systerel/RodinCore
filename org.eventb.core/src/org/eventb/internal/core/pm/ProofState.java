@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -746,9 +746,12 @@ public class ProofState implements IProofState {
 							.getAutoPostTacticManager();
 					final IAutoTacticPreference postTac = manager.getPostTacticPreference();
 					if (postTac.isEnabled()) {
-						final ITactic postTactic = manager
-						.getSelectedPostTactics(root);
-						postTactic.apply(node, pm);
+						if (pm != null && pm.isCanceled()) {
+							info = "Canceled";
+						} else {
+							final ITactic postTactic = manager.getSelectedPostTactics(root);
+							postTactic.apply(node, pm);
+						}
 					}
 				}
 			}
