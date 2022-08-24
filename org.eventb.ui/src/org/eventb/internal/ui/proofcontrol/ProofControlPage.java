@@ -38,7 +38,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -70,7 +69,6 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -175,11 +173,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            a runnable with progress monitor.
 	 */
 	private static void applyTacticWithProgress(IRunnableWithProgress op) {
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		final Shell shell = display.getActiveShell();
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
-			dialog.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException exception) {
 			if (ProofControlUtils.DEBUG)
 				ProofControlUtils.debug("Interrupt");
