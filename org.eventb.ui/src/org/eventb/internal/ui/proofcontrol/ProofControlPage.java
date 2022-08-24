@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,17 +237,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											.getElementName());
 						final IUserSupport userSupport = editor
 								.getUserSupport();
-						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
 								userSupport, currentInput);
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
 									(TacticApplicationProxy<?>) application,
-									userSupport, interruptable);
+									userSupport);
 						} else if (application instanceof ICommandApplication) {
 							applyGlobalExpertTactic((ICommandApplication) application,
-									userSupport, interruptable);
+									userSupport);
 						} else {
 							return;
 						}
@@ -299,16 +298,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					final IUserSupport userSupport = editor
 					.getUserSupport();
-					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
 							userSupport, currentInput);
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
-								userSupport, interruptable);
+								userSupport);
 					} else if (application instanceof ICommandApplication) {
-						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
-								interruptable);
+						applyGlobalExpertTactic((ICommandApplication) application, userSupport);
 					} else {
 						return;
 					}
@@ -359,42 +356,33 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyGlobalExpertTactic(final ICommandApplication command,
-			final IUserSupport userSupport, final boolean interruptable) {
+			final IUserSupport userSupport) {
 
 		final String[] inputs = { currentInput };
-		if (interruptable) {
-			applyTacticWithProgress(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException {
-					applyCommand(command.getProofCommand(), userSupport, null,
-							inputs, pm);
-				}
-			});
-
-		} else {
-			applyCommand(command.getProofCommand(), userSupport, null, inputs, null);
-		}
+		applyTacticWithProgress(new IRunnableWithProgress() {
+			@Override
+			public void run(IProgressMonitor pm)
+					throws InvocationTargetException {
+				applyCommand(command.getProofCommand(), userSupport, null,
+						inputs, pm);
+			}
+		});
 	}
 
 	
 	// Applies a global tactic to the current proof tree node.
 	void applyTacticProvider(TacticApplicationProxy<?> appli,
-			final IUserSupport userSupport, boolean interruptable) {
+			final IUserSupport userSupport) {
 
 		final ITactic tactic = appli.getTactic(null, currentInput);
 		final boolean skipPostTactic = appli.isSkipPostTactic();
-		if (interruptable) {
-			applyTacticWithProgress(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException {
-					applyTactic(tactic, userSupport, null, skipPostTactic, pm);
-				}
-			});
-		} else {
-			applyTactic(tactic, userSupport, null, skipPostTactic, null);
-		}
+		applyTacticWithProgress(new IRunnableWithProgress() {
+			@Override
+			public void run(IProgressMonitor pm)
+					throws InvocationTargetException {
+				applyTactic(tactic, userSupport, null, skipPostTactic, pm);
+			}
+		});
 	}
 
 	private class ToolBarDropTargetListener implements DropTargetListener {
