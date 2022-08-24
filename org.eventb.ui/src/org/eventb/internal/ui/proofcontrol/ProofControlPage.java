@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -354,14 +353,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			final IUserSupport userSupport) {
 
 		final String[] inputs = { currentInput };
-		applyTacticWithProgress(new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor pm)
-					throws InvocationTargetException {
-				applyCommand(command.getProofCommand(), userSupport, null,
-						inputs, pm);
-			}
-		});
+		applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
 	}
 
 	
@@ -371,13 +363,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		final ITactic tactic = appli.getTactic(null, currentInput);
 		final boolean skipPostTactic = appli.isSkipPostTactic();
-		applyTacticWithProgress(new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor pm)
-					throws InvocationTargetException {
-				applyTactic(tactic, userSupport, null, skipPostTactic, pm);
-			}
-		});
+		applyTacticWithProgress(pm -> applyTactic(tactic, userSupport, null, skipPostTactic, pm));
 	}
 
 	private class ToolBarDropTargetListener implements DropTargetListener {
