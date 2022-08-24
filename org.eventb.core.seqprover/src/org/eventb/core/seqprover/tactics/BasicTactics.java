@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -283,6 +283,9 @@ public class BasicTactics {
 					Object tacticApp = tactic.apply(pt, pm);
 					if (tacticApp == null) applicable = true; 
 					else lastFailure = tacticApp;
+					if (pm != null && pm.isCanceled()) {
+						return Messages.tactic_cancelled;
+					}
 				}
 				return applicable ? null : lastFailure;
 			}
@@ -320,6 +323,9 @@ public class BasicTactics {
 					Object tacticApp = onAllPending(tactic).apply(pt, pm);
 					if (tacticApp == null) applicable = true; 
 					else lastFailure = tacticApp;
+					if (pm != null && pm.isCanceled()) {
+						return Messages.tactic_cancelled;
+					}
 				}
 				return applicable ? null : lastFailure;
 			}
@@ -411,6 +417,9 @@ public class BasicTactics {
 					final IProofTreeNode open = pt.getFirstOpenDescendant();
 					final Object tacticApp = tactic.apply(open, pm);
 					if (tacticApp != null) return tacticApp; 
+					if (pm != null && pm.isCanceled()) {
+						return Messages.tactic_cancelled;
+					}
 				}
 				return null;
 			}
