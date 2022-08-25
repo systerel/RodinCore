@@ -6,7 +6,7 @@
       provider-name="%providerName"
       os="linux,win32,macosx"
       ws="gtk,win32,cocoa"
-      arch="x86,x86_64"
+      arch="x86_64"
       image="rodin_update_120.jpg">
 
    <description>
