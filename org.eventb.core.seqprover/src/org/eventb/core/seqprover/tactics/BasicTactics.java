@@ -170,10 +170,10 @@ public class BasicTactics {
 				String applicable = "onAllPending unapplicable";
 				IProofTreeNode[] subgoals = pt.getOpenDescendants();
 				for(IProofTreeNode subgoal : subgoals){
-					if (tactic.apply(subgoal, pm) == null) applicable = null;
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					if (tactic.apply(subgoal, pm) == null) applicable = null;
 				}
 				return applicable;
 			}
@@ -225,15 +225,12 @@ public class BasicTactics {
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				boolean applicable = false;
 				Object tacticApp = tactic.apply(pt, pm);
-				if (pm != null && pm.isCanceled()) {
-					return Messages.tactic_cancelled;
-				}
 				while(tacticApp == null){
-					applicable = true;
-					tacticApp = tactic.apply(pt, pm);
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					applicable = true;
+					tacticApp = tactic.apply(pt, pm);
 				}
 				return applicable ? null : tacticApp;
 			}
@@ -280,12 +277,12 @@ public class BasicTactics {
 				boolean applicable = false;
 				Object lastFailure = "compose unapplicable: no tactics";
 				for (ITactic tactic : tactics){
-					Object tacticApp = tactic.apply(pt, pm);
-					if (tacticApp == null) applicable = true; 
-					else lastFailure = tacticApp;
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					Object tacticApp = tactic.apply(pt, pm);
+					if (tacticApp == null) applicable = true;
+					else lastFailure = tacticApp;
 				}
 				return applicable ? null : lastFailure;
 			}
@@ -320,12 +317,12 @@ public class BasicTactics {
 				boolean applicable = false;
 				Object lastFailure = "compose unapplicable: no tactics";
 				for (ITactic tactic : tactics){
-					Object tacticApp = onAllPending(tactic).apply(pt, pm);
-					if (tacticApp == null) applicable = true; 
-					else lastFailure = tacticApp;
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					Object tacticApp = onAllPending(tactic).apply(pt, pm);
+					if (tacticApp == null) applicable = true;
+					else lastFailure = tacticApp;
 				}
 				return applicable ? null : lastFailure;
 			}
@@ -366,10 +363,10 @@ public class BasicTactics {
 				while (! nodes.isEmpty()) {
 					IProofTreeNode node = nodes.removeFirst();
 					for (ITactic tactic : tactics) {
-						tactic.apply(node, pm);
 						if (pm != null && pm.isCanceled()) {
 							return Messages.tactic_cancelled;
 						}
+						tactic.apply(node, pm);
 						if (! node.isOpen())
 						{
 							// tactic made some progress on node
@@ -414,12 +411,12 @@ public class BasicTactics {
 			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				for (ITactic tactic : tactics){
-					final IProofTreeNode open = pt.getFirstOpenDescendant();
-					final Object tacticApp = tactic.apply(open, pm);
-					if (tacticApp != null) return tacticApp; 
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					final IProofTreeNode open = pt.getFirstOpenDescendant();
+					final Object tacticApp = tactic.apply(open, pm);
+					if (tacticApp != null) return tacticApp;
 				}
 				return null;
 			}
@@ -448,10 +445,10 @@ public class BasicTactics {
 			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				for (ITactic tactic : tactics){
-					Object tacticApp = tactic.apply(pt, pm);
 					if (pm != null && pm.isCanceled()) {
 						return Messages.tactic_cancelled;
 					}
+					Object tacticApp = tactic.apply(pt, pm);
 					if (tacticApp == null) return null; 
 				}
 				return "All composed tactics failed";
