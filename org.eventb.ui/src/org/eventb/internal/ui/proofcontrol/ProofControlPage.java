@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -70,7 +68,6 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -175,11 +172,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            a runnable with progress monitor.
 	 */
 	private static void applyTacticWithProgress(IRunnableWithProgress op) {
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		final Shell shell = display.getActiveShell();
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
-			dialog.run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException exception) {
 			if (ProofControlUtils.DEBUG)
 				ProofControlUtils.debug("Interrupt");
@@ -237,17 +231,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											.getElementName());
 						final IUserSupport userSupport = editor
 								.getUserSupport();
-						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
 								userSupport, currentInput);
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
 									(TacticApplicationProxy<?>) application,
-									userSupport, interruptable);
+									userSupport);
 						} else if (application instanceof ICommandApplication) {
 							applyGlobalExpertTactic((ICommandApplication) application,
-									userSupport, interruptable);
+									userSupport);
 						} else {
 							return;
 						}
@@ -299,16 +292,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					final IUserSupport userSupport = editor
 					.getUserSupport();
-					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
 							userSupport, currentInput);
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
-								userSupport, interruptable);
+								userSupport);
 					} else if (application instanceof ICommandApplication) {
-						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
-								interruptable);
+						applyGlobalExpertTactic((ICommandApplication) application, userSupport);
 					} else {
 						return;
 					}
@@ -359,42 +350,20 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyGlobalExpertTactic(final ICommandApplication command,
-			final IUserSupport userSupport, final boolean interruptable) {
+			final IUserSupport userSupport) {
 
 		final String[] inputs = { currentInput };
-		if (interruptable) {
-			applyTacticWithProgress(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException {
-					applyCommand(command.getProofCommand(), userSupport, null,
-							inputs, pm);
-				}
-			});
-
-		} else {
-			applyCommand(command.getProofCommand(), userSupport, null, inputs, null);
-		}
+		applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
 	}
 
 	
 	// Applies a global tactic to the current proof tree node.
 	void applyTacticProvider(TacticApplicationProxy<?> appli,
-			final IUserSupport userSupport, boolean interruptable) {
+			final IUserSupport userSupport) {
 
 		final ITactic tactic = appli.getTactic(null, currentInput);
 		final boolean skipPostTactic = appli.isSkipPostTactic();
-		if (interruptable) {
-			applyTacticWithProgress(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException {
-					applyTactic(tactic, userSupport, null, skipPostTactic, pm);
-				}
-			});
-		} else {
-			applyTactic(tactic, userSupport, null, skipPostTactic, null);
-		}
+		applyTacticWithProgress(pm -> applyTactic(tactic, userSupport, null, skipPostTactic, pm));
 	}
 
 	private class ToolBarDropTargetListener implements DropTargetListener {
