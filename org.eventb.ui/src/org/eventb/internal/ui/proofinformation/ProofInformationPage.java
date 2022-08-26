@@ -299,8 +299,6 @@ public class ProofInformationPage extends Page implements
 	 */
 	@Override
 	public Control getControl() {
-		if (scrolledForm == null)
-			return null;
 		return scrolledForm;
 	}
 
