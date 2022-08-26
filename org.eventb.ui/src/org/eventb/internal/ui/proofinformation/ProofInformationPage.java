@@ -82,6 +82,7 @@ public class ProofInformationPage extends Page implements
 	protected IProofState proofState;
 	protected ScrolledForm scrolledForm;
 	private IEventBFormText formText;
+	private FormToolkit toolkit;
 	
 
 	/**
@@ -106,6 +107,7 @@ public class ProofInformationPage extends Page implements
 		// Deregister with the user support manager.
 		USM.removeChangeListener(this);
 		formText.dispose();
+		toolkit.dispose();
 		super.dispose();
 	}
 
@@ -117,7 +119,7 @@ public class ProofInformationPage extends Page implements
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit = new FormToolkit(parent.getDisplay());
 		scrolledForm = toolkit.createScrolledForm(parent);
 
 		if (proofState != null)
