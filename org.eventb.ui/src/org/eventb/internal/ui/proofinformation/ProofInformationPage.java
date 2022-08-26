@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -84,6 +82,7 @@ public class ProofInformationPage extends Page implements
 	protected IProofState proofState;
 	protected ScrolledForm scrolledForm;
 	private IEventBFormText formText;
+	private FormToolkit toolkit;
 	
 
 	/**
@@ -108,6 +107,7 @@ public class ProofInformationPage extends Page implements
 		// Deregister with the user support manager.
 		USM.removeChangeListener(this);
 		formText.dispose();
+		toolkit.dispose();
 		super.dispose();
 	}
 
@@ -119,16 +119,14 @@ public class ProofInformationPage extends Page implements
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit = new FormToolkit(parent.getDisplay());
 		scrolledForm = toolkit.createScrolledForm(parent);
 
 		if (proofState != null)
 			scrolledForm.setText(proofState.getPSStatus().getElementName());
 
 		final Composite body = scrolledForm.getBody();
-		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		final GridLayout gl = new GridLayout();
-		body.setLayout(gl);
+		body.setLayout(new FillLayout());
 
 		formText = createEventBFormText(toolkit.createFormText(body, true));
 		if (proofState != null)
@@ -301,8 +299,6 @@ public class ProofInformationPage extends Page implements
 	 */
 	@Override
 	public Control getControl() {
-		if (scrolledForm == null)
-			return null;
 		return scrolledForm;
 	}
 
