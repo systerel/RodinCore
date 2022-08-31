@@ -25,9 +25,8 @@ import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
-import static org.eventb.internal.ui.utils.Messages.title_unexpectedError;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyTacticWithProgress;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -72,7 +70,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -94,7 +91,6 @@ import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBControl;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.ICommandApplication;
@@ -165,30 +161,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		USM.addChangeListener(this);
 	}
 
-	/**
-	 * Apply a tactic with a progress monitor (providing cancel button).
-	 * 
-	 * @param op
-	 *            a runnable with progress monitor.
-	 */
-	private static void applyTacticWithProgress(IRunnableWithProgress op) {
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InterruptedException exception) {
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils.debug("Interrupt");
-			return;
-		} catch (InvocationTargetException exception) {
-			final Throwable realException = exception.getTargetException();
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils.debug("Interrupt");
-			realException.printStackTrace();
-			final String message = realException.getMessage();
-			UIUtils.showError(title_unexpectedError,message);
-			return;
-		}
-	}
-
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
@@ -231,16 +203,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											.getElementName());
 						final IUserSupport userSupport = editor
 								.getUserSupport();
+						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
 								userSupport, currentInput);
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
 									(TacticApplicationProxy<?>) application,
-									userSupport);
+									userSupport, interruptable);
 						} else if (application instanceof ICommandApplication) {
 							applyGlobalExpertTactic((ICommandApplication) application,
-									userSupport);
+									userSupport, interruptable);
 						} else {
 							return;
 						}
@@ -292,14 +265,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					final IUserSupport userSupport = editor
 					.getUserSupport();
+					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
 							userSupport, currentInput);
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
-								userSupport);
+								userSupport, interruptable);
 					} else if (application instanceof ICommandApplication) {
-						applyGlobalExpertTactic((ICommandApplication) application, userSupport);
+						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
+								interruptable);
 					} else {
 						return;
 					}
@@ -350,20 +325,24 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyGlobalExpertTactic(final ICommandApplication command,
-			final IUserSupport userSupport) {
+			final IUserSupport userSupport, final boolean interruptable) {
 
 		final String[] inputs = { currentInput };
-		applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
+		if (interruptable) {
+			applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
+		} else {
+			applyCommand(command.getProofCommand(), userSupport, null, inputs, null);
+		}
 	}
 
 	
 	// Applies a global tactic to the current proof tree node.
 	void applyTacticProvider(TacticApplicationProxy<?> appli,
-			final IUserSupport userSupport) {
+			final IUserSupport userSupport, boolean interruptable) {
 
 		final ITactic tactic = appli.getTactic(null, currentInput);
 		final boolean skipPostTactic = appli.isSkipPostTactic();
-		applyTacticWithProgress(pm -> applyTactic(tactic, userSupport, null, skipPostTactic, pm));
+		applyTactic(tactic, userSupport, null, skipPostTactic, interruptable);
 	}
 
 	private class ToolBarDropTargetListener implements DropTargetListener {

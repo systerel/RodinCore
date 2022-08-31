@@ -110,7 +110,7 @@
          <attribute name="interrupt" type="boolean" use="required">
             <annotation>
                <documentation>
-                  whether this tactic is interruptable or not.
+                  whether this tactic is interruptable or not. Non interruptable tactics may modify the UI and therefore run in the UI thread. Interruptable tactics can run in a background thread.
                </documentation>
             </annotation>
          </attribute>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
@@ -52,14 +53,18 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
 import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
 import org.eventb.internal.ui.utils.ListMultimap;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -237,6 +242,90 @@ public class ProverUIUtils {
 		} finally {
 			if (pm != null)
 				pm.done();
+		}
+	}
+
+	// A tactic that does nothing, used to apply post tactic
+	private static final ITactic IDENTITY_TACTIC = new ITactic() {
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			return null;
+		}
+	};
+
+	/**
+	 * Applies the given tactic using the given user support and arguments.
+	 *
+	 * A progress dialog will be displayed during application.
+	 * If {@code tacticProgress} is true, the dialog is displayed during the
+	 * entire application; if it is false, the tactic is applied in the current
+	 * thread, then the dialog is displayed for the post tactic.
+	 *
+	 * @param tactic
+	 *            a tactic to apply
+	 * @param userSupport
+	 *            the user support on which the tactic is to be applied
+	 * @param hyps
+	 *            a set of hypotheses or <code>null</code>
+	 * @param skipPostTactic
+	 *            if <code>true</code>, post tactic will NOT be applied;
+	 *            otherwise post tactic will be applied provided that the user
+	 *            did not deactivate them
+	 * @param tacticProgress
+	 *            whether to show a progress dialog for the tactic
+	 */
+	public static void applyTactic(ITactic tactic, IUserSupport userSupport,
+			Set<Predicate> hyps, boolean skipPostTactic, boolean tacticProgress) {
+		if (tacticProgress) {
+			applyTacticWithProgress(pm -> {
+				pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
+				if (hyps == null) {
+					userSupport.applyTactic(tactic, !skipPostTactic, pm);
+				} else {
+					userSupport.applyTacticToHypotheses(tactic, hyps, !skipPostTactic, pm);
+				}
+			});
+		} else {
+			// The tactic must be applied in the UI thread,
+			// so we apply it alone without the post tactic
+			if (hyps == null) {
+				userSupport.applyTactic(tactic, false, null);
+			} else {
+				userSupport.applyTacticToHypotheses(tactic, hyps, false, null);
+			}
+			if (!skipPostTactic) {
+				// In order to apply the post tactic (with a progress bar), we apply an
+				// "identity tactic" that does nothing on its own but triggers the
+				// application of the post tactic
+				applyTacticWithProgress(pm -> {
+					pm.beginTask("Proving with post tactic", IProgressMonitor.UNKNOWN);
+					userSupport.applyTactic(IDENTITY_TACTIC, true, pm);
+				});
+			}
+		}
+	}
+
+	/**
+	 * Apply a tactic with a progress monitor (providing cancel button).
+	 *
+	 * @param op
+	 *            a runnable with progress monitor.
+	 */
+	public static void applyTacticWithProgress(IRunnableWithProgress op) {
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (InterruptedException exception) {
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Interrupt");
+			return;
+		} catch (InvocationTargetException exception) {
+			final Throwable realException = exception.getTargetException();
+			if (ProofControlUtils.DEBUG)
+				ProofControlUtils.debug("Interrupt");
+			realException.printStackTrace();
+			final String message = realException.getMessage();
+			UIUtils.showError(Messages.title_unexpectedError,message);
+			return;
 		}
 	}
 
