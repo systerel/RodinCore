@@ -231,16 +231,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											.getElementName());
 						final IUserSupport userSupport = editor
 								.getUserSupport();
+						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
 								userSupport, currentInput);
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
 									(TacticApplicationProxy<?>) application,
-									userSupport);
+									userSupport, interruptable);
 						} else if (application instanceof ICommandApplication) {
 							applyGlobalExpertTactic((ICommandApplication) application,
-									userSupport);
+									userSupport, interruptable);
 						} else {
 							return;
 						}
@@ -292,14 +293,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					final IUserSupport userSupport = editor
 					.getUserSupport();
+					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
 							userSupport, currentInput);
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
-								userSupport);
+								userSupport, interruptable);
 					} else if (application instanceof ICommandApplication) {
-						applyGlobalExpertTactic((ICommandApplication) application, userSupport);
+						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
+								interruptable);
 					} else {
 						return;
 					}
@@ -350,20 +353,28 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	// Applies a global tactic to the current proof tree node.
 	void applyGlobalExpertTactic(final ICommandApplication command,
-			final IUserSupport userSupport) {
+			final IUserSupport userSupport, final boolean interruptable) {
 
 		final String[] inputs = { currentInput };
-		applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
+		if (interruptable) {
+			applyTacticWithProgress(pm -> applyCommand(command.getProofCommand(), userSupport, null, inputs, pm));
+		} else {
+			applyCommand(command.getProofCommand(), userSupport, null, inputs, null);
+		}
 	}
 
 	
 	// Applies a global tactic to the current proof tree node.
 	void applyTacticProvider(TacticApplicationProxy<?> appli,
-			final IUserSupport userSupport) {
+			final IUserSupport userSupport, boolean interruptable) {
 
 		final ITactic tactic = appli.getTactic(null, currentInput);
 		final boolean skipPostTactic = appli.isSkipPostTactic();
-		applyTacticWithProgress(pm -> applyTactic(tactic, userSupport, null, skipPostTactic, pm));
+		if (interruptable) {
+			applyTacticWithProgress(pm -> applyTactic(tactic, userSupport, null, skipPostTactic, pm));
+		} else {
+			applyTactic(tactic, userSupport, null, skipPostTactic, null);
+		}
 	}
 
 	private class ToolBarDropTargetListener implements DropTargetListener {
