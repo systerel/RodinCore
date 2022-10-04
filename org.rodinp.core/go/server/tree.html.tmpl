@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{.Title}}</title>
+  <style>
+    body {
+      background-color: linen;
+    }
+    h1 {
+      color: maroon;
+    }
+    ul.subtree {
+      display: none;
+      list-style-type: none;
+      padding-inline-start: 1em;
+    }
+    ul.subtree.open {
+      display: block;
+    }
+    li.element {
+      margin: 0;
+      position: relative;
+    }
+    li.element::before {
+      content: '+';
+      color: green;
+      position: absolute;
+      left: -1em;
+    }
+    li.element.open::before {
+      content: '-';
+      color: red;
+    }
+    .ename {
+      color: blue;
+      cursor: pointer;
+    }
+    .evalue {
+      color: #05a;
+    }
+    .etype {
+      color: #a50;
+    }
+    .eattr {
+      color: #a11;
+    }
+  </style>
+</head>
+<body>
+<h1>{{.Title}}</h1>
+<div id="file-tree">
+  <ul class="subtree open">
+  {{- range .Tokens}}
+    {{- if is_start .}}
+    <li class="element">
+      <span class="ename">&quot;{{.EName}}&quot;</span>
+      <span class="etype" title="{{.EType}}">{{short .EType}}</span>
+      <ul class="subtree">
+      {{- range .Attrs}}
+        <li class="attribute">
+          <span class="eattr" title="{{.Name}}">{{short .Name}}</span>=
+          {{- /* eat space */ -}}
+          <span class="evalue">&quot;{{.Value}}&quot;</span>
+        </li>
+      {{- end}}
+    {{- else}}
+      </ul>
+    </li>
+    {{- end}}
+  {{- end}}
+  </ul>
+</div>
+<script>
+let elements = document.getElementById("file-tree").getElementsByClassName("ename");
+for (let element of elements) {
+    element.addEventListener("click", function() {
+        this.parentElement.classList.toggle("open");
+        this.parentElement.querySelector(".subtree").classList.toggle("open");
+    });
+}
+/* Open the root element */
+elements[0].click()
+</script>
+</body>
+</html>
