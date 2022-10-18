@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Arrays.stream;
+
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -63,22 +65,11 @@ public class FiniteInter extends EmptyInputReasoner {
 	}
 		
 	protected IAntecedent[] getAntecedentsBInter(AssociativeExpression aExp, FormulaFactory ff) {
-		// There will be 1 antecedent
-		IAntecedent[] antecedents = new IAntecedent[1];
-		
 		Expression[] children = aExp.getChildren();
-		Predicate [] newChildren = new Predicate[children.length];
-		
-		for (int i = 0; i < children.length; ++i) {
-			newChildren[i] = ff.makeSimplePredicate(Predicate.KFINITE,
-					children[i], null);
-		}
-		
-		Predicate newGoal = ff.makeAssociativePredicate(Predicate.LOR,
-				newChildren, null);
-		
-		antecedents[0] = ProverFactory.makeAntecedent(newGoal);
-		return antecedents;
+		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(Predicate.KFINITE, e, null))
+				.toArray(Predicate[]::new);
+		Predicate newGoal = ff.makeAssociativePredicate(Predicate.LOR, newChildren, null);
+		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
 	}
 
 	protected IAntecedent[] getAntecedentKInter(UnaryExpression exp, FormulaFactory ff) {
