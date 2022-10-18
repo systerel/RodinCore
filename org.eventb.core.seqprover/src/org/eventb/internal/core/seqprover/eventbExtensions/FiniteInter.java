@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,8 @@ public class FiniteInter extends EmptyInputReasoner {
 		if (!Lib.isInter(sPred.getExpression()))
 			return null;
 		
-		// There will be 1 antecidents
-		IAntecedent[] antecidents = new IAntecedent[1];
+		// There will be 1 antecedent
+		IAntecedent[] antecedents = new IAntecedent[1];
 		
 		AssociativeExpression aExp = (AssociativeExpression) sPred
 				.getExpression();
@@ -64,8 +64,8 @@ public class FiniteInter extends EmptyInputReasoner {
 		Predicate newGoal = ff.makeAssociativePredicate(Predicate.LOR,
 				newChildren, null);
 		
-		antecidents[0] = ProverFactory.makeAntecedent(newGoal);
-		return antecidents;
+		antecedents[0] = ProverFactory.makeAntecedent(newGoal);
+		return antecedents;
 	}
 
 	protected String getDisplayName() {
@@ -75,15 +75,15 @@ public class FiniteInter extends EmptyInputReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		IAntecedent[] antecidents = getAntecedents(seq);
-		if (antecidents == null)
+		IAntecedent[] antecedents = getAntecedents(seq);
+		if (antecedents == null)
 			return ProverFactory.reasonerFailure(this, input,
 					"Inference " + getReasonerID()
 							+ " is not applicable");
 
 		// Generate the successful reasoner output
 		return ProverFactory.makeProofRule(this, input, seq.goal(),
-				getDisplayName(), antecidents);
+				getDisplayName(), antecedents);
 	}
 
 }
