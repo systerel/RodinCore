@@ -11,18 +11,21 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -35,27 +38,34 @@ public class FiniteInter extends EmptyInputReasoner {
 		return REASONER_ID;
 	}
 	
-	@ProverRule("FIN_BINTER_R")
+	@ProverRule({"FIN_BINTER_R", "FIN_KINTER_R"})
 	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		Predicate goal = seq.goal();
+		final FormulaFactory ff = seq.getFormulaFactory();
 
-		// goal should have the form finite(S /\ ... /\ T)
+		// goal should have the form finite(...)
 		if (!Lib.isFinite(goal))
 			return null;
 		SimplePredicate sPred = (SimplePredicate) goal;
-		if (!Lib.isInter(sPred.getExpression()))
+		Expression expr = sPred.getExpression();
+		switch (expr.getTag()) {
+		case Expression.BINTER:
+			return getAntecedentsBInter((AssociativeExpression) expr, ff);
+		case Expression.KINTER:
+			return getAntecedentKInter((UnaryExpression) expr, ff);
+		default:
+			// Not applicable
 			return null;
+		}
+	}
 		
+	protected IAntecedent[] getAntecedentsBInter(AssociativeExpression aExp, FormulaFactory ff) {
 		// There will be 1 antecedent
 		IAntecedent[] antecedents = new IAntecedent[1];
-		
-		AssociativeExpression aExp = (AssociativeExpression) sPred
-				.getExpression();
 		
 		Expression[] children = aExp.getChildren();
 		Predicate [] newChildren = new Predicate[children.length];
 		
-		final FormulaFactory ff = seq.getFormulaFactory();
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeSimplePredicate(Predicate.KFINITE,
 					children[i], null);
@@ -66,6 +76,19 @@ public class FiniteInter extends EmptyInputReasoner {
 		
 		antecedents[0] = ProverFactory.makeAntecedent(newGoal);
 		return antecedents;
+	}
+
+	protected IAntecedent[] getAntecedentKInter(UnaryExpression exp, FormulaFactory ff) {
+		Expression set = exp.getChild();
+		// Generate: ∃s · s ∈ set ∧ finite(s)
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null);
+		BoundIdentifier s = ff.makeBoundIdentifier(0, null);
+		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, s, set, null);
+		Predicate pred2 = ff.makeSimplePredicate(Predicate.KFINITE, s, null);
+		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
+		Predicate newGoal = ff.makeQuantifiedPredicate(Predicate.EXISTS, new BoundIdentDecl[] { decl }, pred, null);
+		newGoal.typeCheck(ff.makeTypeEnvironment());
+		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
 	}
 
 	protected String getDisplayName() {

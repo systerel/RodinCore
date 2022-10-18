@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,10 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 	String P3 = "finite(S ∩ {0 ↦ 3} ∩ T)";
 
 	String resultP3GoalA = "{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- finite(S)∨finite({0 ↦ 3})∨finite(T)";
+
+	String P4 = "finite(inter({S, {0 ↦ 3}, T}))";
+
+	String resultP4GoalA = "{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)";
 	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.finiteInterGetPositions(predicate);
@@ -44,7 +48,9 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 				// P3 in goal
-				new SuccessfulTest(" ⊤ |- " + P3, resultP3GoalA)
+				new SuccessfulTest(" ⊤ |- " + P3, resultP3GoalA),
+				// P4 in goal
+				new SuccessfulTest(" ⊤ |- " + P4, resultP4GoalA),
 		};
 	}
 
@@ -63,6 +69,7 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 				P1, "",
 				P2, "",
 				P3, "ROOT",
+				P4, "ROOT",
 		};
 	}
 

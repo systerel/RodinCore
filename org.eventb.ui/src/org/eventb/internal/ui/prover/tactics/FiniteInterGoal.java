@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static java.util.Collections.singletonList;
 
 import java.util.List;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
@@ -63,7 +64,9 @@ public class FiniteInterGoal implements ITacticProvider {
 		
 		final Predicate goal = node.getSequent().goal();
 		if (Lib.isFinite(goal)) {
-			if (Lib.isInter(((SimplePredicate) goal).getExpression())) {
+			switch (((SimplePredicate) goal).getExpression().getTag()) {
+			case Expression.BINTER:
+			case Expression.KINTER:
 				final ITacticApplication appli = new FiniteInterGoalApplication();
 				return singletonList(appli);
 			}
