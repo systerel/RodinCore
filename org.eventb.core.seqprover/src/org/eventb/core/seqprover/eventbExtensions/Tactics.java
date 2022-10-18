@@ -2391,6 +2391,7 @@ public class Tactics {
 			switch (((SimplePredicate) predicate).getExpression().getTag()) {
 			case Expression.BINTER:
 			case Expression.KINTER:
+			case Expression.QINTER:
 				return Arrays.asList(new IPosition[] { IPosition.ROOT });
 			}
 		}

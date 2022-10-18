@@ -67,6 +67,7 @@ public class FiniteInterGoal implements ITacticProvider {
 			switch (((SimplePredicate) goal).getExpression().getTag()) {
 			case Expression.BINTER:
 			case Expression.KINTER:
+			case Expression.QINTER:
 				final ITacticApplication appli = new FiniteInterGoalApplication();
 				return singletonList(appli);
 			}

@@ -16,6 +16,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -38,7 +39,7 @@ public class FiniteInter extends EmptyInputReasoner {
 		return REASONER_ID;
 	}
 	
-	@ProverRule({"FIN_BINTER_R", "FIN_KINTER_R"})
+	@ProverRule({"FIN_BINTER_R", "FIN_KINTER_R", "FIN_QINTER_R"})
 	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
@@ -53,6 +54,8 @@ public class FiniteInter extends EmptyInputReasoner {
 			return getAntecedentsBInter((AssociativeExpression) expr, ff);
 		case Expression.KINTER:
 			return getAntecedentKInter((UnaryExpression) expr, ff);
+		case Expression.QINTER:
+			return getAntecedentQInter((QuantifiedExpression) expr, ff);
 		default:
 			// Not applicable
 			return null;
@@ -87,6 +90,16 @@ public class FiniteInter extends EmptyInputReasoner {
 		Predicate pred2 = ff.makeSimplePredicate(Predicate.KFINITE, s, null);
 		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
 		Predicate newGoal = ff.makeQuantifiedPredicate(Predicate.EXISTS, new BoundIdentDecl[] { decl }, pred, null);
+		newGoal.typeCheck(ff.makeTypeEnvironment());
+		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
+	}
+
+	protected IAntecedent[] getAntecedentQInter(QuantifiedExpression exp, FormulaFactory ff) {
+		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
+		Predicate pred1 = exp.getPredicate();
+		Predicate pred2 = ff.makeSimplePredicate(Predicate.KFINITE, exp.getExpression(), null);
+		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
+		Predicate newGoal = ff.makeQuantifiedPredicate(Predicate.EXISTS, expDecls, pred, null);
 		newGoal.typeCheck(ff.makeTypeEnvironment());
 		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
 	}

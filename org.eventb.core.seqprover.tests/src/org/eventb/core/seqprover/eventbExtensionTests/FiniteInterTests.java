@@ -35,6 +35,10 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 	String P4 = "finite(inter({S, {0 ↦ 3}, T}))";
 
 	String resultP4GoalA = "{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)";
+
+	String P5 = "finite(⋂s·s ∈ {S, {0 ↦ 3}, T} ∣ s)";
+
+	String resultP5GoalA = "{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)";
 	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.finiteInterGetPositions(predicate);
@@ -51,6 +55,8 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 				new SuccessfulTest(" ⊤ |- " + P3, resultP3GoalA),
 				// P4 in goal
 				new SuccessfulTest(" ⊤ |- " + P4, resultP4GoalA),
+				// P5 in goal
+				new SuccessfulTest(" ⊤ |- " + P5, resultP5GoalA),
 		};
 	}
 
@@ -70,6 +76,7 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 				P2, "",
 				P3, "ROOT",
 				P4, "ROOT",
+				P5, "ROOT",
 		};
 	}
 
