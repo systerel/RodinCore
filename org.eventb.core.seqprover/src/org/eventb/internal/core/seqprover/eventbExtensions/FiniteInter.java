@@ -31,6 +31,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -85,13 +86,13 @@ public class FiniteInter extends EmptyInputReasoner {
 	protected IAntecedent[] getAntecedentKInter(UnaryExpression exp, FormulaFactory ff) {
 		Expression set = exp.getChild();
 		// Generate: ∃s · s ∈ set ∧ finite(s)
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null);
-		BoundIdentifier s = ff.makeBoundIdentifier(0, null);
+		Type sType = set.getType().getBaseType();
+		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, sType);
+		BoundIdentifier s = ff.makeBoundIdentifier(0, null, sType);
 		Predicate pred1 = ff.makeRelationalPredicate(IN, s, set, null);
 		Predicate pred2 = ff.makeSimplePredicate(KFINITE, s, null);
 		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
 		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
-		newGoal.typeCheck(ff.makeTypeEnvironment());
 		return new IAntecedent[] { makeAntecedent(newGoal) };
 	}
 
@@ -101,7 +102,6 @@ public class FiniteInter extends EmptyInputReasoner {
 		Predicate pred2 = ff.makeSimplePredicate(KFINITE, exp.getExpression(), null);
 		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
 		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, expDecls, pred, null);
-		newGoal.typeCheck(ff.makeTypeEnvironment());
 		return new IAntecedent[] { makeAntecedent(newGoal) };
 	}
 
