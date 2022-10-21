@@ -26,7 +26,7 @@ import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
 /**
- * Provider for the "finite of ∩" tactic.
+ * Provider for the "finite of intersection" tactic.
  * <ul>
  * <li>Provider ID : <code>org.eventb.ui.finiteInterGoal</code></li>
  * <li>Target : goal</li>

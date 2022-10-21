@@ -106,7 +106,7 @@ public class FiniteInter extends EmptyInputReasoner {
 	}
 
 	protected String getDisplayName() {
-		return "finite of ∩";
+		return "finite of intersection";
 	}
 
 	@Override
