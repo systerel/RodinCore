@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.QINTER;
@@ -188,6 +190,9 @@ public class Tactics {
 
 	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
 
+	private static final List<IPosition> NO_POSITIONS = emptyList();
+
+	private static final List<IPosition> POSITION_ROOT = singletonList(ROOT);
 
 	// Globally applicable tactics
 
@@ -2397,10 +2402,10 @@ public class Tactics {
 			case BINTER:
 			case KINTER:
 			case QINTER:
-				return Arrays.asList(new IPosition[] { ROOT });
+				return POSITION_ROOT;
 			}
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
