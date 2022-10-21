@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -36,8 +37,12 @@ public abstract class AbstractEmptyInputReasonerTests extends
 			this.results = results;
 		}
 	}
+
+	private static final SuccessfulTest[] NO_SUCCESSFUL_TESTS = new SuccessfulTest[0];
 	
-	protected abstract SuccessfulTest[] getSuccessfulTests();
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return NO_SUCCESSFUL_TESTS;
+	}
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
@@ -76,7 +81,11 @@ public abstract class AbstractEmptyInputReasonerTests extends
 						.size()]);
 	}
 
-	protected abstract String[] getUnsuccessfulTests();
+	private static final String[] NO_UNSUCCESSFUL_TESTS = new String[0];
+
+	protected String[] getUnsuccessfulTests() {
+		return NO_UNSUCCESSFUL_TESTS;
+	}
 
 	protected Collection<UnsuccessfullReasonerApplication> makeUnsuccessfulApplication(
 			String sequentImage) {
@@ -94,9 +103,12 @@ public abstract class AbstractEmptyInputReasonerTests extends
 		return unsuccessfullReasonerApps;
 	}
 
-//	@Override
-//	public ITactic getJustDischTactic() {
-//		return B4freeCore.externalPP(false);
-//	}
+	public void assertReasonerSuccess(String sequentImage, String... newSequents) throws UntranslatableException {
+		assertReasonerSuccess(sequentImage, new EmptyInput(), newSequents);
+	}
+
+	public void assertReasonerFailure(String sequentImage, String reason) throws UntranslatableException {
+		assertReasonerFailure(sequentImage, new EmptyInput(), reason);
+	}
 
 }

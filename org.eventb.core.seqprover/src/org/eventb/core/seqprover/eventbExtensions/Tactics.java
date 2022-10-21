@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,13 @@
  *     Systerel - implemented DATATYPE_DISTINCT_CASE and DATATYPE_INDUCTION
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.ast.IPosition.ROOT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,6 +190,9 @@ public class Tactics {
 
 	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
 
+	private static final List<IPosition> NO_POSITIONS = emptyList();
+
+	private static final List<IPosition> POSITION_ROOT = singletonList(ROOT);
 
 	// Globally applicable tactics
 
@@ -2388,10 +2398,14 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteInterGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
-			if (Lib.isInter(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			switch (((SimplePredicate) predicate).getExpression().getTag()) {
+			case BINTER:
+			case KINTER:
+			case QINTER:
+				return POSITION_ROOT;
+			}
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
