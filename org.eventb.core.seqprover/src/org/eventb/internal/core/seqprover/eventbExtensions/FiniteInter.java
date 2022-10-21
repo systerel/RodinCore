@@ -113,7 +113,7 @@ public class FiniteInter extends EmptyInputReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
 		IAntecedent[] antecedents = getAntecedents(seq);
 		if (antecedents == null)
-			return reasonerFailure(this, input, "Inference " + getReasonerID() + " is not applicable");
+			return reasonerFailure(this, input, "Inference '" + getDisplayName() + "' is not applicable");
 
 		// Generate the successful reasoner output
 		return makeProofRule(this, input, seq.goal(), getDisplayName(), antecedents);
