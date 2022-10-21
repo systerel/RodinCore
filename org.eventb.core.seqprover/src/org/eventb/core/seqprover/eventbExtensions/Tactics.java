@@ -17,6 +17,11 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.ast.IPosition.ROOT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2389,10 +2394,10 @@ public class Tactics {
 	public static List<IPosition> finiteInterGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			switch (((SimplePredicate) predicate).getExpression().getTag()) {
-			case Expression.BINTER:
-			case Expression.KINTER:
-			case Expression.QINTER:
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			case BINTER:
+			case KINTER:
+			case QINTER:
+				return Arrays.asList(new IPosition[] { ROOT });
 			}
 		}
 		return new ArrayList<IPosition>();

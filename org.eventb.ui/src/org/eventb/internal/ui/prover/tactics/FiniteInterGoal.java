@@ -12,11 +12,13 @@ package org.eventb.internal.ui.prover.tactics;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.ast.IPosition.ROOT;
 
 import java.util.List;
 
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -41,7 +43,7 @@ public class FiniteInterGoal implements ITacticProvider {
 		private static final String TACTIC_ID = "org.eventb.ui.finiteInterGoal";
 
 		public FiniteInterGoalApplication() {
-			super(null, IPosition.ROOT);
+			super(null, ROOT);
 		}
 
 		@Override
@@ -65,9 +67,9 @@ public class FiniteInterGoal implements ITacticProvider {
 		final Predicate goal = node.getSequent().goal();
 		if (Lib.isFinite(goal)) {
 			switch (((SimplePredicate) goal).getExpression().getTag()) {
-			case Expression.BINTER:
-			case Expression.KINTER:
-			case Expression.QINTER:
+			case BINTER:
+			case KINTER:
+			case QINTER:
 				final ITacticApplication appli = new FiniteInterGoalApplication();
 				return singletonList(appli);
 			}

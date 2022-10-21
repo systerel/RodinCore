@@ -11,6 +11,17 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.stream;
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -26,7 +37,6 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -35,13 +45,13 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 public class FiniteInter extends EmptyInputReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteInter";
-	
+
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	@ProverRule({"FIN_BINTER_R", "FIN_KINTER_R", "FIN_QINTER_R"})
+
+	@ProverRule({ "FIN_BINTER_R", "FIN_KINTER_R", "FIN_QINTER_R" })
 	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
@@ -52,24 +62,24 @@ public class FiniteInter extends EmptyInputReasoner {
 		SimplePredicate sPred = (SimplePredicate) goal;
 		Expression expr = sPred.getExpression();
 		switch (expr.getTag()) {
-		case Expression.BINTER:
+		case BINTER:
 			return getAntecedentsBInter((AssociativeExpression) expr, ff);
-		case Expression.KINTER:
+		case KINTER:
 			return getAntecedentKInter((UnaryExpression) expr, ff);
-		case Expression.QINTER:
+		case QINTER:
 			return getAntecedentQInter((QuantifiedExpression) expr, ff);
 		default:
 			// Not applicable
 			return null;
 		}
 	}
-		
+
 	protected IAntecedent[] getAntecedentsBInter(AssociativeExpression aExp, FormulaFactory ff) {
 		Expression[] children = aExp.getChildren();
-		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(Predicate.KFINITE, e, null))
+		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
 				.toArray(Predicate[]::new);
-		Predicate newGoal = ff.makeAssociativePredicate(Predicate.LOR, newChildren, null);
-		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
+		Predicate newGoal = ff.makeAssociativePredicate(LOR, newChildren, null);
+		return new IAntecedent[] { makeAntecedent(newGoal) };
 	}
 
 	protected IAntecedent[] getAntecedentKInter(UnaryExpression exp, FormulaFactory ff) {
@@ -77,22 +87,22 @@ public class FiniteInter extends EmptyInputReasoner {
 		// Generate: ∃s · s ∈ set ∧ finite(s)
 		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null);
 		BoundIdentifier s = ff.makeBoundIdentifier(0, null);
-		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, s, set, null);
-		Predicate pred2 = ff.makeSimplePredicate(Predicate.KFINITE, s, null);
-		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
-		Predicate newGoal = ff.makeQuantifiedPredicate(Predicate.EXISTS, new BoundIdentDecl[] { decl }, pred, null);
+		Predicate pred1 = ff.makeRelationalPredicate(IN, s, set, null);
+		Predicate pred2 = ff.makeSimplePredicate(KFINITE, s, null);
+		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
+		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
 		newGoal.typeCheck(ff.makeTypeEnvironment());
-		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
+		return new IAntecedent[] { makeAntecedent(newGoal) };
 	}
 
 	protected IAntecedent[] getAntecedentQInter(QuantifiedExpression exp, FormulaFactory ff) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
 		Predicate pred1 = exp.getPredicate();
-		Predicate pred2 = ff.makeSimplePredicate(Predicate.KFINITE, exp.getExpression(), null);
-		Predicate pred = ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { pred1, pred2 }, null);
-		Predicate newGoal = ff.makeQuantifiedPredicate(Predicate.EXISTS, expDecls, pred, null);
+		Predicate pred2 = ff.makeSimplePredicate(KFINITE, exp.getExpression(), null);
+		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
+		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, expDecls, pred, null);
 		newGoal.typeCheck(ff.makeTypeEnvironment());
-		return new IAntecedent[] { ProverFactory.makeAntecedent(newGoal) };
+		return new IAntecedent[] { makeAntecedent(newGoal) };
 	}
 
 	protected String getDisplayName() {
@@ -100,17 +110,13 @@ public class FiniteInter extends EmptyInputReasoner {
 	}
 
 	@Override
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IProofMonitor pm) {
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
 		IAntecedent[] antecedents = getAntecedents(seq);
 		if (antecedents == null)
-			return ProverFactory.reasonerFailure(this, input,
-					"Inference " + getReasonerID()
-							+ " is not applicable");
+			return reasonerFailure(this, input, "Inference " + getReasonerID() + " is not applicable");
 
 		// Generate the successful reasoner output
-		return ProverFactory.makeProofRule(this, input, seq.goal(),
-				getDisplayName(), antecedents);
+		return makeProofRule(this, input, seq.goal(), getDisplayName(), antecedents);
 	}
 
 }
