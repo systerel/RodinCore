@@ -103,6 +103,7 @@ import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -586,6 +587,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void modifyText(ModifyEvent e) {
 				currentInput = textWidget.getText();
+				// The word under the cursor may not have been translated yet,
+				// so we force a translation before handing the input to the tactic
+				currentInput = RodinKeyboardUIPlugin.getDefault().translate(currentInput);
 				updateToolItems();
 			}
 		});
