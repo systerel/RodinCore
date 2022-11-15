@@ -20,8 +20,11 @@ package org.eventb.core.seqprover.eventbExtensions;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.QINTER;
+import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.IPosition.ROOT;
 
 import java.util.ArrayList;
@@ -114,6 +117,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
@@ -2420,6 +2424,37 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new FiniteInter(), EMPTY_INPUT);
 	}
 
+	/**
+	 * Return the list of applicable positions of the tactic "finite of union" to a
+	 * predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @see FiniteUnion
+	 * @since 3.6
+	 */
+	public static List<IPosition> finiteUnionGetPositions(Predicate predicate) {
+		if (Lib.isFinite(predicate)) {
+			switch (((SimplePredicate) predicate).getExpression().getTag()) {
+			case BUNION:
+			case KUNION:
+			case QUNION:
+				return POSITION_ROOT;
+			}
+		}
+		return NO_POSITIONS;
+	}
+
+	/**
+	 * Return the tactic "Finite of union".
+	 *
+	 * @return The tactic "finite of union"
+	 * @see FiniteUnion
+	 * @since 3.6
+	 */
+	public static ITactic finiteUnion() {
+		return BasicTactics.reasonerTac(new FiniteUnion(), EMPTY_INPUT);
+	}
 
 	/**
 	 * Return the list of applicable positions of the tactic "finite of set

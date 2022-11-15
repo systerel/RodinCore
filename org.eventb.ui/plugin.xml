@@ -1929,6 +1929,15 @@
             tooltip="%proofTactic.finiteInterGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
+            id="org.eventb.ui.finiteUnionGoal"
+            interrupt="false"
+            name="%proofTactic.finiteUnionGoal.name"
+            priority="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteUnionGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteUnionGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
             id="org.eventb.ui.finiteSetMinusGoal"
             interrupt="false"
             name="%proofTactic.finiteSetMinusGoal.name"

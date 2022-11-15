@@ -348,6 +348,10 @@
             id="finiteInter"
             name="%finiteInterName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion"
+            id="finiteUnion"
+            name="%finiteUnionName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus"
             id="finiteSetMinus"
             name="%finiteSetMinusName"/>
