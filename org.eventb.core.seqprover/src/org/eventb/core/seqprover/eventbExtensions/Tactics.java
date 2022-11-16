@@ -673,7 +673,14 @@ public class Tactics {
 	}
 
 	public static boolean disjE_applicable(Predicate hyp) {
-		return Lib.isDisj(hyp) || (Lib.isInclusion(hyp) && Lib.isUnion(((RelationalPredicate) hyp).getRight()));
+		if (Lib.isDisj(hyp)) {
+			return true;
+		}
+		if (Lib.isInclusion(hyp)) {
+			Expression right = ((RelationalPredicate) hyp).getRight();
+			return Lib.isUnion(right) || Lib.isSetExtension(right);
+		}
+		return false;
 	}
 
 	public static ITactic eqE(Predicate eqHyp) {

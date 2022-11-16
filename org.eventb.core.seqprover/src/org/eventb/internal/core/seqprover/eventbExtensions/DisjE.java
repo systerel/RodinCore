@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Université de Lorraine - extended for case on unions
+ *     Université de Lorraine - extended for case on unions and set extension
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singleton;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
@@ -23,6 +24,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -40,6 +42,8 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  * <li>a disjunctive hypothesis by case distinction on its disjuncts</li>
  * <li>a set membership to an union by case distinction on the sets in the
  * union</li>
+ * <li>a set membership to an extension set by case distinction on the elements
+ * of the set</li>
  * </ul>
  * 
  * <p>
@@ -82,6 +86,14 @@ public class DisjE extends HypothesisReasoner {
 				final Expression element = rel.getLeft();
 				final IHypAction hypAction = makeDeselectHypAction(asList(pred));
 				return stream(sets).map(e -> ff.makeRelationalPredicate(IN, element, e, null)) // new hypothesis
+						.map(e -> makeAntecedent(null, singleton(e), hypAction)) // antecedent with hyp action
+						.toArray(IAntecedent[]::new);
+			}
+			if (Lib.isSetExtension(set)) {
+				final Expression[] values = ((SetExtension) set).getMembers();
+				final Expression element = rel.getLeft();
+				final IHypAction hypAction = makeDeselectHypAction(asList(pred));
+				return stream(values).map(e -> ff.makeRelationalPredicate(EQUAL, element, e, null)) // new hypothesis
 						.map(e -> makeAntecedent(null, singleton(e), hypAction)) // antecedent with hyp action
 						.toArray(IAntecedent[]::new);
 			}
