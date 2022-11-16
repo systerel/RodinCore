@@ -1245,7 +1245,7 @@
             interrupt="false"
             name="%proofTactics.disjE.name"
             priority="4"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjunctionElemination"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjunctionElimination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.DisjE.tooltip"/>
       <tactic

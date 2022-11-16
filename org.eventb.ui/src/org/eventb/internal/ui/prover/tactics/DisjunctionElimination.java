@@ -37,7 +37,7 @@ import org.eventb.ui.prover.ITacticProvider;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class DisjunctionElemination implements ITacticProvider {
+public class DisjunctionElimination implements ITacticProvider {
 
 	public static class DisjunctionEliminationApplication extends
 			DefaultPositionApplication {
