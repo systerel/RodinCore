@@ -37,7 +37,7 @@ public class DisjETests extends AbstractReasonerTests {
 	@Test
 	public void failure() throws Exception {
 		assertReasonerFailure("⊤ |- ⊤", makeInput("1=1∨2=2"), "Nonexistent hypothesis: 1=1∨2=2");
-		assertReasonerFailure("⊤ |- ⊤", makeInput("⊤"), "Hypothesis is not a disjunction: ⊤");
+		assertReasonerFailure("⊤ |- ⊤", makeInput("⊤"), "Case analysis not possible on hypothesis: ⊤");
 	}
 
 	/**
@@ -47,6 +47,10 @@ public class DisjETests extends AbstractReasonerTests {
 	public void success() throws Exception {
 		assertReasonerSuccess("1=1∨2=2  |- ⊤", makeInput("1=1∨2=2"), "{}[][1=1∨2=2][1=1] |- ⊤",
 				"{}[][1=1∨2=2][2=2] |- ⊤");
+		assertReasonerSuccess("x∈S∪{1} |- ⊤", makeInput("x∈S∪{1}"), "{}[][x∈S∪{1}][x∈S] |- ⊤",
+				"{}[][x∈S∪{1}][x∈{1}] |- ⊤");
+		assertReasonerSuccess("x∈{1,2} |- ⊤", makeInput("x∈{1,2}"), "{}[][x∈{1,2}][x=1] |- ⊤",
+				"{}[][x∈{1,2}][x=2] |- ⊤");
 	}
 
 	private IReasonerInput makeInput(String input) {
