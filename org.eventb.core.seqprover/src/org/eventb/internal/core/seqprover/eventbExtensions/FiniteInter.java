@@ -34,7 +34,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
@@ -53,7 +52,7 @@ public class FiniteInter extends EmptyInputReasoner {
 	}
 
 	@ProverRule({ "FIN_BINTER_R", "FIN_KINTER_R", "FIN_QINTER_R" })
-	protected IAntecedent[] getAntecedents(IProverSequent seq) {
+	protected Predicate getNewGoal(IProverSequent seq) {
 		Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 
@@ -64,26 +63,25 @@ public class FiniteInter extends EmptyInputReasoner {
 		Expression expr = sPred.getExpression();
 		switch (expr.getTag()) {
 		case BINTER:
-			return getAntecedentsBInter((AssociativeExpression) expr, ff);
+			return getNewGoalBInter((AssociativeExpression) expr, ff);
 		case KINTER:
-			return getAntecedentKInter((UnaryExpression) expr, ff);
+			return getNewGoalKInter((UnaryExpression) expr, ff);
 		case QINTER:
-			return getAntecedentQInter((QuantifiedExpression) expr, ff);
+			return getNewGoalQInter((QuantifiedExpression) expr, ff);
 		default:
 			// Not applicable
 			return null;
 		}
 	}
 
-	protected IAntecedent[] getAntecedentsBInter(AssociativeExpression aExp, FormulaFactory ff) {
+	protected Predicate getNewGoalBInter(AssociativeExpression aExp, FormulaFactory ff) {
 		Expression[] children = aExp.getChildren();
 		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
 				.toArray(Predicate[]::new);
-		Predicate newGoal = ff.makeAssociativePredicate(LOR, newChildren, null);
-		return new IAntecedent[] { makeAntecedent(newGoal) };
+		return ff.makeAssociativePredicate(LOR, newChildren, null);
 	}
 
-	protected IAntecedent[] getAntecedentKInter(UnaryExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalKInter(UnaryExpression exp, FormulaFactory ff) {
 		Expression set = exp.getChild();
 		// Generate: ∃s · s ∈ set ∧ finite(s)
 		Type sType = set.getType().getBaseType();
@@ -92,17 +90,15 @@ public class FiniteInter extends EmptyInputReasoner {
 		Predicate pred1 = ff.makeRelationalPredicate(IN, s, set, null);
 		Predicate pred2 = ff.makeSimplePredicate(KFINITE, s, null);
 		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
-		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
-		return new IAntecedent[] { makeAntecedent(newGoal) };
+		return ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
 	}
 
-	protected IAntecedent[] getAntecedentQInter(QuantifiedExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalQInter(QuantifiedExpression exp, FormulaFactory ff) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
 		Predicate pred1 = exp.getPredicate();
 		Predicate pred2 = ff.makeSimplePredicate(KFINITE, exp.getExpression(), null);
 		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
-		Predicate newGoal = ff.makeQuantifiedPredicate(EXISTS, expDecls, pred, null);
-		return new IAntecedent[] { makeAntecedent(newGoal) };
+		return ff.makeQuantifiedPredicate(EXISTS, expDecls, pred, null);
 	}
 
 	protected String getDisplayName() {
@@ -111,12 +107,12 @@ public class FiniteInter extends EmptyInputReasoner {
 
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
-		IAntecedent[] antecedents = getAntecedents(seq);
-		if (antecedents == null)
+		Predicate newGoal = getNewGoal(seq);
+		if (newGoal == null)
 			return reasonerFailure(this, input, "Inference '" + getDisplayName() + "' is not applicable");
 
 		// Generate the successful reasoner output
-		return makeProofRule(this, input, seq.goal(), getDisplayName(), antecedents);
+		return makeProofRule(this, input, seq.goal(), getDisplayName(), makeAntecedent(newGoal));
 	}
 
 }
