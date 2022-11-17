@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.EMPTYSET;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.IPosition.ROOT;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.disjToImpl;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
@@ -1309,6 +1312,35 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return BasicTactics.loopOnAllPending(new NNFRewritesOnceTac());
+		}
+
+	}
+
+	/**
+	 * Replaces a non-empty set hypothesis with an existential.
+	 *
+	 * @author Guillaume Verdier
+	 * @since 3.6
+	 */
+	public static class NotEmptyAutoTac implements ITactic {
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate hyp : ptNode.getSequent().selectedHypIterable()) {
+				if (pm != null && pm.isCanceled()) {
+					return "Canceled";
+				}
+				if (hyp.getTag() == NOT) {
+					Predicate child = ((UnaryPredicate) hyp).getChild();
+					if (child.getTag() == EQUAL) {
+						var predEq = (RelationalPredicate) child;
+						if (predEq.getLeft().getTag() == EMPTYSET || predEq.getRight().getTag() == EMPTYSET) {
+							return Tactics.removeNeg(hyp, ROOT).apply(ptNode, pm);
+						}
+					}
+				}
+			}
+			return "Tactic unapplicable";
 		}
 
 	}

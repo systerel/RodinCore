@@ -804,6 +804,12 @@
             id="rmiGoalOnceTac"
             name="%rmiGoalOnceTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$NotEmptyAutoTac"
+            description="%notEmptyTacDesc"
+            id="notEmptyTac"
+            name="%notEmptyTacName">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">
