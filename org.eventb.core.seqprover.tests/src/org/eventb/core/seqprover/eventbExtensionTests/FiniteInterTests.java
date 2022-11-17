@@ -42,6 +42,10 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 				"{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)");
 		assertReasonerSuccess("⊤ |- finite(⋂s·s ∈ {S, {0 ↦ 3}, T} ∣ s)",
 				"{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)");
+		assertReasonerSuccess("⊤ |- finite(⋂s ∣ s ∈ {S, {0 ↦ 3}, T})",
+				"{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- ∃s· s ∈ {S, {0 ↦ 3}, T} ∧ finite(s)");
+		assertReasonerSuccess("⊤ |- finite(⋂s·s ∈ {S, {0, 3}, T} ∧ s ∩ {1} ⊆ s ∣ { t ∣ t = s ∩ {2}})",
+				"{S=ℙ(ℤ); T=ℙ(ℤ)}[][][⊤] |- ∃s· (s ∈ {S, {0, 3}, T} ∧ s ∩ {1} ⊆ s) ∧ finite({ t ∣ t = s ∩ {2}})");
 	}
 
 	@Test
