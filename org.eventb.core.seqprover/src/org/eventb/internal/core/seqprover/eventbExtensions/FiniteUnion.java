@@ -60,7 +60,6 @@ public class FiniteUnion extends EmptyInputReasoner {
 		return REASONER_ID;
 	}
 
-	@ProverRule({ "FIN_BUNION_R", "FIN_KUNION_R", "FIN_QUNION_R" })
 	protected Predicate getNewGoal(IProverSequent seq) {
 		Predicate goal = seq.goal();
 		FormulaFactory ff = seq.getFormulaFactory();
@@ -82,15 +81,20 @@ public class FiniteUnion extends EmptyInputReasoner {
 		}
 	}
 
+	// Input: S ∪ ... ∪ T
+	// Output: finite(S) ∧ ... ∧ finite(T)
+	@ProverRule("FIN_BUNION_R")
 	protected Predicate getNewGoalBUnion(AssociativeExpression exp, FormulaFactory ff) {
 		Predicate[] newChildren = stream(exp.getChildren()).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
 				.toArray(Predicate[]::new);
 		return ff.makeAssociativePredicate(LAND, newChildren, null);
 	}
 
+	// Input: union(S)
+	// Output: finite(S) ∧ (∀s · s ∈ S ⇒ finite(s))
+	@ProverRule("FIN_KUNION_R")
 	protected Predicate getNewGoalKUnion(UnaryExpression exp, FormulaFactory ff) {
 		Expression set = exp.getChild();
-		// Generate: finite(set) ∧ (∀s · s ∈ set ⇒ finite(s))
 		Type sType = set.getType().getBaseType();
 		Predicate finite = ff.makeSimplePredicate(KFINITE, set, null);
 		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, sType);
@@ -102,9 +106,11 @@ public class FiniteUnion extends EmptyInputReasoner {
 		return ff.makeAssociativePredicate(LAND, new Predicate[] { finite, quantified }, null);
 	}
 
+	// Input: ⋃ s · P ∣ E
+	// Output: finite({s · P ∣ E}) ∧ (∀s · P ⇒ finite(E))
+	@ProverRule("FIN_QUNION_R")
 	protected Predicate getNewGoalQUnion(QuantifiedExpression exp, FormulaFactory ff) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
-		// Generate: finite({s · P | E}) ∧ (∀s · P ⇒ finite(E))
 		Predicate expPred = exp.getPredicate();
 		Expression exprExpr = exp.getExpression();
 		Expression cset = ff.makeQuantifiedExpression(CSET, expDecls, expPred, exprExpr, null, exp.getForm());

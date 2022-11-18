@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Université de Lorraine - rules FIN_KINTER_R and FIN_QINTER_R
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -42,6 +43,15 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
+/**
+ * Implementation of the "Finite of inter" reasoners.
+ *
+ * There are three rules to prove the finiteness of the three types of intersection: ∩,
+ * inter and ⋂ (internally named BINTER, KINTER and QINTER).
+ *
+ * @author Thai Son Hoang
+ * @author Guillaume Verdier
+ */
 public class FiniteInter extends EmptyInputReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteInter";
@@ -51,7 +61,6 @@ public class FiniteInter extends EmptyInputReasoner {
 		return REASONER_ID;
 	}
 
-	@ProverRule({ "FIN_BINTER_R", "FIN_KINTER_R", "FIN_QINTER_R" })
 	protected Predicate getNewGoal(IProverSequent seq) {
 		Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
@@ -74,6 +83,9 @@ public class FiniteInter extends EmptyInputReasoner {
 		}
 	}
 
+	// Input: S ∩ ... ∩ T
+	// Output: finite(S) ∨ ... ∨ finite(T)
+	@ProverRule("FIN_BINTER_R")
 	protected Predicate getNewGoalBInter(AssociativeExpression aExp, FormulaFactory ff) {
 		Expression[] children = aExp.getChildren();
 		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
@@ -81,9 +93,11 @@ public class FiniteInter extends EmptyInputReasoner {
 		return ff.makeAssociativePredicate(LOR, newChildren, null);
 	}
 
+	// Input: inter(S)
+	// Output: ∃s · s ∈ S ∧ finite(s)
+	@ProverRule("FIN_KINTER_R")
 	protected Predicate getNewGoalKInter(UnaryExpression exp, FormulaFactory ff) {
 		Expression set = exp.getChild();
-		// Generate: ∃s · s ∈ set ∧ finite(s)
 		Type sType = set.getType().getBaseType();
 		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, sType);
 		BoundIdentifier s = ff.makeBoundIdentifier(0, null, sType);
@@ -93,6 +107,9 @@ public class FiniteInter extends EmptyInputReasoner {
 		return ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
 	}
 
+	// Input: ⋂ s · P ∣ E
+	// Output: ∃s · P ∧ finite(E)
+	@ProverRule("FIN_QINTER_R")
 	protected Predicate getNewGoalQInter(QuantifiedExpression exp, FormulaFactory ff) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
 		Predicate pred1 = exp.getPredicate();
