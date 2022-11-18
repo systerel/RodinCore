@@ -47,8 +47,12 @@ public class DisjETests extends AbstractReasonerTests {
 	public void success() throws Exception {
 		assertReasonerSuccess("1=1∨2=2  |- ⊤", makeInput("1=1∨2=2"), "{}[][1=1∨2=2][1=1] |- ⊤",
 				"{}[][1=1∨2=2][2=2] |- ⊤");
+		assertReasonerSuccess("1=1∨2=2∨3=3 |- ⊤", makeInput("1=1∨2=2∨3=3"), "{}[][1=1∨2=2∨3=3][1=1] |- ⊤",
+				"{}[][1=1∨2=2∨3=3][2=2] |- ⊤", "{}[][1=1∨2=2∨3=3][3=3] |- ⊤");
 		assertReasonerSuccess("x∈S∪{1} |- ⊤", makeInput("x∈S∪{1}"), "{}[][x∈S∪{1}][x∈S] |- ⊤",
 				"{}[][x∈S∪{1}][x∈{1}] |- ⊤");
+		assertReasonerSuccess("x∈{0}∪S∪{1} |- ⊤", makeInput("x∈{0}∪S∪{1}"), "{}[][x∈{0}∪S∪{1}][x∈{0}] |- ⊤",
+				"{}[][x∈{0}∪S∪{1}][x∈S] |- ⊤", "{}[][x∈{0}∪S∪{1}][x∈{1}] |- ⊤");
 		assertReasonerSuccess("x∈{1,2} |- ⊤", makeInput("x∈{1,2}"), "{}[][x∈{1,2}][x=1] |- ⊤",
 				"{}[][x∈{1,2}][x=2] |- ⊤");
 	}
