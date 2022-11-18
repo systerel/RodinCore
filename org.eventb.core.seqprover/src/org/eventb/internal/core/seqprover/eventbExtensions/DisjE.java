@@ -19,6 +19,8 @@ import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 
+import java.util.stream.Stream;
+
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -80,21 +82,19 @@ public class DisjE extends HypothesisReasoner {
 		if (Lib.isInclusion(pred)) {
 			final FormulaFactory ff = sequent.getFormulaFactory();
 			final var rel = (RelationalPredicate) pred;
+			final Expression element = rel.getLeft();
 			final Expression set = rel.getRight();
+			Stream<Predicate> newPredicates = null;
 			if (Lib.isUnion(set)) {
-				final Expression[] sets = ((AssociativeExpression) set).getChildren();
-				final Expression element = rel.getLeft();
-				final IHypAction hypAction = makeDeselectHypAction(asList(pred));
-				return stream(sets).map(e -> ff.makeRelationalPredicate(IN, element, e, null)) // new hypothesis
-						.map(e -> makeAntecedent(null, singleton(e), hypAction)) // antecedent with hyp action
-						.toArray(IAntecedent[]::new);
+				Expression[] values = ((AssociativeExpression) set).getChildren();
+				newPredicates = stream(values).map(e -> ff.makeRelationalPredicate(IN, element, e, null));
+			} else if (Lib.isSetExtension(set)) {
+				Expression[] values = ((SetExtension) set).getMembers();
+				newPredicates = stream(values).map(e -> ff.makeRelationalPredicate(EQUAL, element, e, null));
 			}
-			if (Lib.isSetExtension(set)) {
-				final Expression[] values = ((SetExtension) set).getMembers();
-				final Expression element = rel.getLeft();
+			if (newPredicates != null) {
 				final IHypAction hypAction = makeDeselectHypAction(asList(pred));
-				return stream(values).map(e -> ff.makeRelationalPredicate(EQUAL, element, e, null)) // new hypothesis
-						.map(e -> makeAntecedent(null, singleton(e), hypAction)) // antecedent with hyp action
+				return newPredicates.map(e -> makeAntecedent(null, singleton(e), hypAction))
 						.toArray(IAntecedent[]::new);
 			}
 		}
