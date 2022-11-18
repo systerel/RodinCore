@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,8 +60,11 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 
 	/**
 	 * Tests for applicable positions
+	 *
+	 * @deprecated use {@link #testGetPosition(String, String)} in a new test method
 	 */
 	@Test
+	@Deprecated
 	public void testGetPositions() {
 		String [] tests = getTestGetPositions();
 		assert tests.length % 2 == 0;
@@ -70,7 +73,19 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 		}
 	}
 
-	protected abstract String[] getTestGetPositions();
+	private static final String[] TEST_GET_POSITIONS_EMPTY = new String[0];
+
+	/**
+	 * Return a list of pairs <predicate, applicable positions>.
+	 *
+	 * @return list of predicates and positions to test
+	 * @deprecated create a new test method and call
+	 *             {@link #testGetPosition(String, String)} directly
+	 */
+	@Deprecated
+	protected String[] getTestGetPositions() {
+		return TEST_GET_POSITIONS_EMPTY;
+	}
 	
 	/**
 	 * Client must implement this method to return the applicable positions for

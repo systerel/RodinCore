@@ -56,15 +56,13 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 				"Inference 'finite of intersection' is not applicable");
 	}
 
-	@Override
-	protected String[] getTestGetPositions() {
-		return new String[] { //
-				"(x = 2) ⇒ finite(S ∩ {0 ↦ 3} ∩ T)", "", //
-				"∀x· x = 2 ⇒ finite(S ∩ {0 ↦ 3} ∩ T)", "", //
-				"finite(S ∩ {0 ↦ 3} ∩ T)", "ROOT", //
-				"finite(inter({S, {0 ↦ 3}, T}))", "ROOT", //
-				"finite(⋂s·s ∈ {S, {0 ↦ 3}, T} ∣ s)", "ROOT", //
-		};
+	@Test
+	public void testPositions() {
+		testGetPosition("(x = 2) ⇒ finite(S ∩ {0 ↦ 3} ∩ T)", "");
+		testGetPosition("∀x· x = 2 ⇒ finite(S ∩ {0 ↦ 3} ∩ T)", "");
+		testGetPosition("finite(S ∩ {0 ↦ 3} ∩ T)", "ROOT");
+		testGetPosition("finite(inter({S, {0 ↦ 3}, T}))", "ROOT");
+		testGetPosition("finite(⋂s·s ∈ {S, {0 ↦ 3}, T} ∣ s)", "ROOT");
 	}
 
 }
