@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
+
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static org.eventb.core.ast.Formula.BTRUE;
 
 import java.math.BigInteger;
 
@@ -49,6 +53,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 /**
@@ -128,6 +133,12 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
         return false;
     }
 
+    /*
+     * This can return:
+     * - a predicate finite(set) from an hypothesis
+     * - a true predicate if the set is implicitly finite (i.e., set extension)
+     * - null if nothing proves that the set is finite
+     */
     private Predicate getFiniteBoundSetHyp(IProverSequent seq) {
         final Expression boundedSet = getBoundSet(seq.goal());
         if (boundedSet == null) {
@@ -136,6 +147,14 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
         for (Predicate shyp : seq.visibleHypIterable()) {
             if (isFiniteBoundSetHyp(shyp, boundedSet)) {
                 return shyp;
+            }
+        }
+        // For backwards compatibility, we first look for the set in the hypotheses.
+        // If it is not found, but the bounded set is a set extension, we accept it
+        // (finiteness is implicit), while it was previously rejected.
+        %match (Expression boundedSet) {
+            SetExtension(_) -> {
+                return DLib.True(seq.getFormulaFactory());
             }
         }
         return null;
@@ -168,7 +187,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
                 this,
                 input,
                 seq.goal(),
-                finiteHyp,
+                finiteHyp.getTag() == BTRUE ? emptySet() : singleton(finiteHyp),
                 getDisplayName(),
                 new IAntecedent[0]);
         

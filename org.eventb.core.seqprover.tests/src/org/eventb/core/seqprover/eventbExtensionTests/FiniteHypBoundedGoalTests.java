@@ -31,6 +31,11 @@ public class FiniteHypBoundedGoalTests extends AbstractAutomaticReasonerTests {
 		assertReasonerSuccess("finite({1,2,3}) |- ∃n·(∀x·x ∈ {1,2,3} ⇒ x ≥ n)");
 		assertReasonerSuccess("finite({1,2,3}) |- ∃n·(∀x·x ∈ {1,2,3} ⇒ n ≥ x)");
 		assertReasonerSuccess("finite({1,2,3}) |- ∃n·(∀x·x ∈ {1,2,3} ⇒ x ≤ n)");
+		// same as above, but with implicit finiteness of set extension
+		assertReasonerSuccess(" |- ∃n·(∀x·x ∈ {1,2,3} ⇒ n ≤ x)");
+		assertReasonerSuccess(" |- ∃n·(∀x·x ∈ {1,2,3} ⇒ x ≥ n)");
+		assertReasonerSuccess(" |- ∃n·(∀x·x ∈ {1,2,3} ⇒ n ≥ x)");
+		assertReasonerSuccess(" |- ∃n·(∀x·x ∈ {1,2,3} ⇒ x ≤ n)");
 		// additional hypothesis
 		assertReasonerSuccess("⊤ ;; finite({1,2,3}) |- ∃n·(∀x·x ∈ {1,2,3} ⇒ x ≥ n)");
 		// comprehension set
@@ -40,10 +45,8 @@ public class FiniteHypBoundedGoalTests extends AbstractAutomaticReasonerTests {
 
 	@Test
 	public void failure() throws Exception {
-		// no finite hyp
-		assertReasonerFailure("⊤ ;; ⊤ |- ∃n·(∀x·x ∈ {1,2,3} ⇒ n ≤ x)");
 		// finite hyp on a different set
-		assertReasonerFailure("finite({1,2,3,4}) |- ∃n·(∀x·x ∈ {1,2,3} ⇒ n ≤ x)");
+		assertReasonerFailure("S⊆ℤ ;; T⊆ℤ ;; finite(S) |- ∃n·(∀x·x ∈ T ⇒ n ≤ x)");
 		// comprehension set with bound identifiers references
 		assertReasonerFailure("finite({y·n≤y∧y≤10∣2∗y}) |- ∃n·(∀x·x ∈ {y·n≤y∧y≤10∣2∗y} ⇒ n ≤ x)");
 		// malformed predicates
