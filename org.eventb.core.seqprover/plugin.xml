@@ -491,6 +491,11 @@
             id="eqvRL"
             name="%eqvRLName">
       </reasoner>
+      <reasoner
+      	    class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites"
+      	    id="cardDefRewrites"
+      	    name="%cardDefRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

@@ -2162,6 +2162,17 @@
             target="any"
             tooltip="%proofTactic.locEq.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.cardDef"
+            interrupt="true"
+            name="%proofTactic.cardDef.name"
+            priority="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardDef"
+            target="any"
+            tooltip="%proofTactic.cardDef.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

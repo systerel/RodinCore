@@ -21,6 +21,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.QINTER;
@@ -42,10 +44,12 @@ import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -136,6 +140,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -3471,6 +3476,43 @@ public class Tactics {
 				return Lib.isFinite(pred);
 			}
 			
+		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link CardDefRewrites} reasoner for a given
+	 * position where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "Cardinal definition"
+	 * @since 3.6
+	 */
+	public static ITactic cardDef(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CardDefRewrites(), new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link CardDefRewrites} to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> cardDefGetPositions(Predicate predicate) {
+		return predicate.inspect(new DefaultInspector<IPosition>() {
+			@Override
+			public void inspect(RelationalPredicate pred, IAccumulator<IPosition> accumulator) {
+				if (pred.getTag() == EQUAL) {
+					if (pred.getLeft().getTag() == KCARD) {
+						accumulator.add(accumulator.getCurrentPosition().getFirstChild());
+					}
+					if (pred.getRight().getTag() == KCARD) {
+						accumulator.add(accumulator.getCurrentPosition().getChildAtIndex(1));
+					}
+				}
+			}
 		});
 	}
 
