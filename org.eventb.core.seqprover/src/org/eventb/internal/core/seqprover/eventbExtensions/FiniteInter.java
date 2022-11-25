@@ -13,12 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.stream;
 import static org.eventb.core.ast.Formula.BINTER;
-import static org.eventb.core.ast.Formula.EXISTS;
-import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KINTER;
-import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
@@ -28,7 +23,6 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
@@ -42,6 +36,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FormulaBuilder;
 
 /**
  * Implementation of the "Finite of inter" reasoners.
@@ -63,7 +58,7 @@ public class FiniteInter extends EmptyInputReasoner {
 
 	protected Predicate getNewGoal(IProverSequent seq) {
 		Predicate goal = seq.goal();
-		final FormulaFactory ff = seq.getFormulaFactory();
+		final FormulaBuilder fb = new FormulaBuilder(seq.getFormulaFactory());
 
 		// goal should have the form finite(...)
 		if (!Lib.isFinite(goal))
@@ -72,11 +67,11 @@ public class FiniteInter extends EmptyInputReasoner {
 		Expression expr = sPred.getExpression();
 		switch (expr.getTag()) {
 		case BINTER:
-			return getNewGoalBInter((AssociativeExpression) expr, ff);
+			return getNewGoalBInter((AssociativeExpression) expr, fb);
 		case KINTER:
-			return getNewGoalKInter((UnaryExpression) expr, ff);
+			return getNewGoalKInter((UnaryExpression) expr, fb);
 		case QINTER:
-			return getNewGoalQInter((QuantifiedExpression) expr, ff);
+			return getNewGoalQInter((QuantifiedExpression) expr, fb);
 		default:
 			// Not applicable
 			return null;
@@ -86,36 +81,27 @@ public class FiniteInter extends EmptyInputReasoner {
 	// Input: S ∩ ... ∩ T
 	// Output: finite(S) ∨ ... ∨ finite(T)
 	@ProverRule("FIN_BINTER_R")
-	protected Predicate getNewGoalBInter(AssociativeExpression aExp, FormulaFactory ff) {
-		Expression[] children = aExp.getChildren();
-		Predicate[] newChildren = stream(children).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
-				.toArray(Predicate[]::new);
-		return ff.makeAssociativePredicate(LOR, newChildren, null);
+	protected Predicate getNewGoalBInter(AssociativeExpression aExp, FormulaBuilder fb) {
+		Predicate[] newChildren = stream(aExp.getChildren()).map(fb::finite).toArray(Predicate[]::new);
+		return fb.or(newChildren);
 	}
 
 	// Input: inter(S)
 	// Output: ∃s · s ∈ S ∧ finite(s)
 	@ProverRule("FIN_KINTER_R")
-	protected Predicate getNewGoalKInter(UnaryExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalKInter(UnaryExpression exp, FormulaBuilder fb) {
 		Expression set = exp.getChild();
 		Type sType = set.getType().getBaseType();
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, sType);
-		BoundIdentifier s = ff.makeBoundIdentifier(0, null, sType);
-		Predicate pred1 = ff.makeRelationalPredicate(IN, s, set, null);
-		Predicate pred2 = ff.makeSimplePredicate(KFINITE, s, null);
-		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
-		return ff.makeQuantifiedPredicate(EXISTS, new BoundIdentDecl[] { decl }, pred, null);
+		BoundIdentifier s = fb.boundIdent(0, sType);
+		return fb.exists(fb.boundIdentDecl("s", sType), fb.and(fb.in(s, set), fb.finite(s)));
 	}
 
 	// Input: ⋂ s · P ∣ E
 	// Output: ∃s · P ∧ finite(E)
 	@ProverRule("FIN_QINTER_R")
-	protected Predicate getNewGoalQInter(QuantifiedExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalQInter(QuantifiedExpression exp, FormulaBuilder fb) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
-		Predicate pred1 = exp.getPredicate();
-		Predicate pred2 = ff.makeSimplePredicate(KFINITE, exp.getExpression(), null);
-		Predicate pred = ff.makeAssociativePredicate(LAND, new Predicate[] { pred1, pred2 }, null);
-		return ff.makeQuantifiedPredicate(EXISTS, expDecls, pred, null);
+		return fb.exists(expDecls, fb.and(exp.getPredicate(), fb.finite(exp.getExpression())));
 	}
 
 	protected String getDisplayName() {

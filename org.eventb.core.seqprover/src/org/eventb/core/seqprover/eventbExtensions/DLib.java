@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FormulaBuilder;
 
 /**
  * This is a collection of constants and methods that are used often in relation
@@ -49,6 +50,8 @@ import org.eventb.core.ast.Type;
  * functions that you need, assuming that they do the intended job.
  * </p>
  * 
+ * Inside the sequent prover, {@link FormulaBuilder} is a more modern and
+ * lighter class to build formulas.
  * 
  * @author Farhad Mehta, htson
  * @since 2.0

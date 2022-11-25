@@ -12,13 +12,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.stream;
 import static org.eventb.core.ast.Formula.BUNION;
-import static org.eventb.core.ast.Formula.CSET;
-import static org.eventb.core.ast.Formula.FORALL;
-import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KUNION;
-import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
@@ -28,7 +22,6 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
@@ -42,6 +35,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FormulaBuilder;
 
 /**
  * Implementation of the "Finite of union" reasoners.
@@ -62,7 +56,7 @@ public class FiniteUnion extends EmptyInputReasoner {
 
 	protected Predicate getNewGoal(IProverSequent seq) {
 		Predicate goal = seq.goal();
-		FormulaFactory ff = seq.getFormulaFactory();
+		FormulaBuilder fb = new FormulaBuilder(seq.getFormulaFactory());
 
 		if (!Lib.isFinite(goal))
 			return null;
@@ -70,11 +64,11 @@ public class FiniteUnion extends EmptyInputReasoner {
 		Expression expr = sPred.getExpression();
 		switch (expr.getTag()) {
 		case BUNION:
-			return getNewGoalBUnion((AssociativeExpression) expr, ff);
+			return getNewGoalBUnion((AssociativeExpression) expr, fb);
 		case KUNION:
-			return getNewGoalKUnion((UnaryExpression) expr, ff);
+			return getNewGoalKUnion((UnaryExpression) expr, fb);
 		case QUNION:
-			return getNewGoalQUnion((QuantifiedExpression) expr, ff);
+			return getNewGoalQUnion((QuantifiedExpression) expr, fb);
 		default:
 			// Not applicable
 			return null;
@@ -84,41 +78,30 @@ public class FiniteUnion extends EmptyInputReasoner {
 	// Input: S ∪ ... ∪ T
 	// Output: finite(S) ∧ ... ∧ finite(T)
 	@ProverRule("FIN_BUNION_R")
-	protected Predicate getNewGoalBUnion(AssociativeExpression exp, FormulaFactory ff) {
-		Predicate[] newChildren = stream(exp.getChildren()).map(e -> ff.makeSimplePredicate(KFINITE, e, null))
-				.toArray(Predicate[]::new);
-		return ff.makeAssociativePredicate(LAND, newChildren, null);
+	protected Predicate getNewGoalBUnion(AssociativeExpression exp, FormulaBuilder fb) {
+		Predicate[] newChildren = stream(exp.getChildren()).map(e -> fb.finite(e)).toArray(Predicate[]::new);
+		return fb.and(newChildren);
 	}
 
 	// Input: union(S)
 	// Output: finite(S) ∧ (∀s · s ∈ S ⇒ finite(s))
 	@ProverRule("FIN_KUNION_R")
-	protected Predicate getNewGoalKUnion(UnaryExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalKUnion(UnaryExpression exp, FormulaBuilder fb) {
 		Expression set = exp.getChild();
 		Type sType = set.getType().getBaseType();
-		Predicate finite = ff.makeSimplePredicate(KFINITE, set, null);
-		BoundIdentDecl decl = ff.makeBoundIdentDecl("s", null, sType);
-		BoundIdentifier s = ff.makeBoundIdentifier(0, null, sType);
-		Predicate pred1 = ff.makeRelationalPredicate(IN, s, set, null);
-		Predicate pred2 = ff.makeSimplePredicate(KFINITE, s, null);
-		Predicate pred = ff.makeBinaryPredicate(LIMP, pred1, pred2, null);
-		Predicate quantified = ff.makeQuantifiedPredicate(FORALL, new BoundIdentDecl[] { decl }, pred, null);
-		return ff.makeAssociativePredicate(LAND, new Predicate[] { finite, quantified }, null);
+		BoundIdentifier s = fb.boundIdent(0, sType);
+		return fb.and(fb.finite(set), fb.forall(fb.boundIdentDecl("s", sType), fb.imp(fb.in(s, set), fb.finite(s))));
 	}
 
 	// Input: ⋃ s · P ∣ E
 	// Output: finite({s · P ∣ E}) ∧ (∀s · P ⇒ finite(E))
 	@ProverRule("FIN_QUNION_R")
-	protected Predicate getNewGoalQUnion(QuantifiedExpression exp, FormulaFactory ff) {
+	protected Predicate getNewGoalQUnion(QuantifiedExpression exp, FormulaBuilder fb) {
 		BoundIdentDecl[] expDecls = exp.getBoundIdentDecls();
 		Predicate expPred = exp.getPredicate();
 		Expression exprExpr = exp.getExpression();
-		Expression cset = ff.makeQuantifiedExpression(CSET, expDecls, expPred, exprExpr, null, exp.getForm());
-		Predicate finite = ff.makeSimplePredicate(KFINITE, cset, null);
-		Predicate exprFin = ff.makeSimplePredicate(KFINITE, exprExpr, null);
-		Predicate pred = ff.makeBinaryPredicate(LIMP, expPred, exprFin, null);
-		Predicate quantified = ff.makeQuantifiedPredicate(FORALL, expDecls, pred, null);
-		return ff.makeAssociativePredicate(LAND, new Predicate[] { finite, quantified }, null);
+		return fb.and(fb.finite(fb.cset(expDecls, expPred, exprExpr, exp.getForm())),
+				fb.forall(expDecls, fb.imp(expPred, fb.finite(exprExpr))));
 	}
 
 	protected String getDisplayName() {
