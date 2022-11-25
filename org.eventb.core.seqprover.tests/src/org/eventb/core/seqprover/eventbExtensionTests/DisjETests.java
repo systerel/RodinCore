@@ -38,6 +38,7 @@ public class DisjETests extends AbstractReasonerTests {
 	public void failure() throws Exception {
 		assertReasonerFailure("⊤ |- ⊤", makeInput("1=1∨2=2"), "Nonexistent hypothesis: 1=1∨2=2");
 		assertReasonerFailure("⊤ |- ⊤", makeInput("⊤"), "Case analysis not possible on hypothesis: ⊤");
+		assertReasonerFailure("x∈{1} |- ⊤", makeInput("x∈{1}"), "Case analysis not possible on hypothesis: x∈{1}");
 	}
 
 	/**

@@ -88,7 +88,7 @@ public class DisjE extends HypothesisReasoner {
 			if (Lib.isUnion(set)) {
 				Expression[] values = ((AssociativeExpression) set).getChildren();
 				newPredicates = stream(values).map(e -> ff.makeRelationalPredicate(IN, element, e, null));
-			} else if (Lib.isSetExtension(set)) {
+			} else if (Lib.isSetExtension(set) && !Lib.isSingletonSet(set)) {
 				Expression[] values = ((SetExtension) set).getMembers();
 				newPredicates = stream(values).map(e -> ff.makeRelationalPredicate(EQUAL, element, e, null));
 			}

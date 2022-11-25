@@ -678,7 +678,7 @@ public class Tactics {
 		}
 		if (Lib.isInclusion(hyp)) {
 			Expression right = ((RelationalPredicate) hyp).getRight();
-			return Lib.isUnion(right) || Lib.isSetExtension(right);
+			return Lib.isUnion(right) || (Lib.isSetExtension(right) && !Lib.isSingletonSet(right));
 		}
 		return false;
 	}
