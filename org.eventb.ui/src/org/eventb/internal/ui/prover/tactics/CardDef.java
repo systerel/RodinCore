@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import static java.util.stream.Collectors.toList;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.cardDef;
-import static org.eventb.core.seqprover.eventbExtensions.Tactics.cardDefGetPositions;
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
 
 import java.util.List;
 
@@ -20,6 +19,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -53,7 +53,7 @@ public class CardDef extends AbstractHypGoalTacticProvider {
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(IProofTreeNode node, Predicate hyp,
 			String globalInput, Predicate predicate) {
-		return cardDefGetPositions(predicate).stream().map(p -> new CardDefApplication(hyp, p)).collect(toList());
+		return adaptPositionsToApplications(hyp, predicate, Tactics::cardDefGetPositions, CardDefApplication::new);
 	}
 
 }

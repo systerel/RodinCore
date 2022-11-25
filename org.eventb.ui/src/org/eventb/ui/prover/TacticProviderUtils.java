@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,12 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.ui.prover;
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;
@@ -47,4 +53,25 @@ public class TacticProviderUtils {
 		return new DefaultPositionApplication(null, position)
 				.getOperatorPosition(predicate, predStr);
 	}
+
+	/**
+	 * Adapt a function generating a list of positions to generate tactic
+	 * applications.
+	 *
+	 * @param hyp                hypothesis used or {@code null} if applied to the
+	 *                           goal
+	 * @param predicate          predicate on which positions are generated (either
+	 *                           {@code hyp} or the goal)
+	 * @param positionsSupplier  function generating the positions for the predicate
+	 * @param applicationBuilder build a tactic application from {@code hyp} and a
+	 *                           given position
+	 * @return list of generated tactic applications
+	 * @since 3.7
+	 */
+	public static List<ITacticApplication> adaptPositionsToApplications(Predicate hyp, Predicate predicate,
+			Function<Predicate, List<IPosition>> positionsSupplier,
+			BiFunction<Predicate, IPosition, ITacticApplication> applicationBuilder) {
+		return positionsSupplier.apply(predicate).stream().map(p -> applicationBuilder.apply(hyp, p)).collect(toList());
+	}
+
 }
