@@ -151,6 +151,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistLeft
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualCardRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
@@ -3510,6 +3511,40 @@ public class Tactics {
 					}
 					if (pred.getRight().getTag() == KCARD) {
 						accumulator.add(accumulator.getCurrentPosition().getChildAtIndex(1));
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link EqualCardRewrites} reasoner for a given
+	 * position where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "Simplify cardinal equality"
+	 * @since 3.6
+	 */
+	public static ITactic equalCard(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new EqualCardRewrites(), new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link EqualCardRewrites} to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> equalCardGetPositions(Predicate predicate) {
+		return predicate.inspect(new DefaultInspector<IPosition>() {
+			@Override
+			public void inspect(RelationalPredicate pred, IAccumulator<IPosition> accumulator) {
+				if (pred.getTag() == EQUAL) {
+					if (pred.getLeft().getTag() == KCARD && pred.getRight().getTag() == KCARD) {
+						accumulator.add(accumulator.getCurrentPosition());
 					}
 				}
 			}

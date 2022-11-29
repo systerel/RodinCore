@@ -496,6 +496,11 @@
       	    id="cardDefRewrites"
       	    name="%cardDefRewritesName">
       </reasoner>
+      <reasoner
+      	    class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualCardRewrites"
+      	    id="equalCardRewrites"
+      	    name="%equalCardRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
