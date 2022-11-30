@@ -1236,7 +1236,7 @@
             interrupt="false"
             name="%proofTactics.conjE.name"
             priority="3"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElemination"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElimination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ConjE.tooltip"/>
       <tactic
