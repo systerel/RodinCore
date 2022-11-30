@@ -27,6 +27,7 @@ import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
@@ -845,6 +846,23 @@ public class Tactics {
 	public static ITactic contImpHyp(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new ContImplHypRewrites(),
 				new ContImplHypRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link ContImplHypRewrites} to a predicate.
+	 *
+	 * @param hyp a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> contImpHypGetPositions(Predicate hyp) {
+		return hyp.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(BinaryPredicate predicate) {
+				return predicate.getTag() == LIMP;
+			}
+		});
 	}
 
 	public static boolean isFunOvrApp(Formula<?> subFormula) {
