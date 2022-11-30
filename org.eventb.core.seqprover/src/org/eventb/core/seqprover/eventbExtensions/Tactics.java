@@ -25,6 +25,8 @@ import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KUNION;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.IPosition.ROOT;
@@ -1763,30 +1765,21 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativePredicate pred) {
-				if (pred.getTag() == Predicate.LAND
-						|| pred.getTag() == Predicate.LOR) {
-					return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == LAND || pred.getTag() == LOR;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			AssociativePredicate aPred = ((AssociativePredicate) predicate
-								.getSubFormula(position));
-			int tag = aPred.getTag() == Predicate.LAND ? Predicate.LOR
-					: Predicate.LAND;
+			AssociativePredicate aPred = (AssociativePredicate) predicate.getSubFormula(position);
+			int tag = aPred.getTag() == LAND ? LOR : LAND;
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativePredicate
-						&& subFormula.getTag() == tag) {
+			for (Predicate childPred : aPred.getChildren()) {
+				if (childPred.getTag() == tag) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
