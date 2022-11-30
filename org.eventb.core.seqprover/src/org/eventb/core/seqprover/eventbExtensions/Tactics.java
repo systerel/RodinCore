@@ -22,6 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KUNION;
@@ -1888,26 +1889,20 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.FCOMP) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == FCOMP;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			int tag = Expression.BUNION;
+			AssociativeExpression expr = (AssociativeExpression) predicate.getSubFormula(position);
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativeExpression
-						&& subFormula.getTag() == tag) {
+			for (Expression childExpr : expr.getChildren()) {
+				if (childExpr.getTag() == BUNION) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
