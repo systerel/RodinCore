@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,10 @@ import org.eventb.ui.prover.ITacticProvider;
  */
 public class ConjunctionIntroduction implements ITacticProvider {
 
-	public static class ConjonctionIntroductionApplication extends
+	public static class ConjunctionIntroductionApplication extends
 			DefaultPositionApplication {
 
-		public ConjonctionIntroductionApplication() {
+		public ConjunctionIntroductionApplication() {
 			super(null, IPosition.ROOT);
 		}
 
@@ -54,14 +54,17 @@ public class ConjunctionIntroduction implements ITacticProvider {
 
 	}
 
+	private static final List<ITacticApplication> GOAL_APPLICATION = singletonList(new ConjunctionIntroductionApplication());
+
+	private static final List<ITacticApplication> NO_APPLICATIONS = emptyList();
+
 	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && Tactics.conjI_applicable(node.getSequent().goal())) {
-			final ITacticApplication appli = new ConjonctionIntroductionApplication();
-			return singletonList(appli);
+			return GOAL_APPLICATION;
 		}
-		return emptyList();
+		return NO_APPLICATIONS;
 	}
 
 }
