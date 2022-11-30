@@ -89,6 +89,9 @@ public class FiniteUnion extends EmptyInputReasoner {
 	protected Predicate getNewGoalKUnion(UnaryExpression exp, FormulaBuilder fb) {
 		Expression set = exp.getChild();
 		Type sType = set.getType().getBaseType();
+		// We add a new quantified variable but do not need to call
+		// set.shiftBoundIdentifiers() since union(set) is the root expression of the
+		// goal and therefore can't contain bound identifiers
 		BoundIdentifier s = fb.boundIdent(0, sType);
 		return fb.and(fb.finite(set), fb.forall(fb.boundIdentDecl("s", sType), fb.imp(fb.in(s, set), fb.finite(s))));
 	}

@@ -92,6 +92,9 @@ public class FiniteInter extends EmptyInputReasoner {
 	protected Predicate getNewGoalKInter(UnaryExpression exp, FormulaBuilder fb) {
 		Expression set = exp.getChild();
 		Type sType = set.getType().getBaseType();
+		// We add a new quantified variable but do not need to call
+		// set.shiftBoundIdentifiers() since inter(set) is the root expression of the
+		// goal and therefore can't contain bound identifiers
 		BoundIdentifier s = fb.boundIdent(0, sType);
 		return fb.exists(fb.boundIdentDecl("s", sType), fb.and(fb.in(s, set), fb.finite(s)));
 	}
