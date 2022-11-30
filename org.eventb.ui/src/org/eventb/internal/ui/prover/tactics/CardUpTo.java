@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -51,32 +50,12 @@ public class CardUpTo extends AbstractHypGoalTacticProvider {
 		}
 
 	}
-	
-	public static class CardUpToAppliInspector extends DefaultApplicationInspector {
-
-		public CardUpToAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-		
-		@Override
-		public void inspect(UnaryExpression expression,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (expression.getTag() != Formula.KCARD) {
-				return;
-			}
-			if (expression.getChild().getTag() == Formula.UPTO) {
-				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new CardUpToApplication(hyp, position));
-			}
-		}
-		
-	}
 
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new CardUpToAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, predicate, Tactics::cardUpToGetPositions, CardUpToApplication::new);
 	}
 
 }
