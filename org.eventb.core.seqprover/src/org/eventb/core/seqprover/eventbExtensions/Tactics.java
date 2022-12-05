@@ -31,6 +31,7 @@ import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
@@ -1261,10 +1262,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate pred) {
-				if (pred.getTag() == Predicate.LEQV) {
-					return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == LEQV;
 			}
 
 		});
