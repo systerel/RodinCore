@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.ui.prover.tactics;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.finiteMaxIsApplicable;
 
 import java.util.List;
 
@@ -54,16 +55,19 @@ public class FiniteMaxGoal implements ITacticProvider {
 
 	}
 
+	private static final List<ITacticApplication> NO_APPLICATIONS = emptyList();
+
+	private static final List<ITacticApplication> GOAL_APPLICATION = singletonList(new FiniteMaxGoalApplication());
+
 	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node == null)
-			return emptyList();
-		if (Tactics.finiteMaxIsApplicable(node.getSequent().goal())) {
-			final ITacticApplication appli = new FiniteMaxGoalApplication();
-			return singletonList(appli);
+			return NO_APPLICATIONS;
+		if (finiteMaxIsApplicable(node.getSequent().goal())) {
+			return GOAL_APPLICATION;
 		}
-		return emptyList();
+		return NO_APPLICATIONS;
 	}
 
 }

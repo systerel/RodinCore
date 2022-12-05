@@ -2819,9 +2819,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteMinGetPositions(Predicate predicate) {
 		if (new FiniteMin().isApplicable(predicate)) {
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2862,9 +2862,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteMaxGetPositions(Predicate predicate) {
 		if (new FiniteMax().isApplicable(predicate)) {
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 	
 	/**
