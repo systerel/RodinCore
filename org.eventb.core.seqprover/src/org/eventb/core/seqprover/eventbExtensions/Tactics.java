@@ -2362,9 +2362,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteSetGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate))
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		else
-			return new ArrayList<IPosition>();
+			return NO_POSITIONS;
 	}
 
 
@@ -2466,9 +2466,9 @@ public class Tactics {
 	public static List<IPosition> finiteSetMinusGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetMinus(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2496,9 +2496,9 @@ public class Tactics {
 	public static List<IPosition> finiteRelationGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2536,9 +2536,9 @@ public class Tactics {
 	public static List<IPosition> finiteRelImgGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2567,9 +2567,9 @@ public class Tactics {
 	public static List<IPosition> finiteRanGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2629,9 +2629,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunctionGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2668,9 +2668,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunConvGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2708,9 +2708,9 @@ public class Tactics {
 			Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2743,9 +2743,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunRanGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2781,9 +2781,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunDomGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isDom(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2908,9 +2908,9 @@ public class Tactics {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2941,9 +2941,9 @@ public class Tactics {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
