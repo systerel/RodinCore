@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -52,39 +51,11 @@ public class DomComp extends AbstractHypGoalTacticProvider {
 
 	}
 
-	public static class DomCompAppliInspector extends
-			DefaultApplicationInspector {
-
-		public DomCompAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(AssociativeExpression expression,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (expression.getTag() != Expression.FCOMP) {
-				return;
-			}
-			IPosition childPos = accumulator.getCurrentPosition()
-					.getFirstChild();
-			for (final Expression child : expression.getChildren()) {
-
-				final int childTag = child.getTag();
-				if (childTag == Expression.DOMRES
-						|| childTag == Expression.DOMSUB) {
-					accumulator.add(new DomCompApplication(hyp, childPos));
-				}
-				childPos = childPos.getNextSibling();
-			}
-		}
-
-	}
-
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new DomCompAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, predicate, Tactics::domCompGetPositions, DomCompApplication::new);
 	}
 
 }
