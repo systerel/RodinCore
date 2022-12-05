@@ -1557,19 +1557,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.DOMRES
-						|| expression.getTag() == Expression.DOMSUB) {
+				if (expression.getTag() == DOMRES || expression.getTag() == DOMSUB) {
 					Expression right = expression.getRight();
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return right.getTag() == BUNION || right.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
