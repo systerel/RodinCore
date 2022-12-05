@@ -1049,10 +1049,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativePredicate predicate) {
-				if (predicate.getTag() == Predicate.LOR) {
-					return true;
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LOR;
 			}
 
 		});
