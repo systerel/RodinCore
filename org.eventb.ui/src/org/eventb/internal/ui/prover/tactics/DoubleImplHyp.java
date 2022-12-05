@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import static java.util.Collections.emptyList;
-import static org.eventb.core.ast.IPosition.ROOT;
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
 
 import java.util.List;
 
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.IAccumulator;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "db impl" tactic.
@@ -33,14 +29,14 @@ import org.eventb.ui.prover.ITacticProvider;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class DoubleImplHyp implements ITacticProvider {
+public class DoubleImplHyp extends AbstractHypGoalTacticProvider {
 	
 	public static class DoubleImplHypApplication extends DefaultPositionApplication {
 
 		private static final String TACTIC_ID = "org.eventb.ui.doubleImpIHyp";
 
-		public DoubleImplHypApplication(Predicate hyp) {
-			super(hyp, ROOT);
+		public DoubleImplHypApplication(Predicate hyp, IPosition position) {
+			super(hyp, position);
 		}
 		
 		@Override
@@ -54,39 +50,13 @@ public class DoubleImplHyp implements ITacticProvider {
 		}
 		
 	}
-	
-	public static class DoubleImplHypApplicationInspector extends DefaultApplicationInspector {
-
-		public DoubleImplHypApplicationInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(BinaryPredicate predicate,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (isDoubleImplPredicate(predicate)) {
-				accumulator.add(new DoubleImplHypApplication(hyp));
-			}
-		}
-
-		public static boolean isDoubleImplPredicate(Predicate predicate) {
-			if (Lib.isImp(predicate)) {
-				BinaryPredicate bPred = (BinaryPredicate) predicate;
-				if (Lib.isImp(bPred.getRight())) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-	}
 
 	@Override
-	public List<ITacticApplication> getPossibleApplications(
-			IProofTreeNode node, Predicate hyp, String globalInput) {
-		if (node == null)
-			return emptyList();
-		return hyp.inspect(new DoubleImplHypApplicationInspector(hyp));
+	protected List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate) {
+		return adaptPositionsToApplications(hyp, predicate, Tactics::doubleImpHypGetPositions,
+				DoubleImplHypApplication::new);
 	}
 
 }
