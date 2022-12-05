@@ -26,7 +26,9 @@ import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.KCARD;
+import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LIMP;
@@ -1994,13 +1996,8 @@ public class Tactics {
 
 			@Override
 			public boolean select(UnaryExpression expression) {
-				if (expression.getTag() == Expression.KDOM
-						|| expression.getTag() == Expression.KRAN) {
-					Expression child = expression.getChild();
-					return child instanceof AssociativeExpression
-							&& child.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return (expression.getTag() == KDOM || expression.getTag() == KRAN)
+						&& expression.getChild().getTag() == BUNION;
 			}
 
 		});
