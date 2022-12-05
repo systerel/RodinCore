@@ -21,6 +21,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.KCARD;
@@ -1509,19 +1511,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.DOMRES
-						|| expression.getTag() == Expression.DOMSUB) {
+				if (expression.getTag() == DOMRES || expression.getTag() == DOMSUB) {
 					Expression left = expression.getLeft();
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return left.getTag() == BUNION || left.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
