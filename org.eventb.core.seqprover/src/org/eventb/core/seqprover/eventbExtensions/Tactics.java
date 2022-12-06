@@ -885,9 +885,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (Tactics.isFunOvrApp(expression))
-					return true;
-				return false;
+				return isFunOvrApp(expression);
 			}
 		});
 		Lib.removeWDUnstrictPositions(positions, predicate);
