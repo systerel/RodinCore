@@ -1782,30 +1782,21 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.BUNION
-						|| expression.getTag() == Expression.BINTER) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == BUNION || expression.getTag() == BINTER;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			AssociativeExpression aExp = ((AssociativeExpression) predicate
-								.getSubFormula(position));
-			int tag = aExp.getTag() == Expression.BUNION ? Expression.BINTER
-					: Expression.BUNION;
+			AssociativeExpression aExp = ((AssociativeExpression) predicate.getSubFormula(position));
+			int tag = aExp.getTag() == BUNION ? BINTER : BUNION;
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativeExpression
-						&& subFormula.getTag() == tag) {
+			for (Expression childExpr : aExp.getChildren()) {
+				if (childExpr.getTag() == tag) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
