@@ -36,6 +36,8 @@ import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.RANRES;
+import static org.eventb.core.ast.Formula.RANSUB;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
 
@@ -1596,19 +1598,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RANRES
-						|| expression.getTag() == Expression.RANSUB) {
+				if (expression.getTag() == RANRES || expression.getTag() == RANSUB) {
 					Expression right = expression.getRight();
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return right.getTag() == BUNION || right.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1650,19 +1644,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RANRES
-						|| expression.getTag() == Expression.RANSUB) {
+				if (expression.getTag() == RANRES || expression.getTag() == RANSUB) {
 					Expression left = expression.getLeft();
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return left.getTag() == BUNION || left.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -2233,10 +2219,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.FCOMP) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == FCOMP;
 			}
 
 		});
