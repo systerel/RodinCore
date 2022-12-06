@@ -19,12 +19,17 @@ package org.eventb.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.DOMSUB;
+import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FCOMP;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
@@ -34,12 +39,14 @@ import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.OVR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.Formula.RANSUB;
 import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
 
@@ -53,7 +60,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -936,45 +942,24 @@ public class Tactics {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.NOT) {
+				if (predicate.getTag() == NOT) {
 					Predicate child = predicate.getChild();
-					if (child instanceof RelationalPredicate) {
+					switch (child.getTag()) {
+					case EQUAL:
 						RelationalPredicate rPred = (RelationalPredicate) child;
-						if (rPred.getTag() == Predicate.EQUAL) {
-							Expression right = rPred.getRight();
-							Expression left = rPred.getLeft();
-							if (right instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) right;
-								if (aExp.getTag() == Expression.EMPTYSET)
-									return true;
-							}
-							if (left instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) left;
-								if (aExp.getTag() == Expression.EMPTYSET)
-									return true;
-							}
-						}
-					}
-					if (child instanceof AssociativePredicate) {
-						return true;
-					}
-					if (Lib.isTrue(child) || Lib.isFalse(child)) {
-						return true;
-					}
-					if (Lib.isNeg(child)) {
-						return true;
-					}
-					if (Lib.isImp(child)) {
-						return true;
-					}
-					if (Lib.isExQuant(child)) {
-						return true;
-					}
-					if (Lib.isUnivQuant(child)) {
+						return rPred.getLeft().getTag() == EMPTYSET || rPred.getRight().getTag() == EMPTYSET;
+					case LAND:
+					case LOR:
+					case BTRUE:
+					case BFALSE:
+					case NOT:
+					case LIMP:
+					case EXISTS:
+					case FORALL:
 						return true;
 					}
 				}
-				return super.select(predicate);
+				return false;
 			}
 
 		});
@@ -1021,10 +1006,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					return true;
-				}
-				return super.select(predicate);
+				return predicate.getTag() == SUBSETEQ;
 			}
 
 		});
@@ -1040,7 +1022,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				return predicate.getTag() == Predicate.SUBSET;
+				return predicate.getTag() == SUBSET;
 			}
 
 		});
