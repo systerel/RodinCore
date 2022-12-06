@@ -34,6 +34,7 @@ import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.OVR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
@@ -2053,10 +2054,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.OVR) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == OVR;
 			}
 
 		});
