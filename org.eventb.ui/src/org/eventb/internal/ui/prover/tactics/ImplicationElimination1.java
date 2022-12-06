@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eventb.ui.prover.ITacticProvider;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class ImplicationElemination1 implements ITacticProvider {
+public class ImplicationElimination1 implements ITacticProvider {
 
 	public static class ImplicationElemination1Application extends
 			DefaultPositionApplication {

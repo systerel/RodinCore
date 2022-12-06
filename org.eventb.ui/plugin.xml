@@ -1217,7 +1217,7 @@
             interrupt="false"
             name="%proofTactics.mp.name"
             priority="2"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElimination1"
             target="hypothesis"
             tooltip="%proofTactics.mp.tooltip"/>
       <tactic
