@@ -38,6 +38,7 @@ import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.Formula.RANSUB;
+import static org.eventb.core.ast.Formula.RELIMAGE;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
 
@@ -1165,12 +1166,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RELIMAGE) {
-					Expression right = expression.getRight();
-					return right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return expression.getTag() == RELIMAGE && expression.getRight().getTag() == BUNION;
 			}
 
 		});
@@ -1925,12 +1921,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RELIMAGE) {
-					Expression left = expression.getLeft();
-					return left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return expression.getTag() == RELIMAGE && expression.getLeft().getTag() == BUNION;
 			}
 
 		});
