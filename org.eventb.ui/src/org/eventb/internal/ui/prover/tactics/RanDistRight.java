@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
@@ -17,7 +19,6 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -74,35 +75,12 @@ public class RanDistRight extends AbstractHypGoalTacticProvider {
 
 	}
 
-	public static class RanDistRightAppliInspector extends
-			DefaultApplicationInspector {
-
-		public RanDistRightAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(BinaryExpression expression,
-				IAccumulator<ITacticApplication> accumulator) {
-			final int exprTag = expression.getTag();
-			if (!(exprTag == Expression.RANRES || exprTag == Expression.RANSUB)) {
-				return;
-			}
-			final Expression right = expression.getRight();
-			final int rightTag = right.getTag();
-			if (rightTag == Expression.BUNION || rightTag == Expression.BINTER) {
-				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new RanDistRightApplication(hyp, position));
-			}
-		}
-
-	}
-
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new RanDistRightAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, predicate, Tactics::ranDistRightGetPositions,
+				RanDistRightApplication::new);
 	}
 
 }

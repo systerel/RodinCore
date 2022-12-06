@@ -19,14 +19,35 @@ package org.eventb.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.DOMSUB;
+import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.FCOMP;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.KCARD;
+import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KUNION;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LEQV;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.OVR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.RANRES;
+import static org.eventb.core.ast.Formula.RANSUB;
+import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.SUBSET;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
 
 import java.util.ArrayList;
@@ -39,7 +60,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -844,6 +864,23 @@ public class Tactics {
 				new ContImplHypRewrites.Input(hyp, position));
 	}
 
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link ContImplHypRewrites} to a predicate.
+	 *
+	 * @param hyp a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> contImpHypGetPositions(Predicate hyp) {
+		return hyp.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(BinaryPredicate predicate) {
+				return predicate.getTag() == LIMP;
+			}
+		});
+	}
+
 	public static boolean isFunOvrApp(Formula<?> subFormula) {
 		if (Lib.isFunApp(subFormula)) {
 			Expression left = ((BinaryExpression) subFormula).getLeft();
@@ -859,9 +896,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (Tactics.isFunOvrApp(expression))
-					return true;
-				return false;
+				return isFunOvrApp(expression);
 			}
 		});
 		Lib.removeWDUnstrictPositions(positions, predicate);
@@ -907,45 +942,24 @@ public class Tactics {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.NOT) {
+				if (predicate.getTag() == NOT) {
 					Predicate child = predicate.getChild();
-					if (child instanceof RelationalPredicate) {
+					switch (child.getTag()) {
+					case EQUAL:
 						RelationalPredicate rPred = (RelationalPredicate) child;
-						if (rPred.getTag() == Predicate.EQUAL) {
-							Expression right = rPred.getRight();
-							Expression left = rPred.getLeft();
-							if (right instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) right;
-								if (aExp.getTag() == Expression.EMPTYSET)
-									return true;
-							}
-							if (left instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) left;
-								if (aExp.getTag() == Expression.EMPTYSET)
-									return true;
-							}
-						}
-					}
-					if (child instanceof AssociativePredicate) {
-						return true;
-					}
-					if (Lib.isTrue(child) || Lib.isFalse(child)) {
-						return true;
-					}
-					if (Lib.isNeg(child)) {
-						return true;
-					}
-					if (Lib.isImp(child)) {
-						return true;
-					}
-					if (Lib.isExQuant(child)) {
-						return true;
-					}
-					if (Lib.isUnivQuant(child)) {
+						return rPred.getLeft().getTag() == EMPTYSET || rPred.getRight().getTag() == EMPTYSET;
+					case LAND:
+					case LOR:
+					case BTRUE:
+					case BFALSE:
+					case NOT:
+					case LIMP:
+					case EXISTS:
+					case FORALL:
 						return true;
 					}
 				}
-				return super.select(predicate);
+				return false;
 			}
 
 		});
@@ -992,10 +1006,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.SUBSETEQ) {
-					return true;
-				}
-				return super.select(predicate);
+				return predicate.getTag() == SUBSETEQ;
 			}
 
 		});
@@ -1011,7 +1022,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				return predicate.getTag() == Predicate.SUBSET;
+				return predicate.getTag() == SUBSET;
 			}
 
 		});
@@ -1028,10 +1039,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativePredicate predicate) {
-				if (predicate.getTag() == Predicate.LOR) {
-					return true;
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LOR;
 			}
 
 		});
@@ -1078,10 +1086,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LIMP) {
-					return Lib.isConj(predicate.getRight());
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LIMP && Lib.isConj(predicate.getRight());
 			}
 
 		});
@@ -1123,10 +1128,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LIMP) {
-					return Lib.isDisj(predicate.getLeft());
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LIMP && Lib.isDisj(predicate.getLeft());
 			}
 
 		});
@@ -1147,12 +1149,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RELIMAGE) {
-					Expression right = expression.getRight();
-					return right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return expression.getTag() == RELIMAGE && expression.getRight().getTag() == BUNION;
 			}
 
 		});
@@ -1239,10 +1236,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate pred) {
-				if (pred.getTag() == Predicate.LEQV) {
-					return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == LEQV;
 			}
 
 		});
@@ -1491,19 +1485,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.DOMRES
-						|| expression.getTag() == Expression.DOMSUB) {
+				if (expression.getTag() == DOMRES || expression.getTag() == DOMSUB) {
 					Expression left = expression.getLeft();
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return left.getTag() == BUNION || left.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1545,19 +1531,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.DOMRES
-						|| expression.getTag() == Expression.DOMSUB) {
+				if (expression.getTag() == DOMRES || expression.getTag() == DOMSUB) {
 					Expression right = expression.getRight();
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return right.getTag() == BUNION || right.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1599,19 +1577,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RANRES
-						|| expression.getTag() == Expression.RANSUB) {
+				if (expression.getTag() == RANRES || expression.getTag() == RANSUB) {
 					Expression right = expression.getRight();
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (right instanceof AssociativeExpression
-							&& right.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return right.getTag() == BUNION || right.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1653,19 +1623,11 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RANRES
-						|| expression.getTag() == Expression.RANSUB) {
+				if (expression.getTag() == RANRES || expression.getTag() == RANSUB) {
 					Expression left = expression.getLeft();
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BINTER) {
-						return true;
-					}
+					return left.getTag() == BUNION || left.getTag() == BINTER;
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1763,30 +1725,21 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativePredicate pred) {
-				if (pred.getTag() == Predicate.LAND
-						|| pred.getTag() == Predicate.LOR) {
-					return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == LAND || pred.getTag() == LOR;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			AssociativePredicate aPred = ((AssociativePredicate) predicate
-								.getSubFormula(position));
-			int tag = aPred.getTag() == Predicate.LAND ? Predicate.LOR
-					: Predicate.LAND;
+			AssociativePredicate aPred = (AssociativePredicate) predicate.getSubFormula(position);
+			int tag = aPred.getTag() == LAND ? LOR : LAND;
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativePredicate
-						&& subFormula.getTag() == tag) {
+			for (Predicate childPred : aPred.getChildren()) {
+				if (childPred.getTag() == tag) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -1829,30 +1782,21 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.BUNION
-						|| expression.getTag() == Expression.BINTER) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == BUNION || expression.getTag() == BINTER;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			AssociativeExpression aExp = ((AssociativeExpression) predicate
-								.getSubFormula(position));
-			int tag = aExp.getTag() == Expression.BUNION ? Expression.BINTER
-					: Expression.BUNION;
+			AssociativeExpression aExp = ((AssociativeExpression) predicate.getSubFormula(position));
+			int tag = aExp.getTag() == BUNION ? BINTER : BUNION;
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativeExpression
-						&& subFormula.getTag() == tag) {
+			for (Expression childExpr : aExp.getChildren()) {
+				if (childExpr.getTag() == tag) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -1895,26 +1839,20 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.FCOMP) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == FCOMP;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			int tag = Expression.BUNION;
+			AssociativeExpression expr = (AssociativeExpression) predicate.getSubFormula(position);
 			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (subFormula instanceof AssociativeExpression
-						&& subFormula.getTag() == tag) {
+			for (Expression childExpr : expr.getChildren()) {
+				if (childExpr.getTag() == BUNION) {
 					results.add(child);
 				}
 				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -1957,12 +1895,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RELIMAGE) {
-					Expression left = expression.getLeft();
-					return left instanceof AssociativeExpression
-							&& left.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return expression.getTag() == RELIMAGE && expression.getLeft().getTag() == BUNION;
 			}
 
 		});
@@ -2005,13 +1938,8 @@ public class Tactics {
 
 			@Override
 			public boolean select(UnaryExpression expression) {
-				if (expression.getTag() == Expression.KDOM
-						|| expression.getTag() == Expression.KRAN) {
-					Expression child = expression.getChild();
-					return child instanceof AssociativeExpression
-							&& child.getTag() == Expression.BUNION;
-				}
-				return super.select(expression);
+				return (expression.getTag() == KDOM || expression.getTag() == KRAN)
+						&& expression.getChild().getTag() == BUNION;
 			}
 
 		});
@@ -2099,10 +2027,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.OVR) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == OVR;
 			}
 
 		});
@@ -2256,10 +2181,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.FCOMP) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == FCOMP;
 			}
 
 		});
@@ -2378,9 +2300,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteSetGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate))
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		else
-			return new ArrayList<IPosition>();
+			return NO_POSITIONS;
 	}
 
 
@@ -2482,9 +2404,9 @@ public class Tactics {
 	public static List<IPosition> finiteSetMinusGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetMinus(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2512,9 +2434,9 @@ public class Tactics {
 	public static List<IPosition> finiteRelationGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2552,9 +2474,9 @@ public class Tactics {
 	public static List<IPosition> finiteRelImgGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2583,9 +2505,9 @@ public class Tactics {
 	public static List<IPosition> finiteRanGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2645,9 +2567,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunctionGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -2684,9 +2606,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunConvGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelation(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2724,9 +2646,9 @@ public class Tactics {
 			Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRelImg(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2759,9 +2681,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunRanGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isRan(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2797,9 +2719,9 @@ public class Tactics {
 	public static List<IPosition> finiteFunDomGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isDom(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2835,9 +2757,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteMinGetPositions(Predicate predicate) {
 		if (new FiniteMin().isApplicable(predicate)) {
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	/**
@@ -2878,9 +2800,9 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteMaxGetPositions(Predicate predicate) {
 		if (new FiniteMax().isApplicable(predicate)) {
-			return Arrays.asList(new IPosition[] { IPosition.ROOT });
+			return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 	
 	/**
@@ -2924,9 +2846,9 @@ public class Tactics {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 	
@@ -2957,9 +2879,9 @@ public class Tactics {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -3077,11 +2999,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				if (pred.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(pred.getLeft()))
-						return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == SUBSETEQ && Lib.isSetMinus(pred.getLeft());
 			}
 
 		});
@@ -3104,11 +3022,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				if (pred.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(pred.getRight()))
-						return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == SUBSETEQ && Lib.isSetMinus(pred.getRight());
 			}
 
 		});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,14 @@ package org.eventb.internal.ui.prover.tactics;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.finiteFunDomGetPositions;
 
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
@@ -64,14 +63,11 @@ public class FiniteFunDomGoal implements ITacticProvider {
 		if (node == null)
 			return emptyList();
 		final Predicate goal = node.getSequent().goal();
-		if (Lib.isFinite(goal)) {
-			if (Lib.isDom(((SimplePredicate) goal).getExpression())) {
-				final ITacticApplication appli = new FiniteFunDomGoalApplication(
-						node);
-				return singletonList(appli);
-			}
+		if (finiteFunDomGetPositions(goal).isEmpty()) {
+			return emptyList();
+		} else {
+			return singletonList(new FiniteFunDomGoalApplication(node));
 		}
-		return emptyList();
 	}
 
 }

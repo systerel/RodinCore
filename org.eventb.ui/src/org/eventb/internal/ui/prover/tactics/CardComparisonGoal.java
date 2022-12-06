@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.isCardComparisonApplicable;
+
 import java.util.List;
 
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -50,28 +52,21 @@ public class CardComparisonGoal extends AbstractHypGoalTacticProvider {
 		}
 		
 	}
-	
-	public static class CardComparisonAppliInspector extends DefaultApplicationInspector {
 
-		public CardComparisonAppliInspector() {
-			super(null);
-		}
-		
-		@Override
-		public void inspect(RelationalPredicate predicate,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (Tactics.isCardComparisonApplicable(predicate)) {
-				accumulator.add(new CardComparisonApplication());
-			}
-		}
-		
-	}
+	private static final List<ITacticApplication> NO_APPLICATIONS = emptyList();
+
+	private static final List<ITacticApplication> GOAL_APPLICATION = singletonList(new CardComparisonApplication());
 
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new CardComparisonAppliInspector());
+		// Tactic can only be applied to the root element of the goal
+		if (hyp == null && isCardComparisonApplicable(predicate)) {
+			return GOAL_APPLICATION;
+		} else {
+			return NO_APPLICATIONS;
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.funImgSimpGetPositions;
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
-import org.eclipse.swt.graphics.Point;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -23,7 +22,6 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.TacticProviderUtils;
 
 /**
  * Provider for the "Functional image simplification" tactic.
@@ -52,44 +50,15 @@ public class FunImgSimp extends AbstractHypGoalTacticProvider {
 		public ITactic getTactic(String[] inputs, String gInput) {
 			return Tactics.funImgSimplifies(hyp, position);
 		}
-		
-		@Override
-		public Point getHyperlinkBounds(String parsedString,
-				Predicate parsedPredicate) {
-			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
-					parsedString, position);
-		}
 
-	}
-
-	public static class FunImgSimpApplicationInspector extends
-			DefaultApplicationInspector {
-
-		private final IProofTreeNode node;
-
-		public FunImgSimpApplicationInspector(IProofTreeNode node, Predicate hyp) {
-			super(hyp);
-			this.node = node;
-		}
-
-		@Override
-		public void inspect(BinaryExpression expression,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (expression.getTag() != Formula.FUNIMAGE)
-				return;
-			if (Tactics.isFunImgSimpApplicable(expression, node.getSequent())) {
-				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new FunImgSimpApplication(hyp, position));
-			}
-		}
-		
 	}
 
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new FunImgSimpApplicationInspector(node, hyp));
+		return adaptPositionsToApplications(hyp, predicate, pred -> funImgSimpGetPositions(pred, node.getSequent()),
+				FunImgSimpApplication::new);
 	}
 
 }

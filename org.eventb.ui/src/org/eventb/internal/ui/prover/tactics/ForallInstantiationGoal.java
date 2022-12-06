@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,14 +54,17 @@ public class ForallInstantiationGoal implements ITacticProvider {
 
 	}
 
+	private static final List<ITacticApplication> NO_APPLICATIONS = emptyList();
+
+	private static final List<ITacticApplication> GOAL_APPLICATION = singletonList(new ForallInstantiationGoalApplication());
+
 	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && Tactics.allI_applicable(node.getSequent().goal())) {
-			ITacticApplication appli = new ForallInstantiationGoalApplication();
-			return singletonList(appli);
+			return GOAL_APPLICATION;
 		}
-		return emptyList();
+		return NO_APPLICATIONS;
 	}
 
 }

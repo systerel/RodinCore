@@ -11,11 +11,10 @@
 package org.eventb.internal.ui.prover.tactics;
 
 import static java.util.Collections.emptyList;
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
 
 import java.util.List;
 
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -35,12 +34,12 @@ import org.eventb.ui.prover.ITacticProvider;
  */
 public class ContImpHyp implements ITacticProvider {
 
-	public static class CompImpHypApplication extends
+	public static class ContImpHypApplication extends
 			DefaultPositionApplication {
 
 		private static final String TACTIC_ID = "org.eventb.ui.contImpIHyp";
 
-		public CompImpHypApplication(Predicate hyp, IPosition position) {
+		public ContImpHypApplication(Predicate hyp, IPosition position) {
 			super(hyp, position);
 		}
 
@@ -56,30 +55,12 @@ public class ContImpHyp implements ITacticProvider {
 
 	}
 
-	public static class CompImpHypAppliInspector extends
-			DefaultApplicationInspector {
-
-		public CompImpHypAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(BinaryPredicate predicate,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (predicate.getTag() == Predicate.LIMP) {
-				accumulator.add(new CompImpHypApplication(hyp, accumulator
-						.getCurrentPosition()));
-			}
-		}
-
-	}
-
 	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node == null)
 			return emptyList();
-		return hyp.inspect(new CompImpHypAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, hyp, Tactics::contImpHypGetPositions, ContImpHypApplication::new);
 	}
 
 }

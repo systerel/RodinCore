@@ -1217,7 +1217,7 @@
             interrupt="false"
             name="%proofTactics.mp.name"
             priority="2"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElimination1"
             target="hypothesis"
             tooltip="%proofTactics.mp.tooltip"/>
       <tactic
@@ -1236,7 +1236,7 @@
             interrupt="false"
             name="%proofTactics.conjE.name"
             priority="3"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElemination"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElimination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ConjE.tooltip"/>
       <tactic
@@ -1539,7 +1539,7 @@
          point="org.eventb.ui.proofTactics">
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.doubleImpIHyp"
+            id="org.eventb.ui.doubleImplHyp"
             interrupt="false"
             name="%proofTactics.doubleImplHyp.name"
             priority="8"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -52,30 +52,12 @@ public class PartitionRewrites extends AbstractHypGoalTacticProvider {
 
 	}
 
-	public static class PartitionRewritesAppliInspector extends
-			DefaultApplicationInspector {
-
-		public PartitionRewritesAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(MultiplePredicate predicate,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (predicate.getTag() == Predicate.KPARTITION) {
-				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new PartitionRewritesApplication(hyp,
-						position));
-			}
-		}
-
-	}
-
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new PartitionRewritesAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, predicate, Tactics::partitionGetPositions,
+				PartitionRewritesApplication::new);
 	}
 
 }

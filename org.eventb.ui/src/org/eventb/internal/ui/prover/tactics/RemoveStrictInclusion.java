@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
+
 import java.util.List;
 
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -53,29 +53,12 @@ public class RemoveStrictInclusion extends AbstractHypGoalTacticProvider {
 
 	}
 
-	public static class RemoveStrictInclusionAppliInspector extends
-			DefaultApplicationInspector {
-
-		public RemoveStrictInclusionAppliInspector(Predicate hyp) {
-			super(hyp);
-		}
-
-		@Override
-		public void inspect(RelationalPredicate predicate,
-				IAccumulator<ITacticApplication> accumulator) {
-			if (predicate.getTag() == Predicate.SUBSET) {
-				accumulator.add(new RemoveStrictInclusionApplication(hyp,
-						accumulator.getCurrentPosition()));
-			}
-		}
-
-	}
-
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new RemoveStrictInclusionAppliInspector(hyp));
+		return adaptPositionsToApplications(hyp, predicate, Tactics::sirGetPositions,
+				RemoveStrictInclusionApplication::new);
 	}
 	
 }

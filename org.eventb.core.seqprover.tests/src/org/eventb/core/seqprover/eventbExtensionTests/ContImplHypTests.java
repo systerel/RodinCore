@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,11 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.contImpHypGetPositions;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
 import java.util.List;
 
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultFilter;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
@@ -50,13 +48,7 @@ public class ContImplHypTests extends AbstractManualReasonerTests {
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
-		// TODO make a method in Tactics
-		return predicate.getPositions(new DefaultFilter() {
-			@Override
-			public boolean select(BinaryPredicate predicate) {
-				return predicate.getTag() == Formula.LIMP;
-			}
-		});
+		return contImpHypGetPositions(predicate);
 	}
 
 	@Override
