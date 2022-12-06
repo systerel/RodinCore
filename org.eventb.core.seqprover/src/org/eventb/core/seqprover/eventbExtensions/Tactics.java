@@ -36,6 +36,7 @@ import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
 
 import java.util.ArrayList;
@@ -3053,11 +3054,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				if (pred.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(pred.getLeft()))
-						return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == SUBSETEQ && Lib.isSetMinus(pred.getLeft());
 			}
 
 		});
@@ -3080,11 +3077,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				if (pred.getTag() == Predicate.SUBSETEQ) {
-					if (Lib.isSetMinus(pred.getRight()))
-						return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == SUBSETEQ && Lib.isSetMinus(pred.getRight());
 			}
 
 		});
