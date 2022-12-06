@@ -33,36 +33,34 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class InclusionSetMinusRight extends AbstractHypGoalTacticProvider {
 
-	private static class InclusionSetMinusRightApplication extends
-	InclusionSetMinusApplication {
+	private static class InclusionSetMinusRightApplication extends InclusionSetMinusApplication {
 
-private static final String TACTIC_ID = "org.eventb.ui.inclusionSetMinusRight";
+		private static final String TACTIC_ID = "org.eventb.ui.inclusionSetMinusRight";
 
-public InclusionSetMinusRightApplication(Predicate hyp,
-		IPosition position) {
-	super(hyp, position);
-}
+		public InclusionSetMinusRightApplication(Predicate hyp, IPosition position) {
+			super(hyp, position);
+		}
 
-@Override
-protected Expression getChild(RelationalPredicate rel) {
-	return rel.getRight();
-}
+		@Override
+		protected Expression getChild(RelationalPredicate rel) {
+			return rel.getRight();
+		}
 
-@Override
-public String getHyperlinkLabel() {
-	return "Rewrite inclusion with set minus on the right";
-}
+		@Override
+		public String getHyperlinkLabel() {
+			return "Rewrite inclusion with set minus on the right";
+		}
 
-@Override
-public ITactic getTactic(String[] inputs, String globalInput) {
-	return Tactics.inclusionSetMinusRightRewrites(hyp, position);
-}
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return Tactics.inclusionSetMinusRightRewrites(hyp, position);
+		}
 
-@Override
-public String getTacticID() {
-	return TACTIC_ID;
-}
-}
+		@Override
+		public String getTacticID() {
+			return TACTIC_ID;
+		}
+	}
 
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
