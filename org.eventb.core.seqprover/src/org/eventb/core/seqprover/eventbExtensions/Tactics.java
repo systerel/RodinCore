@@ -1099,10 +1099,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LIMP) {
-					return Lib.isConj(predicate.getRight());
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LIMP && Lib.isConj(predicate.getRight());
 			}
 
 		});
@@ -1144,10 +1141,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryPredicate predicate) {
-				if (predicate.getTag() == Predicate.LIMP) {
-					return Lib.isDisj(predicate.getLeft());
-				}
-				return super.select(predicate);
+				return predicate.getTag() == LIMP && Lib.isDisj(predicate.getLeft());
 			}
 
 		});
