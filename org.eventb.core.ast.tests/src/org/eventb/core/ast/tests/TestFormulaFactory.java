@@ -1201,6 +1201,15 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test
+	public void extendedPredicateBoundWithHole_TypeChecked() {
+		var eb0 = EFF.makeBoundIdentifier(0, null, POW(EFFtT));
+		var eb2 = EFF.makeBoundIdentifier(2, null, POW(EFFtT));
+		var pred = EFF.makeExtendedPredicate(fooS, mList(eb0, eb2),
+				mList(EFFP, EFFP), null);
+		assertTrue(pred.isTypeChecked());
+	}
+
+	@Test
 	public void extendedPredicate_ArrayParameter() {
 		final Expression[] exprs = { EFFeS, EFFeT };
 		final Predicate[] preds = { EFFP, EFFP };
@@ -1216,6 +1225,16 @@ public class TestFormulaFactory extends AbstractTests {
 		var pred = EFF.makeExtendedPredicate(old_fooS, mList(EFFeS, EFFeT),
 				mList(EFFP, EFFP), null);
 		assertFalse(pred.isTypeChecked());
+	}
+
+	// Same test as above, but using the obsolescent IPredicateExtension class.
+	@Test
+	public void extendedPredicateBoundWithHole_TypeChecked_old() {
+		var eb0 = EFF.makeBoundIdentifier(0, null, POW(EFFtT));
+		var eb2 = EFF.makeBoundIdentifier(2, null, POW(EFFtT));
+		var pred = EFF.makeExtendedPredicate(old_fooS, mList(eb0, eb2),
+				mList(EFFP, EFFP), null);
+		assertTrue(pred.isTypeChecked());
 	}
 
 	// Same test as above, but using the obsolescent IPredicateExtension class.

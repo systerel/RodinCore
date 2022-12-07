@@ -202,22 +202,14 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			}
 		}
 
-		final FormulaFactory ff = getFactory();
-		BoundIdentDecl[] boundDecls;
-		if (boundIdents.length > 0) {
-			boundDecls = new BoundIdentDecl[boundIdents.length];
-			for (int i = 0; i < boundIdents.length; i++) {
-				boundDecls[i] = new BoundIdentDecl("b" + i, null, boundIdents[i].getType(), ff);
-			}
-		} else {
-			boundDecls = NO_BOUND_IDENT_DECL;
-		}
-
 		if (extension instanceof IPredicateExtension2) {
 			typeChecked = ((IPredicateExtension2) extension).verifyType(childExpressions, childPredicates);
 		} else {
-			TypeCheckResult tcRes = new TypeCheckResult(ff.makeTypeEnvironment().makeSnapshot());
-			typeCheck(tcRes, boundDecls);
+			final FormulaFactory ff = getFactory();
+			ITypeEnvironmentBuilder typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addAll(freeIdents);
+			TypeCheckResult tcRes = new TypeCheckResult(typeEnv.makeSnapshot());
+			extension.typeCheck(this, new TypeCheckMediator(tcRes, this, false));
 			typeChecked = !tcRes.hasProblem();
 		}
 	}
