@@ -25,7 +25,7 @@ import org.eventb.ui.prover.ITacticApplication;
 /**
  * Provider for the "db impl" tactic.
  * <ul>
- * <li>Provider ID : <code>org.eventb.ui.doubleImpIHyp</code></li>
+ * <li>Provider ID : <code>org.eventb.ui.doubleImplHyp</code></li>
  * <li>Target : hypothesis</li>
  * <ul>
  */
@@ -33,7 +33,7 @@ public class DoubleImplHyp extends AbstractHypGoalTacticProvider {
 	
 	public static class DoubleImplHypApplication extends DefaultPositionApplication {
 
-		private static final String TACTIC_ID = "org.eventb.ui.doubleImpIHyp";
+		private static final String TACTIC_ID = "org.eventb.ui.doubleImplHyp";
 
 		public DoubleImplHypApplication(Predicate hyp, IPosition position) {
 			super(hyp, position);

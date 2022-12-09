@@ -1539,7 +1539,7 @@
          point="org.eventb.ui.proofTactics">
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.doubleImpIHyp"
+            id="org.eventb.ui.doubleImplHyp"
             interrupt="false"
             name="%proofTactics.doubleImplHyp.name"
             priority="8"
