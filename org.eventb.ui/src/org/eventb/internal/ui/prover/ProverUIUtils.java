@@ -15,6 +15,8 @@ package org.eventb.internal.ui.prover;
 
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.allD;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.allmpD;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.allmpD_applicable;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.exI;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
@@ -349,7 +351,14 @@ public class ProverUIUtils {
 			applyTactic(exI(inputs), us, null, false, new NullProgressMonitor());
 		} else {
 			// Apply instantiation to a hypothesis: it is a universal
-			applyTactic(allD(hypothesis, inputs), us, singleton(hypothesis), false, new NullProgressMonitor());
+			ITactic tactic;
+			// Try to do a modus ponens too, if applicable
+			if (allmpD_applicable(hypothesis)) {
+				tactic = allmpD(hypothesis, inputs);
+			} else {
+				tactic = allD(hypothesis, inputs);
+			}
+			applyTactic(tactic, us, singleton(hypothesis), false, new NullProgressMonitor());
 		}
 	}
 	

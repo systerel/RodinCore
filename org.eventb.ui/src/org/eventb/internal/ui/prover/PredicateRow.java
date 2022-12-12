@@ -211,8 +211,8 @@ public class PredicateRow {
 
 	/**
 	 * Instantiates the given predicate with the current value of the inputs.
-	 * This method applies <code>allE</code> on an hypothesis, and
-	 * <code>exI</code> on a goal.
+	 * This method applies <code>allmpD</code> (if applicable) or
+	 * <code>allE</code> on an hypothesis, and <code>exI</code> on a goal.
 	 */
 	protected void instantiate() {
 		final IUserSupport us = getUserSupport();
