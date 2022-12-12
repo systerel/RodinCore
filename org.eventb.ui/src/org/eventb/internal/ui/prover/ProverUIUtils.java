@@ -14,10 +14,13 @@
 package org.eventb.internal.ui.prover;
 
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.allD;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.allmpD;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.allmpD_applicable;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.exI;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,8 +64,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIRegistry;
-import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
-import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
 import org.eventb.internal.ui.utils.ListMultimap;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.prover.IProofCommand;
@@ -345,36 +346,20 @@ public class ProverUIUtils {
 	 */
 	public static void applyInstantiation(Predicate hypothesis,
 			IUserSupport us, String[] inputs, String globalInput) {
-		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
-		final List<PositionApplicationProxy> applis = registry
-				.getPositionApplications(us, hypothesis);
-		final Set<Predicate> hypset;
 		if (hypothesis == null) {
-			hypset = null;
+			// Apply instantiation to the goal: it is an existential
+			applyTactic(exI(inputs), us, null, false, new NullProgressMonitor());
 		} else {
-			hypset = singleton(hypothesis);
-		}
-		// FIXME hard coded list ?
-		final Set<String> iTacticIDs = getInstantiationTacticIDs();
-		for (PositionApplicationProxy app : applis) {
-			if (iTacticIDs.contains(app.getTacticID())) {
-				applyTactic(app.getTactic(inputs, globalInput), us, hypset,
-						false, new NullProgressMonitor());
-				return;
+			// Apply instantiation to a hypothesis: it is a universal
+			ITactic tactic;
+			// Try to do a modus ponens too, if applicable
+			if (allmpD_applicable(hypothesis)) {
+				tactic = allmpD(hypothesis, inputs);
+			} else {
+				tactic = allD(hypothesis, inputs);
 			}
+			applyTactic(tactic, us, singleton(hypothesis), false, new NullProgressMonitor());
 		}
-	}
-
-	/**
-	 * Returns the IDs of the instantiation tactics.
-	 * 
-	 * @return the IDs of the instantiation tactics.
-	 */
-	private static Set<String> getInstantiationTacticIDs() {
-		final Set<String> tacticIDs = new HashSet<String>();
-		tacticIDs.add(new ForallInstantiationHypApplication(null).getTacticID());
-		tacticIDs.add(new ExistsInstantiationGoalApplication().getTacticID());
-		return tacticIDs;
 	}
 	
 	/**
