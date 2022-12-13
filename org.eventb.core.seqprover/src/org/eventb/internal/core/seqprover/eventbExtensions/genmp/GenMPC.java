@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutes;
 import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutesL2;
+import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutesL4;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -160,7 +161,9 @@ public class GenMPC {
 	private void addSubstitute(Predicate origin, boolean fromGoal,
 			Predicate source) {
 		final List<Substitute> substs;
-		if (level.from(Level.L2)) {
+		if (level.from(Level.L4)) {
+			substs = makeSubstitutesL4(origin, fromGoal, source);
+		} else if (level.from(Level.L2)) {
 			substs = makeSubstitutesL2(origin, fromGoal, source);
 		} else {
 			substs = makeSubstitutes(origin, fromGoal, source);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Systerel and others.
+ * Copyright (c) 2011, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,12 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 	private final String REASONER_ID;
 	protected final boolean fromLevel2;
 	protected final boolean fromLevel3;
+	protected final boolean fromLevel4;
 
 	public GeneralizedModusPonensTests(AbstractGenMP reasoner) {
 		this.fromLevel2 = reasoner.level().from(Level.L2);
 		this.fromLevel3 = reasoner.level().from(Level.L3);
+		this.fromLevel4 = reasoner.level().from(Level.L4);
 		REASONER_ID = reasoner.getReasonerID();
 	}
 
@@ -133,6 +135,11 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		// Bug #713: Apply in a hypotheses giving an already existing hypothesis
 		assertReasonerSuccess(" 1∈P ;; 2∈P ⇒ 1∈P ;; 2∈P ⇒ ⊤ |- ⊤ ", //
 				"{P=ℙ(ℤ)}[2∈P ⇒ 1∈P][][1∈P ;; 2∈P ⇒ ⊤] |- ⊤");
+
+		// FR #343: Generalized Modus Ponens on natural integers
+		assertReasonerSuccessFromLevel(fromLevel4, "n ∈ ℕ |- 0 ≤ n", "{}[][][n ∈ ℕ] |- ⊤");
+		assertReasonerSuccessFromLevel(fromLevel4, "0 ≤ n |- n ∈ ℕ", "{}[][][0 ≤ n] |- ⊤");
+		assertReasonerSuccessFromLevel(fromLevel4, "¬n ∈ ℕ |- 0 > n", "{}[][][¬n ∈ ℕ] |- ⊤");
 	}
 
 	@Test
@@ -198,6 +205,15 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 	protected void assertReasonerFailure(IProverSequent sequent)
 			throws Exception {
 		assertReasonerFailure(sequent, new EmptyInput(), REASON);
+	}
+
+	protected void assertReasonerSuccessFromLevel(boolean fromLevel, String sequent, String newSequent)
+			throws Exception {
+		if (fromLevel) {
+			assertReasonerSuccess(sequent, newSequent);
+		} else {
+			assertReasonerFailure(sequent);
+		}
 	}
 
 	protected IProverSequent seq(String hiddenHypsImage,

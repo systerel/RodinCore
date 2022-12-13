@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerNegative;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerPositive;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +37,7 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContradictionFinder.ContradictionInSetFinder;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 
 /**
  * Discharges a sequent that contains a hypothesis and its contradiction.
@@ -137,12 +136,13 @@ public class ContrHyps implements IVersionedReasoner {
 			Predicate pred) {
 		Map<Predicate, List<Predicate>> preds = new HashMap<Predicate, List<Predicate>>();
 
+		Variations variations = Variations.getInstance(Variations.Level.L0);
 		if (!isNeg(pred)) {
-			final List<Predicate> genContrPredicate = getStrongerNegative(pred);
+			final List<Predicate> genContrPredicate = variations.getStrongerNegative(pred);
 			preds.put(pred, genContrPredicate);
 		} else {
 			for (Predicate p : breakPossibleConjunct(makeNeg(pred))) {
-				preds.put(p, getStrongerPositive(p));
+				preds.put(p, variations.getStrongerPositive(p));
 			}
 		}
 		return preds;
