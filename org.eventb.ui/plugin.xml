@@ -2184,6 +2184,17 @@
             target="any"
             tooltip="%proofTactic.equalCard.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.minMaxDef"
+            interrupt="true"
+            name="%proofTactic.minMaxDef.name"
+            priority="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.MinMaxDef"
+            target="any"
+            tooltip="%proofTactic.minMaxDef.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

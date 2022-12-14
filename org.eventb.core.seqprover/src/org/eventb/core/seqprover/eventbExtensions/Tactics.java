@@ -33,6 +33,8 @@ import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
+import static org.eventb.core.ast.Formula.KMAX;
+import static org.eventb.core.ast.Formula.KMIN;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.LAND;
@@ -181,6 +183,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrit
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LocalEqRewrite;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.MinMaxDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
@@ -3459,6 +3462,43 @@ public class Tactics {
 				if (pred.getTag() == EQUAL) {
 					if (pred.getLeft().getTag() == KCARD && pred.getRight().getTag() == KCARD) {
 						accumulator.add(accumulator.getCurrentPosition());
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link MinMaxDefRewrites} reasoner for a given
+	 * position where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "Min/max definition"
+	 * @since 3.6
+	 */
+	public static ITactic minMaxDef(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new MinMaxDefRewrites(), new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link MinMaxDefRewrites} to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> minMaxDefGetPositions(Predicate predicate) {
+		return predicate.inspect(new DefaultInspector<IPosition>() {
+			@Override
+			public void inspect(RelationalPredicate pred, IAccumulator<IPosition> accumulator) {
+				if (pred.getTag() == EQUAL) {
+					if (pred.getLeft().getTag() == KMIN || pred.getLeft().getTag() == KMAX) {
+						accumulator.add(accumulator.getCurrentPosition().getFirstChild());
+					}
+					if (pred.getRight().getTag() == KMIN || pred.getRight().getTag() == KMAX) {
+						accumulator.add(accumulator.getCurrentPosition().getChildAtIndex(1));
 					}
 				}
 			}

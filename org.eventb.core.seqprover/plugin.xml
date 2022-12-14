@@ -506,6 +506,11 @@
       	    id="equalCardRewrites"
       	    name="%equalCardRewritesName">
       </reasoner>
+      <reasoner
+      	    class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.MinMaxDefRewrites"
+      	    id="minMaxDefRewrites"
+      	    name="%minMaxDefRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

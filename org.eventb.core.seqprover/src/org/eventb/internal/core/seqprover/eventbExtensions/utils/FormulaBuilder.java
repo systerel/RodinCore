@@ -13,9 +13,11 @@ package org.eventb.internal.core.seqprover.eventbExtensions.utils;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.TBIJ;
@@ -258,6 +260,28 @@ public class FormulaBuilder {
 	 */
 	public Predicate imp(Predicate left, Predicate right) {
 		return ff.makeBinaryPredicate(LIMP, left, right, null);
+	}
+
+	/**
+	 * Build a greater-or-equal relation.
+	 *
+	 * @param left left-hand side of the relation
+	 * @param right right-hand side of the relation
+	 * @return the predicate left ≥ right
+	 */
+	public Predicate ge(Expression left, Expression right) {
+		return ff.makeRelationalPredicate(GE, left, right, null);
+	}
+
+	/**
+	 * Build a less-or-equal relation.
+	 *
+	 * @param left left-hand side of the relation
+	 * @param right right-hand side of the relation
+	 * @return the predicate left ≤ right
+	 */
+	public Predicate le(Expression left, Expression right) {
+		return ff.makeRelationalPredicate(LE, left, right, null);
 	}
 
 	/**
