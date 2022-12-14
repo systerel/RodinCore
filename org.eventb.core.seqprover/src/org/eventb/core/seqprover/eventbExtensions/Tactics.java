@@ -19,6 +19,7 @@ package org.eventb.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -163,6 +164,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrit
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.BCompDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -3501,6 +3503,36 @@ public class Tactics {
 						accumulator.add(accumulator.getCurrentPosition().getChildAtIndex(1));
 					}
 				}
+			}
+		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link BCompDefRewrites} reasoner for a given
+	 * position where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "Backward composition definition"
+	 * @since 3.6
+	 */
+	public static ITactic bcompDef(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new BCompDefRewrites(), new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link BCompDefRewrites} to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.6
+	 */
+	public static List<IPosition> bcompDefGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(AssociativeExpression expr) {
+				return expr.getTag() == BCOMP;
 			}
 		});
 	}

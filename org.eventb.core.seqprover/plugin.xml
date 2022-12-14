@@ -511,6 +511,11 @@
       	    id="minMaxDefRewrites"
       	    name="%minMaxDefRewritesName">
       </reasoner>
+      <reasoner
+      	    class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.BCompDefRewrites"
+      	    id="bcompDefRewrites"
+      	    name="%bcompDefRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
