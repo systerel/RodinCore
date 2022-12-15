@@ -113,14 +113,14 @@ public class EqualCardTests extends AbstractManualReasonerTests {
 	@Test
 	public void testPositions() {
 		// Acceptable cases
-		testGetPosition("card({1})=card({2})", "ROOT");
-		testGetPosition("S ∪ T ⊆ ℕ ∧ card(S) = card(T)", "1");
-		testGetPosition("∀x ⦂ ℤ · card({x})=card({0})", "1");
+		assertGetPositions("card({1})=card({2})", "ROOT");
+		assertGetPositions("S ∪ T ⊆ ℕ ∧ card(S) = card(T)", "1");
+		assertGetPositions("∀x ⦂ ℤ · card({x})=card({0})", "1");
 		// Cases on which the reasoner can't be applied
-		testGetPosition("card({1})≠card({2})", ""); // Not an equality
-		testGetPosition("1=card({1})", ""); // Not a cardinal in left-hand side
-		testGetPosition("card({1})=1", ""); // Not a cardinal in right-hand side
-		testGetPosition("inter({{1}})=inter({{2}})", ""); // No cardinals
+		assertGetPositions("card({1})≠card({2})"); // Not an equality
+		assertGetPositions("1=card({1})"); // Not a cardinal in left-hand side
+		assertGetPositions("card({1})=1"); // Not a cardinal in right-hand side
+		assertGetPositions("inter({{1}})=inter({{2}})"); // No cardinals
 	}
 
 	@Override

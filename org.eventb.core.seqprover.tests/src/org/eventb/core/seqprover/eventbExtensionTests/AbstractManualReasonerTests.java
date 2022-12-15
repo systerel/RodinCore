@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.List;
 
@@ -19,7 +19,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.core.seqprover.tests.Util;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.junit.Test;
@@ -48,10 +47,10 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	 * @param predicateImage
 	 *            The string image of the predicate
 	 * @param expected
-	 *            The string image of expected applicable positions
+	 *            The string images of expected applicable positions
 	 * @see #getPositions(Predicate)
 	 */
-	protected void testGetPosition(String predicateImage, String expected) {
+	protected void assertGetPositions(String predicateImage, String... expected) {
 		Predicate predicate = TestLib.genPred(predicateImage, ff);
 		List<IPosition> positions = getPositions(predicate);
 		assertPositions("Applicable positions are incorrect for "
@@ -61,7 +60,7 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	/**
 	 * Tests for applicable positions
 	 *
-	 * @deprecated use {@link #testGetPosition(String, String)} in a new test method
+	 * @deprecated use {@link #assertGetPositions(String, String...)} in a new test method
 	 */
 	@Test
 	@Deprecated
@@ -69,7 +68,13 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 		String [] tests = getTestGetPositions();
 		assert tests.length % 2 == 0;
 		for (int i = 0; i < tests.length; i += 2) {
-			testGetPosition(tests[i], tests[i + 1]);
+			// The input format was: empty string for no positions,
+			// newline-separated values for multiple positions
+			if (tests[i + 1].isEmpty()) {
+				assertGetPositions(tests[i]);
+			} else {
+				assertGetPositions(tests[i], tests[i + 1].split("\n"));
+			}
 		}
 	}
 
@@ -80,7 +85,7 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	 *
 	 * @return list of predicates and positions to test
 	 * @deprecated create a new test method and call
-	 *             {@link #testGetPosition(String, String)} directly
+	 *             {@link #assertGetPositions(String, String...)} directly
 	 */
 	@Deprecated
 	protected String[] getTestGetPositions() {
@@ -109,24 +114,10 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	 * @param positions
 	 *            a list of position ({@link IPosition}
 	 */
-	private void assertPositions(String message, String expected,
+	private void assertPositions(String message, String[] expected,
 			List<IPosition> positions) {
-		StringBuilder builder = new StringBuilder();
-		String sep = "";
-		for (IPosition position : positions) {
-			builder.append(sep);
-			if (position.isRoot()) {
-				builder.append("ROOT");
-			} else {
-				builder.append(position);
-			}
-			sep = "\n";
-		}
-		String actual = builder.toString();
-		if (!expected.equals(actual)) {
-			System.out.println(Util.displayString(actual));
-			fail(message + ":\n" + actual);
-		}
+		String[] actual = positions.stream().map(p -> p.isRoot() ? "ROOT" : p.toString()).toArray(String[]::new);
+		assertArrayEquals(message, expected, actual);
 	}
 
 //	@Override

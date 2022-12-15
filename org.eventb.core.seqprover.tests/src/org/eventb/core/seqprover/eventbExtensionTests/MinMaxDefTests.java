@@ -139,18 +139,18 @@ public class MinMaxDefTests extends AbstractManualReasonerTests {
 	@Test
 	public void testPositions() {
 		// Acceptable cases
-		testGetPosition("min({1, 2})=1", "0");
-		testGetPosition("1=min({1, 2})", "1");
-		testGetPosition("max({1, 2})=2", "0");
-		testGetPosition("2=max({1, 2})", "1");
-		testGetPosition("S ⊆ ℕ ∧ min(S) = n", "1.0");
-		testGetPosition("S ⊆ ℕ ∧ max(S) = n", "1.0");
-		testGetPosition("∀x ⦂ ℤ · min({x})=x", "1.0");
-		testGetPosition("∀x ⦂ ℤ · max({x})=x", "1.0");
+		assertGetPositions("min({1, 2})=1", "0");
+		assertGetPositions("1=min({1, 2})", "1");
+		assertGetPositions("max({1, 2})=2", "0");
+		assertGetPositions("2=max({1, 2})", "1");
+		assertGetPositions("S ⊆ ℕ ∧ min(S) = n", "1.0");
+		assertGetPositions("S ⊆ ℕ ∧ max(S) = n", "1.0");
+		assertGetPositions("∀x ⦂ ℤ · min({x})=x", "1.0");
+		assertGetPositions("∀x ⦂ ℤ · max({x})=x", "1.0");
 		// Cases on which the reasoner can't be applied
-		testGetPosition("min({2})≠1", ""); // Not an equality
-		testGetPosition("max({2})≠1", ""); // Not an equality
-		testGetPosition("card({1, 2})=2", ""); // Not a min or max
+		assertGetPositions("min({2})≠1"); // Not an equality
+		assertGetPositions("max({2})≠1"); // Not an equality
+		assertGetPositions("card({1, 2})=2"); // Not a min or max
 	}
 
 	@Override

@@ -117,13 +117,13 @@ public class CardDefTests extends AbstractManualReasonerTests {
 	@Test
 	public void testPositions() {
 		// Acceptable cases
-		testGetPosition("card({1})=1", "0");
-		testGetPosition("1=card({1})", "1");
-		testGetPosition("S ⊆ ℕ ∧ card(S) = n", "1.0");
-		testGetPosition("∀x ⦂ ℤ · card({x})=1", "1.0");
+		assertGetPositions("card({1})=1", "0");
+		assertGetPositions("1=card({1})", "1");
+		assertGetPositions("S ⊆ ℕ ∧ card(S) = n", "1.0");
+		assertGetPositions("∀x ⦂ ℤ · card({x})=1", "1.0");
 		// Cases on which the reasoner can't be applied
-		testGetPosition("card({1})≠1", ""); // Not an equality
-		testGetPosition("inter({{1}})={1}", ""); // Not a cardinal
+		assertGetPositions("card({1})≠1"); // Not an equality
+		assertGetPositions("inter({{1}})={1}"); // Not a cardinal
 	}
 
 	@Override

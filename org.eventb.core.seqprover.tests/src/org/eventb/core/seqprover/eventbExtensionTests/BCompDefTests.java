@@ -105,11 +105,11 @@ public class BCompDefTests extends AbstractManualReasonerTests {
 	@Test
 	public void testPositions() {
 		// Acceptable cases
-		testGetPosition("({1 ↦ 2} ∘ {0 ↦ 1})(0) = 2", "0.0");
-		testGetPosition("{1 ↦ 2} ∘ {0 ↦ 1} = {1 ↦ 2} ∘ {0 ↦ 1}", "0\n1");
-		testGetPosition("∀ f, g, h · f ∪ g ∪ h ⊆ ℤ × ℤ ∧ h ∘ g ∘ f = f ; g ; h", "3.1.0");
+		assertGetPositions("({1 ↦ 2} ∘ {0 ↦ 1})(0) = 2", "0.0");
+		assertGetPositions("{1 ↦ 2} ∘ {0 ↦ 1} = {1 ↦ 2} ∘ {0 ↦ 1}", "0", "1");
+		assertGetPositions("∀ f, g, h · f ∪ g ∪ h ⊆ ℤ × ℤ ∧ h ∘ g ∘ f = f ; g ; h", "3.1.0");
 		// Cases on which the reasoner can't be applied
-		testGetPosition("({0 ↦ 1} ; {1 ↦ 2})(0) = 2", "");
+		assertGetPositions("({0 ↦ 1} ; {1 ↦ 2})(0) = 2");
 	}
 
 	@Override

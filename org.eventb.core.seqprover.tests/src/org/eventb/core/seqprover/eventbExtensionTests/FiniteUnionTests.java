@@ -60,11 +60,11 @@ public class FiniteUnionTests extends AbstractEmptyInputReasonerTests {
 
 	@Test
 	public void testPositions() {
-		testGetPosition("(x = 2) ⇒ finite(S ∪ {0 ↦ 3} ∪ T)", "");
-		testGetPosition("∀x· x = 2 ⇒ finite(S ∪ {0 ↦ 3} ∪ T)", "");
-		testGetPosition("finite(S ∪ {0 ↦ 3} ∪ T)", "ROOT");
-		testGetPosition("finite(union({S, {0 ↦ 3}, T}))", "ROOT");
-		testGetPosition("finite(⋃s·s ∈ {S, {0 ↦ 3}, T} ∣ s)", "ROOT");
+		assertGetPositions("(x = 2) ⇒ finite(S ∪ {0 ↦ 3} ∪ T)");
+		assertGetPositions("∀x· x = 2 ⇒ finite(S ∪ {0 ↦ 3} ∪ T)");
+		assertGetPositions("finite(S ∪ {0 ↦ 3} ∪ T)", "ROOT");
+		assertGetPositions("finite(union({S, {0 ↦ 3}, T}))", "ROOT");
+		assertGetPositions("finite(⋃s·s ∈ {S, {0 ↦ 3}, T} ∣ s)", "ROOT");
 	}
 
 }
