@@ -24,6 +24,7 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EMPTYSET;
@@ -36,6 +37,7 @@ import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
+import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KUNION;
 import static org.eventb.core.ast.Formula.LAND;
@@ -49,6 +51,7 @@ import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.Formula.RANSUB;
 import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
@@ -1418,38 +1421,19 @@ public class Tactics {
 
 			@Override
 			public boolean select(UnaryExpression expression) {
-				if (expression.getTag() == Expression.CONVERSE) {
-					Expression child = expression.getChild();
-					if (child instanceof AssociativeExpression
-							&& child.getTag() == Expression.BUNION) {
-						return true;
-					}
-					if (child instanceof AssociativeExpression
-							&& child.getTag() == Expression.BINTER) {
-						return true;
-					}
-					if (child instanceof AssociativeExpression
-							&& child.getTag() == Expression.FCOMP) {
-						return true;
-					}
-					if (child instanceof BinaryExpression
-							&& child.getTag() == Expression.DOMRES) {
-						return true;
-					}
-					if (child instanceof BinaryExpression
-							&& child.getTag() == Expression.DOMSUB) {
-						return true;
-					}
-					if (child instanceof BinaryExpression
-							&& child.getTag() == Expression.RANRES) {
-						return true;
-					}
-					if (child instanceof BinaryExpression
-							&& child.getTag() == Expression.RANSUB) {
+				if (expression.getTag() == CONVERSE) {
+					switch (expression.getChild().getTag()) {
+					case BUNION:
+					case BINTER:
+					case FCOMP:
+					case DOMRES:
+					case DOMSUB:
+					case RANRES:
+					case RANSUB:
 						return true;
 					}
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});
@@ -1674,17 +1658,13 @@ public class Tactics {
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.SETMINUS) {
+				if (expression.getTag() == SETMINUS) {
 					final Expression left = expression.getLeft();
 					if (left.isATypeExpression()) {
-						final Expression right = expression.getRight();
-						if (Lib.isUnion(right)) {
-							return true;
-						}
-						if (Lib.isInter(right)) {
-							return true;
-						}
-						if (Lib.isSetMinus(right)) {
+						switch (expression.getRight().getTag()) {
+						case BUNION:
+						case BINTER:
+						case SETMINUS:
 							return true;
 						}
 					}
@@ -1987,10 +1967,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				if (pred.getTag() == Predicate.SUBSETEQ) {
-					return true;
-				}
-				return super.select(pred);
+				return pred.getTag() == SUBSETEQ;
 			}
 
 		});
@@ -2122,27 +2099,19 @@ public class Tactics {
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				if (expression.getTag() == Expression.FCOMP) {
-					return true;
-				}
-				return super.select(expression);
+				return expression.getTag() == FCOMP;
 			}
 
 		});
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				child = child.getNextSibling();
-				Formula<?> nextFormula = predicate.getSubFormula(child);
-				if (nextFormula != null
-						&& (subFormula.getTag() == Expression.DOMRES || subFormula
-								.getTag() == Expression.DOMSUB)) {
-					results.add(child.getPreviousSibling());
+			var fcompExpr = (AssociativeExpression) predicate.getSubFormula(position);
+			Expression[] children = fcompExpr.getChildren();
+			for (int i = 0; i < children.length - 1; i++) {
+				if (children[i].getTag() == DOMRES || children[i].getTag() == DOMSUB) {
+					results.add(position.getChildAtIndex(i));
 				}
-				subFormula = nextFormula;
 			}
 		}
 		
@@ -2193,16 +2162,12 @@ public class Tactics {
 		
 		List<IPosition> results = new ArrayList<IPosition>();
 		for (IPosition position : positions) {
-			IPosition child = position.getFirstChild();
-			Formula<?> subFormula = predicate.getSubFormula(child);
-			while (subFormula != null) {
-				if (!child.isFirstChild()
-						&& (subFormula.getTag() == Expression.RANRES || subFormula
-								.getTag() == Expression.RANSUB)) {
-					results.add(child);
+			var fcompExpr = (AssociativeExpression) predicate.getSubFormula(position);
+			Expression[] children = fcompExpr.getChildren();
+			for (int i = 1; i < children.length; i++) {
+				if (children[i].getTag() == RANRES || children[i].getTag() == RANSUB) {
+					results.add(position.getChildAtIndex(i));
 				}
-				child = child.getNextSibling();
-				subFormula = predicate.getSubFormula(child);
 			}
 		}
 		
@@ -2541,9 +2506,9 @@ public class Tactics {
 	public static List<IPosition> finiteDomGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
 			if (Lib.isDom(((SimplePredicate) predicate).getExpression()))
-				return Arrays.asList(new IPosition[] { IPosition.ROOT });
+				return POSITION_ROOT;
 		}
-		return new ArrayList<IPosition>();
+		return NO_POSITIONS;
 	}
 
 
@@ -3090,7 +3055,7 @@ public class Tactics {
 
 			@Override
 			public boolean select(MultiplePredicate pred) {
-				return pred.getTag() == Predicate.KPARTITION;
+				return pred.getTag() == KPARTITION;
 			}
 
 		});
