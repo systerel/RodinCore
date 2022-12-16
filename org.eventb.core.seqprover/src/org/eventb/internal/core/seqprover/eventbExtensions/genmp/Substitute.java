@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,16 +16,13 @@ import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerNegative;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerPositive;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getWeakerNegative;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getWeakerPositive;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 
 /**
  * Represents one substitution of a predicate into the sequent by ⊤ or ⊥ in the
@@ -59,28 +56,34 @@ public class Substitute {
 
 	public static List<Substitute> makeSubstitutesL2(Predicate origin,
 			boolean fromGoal, Predicate source) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal);
+		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L0);
+	}
+
+	public static List<Substitute> makeSubstitutesL4(Predicate origin,
+			boolean fromGoal, Predicate source) {
+		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L1);
 	}
 
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean fromGoal, Predicate source, boolean isPos) {
+			boolean fromGoal, Predicate source, boolean isPos, Variations.Level level) {
 		final List<Substitute> result = new ArrayList<Substitute>();
 		while (isNeg(source)) {
 			isPos = !isPos;
 			source = makeNeg(source);
 		}
+		Variations variations = Variations.getInstance(level);
 		// Now source does not start with not.
 		if (isPos) {
 			// Add substitutions for all Q such that P => Q
-			addSubstitutes(result, origin, fromGoal, getWeakerPositive(source),
+			addSubstitutes(result, origin, fromGoal, variations.getWeakerPositive(source),
 					true);
-			addSubstitutes(result, origin, fromGoal, getStrongerNegative(source),
+			addSubstitutes(result, origin, fromGoal, variations.getStrongerNegative(source),
 					false);
 		} else {
 			// Add substitutions for all Q such that Q => P
-			addSubstitutes(result, origin, fromGoal, getStrongerPositive(source),
+			addSubstitutes(result, origin, fromGoal, variations.getStrongerPositive(source),
 					false);
-			addSubstitutes(result, origin, fromGoal, getWeakerNegative(source),
+			addSubstitutes(result, origin, fromGoal, variations.getWeakerNegative(source),
 					true);
 		}
 		return result;

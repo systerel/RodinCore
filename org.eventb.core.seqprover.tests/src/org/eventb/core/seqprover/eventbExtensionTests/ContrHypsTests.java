@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Systerel and others.
+ * Copyright (c) 2009, 2022 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,10 @@ public class ContrHypsTests extends AbstractReasonerTests {
 						"1<x"),
 				makeSuccess(" x≤1 ;; 1<x |- 2>x ", //
 						"1<x"),
+				makeSuccess(" x∈ℕ ;; x<0 |- 2>x ", //
+						"x<0"),
+				makeSuccess(" x≤1 ;; 2≤x |- 2>x ", //
+						"2≤x"),
 				makeSuccess(typEnv, " A⊂B ;; A=B |- 2>x ", //
 						"A=B"),
 				makeSuccess(typEnv, " B⊂A ;; A=B |- 2>x ", //

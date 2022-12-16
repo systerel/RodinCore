@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eventb.core.seqprover.reasoners;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerPositive;
 
 import java.util.List;
 
@@ -26,6 +25,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 
 public class Hyp extends EmptyInputReasoner {
 
@@ -62,7 +62,8 @@ public class Hyp extends EmptyInputReasoner {
 	 */
 	public static Predicate getStrongerHypothesis(IProverSequent seq,
 			Predicate pred) {
-		final List<Predicate> simPreds = getStrongerPositive(pred);
+		Variations variations = Variations.getInstance(Variations.Level.L1);
+		final List<Predicate> simPreds = variations.getStrongerPositive(pred);
 		for (final Predicate p : simPreds) {
 			if (seq.containsHypothesis(p)) {
 				return p;
