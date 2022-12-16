@@ -136,7 +136,7 @@ public class ContrHyps implements IVersionedReasoner {
 			Predicate pred) {
 		Map<Predicate, List<Predicate>> preds = new HashMap<Predicate, List<Predicate>>();
 
-		Variations variations = Variations.getInstance(Variations.Level.L0);
+		Variations variations = Variations.getInstance(Variations.Level.L1);
 		if (!isNeg(pred)) {
 			final List<Predicate> genContrPredicate = variations.getStrongerNegative(pred);
 			preds.put(pred, genContrPredicate);

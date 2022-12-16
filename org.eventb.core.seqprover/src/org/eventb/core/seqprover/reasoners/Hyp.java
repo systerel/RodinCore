@@ -62,7 +62,7 @@ public class Hyp extends EmptyInputReasoner {
 	 */
 	public static Predicate getStrongerHypothesis(IProverSequent seq,
 			Predicate pred) {
-		Variations variations = Variations.getInstance(Variations.Level.L0);
+		Variations variations = Variations.getInstance(Variations.Level.L1);
 		final List<Predicate> simPreds = variations.getStrongerPositive(pred);
 		for (final Predicate p : simPreds) {
 			if (seq.containsHypothesis(p)) {

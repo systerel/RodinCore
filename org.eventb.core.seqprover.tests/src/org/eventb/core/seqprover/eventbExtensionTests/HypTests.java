@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2022 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,10 @@ import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.junit.Test;
 
 public class HypTests extends AbstractReasonerTests {
 
@@ -27,10 +29,10 @@ public class HypTests extends AbstractReasonerTests {
 		return "org.eventb.core.seqprover.hyp";
 	}
 
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+	@Test
+	public void success() throws UntranslatableException {
 		final String typEnv = "A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;;";
-		return new SuccessfullReasonerApplication[] {
+		testSuccessfulReasonerApplications("Hyps", new SuccessfullReasonerApplication[] {
 				// Goal in hypotheses
 				makeSuccess(" x = 1 |- x = 1 "),
 				makeSuccess(" 1∈P |- 1∈P "),
@@ -40,6 +42,8 @@ public class HypTests extends AbstractReasonerTests {
 				makeSuccess(" 1 < x |- x > 1 "),
 				makeSuccess(" 1 ≥ x |- x ≤ 1 "),
 				makeSuccess(" 1 ≤ x |- x ≥ 1 "),
+				makeSuccess(" x ∈ ℕ |- x ≥ 0"),
+				makeSuccess(" 1 ≤ x |- 0 < x"),
 				// A hypothesis stronger than a positive Goal
 				// H, P |- P†
 				makeSuccess(" 1 = x |- 1 ≥ x "),
@@ -64,7 +68,7 @@ public class HypTests extends AbstractReasonerTests {
 				makeSuccess(typEnv + " B = A |- ¬A ⊂ B "),
 				makeSuccess(typEnv + " B = A |- ¬A ⊂ B "),
 
-		};
+		});
 	}
 
 	private SuccessfullReasonerApplication makeSuccess(String sequentImage) {
@@ -72,9 +76,9 @@ public class HypTests extends AbstractReasonerTests {
 		return new SuccessfullReasonerApplication(sequent, input);
 	}
 
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {
+	@Test
+	public void testUnsuccessful() {
+		testUnsuccessfulReasonerApplications("Hyps", new UnsuccessfullReasonerApplication[] {
 				// Sequent not normalized
 				makeFailure(" 1 > x ;; ¬x ≥ 1 |- x = 1 "),
 
@@ -85,7 +89,7 @@ public class HypTests extends AbstractReasonerTests {
 				makeFailure(" 1 > x ;; 1 < x ;; 1 ≥ x ;; 1 ≤ x |- x = 1 "),
 				makeFailure(" 1 > x ;; 1 < x ;; 1 ≥ x ;; 1 ≤ x |- x = 1 "),
 
-		};
+		});
 	}
 
 	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
