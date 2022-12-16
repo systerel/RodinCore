@@ -140,6 +140,9 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		assertReasonerSuccessFromLevel(fromLevel4, "n ∈ ℕ |- 0 ≤ n", "{}[][][n ∈ ℕ] |- ⊤");
 		assertReasonerSuccessFromLevel(fromLevel4, "0 ≤ n |- n ∈ ℕ", "{}[][][0 ≤ n] |- ⊤");
 		assertReasonerSuccessFromLevel(fromLevel4, "¬n ∈ ℕ |- 0 > n", "{}[][][¬n ∈ ℕ] |- ⊤");
+		// FR #342: Generalized Modus Ponens on Boolean expressions
+		assertReasonerSuccessFromLevel(fromLevel4, "f(1) = TRUE ⇒ f(2) = TRUE ;; f(2) = FALSE |- f(1) = FALSE",
+				"{f=ℙ(ℤ×BOOL)}[f(1) = TRUE ⇒ f(2) = TRUE][][f(2) = FALSE ;; ⊤ ⇒ ⊥] |- f(1) = FALSE");
 	}
 
 	@Test

@@ -43,7 +43,7 @@ public class VariationTests {
 
 	// Type environment common to all tests
 	private static final ISealedTypeEnvironment TYPENV = mTypeEnvironment( //
-			"S=ℙ(S); A=ℙ(S); B=ℙ(S); a=S; b=S; n=ℤ; m=ℤ").makeSnapshot();
+			"S=ℙ(S); A=ℙ(S); B=ℙ(S); a=S; b=S; n=ℤ; m=ℤ; p=BOOL").makeSnapshot();
 
 	protected Level level;
 
@@ -332,6 +332,8 @@ public class VariationTests {
 			assertEquivalent("12 < n", "n > 12", "n ≥ 13", "13 ≤ n");
 			assertEquivalent("−12 ≤ n", "n ≥ −12", "n > −13", "−13 < n");
 			assertEquivalent("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11");
+			assertEquivalent("p = TRUE", "TRUE = p", "¬ p = FALSE", "¬ FALSE = p");
+			assertEquivalent("p = FALSE", "FALSE = p", "¬ p = TRUE", "¬ TRUE = p");
 		} else {
 			assertEquivalent("n ∈ ℕ");
 			assertEquivalent("n ∈ ℕ1");
@@ -345,6 +347,8 @@ public class VariationTests {
 			assertEquivalent("12 < n", "n > 12");
 			assertEquivalent("−12 ≤ n", "n ≥ −12");
 			assertEquivalent("−12 < n", "n > −12");
+			assertEquivalent("p = TRUE", "TRUE = p");
+			assertEquivalent("p = FALSE", "FALSE = p");
 		}
 	}
 

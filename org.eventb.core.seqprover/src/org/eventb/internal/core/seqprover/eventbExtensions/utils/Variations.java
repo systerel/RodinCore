@@ -13,6 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.utils;
 
 import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.IN;
@@ -23,6 +24,7 @@ import static org.eventb.core.ast.Formula.NATURAL;
 import static org.eventb.core.ast.Formula.NATURAL1;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L0;
@@ -54,7 +56,7 @@ import org.eventb.core.ast.RelationalPredicate;
  * <li>Level 0 is the initial implementation with general rules about
  * equalities, inequalities and subsets.</li>
  * <li>Level 1 adds variations between numeric comparisons and set membership to
- * NAT and NAT1.</li>
+ * NAT and NAT1 as well as equivalences between booleans.</li>
  * </ul>
  * 
  * @author Josselin Dolhen
@@ -458,6 +460,27 @@ public class Variations {
 		if (level.from(L1)) {
 			FormulaFactory ff = lhs.getFactory();
 			switch (tag) {
+			case EQUAL: {
+				var falseExpr = ff.makeAtomicExpression(FALSE, null, ff.makeBooleanType());
+				if (lhs.getTag() == TRUE) {
+					variations.add(makeNeg(rel(EQUAL, falseExpr, rhs)));
+					variations.add(makeNeg(rel(EQUAL, rhs, falseExpr)));
+				}
+				if (rhs.getTag() == TRUE) {
+					variations.add(makeNeg(rel(EQUAL, lhs, falseExpr)));
+					variations.add(makeNeg(rel(EQUAL, falseExpr, lhs)));
+				}
+				var trueExpr = ff.makeAtomicExpression(TRUE, null, ff.makeBooleanType());
+				if (lhs.getTag() == FALSE) {
+					variations.add(makeNeg(rel(EQUAL, trueExpr, rhs)));
+					variations.add(makeNeg(rel(EQUAL, rhs, trueExpr)));
+				}
+				if (rhs.getTag() == FALSE) {
+					variations.add(makeNeg(rel(EQUAL, lhs, trueExpr)));
+					variations.add(makeNeg(rel(EQUAL, trueExpr, lhs)));
+				}
+				break;
+			}
 			case LT:
 				if (isZero(lhs)) {
 					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
