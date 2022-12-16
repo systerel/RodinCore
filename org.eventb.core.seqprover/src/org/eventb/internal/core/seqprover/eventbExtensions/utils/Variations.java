@@ -462,20 +462,52 @@ public class Variations {
 				if (isZero(lhs)) {
 					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
 				}
+				if (lhs.getTag() == INTLIT) {
+					variations.add(rel(LE, literalPlusOne((IntegerLiteral) lhs), rhs));
+					variations.add(rel(GE, rhs, literalPlusOne((IntegerLiteral) lhs)));
+				}
+				if (rhs.getTag() == INTLIT) {
+					variations.add(rel(LE, lhs, literalMinusOne((IntegerLiteral) rhs)));
+					variations.add(rel(GE, literalMinusOne((IntegerLiteral) rhs), lhs));
+				}
 				break;
 			case LE:
 				if (isZero(lhs)) {
 					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
+				}
+				if (lhs.getTag() == INTLIT) {
+					variations.add(rel(LT, literalMinusOne((IntegerLiteral) lhs), rhs));
+					variations.add(rel(GT, rhs, literalMinusOne((IntegerLiteral) lhs)));
+				}
+				if (rhs.getTag() == INTLIT) {
+					variations.add(rel(LT, lhs, literalPlusOne((IntegerLiteral) rhs)));
+					variations.add(rel(GT, literalPlusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case GT:
 				if (isZero(rhs)) {
 					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
 				}
+				if (lhs.getTag() == INTLIT) {
+					variations.add(rel(GE, literalMinusOne((IntegerLiteral) lhs), rhs));
+					variations.add(rel(LE, rhs, literalMinusOne((IntegerLiteral) lhs)));
+				}
+				if (rhs.getTag() == INTLIT) {
+					variations.add(rel(GE, lhs, literalPlusOne((IntegerLiteral) rhs)));
+					variations.add(rel(LE, literalPlusOne((IntegerLiteral) rhs), lhs));
+				}
 				break;
 			case GE:
 				if (isZero(rhs)) {
 					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL, null)));
+				}
+				if (lhs.getTag() == INTLIT) {
+					variations.add(rel(GT, literalPlusOne((IntegerLiteral) lhs), rhs));
+					variations.add(rel(LT, rhs, literalPlusOne((IntegerLiteral) lhs)));
+				}
+				if (rhs.getTag() == INTLIT) {
+					variations.add(rel(GT, lhs, literalMinusOne((IntegerLiteral) rhs)));
+					variations.add(rel(LT, literalMinusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case IN:
@@ -581,6 +613,14 @@ public class Variations {
 			Expression right) {
 		final FormulaFactory ff = left.getFactory();
 		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+
+	private IntegerLiteral literalPlusOne(IntegerLiteral lit) {
+		return lit.getFactory().makeIntegerLiteral(lit.getValue().add(BigInteger.ONE), null);
+	}
+
+	private IntegerLiteral literalMinusOne(IntegerLiteral lit) {
+		return lit.getFactory().makeIntegerLiteral(lit.getValue().subtract(BigInteger.ONE), null);
 	}
 
 }
