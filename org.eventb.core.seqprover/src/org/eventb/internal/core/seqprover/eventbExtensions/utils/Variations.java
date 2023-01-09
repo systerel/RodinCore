@@ -12,6 +12,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.utils;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.GE;
@@ -165,6 +166,14 @@ public class Variations {
 		}
 		if (level.from(L1)) {
 			switch (tag) {
+			case EQUAL:
+				if (isZero(rhs)) {
+					addEquivalentNegativeRelational(variations, IN, lhs, nat1(lhs.getFactory()));
+				}
+				if (isZero(lhs)) {
+					addEquivalentNegativeRelational(variations, IN, rhs, nat1(rhs.getFactory()));
+				}
+				break;
 			case LE:
 			case LT:
 				// Cases where the number is equal to zero are handled in equivalences
@@ -205,52 +214,9 @@ public class Variations {
 		if (isNeg(pred)) {
 			return getWeakerPositive(makeNeg(pred));
 		}
-		if (pred instanceof RelationalPredicate) {
-			final RelationalPredicate relPred = (RelationalPredicate) pred;
-			final Expression lhs = relPred.getLeft();
-			final Expression rhs = relPred.getRight();
-			return getWeakerNegativeRelational(relPred.getTag(), lhs, rhs);
-		}
-		return singletonList(makeNeg(pred));
-	}
-
-	private List<Predicate> getWeakerNegativeRelational(int tag,
-			Expression lhs, Expression rhs) {
-		// Reduce to positive relations
-		switch (tag) {
-		case LE:
-			return getWeakerPositiveRelational(LT, rhs, lhs);
-		case GE:
-			return getWeakerPositiveRelational(LT, lhs, rhs);
-		case LT:
-			return getWeakerPositiveRelational(LE, rhs, lhs);
-		case GT:
-			return getWeakerPositiveRelational(LE, lhs, rhs);
-		}
-		final List<Predicate> variations = new ArrayList<Predicate>();
-		addEquivalentNegativeRelational(variations, tag, lhs, rhs);
-		switch (tag) {
-		case EQUAL:
-			variations.add(makeNeg(rel(EQUAL, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-			break;
-		case SUBSET:
-			variations.add(makeNeg(rel(SUBSET, lhs, rhs)));
-			break;
-		case SUBSETEQ:
-			variations.add(makeNeg(rel(SUBSET, lhs, rhs)));
-			variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-			break;
-		case IN:
-			if (level.from(L1) && rhs.getTag() == NATURAL) {
-				FormulaFactory ff = lhs.getFactory();
-				addEquivalentNegativeRelational(variations, IN, lhs, nat1(ff));
-			}
-			break;
-		}
-		return variations;
+		List<Predicate> result = getStrongerPositive(pred);
+		// result can't be modified in-place: it may be immutable (e.g., singletonList())
+		return result.stream().map(this::makeNegRelational).collect(toList());
 	}
 
 	/**
@@ -351,72 +317,9 @@ public class Variations {
 		if (isNeg(pred)) {
 			return getStrongerPositive(makeNeg(pred));
 		}
-		if (pred instanceof RelationalPredicate) {
-			final RelationalPredicate relPred = (RelationalPredicate) pred;
-			final Expression lhs = relPred.getLeft();
-			final Expression rhs = relPred.getRight();
-			return getStrongerNegativeRelational(relPred.getTag(), lhs, rhs);
-		}
-		return singletonList(makeNeg(pred));
-	}
-
-	private List<Predicate> getStrongerNegativeRelational(int tag,
-			Expression lhs, Expression rhs) {
-		// Reduce to positive relations
-		switch (tag) {
-		case LE:
-			return getStrongerPositiveRelational(LT, rhs, lhs);
-		case GE:
-			return getStrongerPositiveRelational(LT, lhs, rhs);
-		case LT:
-			return getStrongerPositiveRelational(LE, rhs, lhs);
-		case GT:
-			return getStrongerPositiveRelational(LE, lhs, rhs);
-		}
-		final List<Predicate> variations = new ArrayList<Predicate>();
-		addEquivalentNegativeRelational(variations, tag, lhs, rhs);
-		switch (tag) {
-		case EQUAL:
-			if (isSet(rhs)) {
-				variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-				variations.add(makeNeg(rel(SUBSETEQ, rhs, lhs)));
-				variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-				variations.add(rel(SUBSET, lhs, rhs));
-				variations.add(rel(SUBSET, rhs, lhs));
-			} else if (isInteger(rhs)) {
-				variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-				variations.add(rel(GT, lhs, rhs));
-				variations.add(rel(LT, rhs, lhs));
-				variations.add(rel(LT, lhs, rhs));
-				variations.add(rel(GT, rhs, lhs));
-				if (level.from(L1)) {
-					FormulaFactory ff = lhs.getFactory();
-					if (isZero(lhs)) {
-						addEquivalentPositiveRelational(variations, IN, rhs, nat1(ff));
-					} else if (isZero(rhs)) {
-						addEquivalentPositiveRelational(variations, IN, lhs, nat1(ff));
-					}
-				}
-			}
-			break;
-		case SUBSET:
-			variations.add(rel(SUBSET, rhs, lhs));
-			variations.add(rel(SUBSETEQ, rhs, lhs));
-			variations.add(rel(EQUAL, lhs, rhs));
-			variations.add(rel(EQUAL, rhs, lhs));
-			variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-			break;
-		case SUBSETEQ:
-			variations.add(rel(SUBSET, rhs, lhs));
-			break;
-		case IN:
-			if (level.from(L1) && rhs.getTag() == NATURAL1) {
-				FormulaFactory ff = lhs.getFactory();
-				addEquivalentNegativeRelational(variations, IN, lhs, nat(ff));
-			}
-			break;
-		}
-		return variations;
+		List<Predicate> result = getWeakerPositive(pred);
+		// result can't be modified in-place: it may be immutable (e.g., singletonList())
+		return result.stream().map(this::makeNegRelational).collect(toList());
 	}
 
 	/**
@@ -490,6 +393,9 @@ public class Variations {
 				if (isZero(lhs)) {
 					variations.add(rel(IN, rhs, nat1(ff)));
 				}
+				if (isZero(rhs)) {
+					variations.add(makeNeg(rel(IN, lhs, nat(ff))));
+				}
 				if (lhs.getTag() == INTLIT) {
 					variations.add(rel(LE, literalPlusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(GE, rhs, literalPlusOne((IntegerLiteral) lhs)));
@@ -502,6 +408,9 @@ public class Variations {
 			case LE:
 				if (isZero(lhs)) {
 					variations.add(rel(IN, rhs, nat(ff)));
+				}
+				if (isZero(rhs)) {
+					variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
 				}
 				if (lhs.getTag() == INTLIT) {
 					variations.add(rel(LT, literalMinusOne((IntegerLiteral) lhs), rhs));
@@ -615,6 +524,24 @@ public class Variations {
 			break;
 		}
 		variations.add(makeNeg(rel(tag, lhs, rhs)));
+	}
+
+	// makeNeg() with special handling of inequalities
+	private Predicate makeNegRelational(Predicate pred) {
+		if (pred instanceof RelationalPredicate) {
+			var rel = (RelationalPredicate) pred;
+			switch (rel.getTag()) {
+			case LE:
+				return pred.getFactory().makeRelationalPredicate(GT, rel.getLeft(), rel.getRight(), null);
+			case GE:
+				return pred.getFactory().makeRelationalPredicate(LT, rel.getLeft(), rel.getRight(), null);
+			case LT:
+				return pred.getFactory().makeRelationalPredicate(GE, rel.getLeft(), rel.getRight(), null);
+			case GT:
+				return pred.getFactory().makeRelationalPredicate(LE, rel.getLeft(), rel.getRight(), null);
+			}
+		}
+		return makeNeg(pred);
 	}
 
 	private boolean isSet(Expression expr) {

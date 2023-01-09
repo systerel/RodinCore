@@ -231,8 +231,11 @@ public class VariationTests {
 			assertWeakerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 			assertWeakerNegative("12 ≤ n", "n ≤ 11", "11 ≥ n", "n < 12", "12 ≥ n", "n ≤ 12", "¬ 12 = n", "¬ n = 12");
 			assertWeakerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13");
-			assertWeakerNegative("−12 < n", "n ≤ −12", "n < −11", "−11 > n");
-			assertWeakerNegative("−12 ≤ n", "n ≤ −12", "n ≤ −13", "−13 ≥ n", "−12 ≥ n", "−12 > n", "n < −12", "¬ −12 = n", "¬ n = −12");
+			assertWeakerNegative("−12 < n", "n ≤ −12", "n < −11", "−11 > n", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1",
+					"−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertWeakerNegative("−12 ≤ n", "n ≤ −12", "n ≤ −13", "−13 ≥ n", "−12 ≥ n", "−12 > n", "n < −12",
+					"¬ −12 = n", "¬ n = −12", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0",
+					"0 ≥ n", "n < 1", "1 > n");
 		} else {
 			assertWeakerNegative("n ∈ ℕ");
 			assertWeakerNegative("n ∈ ℕ1");
@@ -287,11 +290,13 @@ public class VariationTests {
 		if (level.from(L1)) {
 			assertStrongerNegative("n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1", "−1 ≥ n");
 			assertStrongerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n", "¬ n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1",
-					"−1 ≥ n");
+					"−1 ≥ n", "n = 0", "0 = n");
 			assertStrongerNegative("−12 ≤ n", "−12 > n", "n < −12", "n ≤ −13", "−13 ≥ n");
 			assertStrongerNegative("−12 < n", "n ≤ −12", "−11 > n", "n < −11", "−12 > n", "n < −12", "−12 = n", "n = −12");
-			assertStrongerNegative("12 ≤ n", "n < 12", "n ≤ 11", "11 ≥ n");
-			assertStrongerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13", "12 > n", "n < 12", "12 = n", "n = 12");
+			assertStrongerNegative("12 ≤ n", "n < 12", "n ≤ 11", "11 ≥ n", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1",
+					"−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertStrongerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13", "12 > n", "n < 12", "12 = n", "n = 12",
+					"¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 		} else {
 			assertStrongerNegative("n ∈ ℕ");
 			assertStrongerNegative("n ∈ ℕ1");
