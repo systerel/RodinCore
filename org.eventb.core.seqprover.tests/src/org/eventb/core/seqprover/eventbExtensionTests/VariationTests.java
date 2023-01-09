@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L0;
 import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L1;
 import static org.junit.Assert.assertEquals;
 
@@ -45,14 +44,16 @@ public class VariationTests {
 	private static final ISealedTypeEnvironment TYPENV = mTypeEnvironment( //
 			"S=ℙ(S); A=ℙ(S); B=ℙ(S); a=S; b=S; n=ℤ; m=ℤ; p=BOOL").makeSnapshot();
 
+	protected Variations variations;
 	protected Level level;
 
-	protected VariationTests(Level level) {
-		this.level = level;
+	protected VariationTests(Variations variations) {
+		this.variations = variations;
+		this.level = variations.getLevel();
 	}
 
 	public VariationTests() {
-		this(L0);
+		this(Variations.INSTANCE_L0);
 	}
 
 	/**
@@ -354,26 +355,26 @@ public class VariationTests {
 
 	private void assertStrongerPositive(String predImage,
 			String... expectedImages) {
-		new StrongerPositiveCase().runTest(level, predImage, expectedImages);
+		new StrongerPositiveCase().runTest(variations, predImage, expectedImages);
 	}
 
 	private void assertWeakerPositive(String predImage,
 			String... expectedImages) {
-		new WeakerPositiveCase().runTest(level, predImage, expectedImages);
+		new WeakerPositiveCase().runTest(variations, predImage, expectedImages);
 	}
 
 	private void assertStrongerNegative(String predImage,
 			String... expectedImages) {
-		new StrongerNegativeCase().runTest(level, predImage, expectedImages);
+		new StrongerNegativeCase().runTest(variations, predImage, expectedImages);
 	}
 
 	private void assertWeakerNegative(String predImage,
 			String... expectedImages) {
-		new WeakerNegativeCase().runTest(level, predImage, expectedImages);
+		new WeakerNegativeCase().runTest(variations, predImage, expectedImages);
 	}
 
 	private void assertEquivalent(String predImage, String... expectedImages) {
-		new EquivalentCase().runTest(level, predImage, expectedImages);
+		new EquivalentCase().runTest(variations, predImage, expectedImages);
 	}
 
 	/*
@@ -382,15 +383,15 @@ public class VariationTests {
 	 */
 	private static abstract class TestCase {
 
-		public void runTest(Level level, String predImage, String... expectedImages) {
+		public void runTest(Variations variations, String predImage, String... expectedImages) {
 			final Predicate pred = mPred(predImage);
-			final List<Predicate> actual = getActual(level, pred);
+			final List<Predicate> actual = getActual(variations, pred);
 			final Set<Predicate> expected = makeSet(
 					getExpectedFromSource(pred), expectedImages);
 			assertEqualsSet(expected, actual);
 		}
 
-		protected abstract List<Predicate> getActual(Level level, Predicate pred);
+		protected abstract List<Predicate> getActual(Variations variations, Predicate pred);
 
 		protected abstract Predicate getExpectedFromSource(Predicate pred);
 
@@ -416,8 +417,8 @@ public class VariationTests {
 
 	private static class WeakerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getWeakerPositive(pred);
+		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+			return variations.getWeakerPositive(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -428,8 +429,8 @@ public class VariationTests {
 
 	private static class StrongerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getStrongerPositive(pred);
+		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+			return variations.getStrongerPositive(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -440,8 +441,8 @@ public class VariationTests {
 
 	private static class StrongerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getStrongerNegative(pred);
+		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+			return variations.getStrongerNegative(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -452,8 +453,8 @@ public class VariationTests {
 
 	private static class WeakerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getWeakerNegative(pred);
+		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+			return variations.getWeakerNegative(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -464,8 +465,8 @@ public class VariationTests {
 
 	private static class EquivalentCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getEquivalent(pred);
+		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+			return variations.getEquivalent(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {

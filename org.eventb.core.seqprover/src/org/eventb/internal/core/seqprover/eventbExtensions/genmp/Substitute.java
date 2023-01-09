@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,23 +55,17 @@ public class Substitute {
 	}
 
 	public static List<Substitute> makeSubstitutesL2(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L0);
-	}
-
-	public static List<Substitute> makeSubstitutesL4(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L1);
+			boolean fromGoal, Predicate source, Variations variations) {
+		return makeSubstitutes(origin, fromGoal, source, !fromGoal, variations);
 	}
 
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean fromGoal, Predicate source, boolean isPos, Variations.Level level) {
+			boolean fromGoal, Predicate source, boolean isPos, Variations variations) {
 		final List<Substitute> result = new ArrayList<Substitute>();
 		while (isNeg(source)) {
 			isPos = !isPos;
 			source = makeNeg(source);
 		}
-		Variations variations = Variations.getInstance(level);
 		// Now source does not start with not.
 		if (isPos) {
 			// Add substitutions for all Q such that P => Q

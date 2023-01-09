@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2022 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,8 @@ public class ContrHyps implements IVersionedReasoner {
 	private static String REASONER_ID = SequentProver.PLUGIN_ID + ".contrHyps";
 
 	private static final IAntecedent[] NO_ANTECEDENT = new IAntecedent[0];
+
+	private static final Variations VARIATIONS = Variations.INSTANCE_L1;
 
 	@Override
 	public String getReasonerID() {
@@ -136,13 +138,12 @@ public class ContrHyps implements IVersionedReasoner {
 			Predicate pred) {
 		Map<Predicate, List<Predicate>> preds = new HashMap<Predicate, List<Predicate>>();
 
-		Variations variations = Variations.getInstance(Variations.Level.L1);
 		if (!isNeg(pred)) {
-			final List<Predicate> genContrPredicate = variations.getStrongerNegative(pred);
+			final List<Predicate> genContrPredicate = VARIATIONS.getStrongerNegative(pred);
 			preds.put(pred, genContrPredicate);
 		} else {
 			for (Predicate p : breakPossibleConjunct(makeNeg(pred))) {
-				preds.put(p, variations.getStrongerPositive(p));
+				preds.put(p, VARIATIONS.getStrongerPositive(p));
 			}
 		}
 		return preds;

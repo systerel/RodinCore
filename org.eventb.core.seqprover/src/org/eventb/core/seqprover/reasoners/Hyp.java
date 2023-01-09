@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,8 @@ public class Hyp extends EmptyInputReasoner {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".hyp";
 
+	private static final Variations VARIATIONS = Variations.INSTANCE_L1;
+
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -62,8 +64,7 @@ public class Hyp extends EmptyInputReasoner {
 	 */
 	public static Predicate getStrongerHypothesis(IProverSequent seq,
 			Predicate pred) {
-		Variations variations = Variations.getInstance(Variations.Level.L1);
-		final List<Predicate> simPreds = variations.getStrongerPositive(pred);
+		final List<Predicate> simPreds = VARIATIONS.getStrongerPositive(pred);
 		for (final Predicate p : simPreds) {
 			if (seq.containsHypothesis(p)) {
 				return p;

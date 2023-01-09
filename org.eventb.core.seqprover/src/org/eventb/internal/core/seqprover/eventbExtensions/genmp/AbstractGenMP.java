@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2022 Systerel and others.
+ * Copyright (c) 2011, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 
 /**
  * Class used for all the level of the reasoner GeneralizedModusPonens.
@@ -38,9 +39,19 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			+ ".genMP";
 
 	public static enum Level {
-		L0, L1, L2, L3, L4;
+		L0(Variations.INSTANCE_L0),
+		L1(Variations.INSTANCE_L0),
+		L2(Variations.INSTANCE_L0),
+		L3(Variations.INSTANCE_L0),
+		L4(Variations.INSTANCE_L1);
 
 		public static final Level LATEST = Level.latest();
+
+		private final Variations variations;
+
+		private Level(Variations variations) {
+			this.variations = variations;
+		}
 
 		private static final Level latest() {
 			final Level[] values = Level.values();
@@ -56,6 +67,10 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 				return "";
 			}
 			return toString();
+		}
+
+		public Variations getVariations() {
+			return variations;
 		}
 
 	}

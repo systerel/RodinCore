@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,25 +78,17 @@ public class Variations {
 		this.level = level;
 	}
 
-	private static final Variations INSTANCE_LEVEL_0 = new Variations(L0);
+	public static final Variations INSTANCE_L0 = new Variations(L0);
 
-	private static final Variations INSTANCE_LEVEL_1 = new Variations(L1);
+	public static final Variations INSTANCE_L1 = new Variations(L1);
 
 	/**
-	 * Get an instance of this class for the provided level.
+	 * Get the implementation level.
 	 *
-	 * @param level desired level
-	 * @return instance of this class for the provided level
+	 * @return level
 	 */
-	public static Variations getInstance(Level level) {
-		switch (level) {
-		case L0:
-			return INSTANCE_LEVEL_0;
-		case L1:
-			return INSTANCE_LEVEL_1;
-		default:
-			throw new IllegalArgumentException("Provided level is not a valid enumeration value");
-		}
+	public Level getLevel() {
+		return level;
 	}
 
 	/**

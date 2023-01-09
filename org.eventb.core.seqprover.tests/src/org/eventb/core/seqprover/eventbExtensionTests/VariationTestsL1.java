@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Université de Lorraine and others.
+ * Copyright (c) 2022, 2023 Université de Lorraine and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L1;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 
 public class VariationTestsL1 extends VariationTests {
 
 	public VariationTestsL1() {
-		super(L1);
+		super(Variations.INSTANCE_L1);
 	}
 
 }
