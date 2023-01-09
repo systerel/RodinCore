@@ -98,10 +98,13 @@ public class VariationTests {
 		assertWeakerPositive("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertWeakerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "n ∈ ℕ", "n ∈ ℕ1");
-			assertWeakerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13", "12 ≤ n", "n ≥ 12", "¬ 12 = n", "¬ n = 12", "n ∈ ℕ", "n ∈ ℕ1");
+			assertWeakerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "n ∈ ℕ", "n ∈ ℕ1", "n ≥ 0", "0 ≤ n", "n > −1",
+					"−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
+			assertWeakerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13", "12 ≤ n", "n ≥ 12", "¬ 12 = n", "¬ n = 12",
+					"n ∈ ℕ", "n ∈ ℕ1", "n ≥ 0", "0 ≤ n", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
 			assertWeakerPositive("n ∈ ℕ", "n ≥ 0", "0 ≤ n", "n > −1", "−1 < n");
-			assertWeakerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n", "¬ n = 0", "n ∈ ℕ");
+			assertWeakerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n", "¬ 0 = n", "¬ n = 0", "n ∈ ℕ", "n ≥ 0",
+					"0 ≤ n", "n > −1", "−1 < n");
 			assertWeakerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13");
 			assertWeakerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "−12 ≤ n", "n ≥ −12", "¬ −12 = n", "¬ n = −12");
 		} else {
@@ -156,12 +159,18 @@ public class VariationTests {
 		assertStrongerPositive("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertStrongerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13", "−12 < n", "n > −12", "−12 = n", "n = −12", "n ∈ ℕ", "n ∈ ℕ1");
-			assertStrongerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "n ∈ ℕ", "n ∈ ℕ1");
-			assertStrongerPositive("n ∈ ℕ", "0 ≤ n", "n ≥ 0", "n ∈ ℕ1", "n > −1", "−1 < n");
+			assertStrongerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13", "−12 < n", "n > −12", "−12 = n",
+					"n = −12", "n ∈ ℕ", "n ∈ ℕ1", "0 ≤ n", "n ≥ 0", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1",
+					"1 ≤ n");
+			assertStrongerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "n ∈ ℕ", "n ∈ ℕ1", "0 ≤ n", "n ≥ 0",
+					"n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
+			assertStrongerPositive("n ∈ ℕ", "0 ≤ n", "n ≥ 0", "n ∈ ℕ1", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1",
+					"1 ≤ n");
 			assertStrongerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
-			assertStrongerPositive("¬ n = 0", "n < 0", "n > 0", "0 < n", "0 > n", "¬ 0 = n", "n ∈ ℕ1");
-			assertStrongerPositive("¬ 0 = n", "n < 0", "n > 0", "0 < n", "0 > n", "¬ n = 0", "n ∈ ℕ1");
+			assertStrongerPositive("¬ n = 0", "n < 0", "n > 0", "0 < n", "0 > n", "¬ 0 = n", "n ∈ ℕ1", "n ≥ 1",
+					"1 ≤ n");
+			assertStrongerPositive("¬ 0 = n", "n < 0", "n > 0", "0 < n", "0 > n", "¬ n = 0", "n ∈ ℕ1", "n ≥ 1",
+					"1 ≤ n");
 			assertStrongerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "12 < n", "n > 12", "12 = n", "n = 12");
 			assertStrongerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13");
 		} else {
@@ -218,7 +227,7 @@ public class VariationTests {
 		assertWeakerNegative("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertWeakerNegative("n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n");
+			assertWeakerNegative("n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 			assertWeakerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 			assertWeakerNegative("12 ≤ n", "n ≤ 11", "11 ≥ n", "n < 12", "12 ≥ n", "n ≤ 12", "¬ 12 = n", "¬ n = 12");
 			assertWeakerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13");
@@ -277,7 +286,8 @@ public class VariationTests {
 		// Natural numbers sets
 		if (level.from(L1)) {
 			assertStrongerNegative("n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1", "−1 ≥ n");
-			assertStrongerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertStrongerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n", "¬ n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1",
+					"−1 ≥ n");
 			assertStrongerNegative("−12 ≤ n", "−12 > n", "n < −12", "n ≤ −13", "−13 ≥ n");
 			assertStrongerNegative("−12 < n", "n ≤ −12", "−11 > n", "n < −11", "−12 > n", "n < −12", "−12 = n", "n = −12");
 			assertStrongerNegative("12 ≤ n", "n < 12", "n ≤ 11", "11 ≥ n");

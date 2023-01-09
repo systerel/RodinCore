@@ -169,15 +169,16 @@ public class Variations {
 				// Cases where the number is equal to zero are handled in equivalences
 				if (isPositive(lhs)) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, rhs, ff.makeAtomicExpression(NATURAL, null));
+					addEquivalentPositiveRelational(variations, IN, rhs, ff.makeAtomicExpression(NATURAL1, null));
 				}
 				break;
 			case IN:
 				if (rhs.getTag() == NATURAL1) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(makeNeg(rel(EQUAL, lhs, ff.makeIntegerLiteral(BigInteger.ZERO, null))));
+					addEquivalentPositiveRelational(variations, IN, lhs, ff.makeAtomicExpression(NATURAL, null));
+					addEquivalentNegativeRelational(variations, EQUAL, lhs,
+							ff.makeIntegerLiteral(BigInteger.ZERO, null));
 				}
 				break;
 			}
@@ -240,6 +241,12 @@ public class Variations {
 			variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
 			variations.add(makeNeg(rel(EQUAL, lhs, rhs)));
 			variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
+			break;
+		case IN:
+			if (level.from(L1) && rhs.getTag() == NATURAL) {
+				FormulaFactory ff = lhs.getFactory();
+				addEquivalentNegativeRelational(variations, IN, lhs, ff.makeAtomicExpression(NATURAL1, null));
+			}
 			break;
 		}
 		return variations;
@@ -311,14 +318,14 @@ public class Variations {
 				// Cases where the number is equal to zero are handled in equivalences
 				if (isNegative(lhs)) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, rhs, ff.makeAtomicExpression(NATURAL, null));
+					addEquivalentPositiveRelational(variations, IN, rhs, ff.makeAtomicExpression(NATURAL1, null));
 				}
 				break;
 			case IN:
 				if (rhs.getTag() == NATURAL) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, lhs, ff.makeAtomicExpression(NATURAL1, null));
 				}
 				break;
 			}
@@ -385,9 +392,9 @@ public class Variations {
 				if (level.from(L1)) {
 					FormulaFactory ff = lhs.getFactory();
 					if (isZero(lhs)) {
-						variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
+						addEquivalentPositiveRelational(variations, IN, rhs, ff.makeAtomicExpression(NATURAL1, null));
 					} else if (isZero(rhs)) {
-						variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
+						addEquivalentPositiveRelational(variations, IN, lhs, ff.makeAtomicExpression(NATURAL1, null));
 					}
 				}
 			}
@@ -401,6 +408,12 @@ public class Variations {
 			break;
 		case SUBSETEQ:
 			variations.add(rel(SUBSET, rhs, lhs));
+			break;
+		case IN:
+			if (level.from(L1) && rhs.getTag() == NATURAL1) {
+				FormulaFactory ff = lhs.getFactory();
+				addEquivalentNegativeRelational(variations, IN, lhs, ff.makeAtomicExpression(NATURAL, null));
+			}
 			break;
 		}
 		return variations;
