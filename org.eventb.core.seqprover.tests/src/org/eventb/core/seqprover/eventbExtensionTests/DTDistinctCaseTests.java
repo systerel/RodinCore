@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,15 +69,6 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 
 	@Test
 	public void success() throws Exception {
-		successGeneric();
-		successSpecific();
-	}
-
-	/*
-	 * Generic test cases that behave the same way for the distinct case and
-	 * induction tactics.
-	 */
-	protected void successGeneric() throws Exception {
 		// Applied to the goal
 		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", input("1.1"),
 				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
@@ -88,13 +79,6 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 				"{l1=SD}[][][l1∈SD;;l1=cons0] |- ⊥",
 				"{l1=SD; p_destr1=ℤ}[][][l1∈SD;;l1=cons1(p_destr1)] |- ⊥",
 				"{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l1∈SD;;l1=cons2(p_destr2_0, p_destr2_1)] |- ⊥");
-	}
-
-	/*
-	 * Specific test cases that behave differently for the distinct case and
-	 * induction tactics.
-	 */
-	protected void successSpecific() throws Exception {
 		// Applied to an inductive datatype
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1", input("1.1"),
 				"{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1",
