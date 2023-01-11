@@ -41,8 +41,7 @@ public class DTReasoner {
 
 	protected static final Predicate[] NO_PRED = new Predicate[0];
 
-	public static boolean hasDatatypeType(FreeIdentifier ident) {
-		final Type type = ident.getType();
+	public static boolean isDatatypeType(Type type) {
 		if (!(type instanceof ParametricType)) {
 			return false;
 		}

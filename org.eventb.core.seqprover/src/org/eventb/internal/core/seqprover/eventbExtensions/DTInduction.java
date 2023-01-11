@@ -11,127 +11,136 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.hasDatatypeType;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeFreshIdents;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeIdentEqualsConstr;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeParamSets;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.predIsExtSetMembership;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorArgument;
 import org.eventb.core.ast.datatype.IConstructorExtension;
 import org.eventb.core.ast.datatype.IDatatype;
-import org.eventb.core.ast.datatype.ISetInstantiation;
 import org.eventb.core.ast.datatype.ITypeInstantiation;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 /**
- * Makes a distinct case on an inductive datatypes.
+ * Makes an induction on an inductive datatypes.
  * 
  * Antecedents are created for each constructor.
  * 
  * @author Nicolas Beauger
  */
-public class DTInduction extends AbstractManualInference {
+public class DTInduction extends EmptyInputReasoner implements IVersionedReasoner {
 
 	private static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".dtInduction";
 	private static final String DISPLAY_NAME = "dt induc";
+
+	private static final int VERSION = 2;
 
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
-	@Override
-	protected String getDisplayName() {
-		return DISPLAY_NAME;
-	}
-
 	@ProverRule("DATATYPE_INDUCTION")
 	protected Set<Predicate> makeNewHyps(FreeIdentifier ident,
 			IExpressionExtension constr, ParametricType type,
-			FreeIdentifier[] params, Expression[] paramSets, Predicate goal, FormulaFactory ff) {
+			FreeIdentifier[] params, QuantifiedPredicate goal, FormulaFactory ff) {
 		final Set<Predicate> newHyps = new LinkedHashSet<Predicate>();
-
-		if (paramSets != null) {
-			assert params.length == paramSets.length;
-			for (int i = 0; i < params.length; ++i) {
-				newHyps.add(ff.makeRelationalPredicate(Formula.IN, params[i], paramSets[i], null));
-			}
-		}
 		
 		newHyps.add(makeIdentEqualsConstr(ident, constr, type, params, ff));
 		
 		for (FreeIdentifier param : params) {
 			if (param.getType().equals(type)) {
-				final Map<FreeIdentifier, Expression> subst = Collections
-						.<FreeIdentifier, Expression> singletonMap(ident, param);
-				newHyps.add(goal.substituteFreeIdents(subst));
+				newHyps.add(instantiateFirstBound(goal, param, ff));
 			}
 		}
 		return newHyps;
 	}
 
-	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred, IPosition position) {
-		Predicate target = pred;
-		if (target == null) {
-			target = seq.goal();
-		}
-		final Formula<?> subFormula = target.getSubFormula(position);
-		if (subFormula == null || subFormula.getTag() != Formula.FREE_IDENT) {
+		Predicate goal = seq.goal();
+		if (goal.getTag() != FORALL) {
 			return null;
 		}
-		final FreeIdentifier ident = (FreeIdentifier) subFormula;
-		if (!hasDatatypeType(ident)) {
+		BoundIdentDecl decl = ((QuantifiedPredicate) goal).getBoundIdentDecls()[0];
+		Type type = decl.getType();
+		if (!isDatatypeType(type)) {
 			return null;
 		}
 
-		final ParametricType prmType = (ParametricType) ident.getType();
+		final ParametricType prmType = (ParametricType) type;
 		final IExpressionExtension ext = prmType.getExprExtension();
 		final IDatatype dt = (IDatatype) ext.getOrigin();
-		Expression prmSet = null;
-		if (pred != null) {
-			prmSet = predIsExtSetMembership(pred, position, ext);
-		}
-		return makeAntecedents(seq, ident, prmType, prmSet, dt);
+		return makeAntecedents(seq, decl.getName(), prmType, dt);
 	}
 
-	private IAntecedent[] makeAntecedents(IProverSequent seq, FreeIdentifier ident, ParametricType type, Expression set,
+	private IAntecedent[] makeAntecedents(IProverSequent seq, String name, ParametricType type,
 			IDatatype dt) {
 		final List<IAntecedent> antecedents = new ArrayList<IAntecedent>();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();
 		final ITypeInstantiation inst = dt.getTypeInstantiation(type);
-		final ISetInstantiation instSet = set == null ? null : dt.getSetInstantiation(set);
+		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null, type);
+		final QuantifiedPredicate goal = (QuantifiedPredicate) seq.goal();
 		for (IConstructorExtension constr : dt.getConstructors()) {
 			final IConstructorArgument[] arguments = constr.getArguments();
 			final FreeIdentifier[] params = makeFreshIdents(arguments, inst, ff, env);
-			final Expression[] paramSets = makeParamSets(arguments, instSet);
-			final Set<Predicate> newHyps = makeNewHyps(ident, constr, type, params, paramSets, seq.goal(), ff);
-			antecedents.add(ProverFactory.makeAntecedent(seq.goal(), newHyps, params, null));
+			final Set<Predicate> newHyps = makeNewHyps(ident, constr, type, params, goal, ff);
+			final FreeIdentifier[] newIdents = Arrays.copyOf(params, params.length + 1);
+			newIdents[params.length] = ident;
+			antecedents.add(makeAntecedent(instantiateFirstBound(goal, ident, ff), newHyps, newIdents, null));
 		}
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
+	}
+
+	@Override
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
+		IAntecedent[] antecedents = getAntecedents(seq, null, IPosition.ROOT);
+		if (antecedents == null)
+			return ProverFactory.reasonerFailure(this, input,
+					"Inference " + getReasonerID() + " is not applicable for " + seq.goal());
+
+		// Generate the successful reasoner output
+		return ProverFactory.makeProofRule(this, input, seq.goal(), DISPLAY_NAME, antecedents);
+	}
+
+	private Predicate instantiateFirstBound(QuantifiedPredicate pred, Expression expr, FormulaFactory ff) {
+		var replacements = new Expression[pred.getBoundIdentDecls().length];
+		replacements[0] = expr;
+		return pred.instantiate(replacements, ff);
+	}
+
+	@Override
+	public int getVersion() {
+		return VERSION;
 	}
 
 }

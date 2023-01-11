@@ -10,25 +10,22 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
-import static org.eventb.core.ast.FormulaFactory.makePosition;
-import static org.eventb.core.seqprover.eventbExtensions.Tactics.dtDCInducGetPositions;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.dtInducApplicable;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
-import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.UntranslatableException;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
+import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.junit.Test;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class DTInductionTests extends AbstractManualReasonerTests {
+public class DTInductionTests extends AbstractReasonerTests {
 
 	public DTInductionTests() {
 		super(DT_FAC);
@@ -39,56 +36,44 @@ public class DTInductionTests extends AbstractManualReasonerTests {
 		return "org.eventb.core.seqprover.dtInduction";
 	}
 
-	// Make an input from a position (in the goal)
-	protected IReasonerInput input(String position) {
-		return new AbstractManualInference.Input(null, makePosition(position));
+	private static final EmptyInput INPUT = new EmptyInput();
+
+	private void assertReasonerSuccess(String sequent, String... newSequentImages) throws UntranslatableException {
+		assertReasonerSuccess(genSeq(sequent, ff), INPUT, newSequentImages);
 	}
 
-	// Make an input from a position in a given hypothesis
-	protected IReasonerInput input(String hypothesis, String position) {
-		return new AbstractManualInference.Input(genPred(ff.makeTypeEnvironment(), hypothesis), makePosition(position));
+	private void assertReasonerFailure(String sequentImage, String reason) throws UntranslatableException {
+		assertReasonerFailure(genSeq(sequentImage, ff), INPUT, reason);
 	}
 
-	public void assertReasonerSuccess(String sequent, IReasonerInput input, String... newSequentImages)
-			throws UntranslatableException {
-		assertReasonerSuccess(genSeq(sequent, ff), input, newSequentImages);
-	}
-
-	@Override
-	protected List<IPosition> getPositions(Predicate predicate) {
-		return dtDCInducGetPositions(predicate);
-	}
-
-	@Override
-	protected String[] getTestGetPositions() {
-		return new String[] { "∀ l⦂SD · l=l1", "1.1", "∀ l ⦂ SD · destr1(l) = 0", "", };
+	@Test
+	public void testApplicable() {
+		assertTrue(dtInducApplicable(genPred("∀ l ⦂ SD · l=l1", ff)));
+		assertTrue(dtInducApplicable(genPred("∀ l ⦂ SD · destr1(l) = 0", ff)));
+		assertTrue(dtInducApplicable(genPred("∀ l⦂Induc(ℤ) · l=l1", ff)));
+		assertFalse(dtInducApplicable(genPred("destr1(l) = 0", ff)));
 	}
 
 	@Test
 	public void success() throws Exception {
-		// Applied to the goal
-		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", input("1.1"), "{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
-				"{l1=SD; p_destr1=ℤ}[][][l1=cons1(p_destr1)] |- ∀ l⦂SD · l=l1",
-				"{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l1=cons2(p_destr2_0, p_destr2_1)] |- ∀ l⦂SD · l=l1");
-		// Applied to an hypothesis
-		assertReasonerSuccess("l1∈SD |- ⊥", input("l1∈SD", "0"), "{l1=SD}[][][l1∈SD;;l1=cons0] |- ⊥",
-				"{l1=SD; p_destr1=ℤ}[][][l1∈SD;;l1=cons1(p_destr1)] |- ⊥",
-				"{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l1∈SD;;l1=cons2(p_destr2_0, p_destr2_1)] |- ⊥");
-		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1", input("1.1"),
-				"{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1",
-				"{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l1=ind1(p_ind1_0) ;; ∀ l⦂Induc(ℤ) · l=p_ind1_0] |- ∀ l⦂Induc(ℤ) · l=l1",
-				"{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l1=ind2(p_ind2_0, p_ind2_1) ;; "
-						+ "∀ l⦂Induc(ℤ) · l=p_ind2_0 ;; ∀ l⦂Induc(ℤ) · l=p_ind2_1]|- ∀ l⦂Induc(ℤ) · l=l1");
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", "{l=SD}[][][l=cons0] |- l=l1",
+				"{l=SD; p_destr1=ℤ}[][][l=cons1(p_destr1)] |- l=l1",
+				"{l=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l=cons2(p_destr2_0, p_destr2_1)] |- l=l1");
+		assertReasonerSuccess("|- ∀ l⦂SD, l1 · l=l1", "{l=SD}[][][l=cons0] |- ∀ l1 · l=l1",
+				"{l=SD; p_destr1=ℤ}[][][l=cons1(p_destr1)] |- ∀ l1 · l=l1",
+				"{l=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l=cons2(p_destr2_0, p_destr2_1)] |- ∀ l1 · l=l1");
+		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1",
+				"{l=Induc(ℤ)}[][][l=ind0] |- l=l1",
+				"{l=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l=ind1(p_ind1_0) ;; p_ind1_0=l1] |- l=l1",
+				"{l=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l=ind2(p_ind2_0, p_ind2_1) ;; "
+						+ "p_ind2_0=l1 ;; p_ind2_1=l1]|- l=l1");
+
 	}
 
 	@Test
 	public void failure() throws Exception {
-		assertReasonerFailure("∀ l⦂SD · l=l1 |- ⊤", input("∀ l⦂SD · l=l1", "1.0"),
-				"Inference " + getReasonerID() + " is not applicable for ∀l·l=l1 at position 1.0");
-		assertReasonerFailure("|- ∀ l⦂SD · l=l1", input("1.0"),
-				"Inference " + getReasonerID() + " is not applicable for ∀l·l=l1 at position 1.0");
-		assertReasonerFailure("|- ∀ l ⦂ SD · destr1(l) = 0", input("1.0.0"),
-				"Inference " + getReasonerID() + " is not applicable for ∀l·destr1(l)=0 at position 1.0.0");
+		assertReasonerFailure("|- destr1(l) = 0",
+				"Inference " + getReasonerID() + " is not applicable for destr1(l)=0");
 	}
 
 }

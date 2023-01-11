@@ -55,6 +55,7 @@ import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,7 +124,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ContrL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
-import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
@@ -166,8 +166,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.BCompDefRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -3281,12 +3281,14 @@ public class Tactics {
 	}
 	
 	/**
-	 * Returns the list of applicable positions of the tactic
-	 * "Datatype Distinct Case" {@link DTDistinctCase} and "Datatype Induction"
-	 * {@link DTInduction} to the given predicate.
+	 * Returns the list of applicable positions of the tactic "Datatype Distinct
+	 * Case" {@link DTDistinctCase} to the given predicate.
+	 *
+	 * Note that despite the name, this method now only returns correct positions
+	 * for the "Distinct Case" tactic, not for the "Induction" tactic (see
+	 * {@link #dtInducApplicable(Predicate)}).
 	 * 
-	 * @param predicate
-	 *            a predicate
+	 * @param predicate a predicate
 	 * @return a list of positions (empty if the tactic is not applicable)
 	 * @since 2.0
 	 */
@@ -3294,9 +3296,22 @@ public class Tactics {
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(FreeIdentifier identifier) {
-				return DTReasoner.hasDatatypeType(identifier);
+				return isDatatypeType(identifier.getType());
 			}
 		});
+	}
+
+	/**
+	 * Determines if the tactic "Datatype Induction"
+	 * {@link DTInduction} is applicable to the given predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return whether the tactic is applicable
+	 * @since 3.6
+	 */
+	public static boolean dtInducApplicable(Predicate predicate) {
+		return predicate.getTag() == FORALL
+				&& isDatatypeType(((QuantifiedPredicate) predicate).getBoundIdentDecls()[0].getType());
 	}
 
 	/**
@@ -3327,10 +3342,25 @@ public class Tactics {
 	 *            the position of the application
 	 * @return the tactic "Datatype Induction"
 	 * @since 2.0
+	 * @deprecated use {@link #dtInduction()}
 	 */
+	@Deprecated
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DTInduction(),
-				new AbstractManualInference.Input(hyp, position));
+		if (hyp == null && position.isRoot()) {
+			return dtInduction();
+		} else {
+			throw new IllegalArgumentException("Induction is only applicable to the goal at the root position");
+		}
+	}
+
+	/**
+	 * Returns the tactic "Datatype Induction".
+	 *
+	 * @return the tactic "Datatype Induction"
+	 * @since 3.6
+	 */
+	public static ITactic dtInduction() {
+		return BasicTactics.reasonerTac(new DTInduction(), new EmptyInput());
 	}
 	
 	/**

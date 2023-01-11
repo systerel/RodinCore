@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.hasDatatypeType;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeFreshIdents;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeIdentEqualsConstr;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeParamSets;
@@ -91,7 +91,7 @@ public class DTDistinctCase extends AbstractManualInference {
 			return null;
 		}
 		final FreeIdentifier ident = (FreeIdentifier) subFormula;
-		if (!hasDatatypeType(ident)) {
+		if (!isDatatypeType(ident.getType())) {
 			return null;
 		}
 
