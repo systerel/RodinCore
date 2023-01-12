@@ -394,43 +394,43 @@ public class VariationTests {
 
 	private void assertStrongerPositive(String predImage,
 			String... expectedImages) {
-		new StrongerPositiveCase().runTest(variations, predImage, expectedImages);
+		new StrongerPositiveCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertWeakerPositive(String predImage,
 			String... expectedImages) {
-		new WeakerPositiveCase().runTest(variations, predImage, expectedImages);
+		new WeakerPositiveCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertStrongerNegative(String predImage,
 			String... expectedImages) {
-		new StrongerNegativeCase().runTest(variations, predImage, expectedImages);
+		new StrongerNegativeCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertWeakerNegative(String predImage,
 			String... expectedImages) {
-		new WeakerNegativeCase().runTest(variations, predImage, expectedImages);
+		new WeakerNegativeCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertEquivalent(String predImage, String... expectedImages) {
-		new EquivalentCase().runTest(variations, predImage, expectedImages);
+		new EquivalentCase().runTest(predImage, expectedImages);
 	}
 
 	/*
 	 * Captures the code common to all tests, add a sub-class for each
 	 * Variations method to test.
 	 */
-	private static abstract class TestCase {
+	private abstract class TestCase {
 
-		public void runTest(Variations variations, String predImage, String... expectedImages) {
+		public void runTest(String predImage, String... expectedImages) {
 			final Predicate pred = mPred(predImage);
-			final List<Predicate> actual = getActual(variations, pred);
+			final List<Predicate> actual = getActual(pred);
 			final Set<Predicate> expected = makeSet(
 					getExpectedFromSource(pred), expectedImages);
 			assertEqualsSet(expected, actual);
 		}
 
-		protected abstract List<Predicate> getActual(Variations variations, Predicate pred);
+		protected abstract List<Predicate> getActual(Predicate pred);
 
 		protected abstract Predicate getExpectedFromSource(Predicate pred);
 
@@ -454,9 +454,9 @@ public class VariationTests {
 
 	}
 
-	private static class WeakerPositiveCase extends TestCase {
+	private class WeakerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+		protected List<Predicate> getActual(final Predicate pred) {
 			return variations.getWeakerPositive(pred);
 		}
 
@@ -466,9 +466,9 @@ public class VariationTests {
 
 	}
 
-	private static class StrongerPositiveCase extends TestCase {
+	private class StrongerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+		protected List<Predicate> getActual(final Predicate pred) {
 			return variations.getStrongerPositive(pred);
 		}
 
@@ -478,9 +478,9 @@ public class VariationTests {
 
 	}
 
-	private static class StrongerNegativeCase extends TestCase {
+	private class StrongerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+		protected List<Predicate> getActual(final Predicate pred) {
 			return variations.getStrongerNegative(pred);
 		}
 
@@ -490,9 +490,9 @@ public class VariationTests {
 
 	}
 
-	private static class WeakerNegativeCase extends TestCase {
+	private class WeakerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+		protected List<Predicate> getActual(final Predicate pred) {
 			return variations.getWeakerNegative(pred);
 		}
 
@@ -502,9 +502,9 @@ public class VariationTests {
 
 	}
 
-	private static class EquivalentCase extends TestCase {
+	private class EquivalentCase extends TestCase {
 
-		protected List<Predicate> getActual(Variations variations, final Predicate pred) {
+		protected List<Predicate> getActual(final Predicate pred) {
 			return variations.getEquivalent(pred);
 		}
 
