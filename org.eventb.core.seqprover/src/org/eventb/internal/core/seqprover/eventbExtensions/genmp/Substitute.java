@@ -33,30 +33,31 @@ import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 public class Substitute {
 
 	/**
-	 * DO NOT MODIFY
+	 * Make the list of substitutes for the GenMP.
+	 *
+	 * This method handles multiple GenMP levels. If {@code variations} is
+	 * {@code null}, it returns the result expected by GenMP levels 0 and 1. If
+	 * {@code variations} is not {@code null}, it uses the provided variations to
+	 * compute a result compatible with GenMP level 2 and above.
 	 * 
-	 * Returns a list of substitutes for the source predicate coming from a
-	 * hypothesis or a goal. For reasoner L0 and L1 only.
-	 * 
-	 * @param origin
-	 *            the hypothesis or goal predicate
-	 * @param fromGoal
-	 *            <code>true</code> if coming from goal
-	 * @param source
-	 *            the predicate to be substituted, modulo negation
+	 * @param origin     the hypothesis or goal predicate
+	 * @param fromGoal   <code>true</code> if coming from goal
+	 * @param source     the predicate to be substituted, modulo negation
+	 * @param variations variations to use or {@code null}
 	 * @return a list of fresh substitutes
 	 */
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		final List<Substitute> result = new ArrayList<Substitute>();
-		final boolean isPos = !fromGoal;
-		addSubstitute(result, origin, fromGoal, source, isPos);
-		return result;
-	}
-
-	public static List<Substitute> makeSubstitutesL2(Predicate origin,
 			boolean fromGoal, Predicate source, Variations variations) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal, variations);
+		if (variations == null) {
+			// Returns a list of substitutes for the source predicate coming from a
+			// hypothesis or a goal. For reasoner L0 and L1 only. DO NOT MODIFY.
+			final List<Substitute> result = new ArrayList<Substitute>();
+			final boolean isPos = !fromGoal;
+			addSubstitute(result, origin, fromGoal, source, isPos);
+			return result;
+		} else {
+			return makeSubstitutes(origin, fromGoal, source, !fromGoal, variations);
+		}
 	}
 
 	public static List<Substitute> makeSubstitutes(Predicate origin,

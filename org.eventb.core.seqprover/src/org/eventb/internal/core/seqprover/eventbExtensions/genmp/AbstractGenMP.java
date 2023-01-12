@@ -39,8 +39,8 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			+ ".genMP";
 
 	public static enum Level {
-		L0(Variations.INSTANCE_L0),
-		L1(Variations.INSTANCE_L0),
+		L0(null),
+		L1(null),
 		L2(Variations.INSTANCE_L0),
 		L3(Variations.INSTANCE_L0),
 		L4(Variations.INSTANCE_L1);

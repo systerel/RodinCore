@@ -17,7 +17,6 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutes;
-import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutesL2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,12 +158,7 @@ public class GenMPC {
 	// the goal.
 	private void addSubstitute(Predicate origin, boolean fromGoal,
 			Predicate source) {
-		final List<Substitute> substs;
-		if (level.from(Level.L2)) {
-			substs = makeSubstitutesL2(origin, fromGoal, source, level.getVariations());
-		} else {
-			substs = makeSubstitutes(origin, fromGoal, source);
-		}
+		final List<Substitute> substs = makeSubstitutes(origin, fromGoal, source, level.getVariations());
 		for (final Substitute subst : substs) {
 			final Predicate toReplace = subst.toReplace();
 			if (substitutes.containsKey(toReplace)) {
