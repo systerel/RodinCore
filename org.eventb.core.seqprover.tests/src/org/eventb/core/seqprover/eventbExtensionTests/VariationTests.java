@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L0;
 import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.Level.L1;
 import static org.junit.Assert.assertEquals;
 
@@ -45,14 +44,16 @@ public class VariationTests {
 	private static final ISealedTypeEnvironment TYPENV = mTypeEnvironment( //
 			"S=ℙ(S); A=ℙ(S); B=ℙ(S); a=S; b=S; n=ℤ; m=ℤ; p=BOOL").makeSnapshot();
 
+	protected Variations variations;
 	protected Level level;
 
-	protected VariationTests(Level level) {
-		this.level = level;
+	protected VariationTests(Variations variations) {
+		this.variations = variations;
+		this.level = variations.getLevel();
 	}
 
 	public VariationTests() {
-		this(L0);
+		this(Variations.INSTANCE_L0);
 	}
 
 	/**
@@ -97,10 +98,13 @@ public class VariationTests {
 		assertWeakerPositive("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertWeakerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "n ∈ ℕ", "n ∈ ℕ1");
-			assertWeakerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13", "12 ≤ n", "n ≥ 12", "¬ 12 = n", "¬ n = 12", "n ∈ ℕ", "n ∈ ℕ1");
+			assertWeakerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "n ∈ ℕ", "n ∈ ℕ1", "n ≥ 0", "0 ≤ n", "n > −1",
+					"−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
+			assertWeakerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13", "12 ≤ n", "n ≥ 12", "¬ 12 = n", "¬ n = 12",
+					"n ∈ ℕ", "n ∈ ℕ1", "n ≥ 0", "0 ≤ n", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
 			assertWeakerPositive("n ∈ ℕ", "n ≥ 0", "0 ≤ n", "n > −1", "−1 < n");
-			assertWeakerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n", "¬ n = 0", "n ∈ ℕ");
+			assertWeakerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n", "¬ 0 = n", "¬ n = 0", "n ∈ ℕ", "n ≥ 0",
+					"0 ≤ n", "n > −1", "−1 < n");
 			assertWeakerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13");
 			assertWeakerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "−12 ≤ n", "n ≥ −12", "¬ −12 = n", "¬ n = −12");
 		} else {
@@ -155,12 +159,18 @@ public class VariationTests {
 		assertStrongerPositive("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertStrongerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13", "−12 < n", "n > −12", "−12 = n", "n = −12", "n ∈ ℕ", "n ∈ ℕ1");
-			assertStrongerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "n ∈ ℕ", "n ∈ ℕ1");
-			assertStrongerPositive("n ∈ ℕ", "0 ≤ n", "n ≥ 0", "n ∈ ℕ1", "n > −1", "−1 < n");
+			assertStrongerPositive("−12 ≤ n", "n ≥ −12", "−13 < n", "n > −13", "−12 < n", "n > −12", "−12 = n",
+					"n = −12", "n ∈ ℕ", "n ∈ ℕ1", "0 ≤ n", "n ≥ 0", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1",
+					"1 ≤ n");
+			assertStrongerPositive("−12 < n", "n > −12", "−11 ≤ n", "n ≥ −11", "n ∈ ℕ", "n ∈ ℕ1", "0 ≤ n", "n ≥ 0",
+					"n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
+			assertStrongerPositive("n ∈ ℕ", "0 ≤ n", "n ≥ 0", "n ∈ ℕ1", "n > −1", "−1 < n", "n > 0", "0 < n", "n ≥ 1",
+					"1 ≤ n");
 			assertStrongerPositive("n ∈ ℕ1", "n > 0", "0 < n", "n ≥ 1", "1 ≤ n");
-			assertStrongerPositive("¬ n = 0", "n < 0", "n > 0", "0 < n", "0 > n", "¬ 0 = n", "n ∈ ℕ1");
-			assertStrongerPositive("¬ 0 = n", "n < 0", "n > 0", "0 < n", "0 > n", "¬ n = 0", "n ∈ ℕ1");
+			assertStrongerPositive("¬ n = 0", "n < 0", "n > 0", "0 < n", "0 > n", "¬ 0 = n", "n ∈ ℕ1", "n ≥ 1",
+					"1 ≤ n");
+			assertStrongerPositive("¬ 0 = n", "n < 0", "n > 0", "0 < n", "0 > n", "¬ n = 0", "n ∈ ℕ1", "n ≥ 1",
+					"1 ≤ n");
 			assertStrongerPositive("12 ≤ n", "n ≥ 12", "11 < n", "n > 11", "12 < n", "n > 12", "12 = n", "n = 12");
 			assertStrongerPositive("12 < n", "n > 12", "13 ≤ n", "n ≥ 13");
 		} else {
@@ -217,12 +227,15 @@ public class VariationTests {
 		assertWeakerNegative("¬ finite(A)");
 		// Natural numbers sets
 		if (level.from(L1)) {
-			assertWeakerNegative("n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n");
+			assertWeakerNegative("n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 			assertWeakerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 			assertWeakerNegative("12 ≤ n", "n ≤ 11", "11 ≥ n", "n < 12", "12 ≥ n", "n ≤ 12", "¬ 12 = n", "¬ n = 12");
 			assertWeakerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13");
-			assertWeakerNegative("−12 < n", "n ≤ −12", "n < −11", "−11 > n");
-			assertWeakerNegative("−12 ≤ n", "n ≤ −12", "n ≤ −13", "−13 ≥ n", "−12 ≥ n", "−12 > n", "n < −12", "¬ −12 = n", "¬ n = −12");
+			assertWeakerNegative("−12 < n", "n ≤ −12", "n < −11", "−11 > n", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1",
+					"−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertWeakerNegative("−12 ≤ n", "n ≤ −12", "n ≤ −13", "−13 ≥ n", "−12 ≥ n", "−12 > n", "n < −12",
+					"¬ −12 = n", "¬ n = −12", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0",
+					"0 ≥ n", "n < 1", "1 > n");
 		} else {
 			assertWeakerNegative("n ∈ ℕ");
 			assertWeakerNegative("n ∈ ℕ1");
@@ -276,11 +289,14 @@ public class VariationTests {
 		// Natural numbers sets
 		if (level.from(L1)) {
 			assertStrongerNegative("n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1", "−1 ≥ n");
-			assertStrongerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertStrongerNegative("n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n", "¬ n ∈ ℕ", "0 > n", "n < 0", "n ≤ −1",
+					"−1 ≥ n", "n = 0", "0 = n");
 			assertStrongerNegative("−12 ≤ n", "−12 > n", "n < −12", "n ≤ −13", "−13 ≥ n");
 			assertStrongerNegative("−12 < n", "n ≤ −12", "−11 > n", "n < −11", "−12 > n", "n < −12", "−12 = n", "n = −12");
-			assertStrongerNegative("12 ≤ n", "n < 12", "n ≤ 11", "11 ≥ n");
-			assertStrongerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13", "12 > n", "n < 12", "12 = n", "n = 12");
+			assertStrongerNegative("12 ≤ n", "n < 12", "n ≤ 11", "11 ≥ n", "¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1",
+					"−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
+			assertStrongerNegative("12 < n", "n ≤ 12", "13 > n", "n < 13", "12 > n", "n < 12", "12 = n", "n = 12",
+					"¬ n ∈ ℕ", "n < 0", "0 > n", "n ≤ −1", "−1 ≥ n", "¬ n ∈ ℕ1", "n ≤ 0", "0 ≥ n", "n < 1", "1 > n");
 		} else {
 			assertStrongerNegative("n ∈ ℕ");
 			assertStrongerNegative("n ∈ ℕ1");
@@ -328,6 +344,18 @@ public class VariationTests {
 			assertEquivalent("n ≥ 0", "0 ≤ n", "n > −1", "−1 < n", "n ∈ ℕ");
 			assertEquivalent("0 < n", "n > 0", "n ≥ 1", "1 ≤ n", "n ∈ ℕ1");
 			assertEquivalent("n > 0", "0 < n", "n ≥ 1", "1 ≤ n", "n ∈ ℕ1");
+			assertEquivalent("n ≤ 0", "0 ≥ n", "1 > n", "n < 1", "¬ n ∈ ℕ1");
+			assertEquivalent("0 ≥ n", "n ≤ 0", "1 > n", "n < 1", "¬ n ∈ ℕ1");
+			assertEquivalent("n < 0", "0 > n", "−1 ≥ n", "n ≤ −1", "¬ n ∈ ℕ");
+			assertEquivalent("0 > n", "n < 0", "−1 ≥ n", "n ≤ −1", "¬ n ∈ ℕ");
+			assertEquivalent("−1 < n", "0 ≤ n", "n ≥ 0", "n > −1", "n ∈ ℕ");
+			assertEquivalent("n > −1", "n ≥ 0", "0 ≤ n", "−1 < n", "n ∈ ℕ");
+			assertEquivalent("n ≤ −1", "n < 0", "0 > n", "−1 ≥ n", "¬ n ∈ ℕ");
+			assertEquivalent("−1 ≥ n", "0 > n", "n < 0", "n ≤ −1", "¬ n ∈ ℕ");
+			assertEquivalent("1 > n", "n ≤ 0", "0 ≥ n", "n < 1", "¬ n ∈ ℕ1");
+			assertEquivalent("n < 1", "0 ≥ n", "n ≤ 0", "1 > n", "¬ n ∈ ℕ1");
+			assertEquivalent("1 ≤ n", "0 < n", "n > 0", "n ≥ 1", "n ∈ ℕ1");
+			assertEquivalent("n ≥ 1", "n > 0", "0 < n", "1 ≤ n", "n ∈ ℕ1");
 			assertEquivalent("12 ≤ n", "n ≥ 12", "n > 11", "11 < n");
 			assertEquivalent("12 < n", "n > 12", "n ≥ 13", "13 ≤ n");
 			assertEquivalent("−12 ≤ n", "n ≥ −12", "n > −13", "−13 < n");
@@ -343,6 +371,18 @@ public class VariationTests {
 			assertEquivalent("n ≥ 0", "0 ≤ n");
 			assertEquivalent("0 < n", "n > 0");
 			assertEquivalent("n > 0", "0 < n");
+			assertEquivalent("n ≤ 0", "0 ≥ n");
+			assertEquivalent("0 ≥ n", "n ≤ 0");
+			assertEquivalent("n < 0", "0 > n");
+			assertEquivalent("0 > n", "n < 0");
+			assertEquivalent("−1 < n", "n > −1");
+			assertEquivalent("n > −1", "−1 < n");
+			assertEquivalent("n ≤ −1", "−1 ≥ n");
+			assertEquivalent("−1 ≥ n", "n ≤ −1");
+			assertEquivalent("1 > n", "n < 1");
+			assertEquivalent("n < 1", "1 > n");
+			assertEquivalent("1 ≤ n", "n ≥ 1");
+			assertEquivalent("n ≥ 1", "1 ≤ n");
 			assertEquivalent("12 ≤ n", "n ≥ 12");
 			assertEquivalent("12 < n", "n > 12");
 			assertEquivalent("−12 ≤ n", "n ≥ −12");
@@ -354,43 +394,43 @@ public class VariationTests {
 
 	private void assertStrongerPositive(String predImage,
 			String... expectedImages) {
-		new StrongerPositiveCase().runTest(level, predImage, expectedImages);
+		new StrongerPositiveCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertWeakerPositive(String predImage,
 			String... expectedImages) {
-		new WeakerPositiveCase().runTest(level, predImage, expectedImages);
+		new WeakerPositiveCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertStrongerNegative(String predImage,
 			String... expectedImages) {
-		new StrongerNegativeCase().runTest(level, predImage, expectedImages);
+		new StrongerNegativeCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertWeakerNegative(String predImage,
 			String... expectedImages) {
-		new WeakerNegativeCase().runTest(level, predImage, expectedImages);
+		new WeakerNegativeCase().runTest(predImage, expectedImages);
 	}
 
 	private void assertEquivalent(String predImage, String... expectedImages) {
-		new EquivalentCase().runTest(level, predImage, expectedImages);
+		new EquivalentCase().runTest(predImage, expectedImages);
 	}
 
 	/*
 	 * Captures the code common to all tests, add a sub-class for each
 	 * Variations method to test.
 	 */
-	private static abstract class TestCase {
+	private abstract class TestCase {
 
-		public void runTest(Level level, String predImage, String... expectedImages) {
+		public void runTest(String predImage, String... expectedImages) {
 			final Predicate pred = mPred(predImage);
-			final List<Predicate> actual = getActual(level, pred);
+			final List<Predicate> actual = getActual(pred);
 			final Set<Predicate> expected = makeSet(
 					getExpectedFromSource(pred), expectedImages);
 			assertEqualsSet(expected, actual);
 		}
 
-		protected abstract List<Predicate> getActual(Level level, Predicate pred);
+		protected abstract List<Predicate> getActual(Predicate pred);
 
 		protected abstract Predicate getExpectedFromSource(Predicate pred);
 
@@ -414,10 +454,10 @@ public class VariationTests {
 
 	}
 
-	private static class WeakerPositiveCase extends TestCase {
+	private class WeakerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getWeakerPositive(pred);
+		protected List<Predicate> getActual(final Predicate pred) {
+			return variations.getWeakerPositive(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -426,10 +466,10 @@ public class VariationTests {
 
 	}
 
-	private static class StrongerPositiveCase extends TestCase {
+	private class StrongerPositiveCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getStrongerPositive(pred);
+		protected List<Predicate> getActual(final Predicate pred) {
+			return variations.getStrongerPositive(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -438,10 +478,10 @@ public class VariationTests {
 
 	}
 
-	private static class StrongerNegativeCase extends TestCase {
+	private class StrongerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getStrongerNegative(pred);
+		protected List<Predicate> getActual(final Predicate pred) {
+			return variations.getStrongerNegative(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -450,10 +490,10 @@ public class VariationTests {
 
 	}
 
-	private static class WeakerNegativeCase extends TestCase {
+	private class WeakerNegativeCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getWeakerNegative(pred);
+		protected List<Predicate> getActual(final Predicate pred) {
+			return variations.getWeakerNegative(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {
@@ -462,10 +502,10 @@ public class VariationTests {
 
 	}
 
-	private static class EquivalentCase extends TestCase {
+	private class EquivalentCase extends TestCase {
 
-		protected List<Predicate> getActual(Level level, final Predicate pred) {
-			return Variations.getInstance(level).getEquivalent(pred);
+		protected List<Predicate> getActual(final Predicate pred) {
+			return variations.getEquivalent(pred);
 		}
 
 		protected Predicate getExpectedFromSource(Predicate pred) {

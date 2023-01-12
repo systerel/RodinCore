@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.utils;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.GE;
@@ -34,6 +35,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
@@ -78,25 +80,17 @@ public class Variations {
 		this.level = level;
 	}
 
-	private static final Variations INSTANCE_LEVEL_0 = new Variations(L0);
+	public static final Variations INSTANCE_L0 = new Variations(L0);
 
-	private static final Variations INSTANCE_LEVEL_1 = new Variations(L1);
+	public static final Variations INSTANCE_L1 = new Variations(L1);
 
 	/**
-	 * Get an instance of this class for the provided level.
+	 * Get the implementation level.
 	 *
-	 * @param level desired level
-	 * @return instance of this class for the provided level
+	 * @return level
 	 */
-	public static Variations getInstance(Level level) {
-		switch (level) {
-		case L0:
-			return INSTANCE_LEVEL_0;
-		case L1:
-			return INSTANCE_LEVEL_1;
-		default:
-			throw new IllegalArgumentException("Provided level is not a valid enumeration value");
-		}
+	public Level getLevel() {
+		return level;
 	}
 
 	/**
@@ -172,20 +166,29 @@ public class Variations {
 		}
 		if (level.from(L1)) {
 			switch (tag) {
+			case EQUAL:
+				if (isZero(rhs)) {
+					addEquivalentNegativeRelational(variations, IN, lhs, nat1(lhs.getFactory()));
+				}
+				if (isZero(lhs)) {
+					addEquivalentNegativeRelational(variations, IN, rhs, nat1(rhs.getFactory()));
+				}
+				break;
 			case LE:
 			case LT:
 				// Cases where the number is equal to zero are handled in equivalences
-				if (isPositive(lhs)) {
+				if (isPositiveIntLit(lhs)) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, rhs, nat(ff));
+					addEquivalentPositiveRelational(variations, IN, rhs, nat1(ff));
 				}
 				break;
 			case IN:
 				if (rhs.getTag() == NATURAL1) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(makeNeg(rel(EQUAL, lhs, ff.makeIntegerLiteral(BigInteger.ZERO, null))));
+					addEquivalentPositiveRelational(variations, IN, lhs, nat(ff));
+					addEquivalentNegativeRelational(variations, EQUAL, lhs,
+							ff.makeIntegerLiteral(BigInteger.ZERO, null));
 				}
 				break;
 			}
@@ -211,46 +214,9 @@ public class Variations {
 		if (isNeg(pred)) {
 			return getWeakerPositive(makeNeg(pred));
 		}
-		if (pred instanceof RelationalPredicate) {
-			final RelationalPredicate relPred = (RelationalPredicate) pred;
-			final Expression lhs = relPred.getLeft();
-			final Expression rhs = relPred.getRight();
-			return getWeakerNegativeRelational(relPred.getTag(), lhs, rhs);
-		}
-		return singletonList(makeNeg(pred));
-	}
-
-	private List<Predicate> getWeakerNegativeRelational(int tag,
-			Expression lhs, Expression rhs) {
-		// Reduce to positive relations
-		switch (tag) {
-		case LE:
-			return getWeakerPositiveRelational(LT, rhs, lhs);
-		case GE:
-			return getWeakerPositiveRelational(LT, lhs, rhs);
-		case LT:
-			return getWeakerPositiveRelational(LE, rhs, lhs);
-		case GT:
-			return getWeakerPositiveRelational(LE, lhs, rhs);
-		}
-		final List<Predicate> variations = new ArrayList<Predicate>();
-		addEquivalentNegativeRelational(variations, tag, lhs, rhs);
-		switch (tag) {
-		case EQUAL:
-			variations.add(makeNeg(rel(EQUAL, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-			break;
-		case SUBSET:
-			variations.add(makeNeg(rel(SUBSET, lhs, rhs)));
-			break;
-		case SUBSETEQ:
-			variations.add(makeNeg(rel(SUBSET, lhs, rhs)));
-			variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, lhs, rhs)));
-			variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-			break;
-		}
-		return variations;
+		List<Predicate> result = getStrongerPositive(pred);
+		// result can't be modified in-place: it may be immutable (e.g., singletonList())
+		return result.stream().map(this::makeNegRelational).collect(toList());
 	}
 
 	/**
@@ -317,16 +283,15 @@ public class Variations {
 			case LE:
 			case LT:
 				// Cases where the number is equal to zero are handled in equivalences
-				if (isNegative(lhs)) {
+				if (isNegativeIntLit(lhs)) {
 					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, rhs, nat(ff));
+					addEquivalentPositiveRelational(variations, IN, rhs, nat1(ff));
 				}
 				break;
 			case IN:
 				if (rhs.getTag() == NATURAL) {
-					FormulaFactory ff = lhs.getFactory();
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
+					addEquivalentPositiveRelational(variations, IN, lhs, nat1(lhs.getFactory()));
 				}
 				break;
 			}
@@ -352,66 +317,9 @@ public class Variations {
 		if (isNeg(pred)) {
 			return getStrongerPositive(makeNeg(pred));
 		}
-		if (pred instanceof RelationalPredicate) {
-			final RelationalPredicate relPred = (RelationalPredicate) pred;
-			final Expression lhs = relPred.getLeft();
-			final Expression rhs = relPred.getRight();
-			return getStrongerNegativeRelational(relPred.getTag(), lhs, rhs);
-		}
-		return singletonList(makeNeg(pred));
-	}
-
-	private List<Predicate> getStrongerNegativeRelational(int tag,
-			Expression lhs, Expression rhs) {
-		// Reduce to positive relations
-		switch (tag) {
-		case LE:
-			return getStrongerPositiveRelational(LT, rhs, lhs);
-		case GE:
-			return getStrongerPositiveRelational(LT, lhs, rhs);
-		case LT:
-			return getStrongerPositiveRelational(LE, rhs, lhs);
-		case GT:
-			return getStrongerPositiveRelational(LE, lhs, rhs);
-		}
-		final List<Predicate> variations = new ArrayList<Predicate>();
-		addEquivalentNegativeRelational(variations, tag, lhs, rhs);
-		switch (tag) {
-		case EQUAL:
-			if (isSet(rhs)) {
-				variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-				variations.add(makeNeg(rel(SUBSETEQ, rhs, lhs)));
-				variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-				variations.add(rel(SUBSET, lhs, rhs));
-				variations.add(rel(SUBSET, rhs, lhs));
-			} else if (isInteger(rhs)) {
-				variations.add(makeNeg(rel(EQUAL, rhs, lhs)));
-				variations.add(rel(GT, lhs, rhs));
-				variations.add(rel(LT, rhs, lhs));
-				variations.add(rel(LT, lhs, rhs));
-				variations.add(rel(GT, rhs, lhs));
-				if (level.from(L1)) {
-					FormulaFactory ff = lhs.getFactory();
-					if (isZero(lhs)) {
-						variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
-					} else if (isZero(rhs)) {
-						variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
-					}
-				}
-			}
-			break;
-		case SUBSET:
-			variations.add(rel(SUBSET, rhs, lhs));
-			variations.add(rel(SUBSETEQ, rhs, lhs));
-			variations.add(rel(EQUAL, lhs, rhs));
-			variations.add(rel(EQUAL, rhs, lhs));
-			variations.add(makeNeg(rel(SUBSETEQ, lhs, rhs)));
-			break;
-		case SUBSETEQ:
-			variations.add(rel(SUBSET, rhs, lhs));
-			break;
-		}
-		return variations;
+		List<Predicate> result = getWeakerPositive(pred);
+		// result can't be modified in-place: it may be immutable (e.g., singletonList())
+		return result.stream().map(this::makeNegRelational).collect(toList());
 	}
 
 	/**
@@ -482,53 +390,81 @@ public class Variations {
 				break;
 			}
 			case LT:
-				if (isZero(lhs)) {
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL1, null)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(rel(IN, rhs, nat1(ff)));
+					} else if (isMinusOne(lhs)) {
+						variations.add(rel(IN, rhs, nat(ff)));
+					}
 					variations.add(rel(LE, literalPlusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(GE, rhs, literalPlusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat(ff))));
+					} else if (isOne(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
+					}
 					variations.add(rel(LE, lhs, literalMinusOne((IntegerLiteral) rhs)));
 					variations.add(rel(GE, literalMinusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case LE:
-				if (isZero(lhs)) {
-					variations.add(rel(IN, rhs, ff.makeAtomicExpression(NATURAL, null)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(rel(IN, rhs, nat(ff)));
+					} else if (isOne(lhs)) {
+						variations.add(rel(IN, rhs, nat1(ff)));
+					}
 					variations.add(rel(LT, literalMinusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(GT, rhs, literalMinusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
+					} else if (isMinusOne(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat(ff))));
+					}
 					variations.add(rel(LT, lhs, literalPlusOne((IntegerLiteral) rhs)));
 					variations.add(rel(GT, literalPlusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case GT:
-				if (isZero(rhs)) {
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL1, null)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat(ff))));
+					} else if (isOne(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat1(ff))));
+					}
 					variations.add(rel(GE, literalMinusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(LE, rhs, literalMinusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(rel(IN, lhs, nat1(ff)));
+					} else if (isMinusOne(rhs)) {
+						variations.add(rel(IN, lhs, nat(ff)));
+					}
 					variations.add(rel(GE, lhs, literalPlusOne((IntegerLiteral) rhs)));
 					variations.add(rel(LE, literalPlusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case GE:
-				if (isZero(rhs)) {
-					variations.add(rel(IN, lhs, ff.makeAtomicExpression(NATURAL, null)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat1(ff))));
+					} else if (isMinusOne(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat(ff))));
+					}
 					variations.add(rel(GT, literalPlusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(LT, rhs, literalPlusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(rel(IN, lhs, nat(ff)));
+					} else if (isOne(rhs)) {
+						variations.add(rel(IN, lhs, nat1(ff)));
+					}
 					variations.add(rel(GT, lhs, literalMinusOne((IntegerLiteral) rhs)));
 					variations.add(rel(LT, literalMinusOne((IntegerLiteral) rhs), lhs));
 				}
@@ -612,6 +548,24 @@ public class Variations {
 		variations.add(makeNeg(rel(tag, lhs, rhs)));
 	}
 
+	// makeNeg() with special handling of inequalities
+	private Predicate makeNegRelational(Predicate pred) {
+		if (pred instanceof RelationalPredicate) {
+			var rel = (RelationalPredicate) pred;
+			switch (rel.getTag()) {
+			case LE:
+				return pred.getFactory().makeRelationalPredicate(GT, rel.getLeft(), rel.getRight(), null);
+			case GE:
+				return pred.getFactory().makeRelationalPredicate(LT, rel.getLeft(), rel.getRight(), null);
+			case LT:
+				return pred.getFactory().makeRelationalPredicate(GE, rel.getLeft(), rel.getRight(), null);
+			case GT:
+				return pred.getFactory().makeRelationalPredicate(LE, rel.getLeft(), rel.getRight(), null);
+			}
+		}
+		return makeNeg(pred);
+	}
+
 	private boolean isSet(Expression expr) {
 		return expr.getType() instanceof PowerSetType;
 	}
@@ -621,15 +575,25 @@ public class Variations {
 	}
 
 	private boolean isZero(Expression expr) {
-		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().equals(BigInteger.ZERO);
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().signum() == 0;
 	}
 
-	private boolean isPositive(Expression expr) {
-		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().compareTo(BigInteger.ZERO) > 0;
+	private boolean isOne(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().equals(BigInteger.ONE);
 	}
 
-	private boolean isNegative(Expression expr) {
-		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().compareTo(BigInteger.ZERO) < 0;
+	private static final BigInteger MINUS_ONE = BigInteger.ONE.negate();
+
+	private boolean isMinusOne(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().equals(MINUS_ONE);
+	}
+
+	private boolean isPositiveIntLit(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().signum() > 0;
+	}
+
+	private boolean isNegativeIntLit(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().signum() < 0;
 	}
 
 	private RelationalPredicate rel(int tag, Expression left,
@@ -644,6 +608,14 @@ public class Variations {
 
 	private IntegerLiteral literalMinusOne(IntegerLiteral lit) {
 		return lit.getFactory().makeIntegerLiteral(lit.getValue().subtract(BigInteger.ONE), null);
+	}
+
+	private AtomicExpression nat(FormulaFactory ff) {
+		return ff.makeAtomicExpression(NATURAL, null);
+	}
+
+	private AtomicExpression nat1(FormulaFactory ff) {
+		return ff.makeAtomicExpression(NATURAL1, null);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,45 +33,40 @@ import org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations;
 public class Substitute {
 
 	/**
-	 * DO NOT MODIFY
+	 * Make the list of substitutes for the GenMP.
+	 *
+	 * This method handles multiple GenMP levels. If {@code variations} is
+	 * {@code null}, it returns the result expected by GenMP levels 0 and 1. If
+	 * {@code variations} is not {@code null}, it uses the provided variations to
+	 * compute a result compatible with GenMP level 2 and above.
 	 * 
-	 * Returns a list of substitutes for the source predicate coming from a
-	 * hypothesis or a goal. For reasoner L0 and L1 only.
-	 * 
-	 * @param origin
-	 *            the hypothesis or goal predicate
-	 * @param fromGoal
-	 *            <code>true</code> if coming from goal
-	 * @param source
-	 *            the predicate to be substituted, modulo negation
+	 * @param origin     the hypothesis or goal predicate
+	 * @param fromGoal   <code>true</code> if coming from goal
+	 * @param source     the predicate to be substituted, modulo negation
+	 * @param variations variations to use or {@code null}
 	 * @return a list of fresh substitutes
 	 */
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		final List<Substitute> result = new ArrayList<Substitute>();
-		final boolean isPos = !fromGoal;
-		addSubstitute(result, origin, fromGoal, source, isPos);
-		return result;
-	}
-
-	public static List<Substitute> makeSubstitutesL2(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L0);
-	}
-
-	public static List<Substitute> makeSubstitutesL4(Predicate origin,
-			boolean fromGoal, Predicate source) {
-		return makeSubstitutes(origin, fromGoal, source, !fromGoal, Variations.Level.L1);
+			boolean fromGoal, Predicate source, Variations variations) {
+		if (variations == null) {
+			// Returns a list of substitutes for the source predicate coming from a
+			// hypothesis or a goal. For reasoner L0 and L1 only. DO NOT MODIFY.
+			final List<Substitute> result = new ArrayList<Substitute>();
+			final boolean isPos = !fromGoal;
+			addSubstitute(result, origin, fromGoal, source, isPos);
+			return result;
+		} else {
+			return makeSubstitutes(origin, fromGoal, source, !fromGoal, variations);
+		}
 	}
 
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean fromGoal, Predicate source, boolean isPos, Variations.Level level) {
+			boolean fromGoal, Predicate source, boolean isPos, Variations variations) {
 		final List<Substitute> result = new ArrayList<Substitute>();
 		while (isNeg(source)) {
 			isPos = !isPos;
 			source = makeNeg(source);
 		}
-		Variations variations = Variations.getInstance(level);
 		// Now source does not start with not.
 		if (isPos) {
 			// Add substitutions for all Q such that P => Q
