@@ -390,59 +390,81 @@ public class Variations {
 				break;
 			}
 			case LT:
-				if (isZero(lhs)) {
-					variations.add(rel(IN, rhs, nat1(ff)));
-				}
-				if (isZero(rhs)) {
-					variations.add(makeNeg(rel(IN, lhs, nat(ff))));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(rel(IN, rhs, nat1(ff)));
+					} else if (isMinusOne(lhs)) {
+						variations.add(rel(IN, rhs, nat(ff)));
+					}
 					variations.add(rel(LE, literalPlusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(GE, rhs, literalPlusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat(ff))));
+					} else if (isOne(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
+					}
 					variations.add(rel(LE, lhs, literalMinusOne((IntegerLiteral) rhs)));
 					variations.add(rel(GE, literalMinusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case LE:
-				if (isZero(lhs)) {
-					variations.add(rel(IN, rhs, nat(ff)));
-				}
-				if (isZero(rhs)) {
-					variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(rel(IN, rhs, nat(ff)));
+					} else if (isOne(lhs)) {
+						variations.add(rel(IN, rhs, nat1(ff)));
+					}
 					variations.add(rel(LT, literalMinusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(GT, rhs, literalMinusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat1(ff))));
+					} else if (isMinusOne(rhs)) {
+						variations.add(makeNeg(rel(IN, lhs, nat(ff))));
+					}
 					variations.add(rel(LT, lhs, literalPlusOne((IntegerLiteral) rhs)));
 					variations.add(rel(GT, literalPlusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case GT:
-				if (isZero(rhs)) {
-					variations.add(rel(IN, lhs, nat1(ff)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat(ff))));
+					} else if (isOne(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat1(ff))));
+					}
 					variations.add(rel(GE, literalMinusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(LE, rhs, literalMinusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(rel(IN, lhs, nat1(ff)));
+					} else if (isMinusOne(rhs)) {
+						variations.add(rel(IN, lhs, nat(ff)));
+					}
 					variations.add(rel(GE, lhs, literalPlusOne((IntegerLiteral) rhs)));
 					variations.add(rel(LE, literalPlusOne((IntegerLiteral) rhs), lhs));
 				}
 				break;
 			case GE:
-				if (isZero(rhs)) {
-					variations.add(rel(IN, lhs, nat(ff)));
-				}
 				if (lhs.getTag() == INTLIT) {
+					if (isZero(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat1(ff))));
+					} else if (isMinusOne(lhs)) {
+						variations.add(makeNeg(rel(IN, rhs, nat(ff))));
+					}
 					variations.add(rel(GT, literalPlusOne((IntegerLiteral) lhs), rhs));
 					variations.add(rel(LT, rhs, literalPlusOne((IntegerLiteral) lhs)));
 				}
 				if (rhs.getTag() == INTLIT) {
+					if (isZero(rhs)) {
+						variations.add(rel(IN, lhs, nat(ff)));
+					} else if (isOne(rhs)) {
+						variations.add(rel(IN, lhs, nat1(ff)));
+					}
 					variations.add(rel(GT, lhs, literalMinusOne((IntegerLiteral) rhs)));
 					variations.add(rel(LT, literalMinusOne((IntegerLiteral) rhs), lhs));
 				}
@@ -554,6 +576,16 @@ public class Variations {
 
 	private boolean isZero(Expression expr) {
 		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().signum() == 0;
+	}
+
+	private boolean isOne(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().equals(BigInteger.ONE);
+	}
+
+	private static final BigInteger MINUS_ONE = BigInteger.ONE.negate();
+
+	private boolean isMinusOne(Expression expr) {
+		return expr.getTag() == INTLIT && ((IntegerLiteral) expr).getValue().equals(MINUS_ONE);
 	}
 
 	private boolean isPositiveIntLit(Expression expr) {
