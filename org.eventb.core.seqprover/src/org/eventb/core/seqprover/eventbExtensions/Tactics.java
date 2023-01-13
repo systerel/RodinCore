@@ -22,6 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -55,6 +56,7 @@ import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,7 +125,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ContrL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
-import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
@@ -166,8 +167,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.BCompDefRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -3281,22 +3282,65 @@ public class Tactics {
 	}
 	
 	/**
-	 * Returns the list of applicable positions of the tactic
-	 * "Datatype Distinct Case" {@link DTDistinctCase} and "Datatype Induction"
-	 * {@link DTInduction} to the given predicate.
+	 * Returns the list of applicable positions of the tactic "Datatype Distinct
+	 * Case" {@link DTDistinctCase} to the given predicate.
 	 * 
-	 * @param predicate
-	 *            a predicate
+	 * @param predicate a predicate
 	 * @return a list of positions (empty if the tactic is not applicable)
 	 * @since 2.0
+	 * @deprecated use either {@link #dtDCGetPositions(Predicate)} or
+	 *             {@link #dtInducGetPositions(Predicate)}
 	 */
+	@Deprecated
 	public static List<IPosition> dtDCInducGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(FreeIdentifier identifier) {
-				return DTReasoner.hasDatatypeType(identifier);
+				return isDatatypeType(identifier.getType());
 			}
 		});
+	}
+
+	/**
+	 * Returns the list of applicable positions of the tactic "Datatype Distinct
+	 * Case" {@link DTDistinctCase} to the given predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of positions (empty if the tactic is not applicable)
+	 * @since 3.6
+	 */
+	public static List<IPosition> dtDCGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(FreeIdentifier identifier) {
+				return isDatatypeType(identifier.getType());
+			}
+		});
+	}
+
+	/**
+	 * Determines if the tactic "Datatype Induction"
+	 * {@link DTInduction} is applicable to the given predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return whether the tactic is applicable
+	 * @since 3.6
+	 */
+	public static List<IPosition> dtInducGetPositions(Predicate predicate) {
+		if (predicate.getTag() != FORALL) {
+			return NO_POSITIONS;
+		}
+		List<IPosition> result = new ArrayList<>();
+		IPosition current = IPosition.ROOT.getFirstChild();
+		Formula<?> child = predicate.getSubFormula(current);
+		while (child.getTag() == BOUND_IDENT_DECL) {
+			if (isDatatypeType(((BoundIdentDecl) child).getType())) {
+				result.add(current);
+			}
+			current = current.getNextSibling();
+			child = predicate.getSubFormula(current);
+		}
+		return result;
 	}
 
 	/**
@@ -3327,10 +3371,25 @@ public class Tactics {
 	 *            the position of the application
 	 * @return the tactic "Datatype Induction"
 	 * @since 2.0
+	 * @deprecated use {@link #dtInduction(IPosition)}
 	 */
+	@Deprecated
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DTInduction(),
-				new AbstractManualInference.Input(hyp, position));
+		if (hyp == null) {
+			return dtInduction(position);
+		} else {
+			throw new IllegalArgumentException("Induction is only applicable to the goal");
+		}
+	}
+
+	/**
+	 * Returns the tactic "Datatype Induction".
+	 *
+	 * @return the tactic "Datatype Induction"
+	 * @since 3.6
+	 */
+	public static ITactic dtInduction(IPosition position) {
+		return BasicTactics.reasonerTac(new DTInduction(), new DTInduction.Input(null, position));
 	}
 	
 	/**
