@@ -13,12 +13,11 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.NO_PRED;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeFreshIdents;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeIdentEqualsConstr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,13 +69,9 @@ public class DTInduction extends EmptyInputReasoner implements IVersionedReasone
 	}
 
 	@ProverRule("DATATYPE_INDUCTION")
-	protected Set<Predicate> makeNewHyps(FreeIdentifier ident,
-			IExpressionExtension constr, ParametricType type,
-			FreeIdentifier[] params, QuantifiedPredicate goal, FormulaFactory ff) {
+	protected Set<Predicate> makeNewHyps(ParametricType type, FreeIdentifier[] params, QuantifiedPredicate goal,
+			FormulaFactory ff) {
 		final Set<Predicate> newHyps = new LinkedHashSet<Predicate>();
-		
-		newHyps.add(makeIdentEqualsConstr(ident, constr, type, params, ff));
-		
 		for (FreeIdentifier param : params) {
 			if (param.getType().equals(type)) {
 				newHyps.add(instantiateFirstBound(goal, param, ff));
@@ -99,24 +94,21 @@ public class DTInduction extends EmptyInputReasoner implements IVersionedReasone
 		final ParametricType prmType = (ParametricType) type;
 		final IExpressionExtension ext = prmType.getExprExtension();
 		final IDatatype dt = (IDatatype) ext.getOrigin();
-		return makeAntecedents(seq, decl.getName(), prmType, dt);
+		return makeAntecedents(seq, prmType, dt);
 	}
 
-	private IAntecedent[] makeAntecedents(IProverSequent seq, String name, ParametricType type,
-			IDatatype dt) {
+	private IAntecedent[] makeAntecedents(IProverSequent seq, ParametricType type, IDatatype dt) {
 		final List<IAntecedent> antecedents = new ArrayList<IAntecedent>();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();
 		final ITypeInstantiation inst = dt.getTypeInstantiation(type);
-		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null, type);
 		final QuantifiedPredicate goal = (QuantifiedPredicate) seq.goal();
 		for (IConstructorExtension constr : dt.getConstructors()) {
 			final IConstructorArgument[] arguments = constr.getArguments();
 			final FreeIdentifier[] params = makeFreshIdents(arguments, inst, ff, env);
-			final Set<Predicate> newHyps = makeNewHyps(ident, constr, type, params, goal, ff);
-			final FreeIdentifier[] newIdents = Arrays.copyOf(params, params.length + 1);
-			newIdents[params.length] = ident;
-			antecedents.add(makeAntecedent(instantiateFirstBound(goal, ident, ff), newHyps, newIdents, null));
+			final Set<Predicate> newHyps = makeNewHyps(type, params, goal, ff);
+			final Expression constrExpr = ff.makeExtendedExpression(constr, params, NO_PRED, null, type);
+			antecedents.add(makeAntecedent(instantiateFirstBound(goal, constrExpr, ff), newHyps, params, null));
 		}
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}

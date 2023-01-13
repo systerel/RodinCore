@@ -39,7 +39,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  */
 public class DTReasoner {
 
-	protected static final Predicate[] NO_PRED = new Predicate[0];
+	public static final Predicate[] NO_PRED = new Predicate[0];
 
 	public static boolean isDatatypeType(Type type) {
 		if (!(type instanceof ParametricType)) {

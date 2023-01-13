@@ -56,18 +56,16 @@ public class DTInductionTests extends AbstractReasonerTests {
 
 	@Test
 	public void success() throws Exception {
-		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", "{l=SD}[][][l=cons0] |- l=l1",
-				"{l=SD; p_destr1=ℤ}[][][l=cons1(p_destr1)] |- l=l1",
-				"{l=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l=cons2(p_destr2_0, p_destr2_1)] |- l=l1");
-		assertReasonerSuccess("|- ∀ l⦂SD, l1 · l=l1", "{l=SD}[][][l=cons0] |- ∀ l1 · l=l1",
-				"{l=SD; p_destr1=ℤ}[][][l=cons1(p_destr1)] |- ∀ l1 · l=l1",
-				"{l=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l=cons2(p_destr2_0, p_destr2_1)] |- ∀ l1 · l=l1");
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", "{}[][][] |- cons0=l1",
+				"{p_destr1=ℤ}[][][] |- cons1(p_destr1)=l1",
+				"{p_destr2_0=ℤ; p_destr2_1=ℤ}[][][] |- cons2(p_destr2_0, p_destr2_1)=l1");
+		assertReasonerSuccess("|- ∀ l⦂SD, l1 · l=l1", "{}[][][] |- ∀ l1 · cons0=l1",
+				"{p_destr1=ℤ}[][][] |- ∀ l1 · cons1(p_destr1)=l1",
+				"{p_destr2_0=ℤ; p_destr2_1=ℤ}[][][] |- ∀ l1 · cons2(p_destr2_0, p_destr2_1)=l1");
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1",
-				"{l=Induc(ℤ)}[][][l=ind0] |- l=l1",
-				"{l=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l=ind1(p_ind1_0) ;; p_ind1_0=l1] |- l=l1",
-				"{l=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l=ind2(p_ind2_0, p_ind2_1) ;; "
-						+ "p_ind2_0=l1 ;; p_ind2_1=l1]|- l=l1");
-
+				"{l1=Induc(ℤ)}[][][] |- ind0=l1",
+				"{p_ind1_0=Induc(ℤ)}[][][p_ind1_0=l1] |- ind1(p_ind1_0)=l1",
+				"{p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][p_ind2_0=l1 ;; p_ind2_1=l1]|- ind2(p_ind2_0, p_ind2_1)=l1");
 	}
 
 	@Test
