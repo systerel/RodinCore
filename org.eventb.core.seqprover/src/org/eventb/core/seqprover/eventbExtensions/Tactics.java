@@ -3283,16 +3283,32 @@ public class Tactics {
 	/**
 	 * Returns the list of applicable positions of the tactic "Datatype Distinct
 	 * Case" {@link DTDistinctCase} to the given predicate.
-	 *
-	 * Note that despite the name, this method now only returns correct positions
-	 * for the "Distinct Case" tactic, not for the "Induction" tactic (see
-	 * {@link #dtInducApplicable(Predicate)}).
 	 * 
 	 * @param predicate a predicate
 	 * @return a list of positions (empty if the tactic is not applicable)
 	 * @since 2.0
+	 * @deprecated use either {@link #dtDCGetPositions(Predicate)} or
+	 *             {@link #dtInducApplicable(Predicate)}
 	 */
+	@Deprecated
 	public static List<IPosition> dtDCInducGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(FreeIdentifier identifier) {
+				return isDatatypeType(identifier.getType());
+			}
+		});
+	}
+
+	/**
+	 * Returns the list of applicable positions of the tactic "Datatype Distinct
+	 * Case" {@link DTDistinctCase} to the given predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of positions (empty if the tactic is not applicable)
+	 * @since 3.6
+	 */
+	public static List<IPosition> dtDCGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(FreeIdentifier identifier) {

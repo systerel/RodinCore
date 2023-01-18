@@ -56,7 +56,7 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 
 	@Override
 	protected List<IPosition> getPositions(Predicate predicate) {
-		return Tactics.dtDCInducGetPositions(predicate);
+		return Tactics.dtDCGetPositions(predicate);
 	}
 
 	@Override

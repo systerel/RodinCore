@@ -50,7 +50,7 @@ public class DTDistinctCase extends AbstractHypGoalTacticProvider {
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(IProofTreeNode node, Predicate hyp,
 			String globalInput, Predicate predicate) {
-		return adaptPositionsToApplications(hyp, predicate, Tactics::dtDCInducGetPositions, DCApplication::new);
+		return adaptPositionsToApplications(hyp, predicate, Tactics::dtDCGetPositions, DCApplication::new);
 	}
 
 }
