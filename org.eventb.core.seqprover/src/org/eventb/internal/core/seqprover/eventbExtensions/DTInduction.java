@@ -14,6 +14,8 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeConj;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.NO_PRED;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
@@ -43,7 +45,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IVersionedReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.eventbExtensions.utils.FormulaBuilder;
@@ -73,7 +74,25 @@ public class DTInduction extends PredicatePositionReasoner implements IVersioned
 		return DISPLAY_NAME;
 	}
 
-	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred, IPosition position) {
+	@Override
+	public int getVersion() {
+		return VERSION;
+	}
+
+	@ProverRule("DATATYPE_INDUCTION")
+	@Override
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm) {
+		var input = (Input) reasonerInput;
+		IAntecedent[] antecedents = getAntecedents(seq, input.getPosition());
+		if (antecedents == null) {
+			return reasonerFailure(this, input,
+					"Inference " + getReasonerID() + " is not applicable for " + seq.goal());
+		}
+		// Generate the successful reasoner output
+		return makeProofRule(this, input, seq.goal(), DISPLAY_NAME, antecedents);
+	}
+
+	protected IAntecedent[] getAntecedents(IProverSequent seq, IPosition position) {
 		Predicate goal = seq.goal();
 		if (goal.getTag() != FORALL || !position.getParent().isRoot()) {
 			return null;
@@ -126,28 +145,10 @@ public class DTInduction extends PredicatePositionReasoner implements IVersioned
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 
-	@ProverRule("DATATYPE_INDUCTION")
-	@Override
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm) {
-		var input = (Input) reasonerInput;
-		IAntecedent[] antecedents = getAntecedents(seq, null, input.getPosition());
-		if (antecedents == null)
-			return ProverFactory.reasonerFailure(this, input,
-					"Inference " + getReasonerID() + " is not applicable for " + seq.goal());
-
-		// Generate the successful reasoner output
-		return ProverFactory.makeProofRule(this, input, seq.goal(), DISPLAY_NAME, antecedents);
-	}
-
 	private Predicate instantiateBound(QuantifiedPredicate pred, int index, Expression expr, FormulaFactory ff) {
 		var replacements = new Expression[pred.getBoundIdentDecls().length];
 		replacements[index] = expr;
 		return pred.instantiate(replacements, ff);
-	}
-
-	@Override
-	public int getVersion() {
-		return VERSION;
 	}
 
 }
