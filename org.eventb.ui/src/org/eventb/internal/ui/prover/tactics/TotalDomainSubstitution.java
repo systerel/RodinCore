@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -27,27 +26,23 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
-import org.eventb.ui.prover.TacticProviderUtils;
 
 public class TotalDomainSubstitution implements ITacticProvider {
 
-	private static class TotalDomApplication implements IPositionApplication {
+	private static class TotalDomApplication extends DefaultPositionApplication {
 
 		private static final String HYP_TACTIC_ID = "org.eventb.contributer.seqprover.fr1866809.totalDomHyp";
 		private static final String GOAL_TACTIC_ID = "org.eventb.contributer.seqprover.fr1866809.totalDomGoal";
 
-		private final Predicate hyp;
-		private final IPosition position;
 		private final Expression substitute;
 		private final String hyperlinkLabel;
 
 		public TotalDomApplication(Predicate hyp, IPosition position,
 				Expression substitute, String hyperlinkLabel) {
-			this.hyp = hyp;
-			this.position = position;
+			super(hyp, position);
 			this.substitute = substitute;
 			this.hyperlinkLabel = hyperlinkLabel;
 		}
@@ -55,13 +50,6 @@ public class TotalDomainSubstitution implements ITacticProvider {
 		@Override
 		public String getHyperlinkLabel() {
 			return hyperlinkLabel;
-		}
-
-		@Override
-		public Point getHyperlinkBounds(String actualString,
-				Predicate parsedPredicate) {
-			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
-					actualString, position);
 		}
 
 		@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2022 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,10 @@ public class TacticProviderUtils {
 	 * A default method to get an operator position. Intended to be used by
 	 * implementors of
 	 * {@link IPositionApplication#getHyperlinkBounds(String, Predicate)}.
+	 *
+	 * Most of the times, it is easier to extend {@link DefaultPositionApplication}
+	 * rather than implementing the interface and using this method to implement
+	 * getHyperlinkBounds().
 	 * 
 	 * @param predicate
 	 *            the predicate where a position is desired

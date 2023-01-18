@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
@@ -31,10 +30,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
-import org.eventb.ui.prover.TacticProviderUtils;
 
 /**
  * Provider for the LocalEqRewrite tactic.
@@ -47,19 +45,16 @@ import org.eventb.ui.prover.TacticProviderUtils;
  */
 public class LocalEqRewriteProvider implements ITacticProvider {
 
-	private static class LocalEqApplication implements IPositionApplication {
+	private static class LocalEqApplication extends DefaultPositionApplication {
 
 		private static final String TACTIC_ID = "org.eventb.ui.locEq";
 
-		private final Predicate hyp;
-		private final IPosition position;
 		private final Predicate equality;
 		private final String hyperlinkLabel;
 
 		public LocalEqApplication(Predicate hyp, IPosition position,
 				Predicate equality, String hyperlinkLabel) {
-			this.hyp = hyp;
-			this.position = position;
+			super(hyp, position);
 			this.equality = equality;
 			this.hyperlinkLabel = hyperlinkLabel;
 		}
@@ -67,13 +62,6 @@ public class LocalEqRewriteProvider implements ITacticProvider {
 		@Override
 		public String getHyperlinkLabel() {
 			return hyperlinkLabel;
-		}
-
-		@Override
-		public Point getHyperlinkBounds(String actualString,
-				Predicate parsedPredicate) {
-			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
-					actualString, position);
 		}
 
 		@Override
