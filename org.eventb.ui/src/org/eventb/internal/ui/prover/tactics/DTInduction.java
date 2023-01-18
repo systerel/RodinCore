@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.eventb.core.seqprover.eventbExtensions.Tactics.dtInducApplicable;
+import static org.eventb.ui.prover.TacticProviderUtils.adaptPositionsToApplications;
 
 import java.util.List;
 
@@ -35,15 +33,13 @@ public class DTInduction implements ITacticProvider {
 
 	private static class DCApplication extends DefaultPositionApplication {
 
-		public DCApplication() {
-			// The induction is applied to the whole goal, but we prefer to highlight the
-			// first identifier in the forall in the UI
-			super(null, IPosition.ROOT.getFirstChild());
+		public DCApplication(IPosition position) {
+			super(null, position);
 		}
 
 		@Override
 		public ITactic getTactic(String[] inputs, String gInput) {
-			return Tactics.dtInduction();
+			return Tactics.dtInduction(position);
 		}
 
 		@Override
@@ -52,18 +48,11 @@ public class DTInduction implements ITacticProvider {
 		}
 	}
 
-	private static final List<ITacticApplication> NO_APPLICATIONS = emptyList();
-
-	private static final List<ITacticApplication> GOAL_APPLICATION = singletonList(new DCApplication());
-
 	@Override
 	public List<ITacticApplication> getPossibleApplications(IProofTreeNode node, Predicate hyp, String globalInput) {
 		// Induction is only applicable on goal
-		if (hyp == null && dtInducApplicable(node.getSequent().goal())) {
-			return GOAL_APPLICATION;
-		} else {
-			return NO_APPLICATIONS;
-		}
+		return adaptPositionsToApplications(null, node.getSequent().goal(), Tactics::dtInducGetPositions,
+				(pred, pos) -> new DCApplication(pos));
 	}
 
 }

@@ -22,6 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -3288,7 +3289,7 @@ public class Tactics {
 	 * @return a list of positions (empty if the tactic is not applicable)
 	 * @since 2.0
 	 * @deprecated use either {@link #dtDCGetPositions(Predicate)} or
-	 *             {@link #dtInducApplicable(Predicate)}
+	 *             {@link #dtInducGetPositions(Predicate)}
 	 */
 	@Deprecated
 	public static List<IPosition> dtDCInducGetPositions(Predicate predicate) {
@@ -3325,9 +3326,21 @@ public class Tactics {
 	 * @return whether the tactic is applicable
 	 * @since 3.6
 	 */
-	public static boolean dtInducApplicable(Predicate predicate) {
-		return predicate.getTag() == FORALL
-				&& isDatatypeType(((QuantifiedPredicate) predicate).getBoundIdentDecls()[0].getType());
+	public static List<IPosition> dtInducGetPositions(Predicate predicate) {
+		if (predicate.getTag() != FORALL) {
+			return NO_POSITIONS;
+		}
+		List<IPosition> result = new ArrayList<>();
+		IPosition current = IPosition.ROOT.getFirstChild();
+		Formula<?> child = predicate.getSubFormula(current);
+		while (child.getTag() == BOUND_IDENT_DECL) {
+			if (isDatatypeType(((BoundIdentDecl) child).getType())) {
+				result.add(current);
+			}
+			current = current.getNextSibling();
+			child = predicate.getSubFormula(current);
+		}
+		return result;
 	}
 
 	/**
@@ -3358,14 +3371,14 @@ public class Tactics {
 	 *            the position of the application
 	 * @return the tactic "Datatype Induction"
 	 * @since 2.0
-	 * @deprecated use {@link #dtInduction()}
+	 * @deprecated use {@link #dtInduction(IPosition)}
 	 */
 	@Deprecated
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
-		if (hyp == null && position.isRoot()) {
-			return dtInduction();
+		if (hyp == null) {
+			return dtInduction(position);
 		} else {
-			throw new IllegalArgumentException("Induction is only applicable to the goal at the root position");
+			throw new IllegalArgumentException("Induction is only applicable to the goal");
 		}
 	}
 
@@ -3375,8 +3388,8 @@ public class Tactics {
 	 * @return the tactic "Datatype Induction"
 	 * @since 3.6
 	 */
-	public static ITactic dtInduction() {
-		return BasicTactics.reasonerTac(new DTInduction(), new EmptyInput());
+	public static ITactic dtInduction(IPosition position) {
+		return BasicTactics.reasonerTac(new DTInduction(), new DTInduction.Input(null, position));
 	}
 	
 	/**
