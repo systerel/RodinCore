@@ -56,7 +56,7 @@ import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

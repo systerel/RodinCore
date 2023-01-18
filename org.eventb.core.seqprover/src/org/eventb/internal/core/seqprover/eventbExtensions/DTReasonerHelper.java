@@ -37,7 +37,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * @author Nicolas Beauger
  * 
  */
-public class DTReasoner {
+public class DTReasonerHelper {
 
 	public static final Predicate[] NO_PRED = new Predicate[0];
 

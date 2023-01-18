@@ -14,9 +14,9 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.NO_PRED;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeFreshIdents;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.NO_PRED;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.makeFreshIdents;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

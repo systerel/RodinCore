@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.isDatatypeType;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeFreshIdents;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeIdentEqualsConstr;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.makeParamSets;
-import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner.predIsExtSetMembership;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.makeFreshIdents;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.makeIdentEqualsConstr;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.makeParamSets;
+import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.predIsExtSetMembership;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
