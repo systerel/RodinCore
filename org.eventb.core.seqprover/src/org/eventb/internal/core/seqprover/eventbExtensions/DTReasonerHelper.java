@@ -100,7 +100,7 @@ public class DTReasonerHelper {
 		return idents;
 	}
 
-	private static String makeArgName(IConstructorArgument arg, int i) {
+	public static String makeArgName(IConstructorArgument arg, int i) {
 		final String prefix = "p_";
 		final String suffix;
 		if (arg.isDestructor()) {
