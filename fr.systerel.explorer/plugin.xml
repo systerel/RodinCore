@@ -665,6 +665,10 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.ui.file.refresh"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -705,6 +709,10 @@
                </reference>
             </and>
          </activeWhen>
+      </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.RefreshHandler"
+            commandId="org.eclipse.ui.file.refresh">
       </handler>
    </extension>
    <extension

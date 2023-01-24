@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -405,7 +405,7 @@ public class ModelController implements IElementChangedListener {
 	 * @param element
 	 *            The element to refresh
 	 */
-	private void refreshModel(IRodinElement element) {
+	public void refreshModel(IRodinElement element) {
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject());
 			if (project != null) {
