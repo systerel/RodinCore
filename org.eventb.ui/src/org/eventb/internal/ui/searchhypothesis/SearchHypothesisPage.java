@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,9 +88,14 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	 */
 	public SearchHypothesisPage(IUserSupport userSupport, ProverUI proverUI) {
 		super(userSupport, proverUI);
-		USM.addChangeListener(this);
 		store = InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID);
 		store.addPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void dispose() {
+		store.removePreferenceChangeListener(this);
+		super.dispose();
 	}
 
 	@Override
