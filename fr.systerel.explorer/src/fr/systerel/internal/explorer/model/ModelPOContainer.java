@@ -13,9 +13,9 @@ package fr.systerel.internal.explorer.model;
 import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
@@ -38,16 +38,26 @@ public abstract class ModelPOContainer implements IModelElement {
 
 	protected IModelElement parent;
 
-	protected HashMap<IPOSequent, ModelProofObligation> proofObligations = new HashMap<IPOSequent, ModelProofObligation>();
+	protected Map<IPOSequent, ModelProofObligation> proofObligations;
+
+	/**
+	 * Initialize the proofObligations attribute.
+	 *
+	 * Some sub-classes will need to use a ConcurrentHashMap as values may be
+	 * added while it is being used. Other sub-classes do not modify the map
+	 * after creating it, so they can use a simple HashMap. Methods of this
+	 * class only access the proof obligations, without modifying the map.
+	 *
+	 * @param proofObligations adequate implementation
+	 */
+	protected ModelPOContainer(Map<IPOSequent, ModelProofObligation> proofObligations) {
+		this.proofObligations = proofObligations;
+	}
 
 	public ModelProofObligation[] getProofObligations() {
 		ModelProofObligation[] proofs = new ModelProofObligation[proofObligations
 				.values().size()];
 		return proofObligations.values().toArray(proofs);
-	}
-
-	public void addProofObligation(ModelProofObligation po) {
-		proofObligations.put(po.getIPOSequent(), po);
 	}
 
 	public ModelProofObligation getProofObligation(IPSStatus status) {

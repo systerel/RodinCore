@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.IPSStatus;
@@ -23,12 +25,17 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  */
 public class ModelAxiom extends ModelPOContainer {
 	public ModelAxiom(IAxiom axiom, IModelElement parent){
+		// proofObligations may be modified concurrently by addProofObligation()
+		super(new ConcurrentHashMap<>());
 		internalAxiom = axiom;
 		this.parent = parent;
 	}
 
 	private IAxiom internalAxiom;
 	
+	public void addProofObligation(ModelProofObligation po) {
+		proofObligations.put(po.getIPOSequent(), po);
+	}
 	
 	public IAxiom getInternalAxiom() {
 		return internalAxiom;

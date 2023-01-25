@@ -11,11 +11,14 @@
 package fr.systerel.internal.explorer.model;
 
 import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IContextRoot;
@@ -92,6 +95,7 @@ public class ModelMachine extends ModelPOContainer {
 	 *            The MachineRoot that this ModelMachine is based on.
 	 */
 	public ModelMachine(IMachineRoot root){
+		super(emptyMap());
 		machineRoot = root;
 		variable_node = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
 		invariant_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
@@ -170,8 +174,13 @@ public class ModelMachine extends ModelPOContainer {
 	public void processPORoot() {
 		if (poNeedsProcessing) {
 			try {
-				//clear old POs
-				proofObligations.clear();
+				/*
+				 * We put the new proof obligations in a new map and set the
+				 * proofObligations attribute at the end. That way, if another
+				 * thread is iterating on the proof obligations at the same
+				 * time, it will not get partial content.
+				 */
+				Map<IPOSequent, ModelProofObligation> newPOs = new HashMap<IPOSequent, ModelProofObligation>();
 				IPORoot root = machineRoot.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
@@ -180,7 +189,7 @@ public class ModelMachine extends ModelPOContainer {
 						ModelProofObligation po = new ModelProofObligation(sequent, pos);
 						pos++;
 						po.setMachine(this);
-						proofObligations.put(sequent, po);
+						newPOs.put(sequent, po);
 						IPOSource[] sources = sequent.getSources();
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
@@ -191,6 +200,7 @@ public class ModelMachine extends ModelPOContainer {
 						}
 					}
 				}
+				proofObligations = unmodifiableMap(newPOs);
 			} catch (RodinDBException e) {
 				log(e, "when processing proof obligations of " + machineRoot);
 			}
