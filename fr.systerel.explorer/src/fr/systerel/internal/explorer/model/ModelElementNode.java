@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
+
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -18,7 +20,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -125,7 +126,7 @@ public class ModelElementNode implements IModelElement, IElementNode{
 				try {
 					return parentRoot.getChildrenOfType(type);
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when accessing children of type " +type +" of " +parentRoot);
+					log(e, "when accessing children of type " + type + " of " + parentRoot);
 				}
 			}
 			

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
-import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -439,7 +438,7 @@ public class ExplorerUtils {
 		if (message == null) {
 			message = "Unknown context"; //$NON-NLS-1$
 		}
-		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+		IStatus status = new Status(IStatus.ERROR, ExplorerPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, exc);
 		ExplorerPlugin.getDefault().getLog().log(status);
 	}

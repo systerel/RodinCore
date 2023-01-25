@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
+
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +23,6 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -108,7 +109,7 @@ public abstract class ModelPOContainer implements IModelElement {
 						}
 					}
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when accessing IPSStatus " + po.getIPSStatus());
+					log(e, "when accessing IPSStatus " + po.getIPSStatus());
 				}
 				
 			}

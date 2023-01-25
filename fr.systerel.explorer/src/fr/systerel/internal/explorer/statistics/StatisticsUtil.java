@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.statistics;
+
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import org.eclipse.core.resources.IProject;
 import org.eventb.core.IAxiom;
@@ -22,7 +24,6 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -146,7 +147,7 @@ public class StatisticsUtil {
 			try {
 				return ((ILabeledElement) internal_parent).getLabel();
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting label for " +internal_parent);
+				log(e, "when getting label for " + internal_parent);
 			}
 		}
 		if (internal_parent instanceof IEventBRoot) {

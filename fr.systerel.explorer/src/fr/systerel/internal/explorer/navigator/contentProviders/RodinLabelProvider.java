@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.contentProviders;
+
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -29,7 +31,6 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -128,13 +129,13 @@ public class RodinLabelProvider extends DecoratingLabelProvider {
 				try {
 					return ((ILabeledElement) obj).getLabel();
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting label for " + obj);
+					log(e, "when getting label for " + obj);
 				}
 			} else if (obj instanceof IIdentifierElement) {
 				try {
 					return ((IIdentifierElement) obj).getIdentifierString();
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when getting identifier for " + obj);
+					log(e, "when getting identifier for " + obj);
 				}
 			} else if (obj instanceof IRodinElement) {
 				return ((IRodinElement) obj).getElementName();

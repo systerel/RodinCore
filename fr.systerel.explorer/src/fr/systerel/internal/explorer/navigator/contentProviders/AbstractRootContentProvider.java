@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,12 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IEventBRoot;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -50,8 +51,7 @@ public abstract class AbstractRootContentProvider implements
 				try {
 					return getRootChildren(proj);
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when accessing " + rootType.getName()
-							+ " roots of " + proj);
+					log(e, "when accessing " + rootType.getName() + " roots of " + proj);
 				}
 			}
 		}

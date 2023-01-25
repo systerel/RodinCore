@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
+
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +27,6 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IWitness;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -151,7 +152,7 @@ public class ModelContext extends ModelPOContainer {
 				addAxiom(axm);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when accessing axioms and theorems of "+contextRoot);
+			log(e, "when accessing axioms and theorems of " + contextRoot);
 		}
 	}
 	
@@ -187,7 +188,7 @@ public class ModelContext extends ModelPOContainer {
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof obligations of " +contextRoot);
+				log(e, "when processing proof obligations of " + contextRoot);
 			}
 			poNeedsProcessing = false;
 		}
@@ -213,7 +214,7 @@ public class ModelContext extends ModelPOContainer {
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof statuses of " +contextRoot);
+				log(e, "when processing proof statuses of " + contextRoot);
 			}
 			psNeedsProcessing = false;
 		}

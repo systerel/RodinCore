@@ -12,6 +12,8 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +31,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
@@ -111,7 +112,7 @@ public class ModelController implements IElementChangedListener {
 				prj.calculateMachineBranches();
 				prj.needsProcessing = false;
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing project " + project);
+				log(e, "when processing project " + project);
 			}
 		}
 		return prj;

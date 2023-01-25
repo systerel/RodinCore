@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.internal.explorer.model;
+
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +28,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -93,7 +94,7 @@ public class ModelProject implements IModelElement {
 			}
 			
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when processing machine " +machine);
+			log(e, "when processing machine " + machine);
 		}
 		
 	}
@@ -160,7 +161,7 @@ public class ModelProject implements IModelElement {
 				processExtends(ext, ctx);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when processing context " +context);
+			log(e, "when processing context " + context);
 		}
 		
 	}
@@ -552,7 +553,7 @@ public class ModelProject implements IModelElement {
 					return ExplorerUtils.getContextRootChildren(internalProject);
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting machines or contexts of " +internalProject);
+				log(e, "when getting machines or contexts of " + internalProject);
 			}
 		} else {
 			if (type == IMachineRoot.ELEMENT_TYPE) {
