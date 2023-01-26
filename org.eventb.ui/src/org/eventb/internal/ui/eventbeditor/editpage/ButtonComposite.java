@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,8 +90,7 @@ public class ButtonComposite implements ILabelProviderListener, DisposeListener 
 		tmp.setLayoutData(gridData);
 
 		foldingHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
-		setHyperlinkImage(foldingHyperlink, EventBImage
-				.getImage(IEventBSharedImages.IMG_COLLAPSED));
+		foldingHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		foldingHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
@@ -106,11 +105,9 @@ public class ButtonComposite implements ILabelProviderListener, DisposeListener 
 			@Override
 			public void mouseEnter(MouseEvent e) {
 				if (elementComp.isExpanded()) {
-					setHyperlinkImage(foldingHyperlink, EventBImage
-							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
+					foldingHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
 				} else {
-					setHyperlinkImage(foldingHyperlink, EventBImage
-							.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
+					foldingHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
 				}
 			}
 
@@ -208,11 +205,9 @@ public class ButtonComposite implements ILabelProviderListener, DisposeListener 
 
 	public void updateExpandStatus() {
 		if (elementComp.isExpanded()) {
-			setHyperlinkImage(foldingHyperlink, EventBImage
-					.getImage(IEventBSharedImages.IMG_EXPANDED));
+			foldingHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED));
 		} else {
-			setHyperlinkImage(foldingHyperlink, EventBImage
-					.getImage(IEventBSharedImages.IMG_COLLAPSED));
+			foldingHyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
 	}
 

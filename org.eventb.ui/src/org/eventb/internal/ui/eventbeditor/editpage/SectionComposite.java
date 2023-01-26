@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -222,8 +222,7 @@ public class SectionComposite implements ISectionComposite {
 		spacer.setLayoutData(gridData);
 
 		folding = toolkit.createImageHyperlink(headerComp, SWT.TOP);
-		setHyperlinkImage(folding,
-				EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
+		folding.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
 
 		folding.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -238,11 +237,9 @@ public class SectionComposite implements ISectionComposite {
 			@Override
 			public void mouseEnter(final MouseEvent e) {
 				if (isExpanded()) {
-					setHyperlinkImage(folding, EventBImage
-							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
+					folding.setImage(EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
 				} else {
-					setHyperlinkImage(folding, EventBImage
-							.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
+					folding.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
 				}
 			}
 
@@ -355,11 +352,9 @@ public class SectionComposite implements ISectionComposite {
 
 	void updateExpandStatus() {
 		if (isExpanded()) {
-			setHyperlinkImage(folding,
-					EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED));
+			folding.setImage(EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED));
 		} else {
-			setHyperlinkImage(folding,
-					EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
+			folding.setImage(EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
 	}
 
