@@ -11,12 +11,15 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L0;
+import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L1;
+
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.He;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level;
 import org.junit.Test;
 
 /**
@@ -26,9 +29,23 @@ import org.junit.Test;
  */
 public class HeTests extends AbstractReasonerTests {
 
+	private final Level level;
+
+	protected HeTests(Level level) {
+		this.level = level;
+	}
+
+	public HeTests() {
+		this.level = L0;
+	}
+
 	@Override
 	public String getReasonerID() {
-		return He.REASONER_ID;
+		if (level.from(L1)) {
+			return "org.eventb.core.seqprover.heL1";
+		} else {
+			return "org.eventb.core.seqprover.he";
+		}
 	}
 
 	@Test
@@ -39,6 +56,18 @@ public class HeTests extends AbstractReasonerTests {
 				"{}[][0+1=2][1=0+1 ;; 1=2] |- 2+1=3");
 		assertReasonerSuccess("2 + 1 = 0 + 1 + 2 ;; 0+1 = 0+1+2 |- 2+0+1 = 0+1+2+3 ", makeInput("2 + 1 = 0 + 1 + 2"),
 				"{}[][0+1=0+1+2][2+1=0+1+2 ;; 0+1=2+1] |- 2+0+1 = 2+1+3");
+		// FR #371
+		if (level.from(L1)) {
+			// Hypothesis is hidden when rewriting an identifier
+			assertReasonerSuccess("y + 1 = x |- x + 1 = 1 + y + 1", makeInput("y + 1 = x"),
+					"{}[y + 1 = x][][] |- y + 1 + 1 = 1 + y + 1");
+		} else {
+			assertReasonerSuccess("y + 1 = x |- x + 1 = 1 + y + 1", makeInput("y + 1 = x"),
+					"{}[][][y + 1 = x] |- y + 1 + 1 = 1 + y + 1");
+		}
+		// Behavior is not modified when rewriting a complex expression
+		assertReasonerSuccess("x = y + 1 |- x + 1 = 1 + y + 1", makeInput("x = y + 1"),
+				"{}[][][x = y + 1] |- x + 1 = 1 + x");
 	}
 
 	@Test

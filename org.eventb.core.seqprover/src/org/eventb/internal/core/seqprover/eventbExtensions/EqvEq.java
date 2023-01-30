@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Université de Lorraine - add possibility to hide hyp. after rewrite
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -14,6 +15,7 @@ import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
 
 import java.util.ArrayList;
@@ -88,6 +90,16 @@ public abstract class EqvEq<T extends Formula<T>> extends HypothesisReasoner {
 
 	protected abstract Rewriter getRewriter(Predicate hyp, T from, T to);
 
+	/**
+	 * Determines if the hypothesis should be hidden.
+	 *
+	 * @param hyp the equivalence/equality predicate in hypothesis
+	 * @return {@code true} to hide it, {@code false} to do nothing
+	 */
+	protected boolean hidePredicate(Predicate hyp) {
+		return false;
+	}
+
 	@Override
 	protected boolean isGoalDependent(IProverSequent sequent, Predicate pred) {
 		return goalDependant;
@@ -108,6 +120,9 @@ public abstract class EqvEq<T extends Formula<T>> extends HypothesisReasoner {
 		final Rewriter rewriter = getRewriter(hypEq, getFrom(hypEq),
 				getTo(hypEq));
 		final List<IHypAction> actions = rewriteHypotheses(sequent, rewriter);
+		if (hidePredicate(hypEq)) {
+			actions.add(makeHideHypAction(singleton(hypEq)));
+		}
 		final Predicate newGoal = rewriteGoal(sequent, rewriter);
 		goalDependant = newGoal != null;
 		if (actions.isEmpty() && !goalDependant) {

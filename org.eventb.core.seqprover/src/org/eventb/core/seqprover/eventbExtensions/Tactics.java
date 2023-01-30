@@ -127,7 +127,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
-import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvLR;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvRL;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
@@ -155,7 +155,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
-import org.eventb.internal.core.seqprover.eventbExtensions.He;
+import org.eventb.internal.core.seqprover.eventbExtensions.HeL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
@@ -719,7 +719,7 @@ public class Tactics {
 	}
 
 	public static ITactic eqE(Predicate eqHyp) {
-		return BasicTactics.reasonerTac(new Eq(), new HypothesisReasoner.Input(
+		return BasicTactics.reasonerTac(new EqL1(), new HypothesisReasoner.Input(
 				eqHyp));
 	}
 
@@ -921,7 +921,7 @@ public class Tactics {
 	}
 
 	public static ITactic he(Predicate hyp) {
-		return BasicTactics.reasonerTac(new He(), new HypothesisReasoner.Input(
+		return BasicTactics.reasonerTac(new HeL1(), new HypothesisReasoner.Input(
 				hyp));
 	}
 
