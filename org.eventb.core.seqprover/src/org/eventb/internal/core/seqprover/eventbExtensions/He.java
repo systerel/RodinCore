@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L0;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -23,6 +25,14 @@ public class He extends EqHe {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".he";
 	private static final int REASONER_VERSION = 1;
+
+	public He(Level level) {
+		super(level);
+	}
+
+	public He() {
+		super(L0);
+	}
 
 	@Override
 	public String getReasonerID() {

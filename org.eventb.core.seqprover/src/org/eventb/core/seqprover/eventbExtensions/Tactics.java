@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2022 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,7 +127,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
-import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqHe;
+import org.eventb.internal.core.seqprover.eventbExtensions.EqL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvLR;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvRL;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
@@ -156,6 +157,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
+import org.eventb.internal.core.seqprover.eventbExtensions.HeL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
@@ -354,8 +356,26 @@ public class Tactics {
 		};
 	}
 	
-	// TODO : Find a better way to do this. Maybe have a combined reasoner.
 	public static ITactic abstrExprThenEq(final String expression) {
+		return abstrExprThenEq(expression, EqHe.Level.L1);
+	}
+
+	/**
+	 * Old version of {@link #abstrExprThenEq(String)} that uses the level 0 of Eq.
+	 *
+	 * This should not be used in new code. It is only used for backwards
+	 * compatibility in old tests.
+	 *
+	 * @param expression expression on which the tactics are applied
+	 * @return tactics ae then eq
+	 * @since 3.6
+	 */
+	public static ITactic abstrExprThenEqL0(final String expression) {
+		return abstrExprThenEq(expression, EqHe.Level.L0);
+	}
+
+	// TODO : Find a better way to do this. Maybe have a combined reasoner.
+	private static ITactic abstrExprThenEq(final String expression, final EqHe.Level level) {
 		
 		return new ITactic() {
 
@@ -383,7 +403,7 @@ public class Tactics {
 				// Get the node where Eq should be applied
 				IProofTreeNode node = pt.getChildNodes()[antecedents.length - 1];
 				// apply Eq
-				result = he(eqHyp).apply(node, pm);
+				result = he(eqHyp, level).apply(node, pm);
 				
 				// Check if it was successful
 				if (result != null) {
@@ -719,7 +739,7 @@ public class Tactics {
 	}
 
 	public static ITactic eqE(Predicate eqHyp) {
-		return BasicTactics.reasonerTac(new Eq(), new HypothesisReasoner.Input(
+		return BasicTactics.reasonerTac(new EqL1(), new HypothesisReasoner.Input(
 				eqHyp));
 	}
 
@@ -921,7 +941,13 @@ public class Tactics {
 	}
 
 	public static ITactic he(Predicate hyp) {
-		return BasicTactics.reasonerTac(new He(), new HypothesisReasoner.Input(
+		return BasicTactics.reasonerTac(new HeL1(), new HypothesisReasoner.Input(
+				hyp));
+	}
+
+	// Only used for backwards compatibility in internal methods needing He level 0
+	private static ITactic he(Predicate hyp, EqHe.Level level) {
+		return BasicTactics.reasonerTac(new He(level), new HypothesisReasoner.Input(
 				hyp));
 	}
 
