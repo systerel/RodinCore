@@ -13,6 +13,7 @@ package fr.systerel.internal.explorer.model;
 import static fr.systerel.internal.explorer.navigator.ExplorerUtils.log;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,19 @@ public abstract class ModelPOContainer implements IModelElement {
 	protected IModelElement parent;
 
 	protected Map<IPOSequent, ModelProofObligation> proofObligations;
+
+	/**
+	 * Default constructor for backward compatibility.
+	 *
+	 * @deprecated This initializes proofObligations with a HashMap, which may
+	 * have race conditions. Sub-classes should use
+	 * {@link #ModelPOContainer(Map)} to initialize the proofObligations
+	 * attribute with a map implementation well suited for their usage.
+	 */
+	@Deprecated
+	protected ModelPOContainer() {
+		this.proofObligations = new HashMap<>();
+	}
 
 	/**
 	 * Initialize the proofObligations attribute.
