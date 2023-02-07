@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,7 @@ public class EventBKeyboardLaTeXJumpingTestCase extends AbstractKeyboardJumpingT
 	 */
 	@Test
 	public void testMarkActions() {
-		testJumping("bm \\meqcl[{tp}]", new int [] { 4, 9 } , new String[] { "bc", " " },
-					"bm \u2254 cl[{tp}]");
+		testJumping("bm \\meq cl[{tp}]", 4, "bc", "bm \u2254 cl[{tp}]");
 	}
 
 	/**

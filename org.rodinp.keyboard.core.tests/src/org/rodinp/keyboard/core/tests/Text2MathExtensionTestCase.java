@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,8 @@ public class Text2MathExtensionTestCase extends AbstractText2EventBMathTestCase 
 		testTranslation("CaretOnWord", "x alpha p", "x alpha p", 4);
 		// On the last letter of the word
 		testTranslation("CaretOnWord", "x alpha p", "x alpha p", 7);
+		// For math symbols: translate immediately
+		testTranslation("CaretOnWord", "x ÷ y", "x / y", 3);
 	}
 
 	@Test
