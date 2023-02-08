@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,15 +57,18 @@ public class RodinModifyListener implements ModifyListener {
 		else if (widget instanceof StyledText)
 			((StyledText) widget).removeModifyListener(this);
 		
-		// Translate the content of the widget using the list of translators.
-		for (IRodinKeyboardTranslator translator : translators) {
-			translator.translate(widget);
+		try {
+			// Translate the content of the widget using the list of translators.
+			for (IRodinKeyboardTranslator translator : translators) {
+				translator.translate(widget);
+			}
+		} finally {
+			 // Re-enable the listener, even if an exception was thrown.
+			if (widget instanceof Text)
+				((Text) widget).addModifyListener(this);
+			else if (widget instanceof StyledText)
+				((StyledText) widget).addModifyListener(this);
 		}
-		 // Re-enable the listener.
-		if (widget instanceof Text)
-			((Text) widget).addModifyListener(this);
-		else if (widget instanceof StyledText)
-			((StyledText) widget).addModifyListener(this);
 	}
 
 	/**

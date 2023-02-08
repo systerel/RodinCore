@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class Text2MathTranslator {
 				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
 					int index = str.indexOf(test);
-					if (index != -1 && !caretOnWord(str, caretOffset, test, index)) {
+					if (index != -1) {
 						return translate(str.substring(0, index), caretOffset)
 								+ symbol.getTranslation()
 								+ translate(str.substring(index
@@ -85,20 +85,6 @@ public class Text2MathTranslator {
 				}
 			}
 		}
-
-		// for (int i = 0; i < textCombo.length; i++) {
-		// String test = " " + textCombo[i] + " ";
-		// int index = (" " + str + " ").indexOf(test);
-		// if (index == 0) {
-		// return textComboTranslation[i]
-		// + translate(str.substring(textCombo[i].length()));
-		// } else if (index != -1) {
-		// return translate(str.substring(0, index))
-		// + textComboTranslation[i]
-		// + translate(str
-		// .substring(index + textCombo[i].length()));
-		// }
-		// }
 
 		return str;
 	}
