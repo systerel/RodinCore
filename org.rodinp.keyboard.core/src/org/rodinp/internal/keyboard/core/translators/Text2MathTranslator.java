@@ -86,20 +86,6 @@ public class Text2MathTranslator {
 			}
 		}
 
-		// for (int i = 0; i < textCombo.length; i++) {
-		// String test = " " + textCombo[i] + " ";
-		// int index = (" " + str + " ").indexOf(test);
-		// if (index == 0) {
-		// return textComboTranslation[i]
-		// + translate(str.substring(textCombo[i].length()));
-		// } else if (index != -1) {
-		// return translate(str.substring(0, index))
-		// + textComboTranslation[i]
-		// + translate(str
-		// .substring(index + textCombo[i].length()));
-		// }
-		// }
-
 		return str;
 	}
 
