@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.ui.prover;
 
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
@@ -66,6 +67,16 @@ public class YellowBoxMaker extends ControlMaker {
 			} else {
 				FormToolkit.ensureVisible(owner);
 				owner.showSelection();
+				// Refresh scrollbars if in scrolled composite
+				var parent = owner.getParent();
+				while (parent != null) {
+					var grandparent = parent.getParent();
+					if (grandparent instanceof ScrolledComposite) {
+						((ScrolledComposite) grandparent).setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+						break;
+					}
+					parent = grandparent;
+				}
 			}
 		}
 	}
