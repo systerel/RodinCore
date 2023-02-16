@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,22 +98,40 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	@Override
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
 			final String comment) throws CoreException {
+		final IReasonerDesc reasonerDesc = getReasonerDesc(store);
 
 		Predicate goal = null;
-		if (hasGoal()) goal = getGoal(store);		
-		final Set<Predicate> neededHyps = getHyps(store);
+		if (hasGoal()) {
+			try  {
+				goal = getGoal(store);
+			} catch (IllegalArgumentException e) {
+				Util.log(e, "error while getting goal for reasoner: " + reasonerDesc.getId());
+				return new EmptySkeleton(comment);
+			}
+		}
+		final Set<Predicate> neededHyps;
+		try {
+			neededHyps = getHyps(store);
+		} catch (IllegalArgumentException e) {
+			Util.log(e, "error while getting hypotheses for reasoner: " + reasonerDesc.getId());
+			return new EmptySkeleton(comment);
+		}
 
 		final IPRRuleAntecedent[] prAntecedents = getAntecedents();
 		final int length = prAntecedents.length;
 		final IAntecedent[] antecedents = new IAntecedent[length];
 		final IProofSkeleton[] children = new IProofSkeleton[length];
 		for (int i = 0; i < length; i++) {
-			antecedents[i] = prAntecedents[i].getAntecedent(store);
-			children[i] = ((EventBProofElement) prAntecedents[i]).getSkeleton(store);
+			try {
+				antecedents[i] = prAntecedents[i].getAntecedent(store);
+				children[i] = ((EventBProofElement) prAntecedents[i]).getSkeleton(store);
+			} catch (IllegalArgumentException e) {
+				Util.log(e, "error while getting antecedent for reasoner: " + reasonerDesc.getId());
+				return new EmptySkeleton(comment);
+			}
 		}
 
 		final String display = getRuleDisplay();
-		final IReasonerDesc reasonerDesc = getReasonerDesc(store);
 		final int confidence = reasonerDesc.isTrusted() ? getConfidence()
 				: IConfidence.UNCERTAIN_MAX;
 				

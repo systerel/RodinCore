@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd" version="3">
+    <org.eventb.core.carrierSet name="'" org.eventb.core.identifier="S"/>
+    <org.eventb.core.constant name="(" org.eventb.core.identifier="T"/>
+    <org.eventb.core.axiom name=")" org.eventb.core.label="axm1" org.eventb.core.predicate="T ⊆ S"/>
+    <org.eventb.core.constant name="*" org.eventb.core.identifier="r"/>
+    <org.eventb.core.axiom name="-" org.eventb.core.label="axm2" org.eventb.core.predicate="a ∈ T"/>
+    <org.eventb.core.axiom name="+" org.eventb.core.label="axm3" org.eventb.core.predicate="r ∈ T → S"/>
+    <org.eventb.core.constant name="," org.eventb.core.identifier="a"/>
+    <org.eventb.core.axiom name="." org.eventb.core.label="thm" org.eventb.core.predicate="r(a) ∈ S" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>
