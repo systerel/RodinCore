@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.eventb</groupId>
     <artifactId>parent</artifactId>
-    <version>3.7.0-SNAPSHOT</version>
+    <version>3.8.0-SNAPSHOT</version>
     <relativePath>../org.eventb.parent/pom.xml</relativePath>
   </parent>
   
   <groupId>org.eventb.features</groupId>
   <artifactId>org.rodinp.platform.tests</artifactId>
-  <version>3.7.0-SNAPSHOT</version>
+  <version>3.8.0-SNAPSHOT</version>
 
   <packaging>eclipse-feature</packaging>  
 
