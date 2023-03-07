@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 Systerel and others.
+ * Copyright (c) 2013, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,8 +136,11 @@ public class DatatypeTranslation extends AbstractTranslation implements
 	}
 
 	public Type translateParametricType(ParametricType type) {
-		assert type.getExprExtension().getOrigin() instanceof Datatype;
-		return getTranslatorFor(type).getTranslatedType();
+		if (type.getExprExtension().getOrigin() instanceof Datatype) {
+			return getTranslatorFor(type).getTranslatedType();
+		} else {
+			return type.translate(targetFactory);
+		}
 	}
 
 	public Expression translate(ExtendedExpression src,

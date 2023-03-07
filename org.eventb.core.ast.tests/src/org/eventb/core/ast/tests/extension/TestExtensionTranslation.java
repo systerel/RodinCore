@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 Systerel and others.
+ * Copyright (c) 2014, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -33,6 +34,8 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.tests.AbstractTests;
+import org.eventb.core.ast.tests.extension.Extensions.Real;
+import org.eventb.core.ast.tests.extension.Extensions.RealPlus;
 import org.eventb.internal.core.ast.extension.ExtensionTranslation;
 import org.junit.Before;
 import org.junit.Test;
@@ -193,6 +196,35 @@ public class TestExtensionTranslation extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that extensions in the target factory are not translated.
+	 */
+	@Test
+	public void targetExtensionsNotTranslated() {
+		setUp("", EXTS_FAC, "", EXTS_FAC);
+		translation = srcTypeEnv.makeExtensionTranslation(EXTS_FAC);
+		assertExprTranslation("empty⦂ℙ(ℤ)", "empty⦂ℙ(ℤ)", "");
+		assertPredTranslation("∧∧(⊤)", "∧∧(⊤)", "");
+		assertExprTranslation("ℝ", "ℝ", "");
+	}
+
+	/**
+	 * Ensures that extensions in the target factory are not translated while others
+	 * are translated.
+	 */
+	@Test
+	public void targetExtensionsPartialTranslation() {
+		FormulaFactory target = COND_FAC.withExtensions(Set.of(Real.EXT, RealPlus.EXT));
+		setUp("a=ℝ;b=ℝ", EXTS_FAC, "a=ℝ;b=ℝ", target);
+		translation = srcTypeEnv.makeExtensionTranslation(target);
+		// belongs is translated, not ℝ
+		assertPredTranslation("belongs(a, ⊤, {a,b})", //
+				"belongs(a↦{a,b}↦bool(⊤))=TRUE", //
+				"belongs=ℝ×ℙ(ℝ)×BOOL↔BOOL");
+		// zero is translated, not ℝ neither +.
+		assertExprTranslation("a+.zero", "a+.zero", "zero=ℝ");
+	}
+
+	/**
 	 * Ensures that datatype operators are not translated.
 	 */
 	@Test
@@ -203,6 +235,18 @@ public class TestExtensionTranslation extends AbstractTests {
 		assertPredTranslation("a = cons(1, nil)", "a = cons(1, nil)", "");
 		assertPredTranslation("1 = head(a)", "1 = head(a)", "");
 		assertPredTranslation("a ∈ List({1})", "a ∈ List({1})", "");
+	}
+
+	/**
+	 * Ensures that trying to translate to a factory without required datatype
+	 * fails.
+	 */
+	@Test
+	public void datatypeTranslationException() {
+		final FormulaFactory ffExtended = extendFactory();
+		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("a=List(ℤ)", ffExtended);
+		assertThrows(IllegalArgumentException.class, () -> typeEnv.makeExtensionTranslation(COND_FAC));
+		assertThrows(IllegalArgumentException.class, () -> typeEnv.makeExtensionTranslation(EXTS_FAC));
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 Systerel and others.
+ * Copyright (c) 2014, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,8 +77,20 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	private final ITypeCheckingRewriter rewriter;
 
 	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv) {
+		this(srcTypenv, null);
+	}
+
+	public ExtensionTranslation(ISealedTypeEnvironment srcTypenv, FormulaFactory trgFac) {
 		super(srcTypenv);
-		this.trgFactory = computeTargetFactory(srcTypenv.getFormulaFactory());
+		final Set<IFormulaExtension> requiredExtensions = computeTargetExtensions(srcTypenv.getFormulaFactory());
+		if (trgFac == null) {
+			trgFactory = FormulaFactory.getInstance(requiredExtensions);
+		} else {
+			if (!trgFac.getExtensions().containsAll(requiredExtensions)) {
+				throw new IllegalArgumentException("Target factory misses some untranslatable extensions");
+			}
+			trgFactory = trgFac;
+		}
 		final Set<String> usedNames = new HashSet<String>(srcTypenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, trgFactory);
 
@@ -90,7 +102,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 		populateTargetTypenv(typeRewriter);
 	}
 
-	private static FormulaFactory computeTargetFactory(FormulaFactory fac) {
+	private static Set<IFormulaExtension> computeTargetExtensions(FormulaFactory fac) {
 		final Set<IFormulaExtension> keptExtensions;
 		final Set<IFormulaExtension> extensions = fac.getExtensions();
 		keptExtensions = new LinkedHashSet<IFormulaExtension>();
@@ -104,7 +116,7 @@ public class ExtensionTranslation extends AbstractTranslation implements
 				keptExtensions.add(extension);
 			}
 		}
-		return FormulaFactory.getInstance(keptExtensions);
+		return keptExtensions;
 	}
 
 	private void populateTargetTypenv(TypeRewriter typeRewriter) {
@@ -128,6 +140,9 @@ public class ExtensionTranslation extends AbstractTranslation implements
 	}
 
 	public Type translate(ParametricType src) {
+		if (trgFactory.hasExtension(src.getExprExtension())) {
+			return src.translate(trgFactory);
+		}
 		final ExpressionExtSignature signature = getSignature(src);
 		final TypeExtTranslator translator = typeTranslators.get(signature);
 		return translator.translate();
@@ -135,6 +150,10 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 	public Expression translate(ExtendedExpression src,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		if (trgFactory.hasExtension(src.getExtension())) {
+			return trgFactory.makeExtendedExpression(src.getExtension(), newChildExprs, newChildPreds,
+					src.getSourceLocation(), src.getType().translate(trgFactory));
+		}
 		final ExpressionExtSignature signature = getSignature(src);
 		final ExpressionExtTranslator translator = exprTranslators
 				.get(signature);
@@ -143,6 +162,10 @@ public class ExtensionTranslation extends AbstractTranslation implements
 
 	public Predicate translate(ExtendedPredicate src,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		if (trgFactory.hasExtension(src.getExtension())) {
+			return trgFactory.makeExtendedPredicate(src.getExtension(), newChildExprs, newChildPreds,
+					src.getSourceLocation());
+		}
 		final PredicateExtSignature signature = getSignature(src);
 		final PredicateExtTranslator translator = predTranslators
 				.get(signature);

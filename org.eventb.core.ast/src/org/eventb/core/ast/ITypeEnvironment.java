@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,6 +208,25 @@ public interface ITypeEnvironment {
 	 * @since 3.1
 	 */
 	IExtensionTranslation makeExtensionTranslation();
+
+	/**
+	 * Returns a fresh extension translation based on a snapshot of this type
+	 * environment. The resulting translation will be applicable to any formula
+	 * which is type-checked within this type environment at the time of the call to
+	 * this method.
+	 *
+	 * The provided target factory must contain at least the extensions that are not
+	 * translatable by implementations of {@link IExtensionTranslation}. If it
+	 * contains more extensions, these will not be translated.
+	 *
+	 * @param targetFactory target factory to use
+	 * @return a fresh extension translation
+	 * @see Formula#translateExtensions(IExtensionTranslation)
+	 * @throws IllegalArgumentException if the target factory misses some
+	 *                                  untranslatable extensions
+	 * @since 3.7
+	 */
+	IExtensionTranslation makeExtensionTranslation(FormulaFactory targetFactory);
 
 	/**
 	 * Returns an iterator for traversing this type environment.

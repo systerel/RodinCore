@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Systerel and others.
+ * Copyright (c) 2011, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.core.seqprover.transformer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toSet;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.EXISTS_IMP;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_AND_OR;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_EQV_NOT;
@@ -24,11 +25,15 @@ import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.ma
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.seqprover.transformer.LanguageFilter;
 import org.eventb.internal.core.seqprover.transformer.SequentDatatypeTranslator;
 import org.eventb.internal.core.seqprover.transformer.SequentExtensionRemover;
@@ -328,13 +333,26 @@ public class SimpleSequents {
 			sequent = sequent.apply(remover);
 		}
 
-		// Then translate non-datatype operators
+		// Then translate non-datatype, non-type-constructor operators
 		final ITypeEnvironment typenv = sequent.getTypeEnvironment();
-		final ISimpleSequent newSequent = sequent
-				.apply(new SequentExtensionTranslator(typenv));
+		Set<IFormulaExtension> keptExts = typenv.getFormulaFactory().getExtensions().stream()
+				.filter(ext -> isDatatype(ext) || isTypeConstructor(ext)).collect(toSet());
+		final ISimpleSequent newSequent = sequent.apply(new SequentExtensionTranslator(typenv,
+				FormulaFactory.getInstance(keptExts)));
 
 		// Then translate datatypes.
-		return translateDatatypes(newSequent);
+		ISimpleSequent result = translateDatatypes(newSequent);
+
+		// Then translate remaining extensions, i.e. type constructor extensions
+		return result.apply(new SequentExtensionTranslator(result.getTypeEnvironment(), FormulaFactory.getDefault()));
+	}
+
+	private static boolean isDatatype(IFormulaExtension ext) {
+		return ext.getOrigin() instanceof IDatatype;
+	}
+
+	private static boolean isTypeConstructor(IFormulaExtension ext) {
+		return ext instanceof IExpressionExtension && ((IExpressionExtension) ext).isATypeConstructor();
 	}
 
 	private SimpleSequents() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ public class SequentExtensionTranslator implements ISequentTranslator {
 
 	final IExtensionTranslation translation;
 
-	public SequentExtensionTranslator(ITypeEnvironment environment) {
-		this.translation = environment.makeExtensionTranslation();
+	public SequentExtensionTranslator(ITypeEnvironment environment, FormulaFactory targetFactory) {
+		this.translation = environment.makeExtensionTranslation(targetFactory);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 Systerel and others.
+ * Copyright (c) 2014, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer.tests;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.tests.DatatypeParser.parse;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
@@ -102,6 +104,12 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 				"1 = 2 |- ⊥");
 	}
 
+	@Test
+	public void datatypeDependency() {
+		assertSequentTranslation("", "x ∈ Typ |- value(data(x)) = x",
+				"data∈Typ ⤖ Datatype ;; value∈ran(data) ↠ Typ ;; value=data∼ ;; x ∈ Typ |- value(data(x)) = x");
+	}
+
 	private void assertSequentTranslation(String typeEnvStr,
 			String sequentImage, String expectedImage) {
 
@@ -133,6 +141,9 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		extensions = LIST_DT.getFactory().getExtensions();
 		extensions.add(Empty.INSTANCE);
 		extensions.add(Weird.INSTANCE);
+		extensions.add(TypeExtension.INSTANCE);
+		IDatatype datatype = parse(ff.withExtensions(singleton(TypeExtension.INSTANCE)), "Datatype ::= data[value: Typ]");
+		extensions.addAll(datatype.getExtensions());
 		final FormulaFactory srcFac = FormulaFactory.getInstance(extensions);
 		final ITypeEnvironmentBuilder srcTypenv;
 		srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
@@ -360,6 +371,84 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 		@Override
 		public boolean isATypeConstructor() {
 			return false;
+		}
+
+	}
+
+	private static class TypeExtension implements IExpressionExtension {
+
+		public static final TypeExtension INSTANCE = new TypeExtension();
+
+		private TypeExtension() {
+			// singleton
+		}
+
+		private final String symbol = "Typ";
+
+		@Override
+		public String getSyntaxSymbol() {
+			return symbol;
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
+		@Override
+		public String getId() {
+			return symbol;
+		}
+
+		@Override
+		public String getGroupId() {
+			return symbol;
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return ATOMIC_EXPRESSION;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// no compatibilities
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// no priorities
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
+			return mediator.makePowerSetType(mediator.makeParametricType(this, emptyList()));
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {
+			Type base = proposedType.getBaseType();
+			return base != null && base instanceof ParametricType && ((ParametricType) base).getExprExtension() == this;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator) {
+			return tcMediator.makePowerSetType(tcMediator.makeParametricType(this, emptyList()));
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return true;
 		}
 
 	}
