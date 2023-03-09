@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class DetailedList {
 	private final java.util.List<String> entries = new ArrayList<String>();
 
 	private final int minWidth = 200;
+	private final int preferredHeight = 400;
 
 	private IDetailsProvider provider;
 
@@ -106,6 +107,7 @@ public class DetailedList {
 		gd.verticalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
+		gd.heightHint = preferredHeight;
 		return gd;
 	}
 
@@ -131,6 +133,7 @@ public class DetailedList {
 		}
 		entries.add(element);
 		list.refresh();
+		list.getControl().pack();
 		list.setSelection(new StructuredSelection(element));
 		updateDetails();
 	}
