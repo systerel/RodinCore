@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -458,6 +459,24 @@ public class TestTypeEnvironment {
 		assertEquals(INT, te.getType("x"));
 		assertNull(te.getType("x'"));
 		assertEquals(POW(t_S), te.getType("S"));
+	}
+
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.getFreeIdentifiers()'
+	 */
+	@Test
+	public void testGetFreeIdentifiers() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		assertEquals(0, te.getFreeIdentifiers().length);
+
+		te.addGivenSet("S");
+		var identS = ff.makeFreeIdentifier("S", null, POW(t_S));
+		assertArrayEquals(new FreeIdentifier[] { identS }, te.getFreeIdentifiers());
+
+		te.addName("x", INT);
+		var identX = ff.makeFreeIdentifier("x", null, INT);
+		// The order of the returned array is unspecified: use a set for comparison
+		assertEquals(Set.of(identS, identX), Set.of(te.getFreeIdentifiers()));
 	}
 
 	/*

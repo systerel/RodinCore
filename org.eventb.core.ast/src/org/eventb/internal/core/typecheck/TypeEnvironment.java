@@ -205,6 +205,12 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	}
 
 	@Override
+	public FreeIdentifier[] getFreeIdentifiers() {
+		return map.entrySet().stream().map(e -> ff.makeFreeIdentifier(e.getKey(), null, e.getValue()))
+				.toArray(FreeIdentifier[]::new);
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return map.isEmpty();
 	}

@@ -253,6 +253,18 @@ public interface ITypeEnvironment {
 	Type getType(String name);
 
 	/**
+	 * Returns the list of free identifiers in this type environment.
+	 *
+	 * This is equivalent to getting all the identifiers in this type environment
+	 * with {@link #getNames()} and then getting the type of each identifier with
+	 * {@link #getType(String)}.
+	 *
+	 * @return the list of free identifiers
+	 * @since 3.7
+	 */
+	FreeIdentifier[] getFreeIdentifiers();
+
+	/**
 	 * Returns whether this type environment is empty.
 	 * 
 	 * @return <code>true</code> iff this environment doesn't contain any
