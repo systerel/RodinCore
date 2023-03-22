@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,7 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
- * This class represents either identifiers occurring free in an event-B
- * formula, or a bound identifier declaration.
+ * This class represents identifiers occurring free in an event-B formula.
  * <p>
  * Identifiers which are bound by a quantifier are instance of the class
  * {@link org.eventb.core.ast.BoundIdentifier} instead.
