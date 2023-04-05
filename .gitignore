@@ -1,2 +1,5 @@
 */bin/
 target/
+
+# Folder created by X virtual frame buffer for Jenkins tests
+/.xvfb*
