@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 ################################################################################
-# Copyright (c) 2009 Systerel and others.
+# Copyright (c) 2009, 2023 Systerel and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -20,14 +20,14 @@ use integer;
 use LWP::Simple;
 
 use constant DEBUG => 0;
-use constant WIKI_EXPORT => "http://wiki.event-b.org/index.php/Special:Export";
+use constant WIKI_EXPORT => "https://wiki.event-b.org/index.php/Special:Export";
 
 # Rule names found are keys of this map
 my %rules;
 
 # Main program
 extract(qw/Inference_Rules
-       Set_Rewrite_Rules Relation_Rewrite_Rules Arithmetic_Rewrite_Rules
+       Set_Rewrite_Rules Empty_Set_Rewrite_Rules Relation_Rewrite_Rules Arithmetic_Rewrite_Rules
        Extension_Proof_Rules/);
 print join("\n", sort keys %rules);
 exit 0;
@@ -44,7 +44,8 @@ sub extractPage {
 	my($page) = @_;
 	my $url = WIKI_EXPORT . "/$page";
 	DEBUG and print STDERR "Processing $url\n";
-	my $content = get($url);
+	my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+	my $content = $ua->get($url)->content;
 	DEBUG and print STDERR "$content\n";
 	while ($content =~ /\|\s*\S\s*\|\|\s*\{\{ \s* Rulename \s* \| \s* (\S+) \s* \}\}/gx) {
 		DEBUG and print STDERR "  Found $1\n";
