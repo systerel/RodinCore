@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.indexers;
 
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -33,7 +34,7 @@ public abstract class ElementIndexer extends Cancellable {
 
 	public ElementIndexer(IInternalElement element,
 			IAttributeType.String attrType, SymbolTable symbolTable,
-			IIndexingBridge bridge) {
+			IIndexingBridge bridge) throws CoreException {
 		this.element = element;
 		this.ff = getFormulaFactory();
 		this.attrType = attrType;
@@ -41,8 +42,8 @@ public abstract class ElementIndexer extends Cancellable {
 		this.bridge = bridge;
 	}
 
-	private FormulaFactory getFormulaFactory() {
-		return ((IEventBRoot)element.getRoot()).getFormulaFactory();
+	private FormulaFactory getFormulaFactory() throws CoreException {
+		return ((IEventBRoot)element.getRoot()).getSafeFormulaFactory();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
@@ -25,8 +26,7 @@ import org.rodinp.core.location.IAttributeLocation;
 public class PredicateIndexer extends ElementIndexer {
 
 	public PredicateIndexer(IPredicateElement element, SymbolTable symbolTable,
-			IIndexingBridge bridge) {
-
+			IIndexingBridge bridge) throws CoreException {
 		super(element, PREDICATE_ATTRIBUTE, symbolTable, bridge);
 	}
 

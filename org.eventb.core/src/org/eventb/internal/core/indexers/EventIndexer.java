@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
@@ -78,7 +79,7 @@ public class EventIndexer extends Cancellable {
 		this.indexer = indexer;
 	}
 
-	public void process() throws RodinDBException {
+	public void process() throws CoreException {
 		checkCancel();
 		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
 
@@ -174,15 +175,14 @@ public class EventIndexer extends Cancellable {
 	 * @throws RodinDBException
 	 */
 	private void processWitnesses(IWitness[] witnesses, SymbolTable totalST)
-			throws RodinDBException {
+			throws CoreException {
 
 		processWitnessLabels(witnesses, totalST);
 		processPredicateElements(witnesses, totalST);
 	}
 
 	private void processWitnessLabels(IWitness[] witnesses, SymbolTable totalST)
-			throws RodinDBException {
-
+			throws CoreException {
 		for (IWitness witness : witnesses) {
 			if (witness.hasLabel()) {
 				final String label = witness.getLabel();
@@ -191,7 +191,7 @@ public class EventIndexer extends Cancellable {
 				}
 				final IEventBRoot root = (IEventBRoot) bridge.getRootToIndex();
 				final String name = getUnprimedName(label,
-						root.getFormulaFactory());
+						root.getSafeFormulaFactory());
 				final IDeclaration declAbs = totalST.lookUpper(name);
 
 				if (declAbs != null) {
@@ -208,7 +208,7 @@ public class EventIndexer extends Cancellable {
 	}
 
 	private void processParameters(IParameter[] parameters, SymbolTable totalST)
-			throws RodinDBException {
+			throws CoreException {
 		for (IParameter parameter : parameters) {
 			final String name = indexer.getIdentifierName(parameter);
 			if (name != null) {
@@ -234,7 +234,7 @@ public class EventIndexer extends Cancellable {
 	}
 
 	private void processActions(IAction[] actions, SymbolTable eventTable)
-			throws RodinDBException {
+			throws CoreException {
 		for (IAction action : actions) {
 			final AssignmentIndexer assignIndexer =
 					new AssignmentIndexer(action, eventTable, bridge);
@@ -245,7 +245,7 @@ public class EventIndexer extends Cancellable {
 	}
 
 	private void processPredicateElements(IPredicateElement[] preds,
-			SymbolTable symbolTable) throws RodinDBException {
+			SymbolTable symbolTable) throws CoreException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer =
 					new PredicateIndexer(elem, symbolTable, bridge);

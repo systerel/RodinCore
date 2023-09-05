@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.concurrent.CancellationException;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IPredicateElement;
@@ -36,7 +37,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
 	protected String getIdentifierName(IIdentifierElement ident)
-			throws RodinDBException {
+			throws CoreException {
 		if (ident.hasIdentifierString()) {
 			final String name = ident.getIdentifierString();
 			if (isValidIdentifierName(name)) {
@@ -46,9 +47,9 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		return null;
 	}
 
-	protected boolean isValidIdentifierName(String name) {
+	protected boolean isValidIdentifierName(String name) throws CoreException {
 		final IEventBRoot root = (IEventBRoot) currentBridge.getRootToIndex();
-		return root.getFormulaFactory().isValidIdentifierName(name);
+		return root.getSafeFormulaFactory().isValidIdentifierName(name);
 	}
 	
 	protected IIndexingBridge currentBridge;
@@ -61,7 +62,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		try {
 			index(root);
 			return true;
-		} catch (RodinDBException e) {
+		} catch (CoreException e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
@@ -75,7 +76,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	}
 
 	protected abstract void index(IInternalElement root)
-			throws RodinDBException;
+			throws CoreException;
 
 	@Override
 	public IRodinFile[] getDependencies(IInternalElement root) {
@@ -129,7 +130,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	}
 
 	protected void processPredicateElements(IPredicateElement[] preds,
-			SymbolTable symbolTable) throws RodinDBException {
+			SymbolTable symbolTable) throws CoreException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer =
 					new PredicateIndexer(elem, symbolTable, currentBridge);

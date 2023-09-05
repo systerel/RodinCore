@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.indexers;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
@@ -51,14 +52,14 @@ public class ContextIndexer extends EventBIndexer {
 	};
 
 	@Override
-	protected void index(IInternalElement root) throws RodinDBException {
+	protected void index(IInternalElement root) throws CoreException {
 		if (!(root instanceof IContextRoot)) {
 			throwIllArgException(root);
 		}
 		index((IContextRoot) root);
 	}
 
-	private void index(IContextRoot root) throws RodinDBException {
+	private void index(IContextRoot root) throws CoreException {
 		checkCancel();
 		
 		indexAndExportRoot(root);
@@ -93,7 +94,7 @@ public class ContextIndexer extends EventBIndexer {
 	}
 
 	private void processIdentifierElements(IIdentifierElement[] elems,
-			SymbolTable symbolTable) throws RodinDBException {
+			SymbolTable symbolTable) throws CoreException {
 		for (IIdentifierElement ident : elems) {
 			final String name = getIdentifierName(ident);
 			if (name != null) {

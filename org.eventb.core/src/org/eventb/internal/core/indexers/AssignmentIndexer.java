@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
@@ -25,7 +26,7 @@ import org.rodinp.core.location.IAttributeLocation;
 public class AssignmentIndexer extends ElementIndexer {
 
 	public AssignmentIndexer(IAssignmentElement element,
-			SymbolTable symbolTable, IIndexingBridge bridge) {
+			SymbolTable symbolTable, IIndexingBridge bridge) throws CoreException {
 		super(element, ASSIGNMENT_ATTRIBUTE, symbolTable, bridge);
 	}
 
