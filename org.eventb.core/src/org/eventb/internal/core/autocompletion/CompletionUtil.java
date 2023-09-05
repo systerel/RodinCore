@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
@@ -177,7 +178,7 @@ public class CompletionUtil {
 				final String assign = ((IAction) locElem).getAssignmentString();
 				// Retrieve root to get the associated formula factory
 				final IEventBRoot root = (IEventBRoot) locElem.getRoot();
-				final FormulaFactory ff = root.getFormulaFactory();
+				final FormulaFactory ff = root.getSafeFormulaFactory();
 				final IParseResult result = ff.parseAssignment(assign, null);
 				if (result.hasProblem()) {
 					continue;
@@ -185,7 +186,7 @@ public class CompletionUtil {
 				if (!isDeterministic(result.getParsedAssignment())) {
 					iter.remove();
 				}
-			} catch (RodinDBException e) {
+			} catch (CoreException e) {
 				// ignore this element
 			}
 		}
