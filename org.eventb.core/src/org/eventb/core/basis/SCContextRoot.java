@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment()
 			throws CoreException {
-		final FormulaFactory factory = getFormulaFactory();
+		final FormulaFactory factory = getSafeFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx: getAbstractSCContexts()) {
 			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
