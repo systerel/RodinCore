@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ class ReadProofOperation implements IWorkspaceRunnable {
 			prFac = proof.getFormulaFactory(sm.newChild(10));
 		} catch (CoreException e) {
 			// exception already logged
-			prFac = pc.getFormulaFactory();
+			prFac = pc.getSafeFormulaFactory();
 		}
 		
 		IProofSkeleton skeleton = proof.getSkeleton(prFac, sm.newChild(90));

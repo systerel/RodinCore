@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -684,6 +684,7 @@ public class UserSupport implements IUserSupport {
 	 * common factory of this component otherwise.
 	 */
 	@Override
+	@Deprecated
 	public FormulaFactory getFormulaFactory() {
 		if (currentPS != null) {
 			final FormulaFactory factory = currentPS.getFormulaFactory();
