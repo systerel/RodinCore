@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.core.tests.extension;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
+import static org.eventb.internal.core.Util.newCoreException;
 import static org.junit.Assert.assertFalse;
 
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.eventb.core.extension.RuntimeCoreException;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinFile;
@@ -75,11 +77,13 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	public static boolean erroneousLoadFormulaFactory = false;
 	public static boolean erroneousSaveFormulaFactory = false;
 	public static boolean erroneousGetExtensions = false;
+	public static boolean erroneousGetExtensionsCoreExn = false;
 
 	public static void reset() {
 		erroneousLoadFormulaFactory = false;
 		erroneousSaveFormulaFactory = false;
 		erroneousGetExtensions = false;
+		erroneousGetExtensionsCoreExn = false;
 	}
 
 	static void maybeFail(boolean condition) {
@@ -97,6 +101,10 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
 		maybeFail(erroneousGetExtensions);
+		if (erroneousGetExtensionsCoreExn) {
+			throw new RuntimeCoreException(
+					newCoreException("Core exception in adversarial formula extension provider"));
+		}
 		final FormulaFactory factory;
 		if (rootsWithPrime.contains(root)) {
 			factory = EXT_FACTORY;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pog.state.IPOGState;
@@ -25,7 +26,7 @@ public class POGStateRepository extends StateRepository<IPOGState> implements IP
 
 	private final IPORoot target;
 	
-	public POGStateRepository(IEventBRoot source, IPORoot target) {
+	public POGStateRepository(IEventBRoot source, IPORoot target) throws CoreException {
 		super(source);
 		
 		assert target.exists();

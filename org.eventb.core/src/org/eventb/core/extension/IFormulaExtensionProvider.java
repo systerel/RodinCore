@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public interface IFormulaExtensionProvider {
 	 *            the root element to retrieve extensions for
 	 * 
 	 * @return a set of extensions
+	 * @throws RuntimeCoreException if an error occurred while making the extensions
 	 */
 	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
 
@@ -64,6 +65,7 @@ public interface IFormulaExtensionProvider {
 	 * @param root
 	 *            an event-b root
 	 * @return a set of rodin files
+	 * @throws RuntimeCoreException if an error occurred while making the extensions
 	 * @since 3.0
 	 */
 	Set<IRodinFile> getFactoryFiles(IEventBRoot root);

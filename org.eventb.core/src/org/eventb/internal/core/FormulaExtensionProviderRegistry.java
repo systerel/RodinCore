@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.eventb.core.extension.RuntimeCoreException;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -77,22 +78,23 @@ public class FormulaExtensionProviderRegistry {
 	}
 
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
-			IEventBRoot root) {
+			IEventBRoot root) throws CoreException {
 		if (provider == null) {
 			return Collections.emptySet();
 		}
 		try {
 			return provider.getFormulaExtensions(root);
+		} catch (RuntimeCoreException e) {
+			throw e.getCause();
 		} catch (Exception e) {
-			// This method is not expected to throw, so we can only log the error and return
-			// an empty set. In a future major version, the API could be changed to throw a
-			// CoreException (like #getFormulaFactory(ILanguage, IProgressMonitor))
+			// Exceptions other than encapsulated core exceptions are not supposed to
+			// happen; they are logged and a default set of extensions is returned instead
 			log(e, "while getting formula extensions");
 			return Collections.emptySet();
 		}
 	}
 
-	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) {
+	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) throws CoreException {
 		return FormulaFactory.getInstance(getFormulaExtensions(root));
 	}
 
@@ -171,12 +173,16 @@ public class FormulaExtensionProviderRegistry {
 	}
 
 	public synchronized Set<IRodinFile> getAllExtensionFiles(
-			IEventBRoot root) {
+			IEventBRoot root) throws CoreException {
 		if (provider == null)
 			return Collections.emptySet();
 
 		final Set<IRodinFile> extFiles = new HashSet<IRodinFile>();
-		extFiles.addAll(provider.getFactoryFiles(root));
+		try {
+			extFiles.addAll(provider.getFactoryFiles(root));
+		} catch (RuntimeCoreException e) {
+			throw e.getCause();
+		}
 
 		return extFiles;
 	}

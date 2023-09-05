@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.DEFA
 import static org.eventb.core.tests.extension.PrimeFormulaExtensionProvider.EXT_FACTORY;
 import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
@@ -21,6 +22,8 @@ import org.eventb.core.ILanguage;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.tests.EventBTest;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
@@ -28,6 +31,15 @@ import org.rodinp.core.RodinDBException;
  * Unit tests for the formula extension provider registry.
  */
 public class FormulaExtensionProviderRegistryTest extends EventBTest {
+
+	/**
+	 * Make sure that the extension provider remains in its default state.
+	 */
+	@Before
+	@After
+	public void resetExtensionProviderFlags() {
+		PrimeFormulaExtensionProvider.reset();
+	}
 
 	/**
 	 * Ensures that the factory associated to an Event-B root which is not
@@ -50,7 +62,36 @@ public class FormulaExtensionProviderRegistryTest extends EventBTest {
 		assertFormulaFactory(root, EXT_FACTORY);
 	}
 
-	private void assertFormulaFactory(IContextRoot root, FormulaFactory expected) {
+	/**
+	 * If a core exception is thrown by the provider, it is also thrown by the
+	 * provider registry.
+	 */
+	@Test
+	public void specializedFactoryCoreException() throws Exception {
+		final IContextRoot root = createContext("ctx");
+		PrimeFormulaExtensionProvider.erroneousGetExtensionsCoreExn = true;
+		PrimeFormulaExtensionProvider.add(root);
+		try {
+			getExtensionProviderRegistry().getFormulaFactory(root);
+			fail("Getting the factory should have thrown an exception");
+		} catch (CoreException e) {
+			// OK
+		}
+	}
+
+	/**
+	 * If a runtime exception is thrown by the provider, it is logged and a default
+	 * factory is returned.
+	 */
+	@Test
+	public void specializedFactoryRuntimeException() throws Exception {
+		final IContextRoot root = createContext("ctx");
+		PrimeFormulaExtensionProvider.erroneousGetExtensions = true;
+		PrimeFormulaExtensionProvider.add(root);
+		assertFormulaFactory(root, FormulaFactory.getDefault());
+	}
+
+	private void assertFormulaFactory(IContextRoot root, FormulaFactory expected) throws CoreException {
 		final FormulaExtensionProviderRegistry registry = getExtensionProviderRegistry();
 		final FormulaFactory actual = registry.getFormulaFactory(root);
 		assertSame(expected, actual);

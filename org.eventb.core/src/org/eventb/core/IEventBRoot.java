@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IInternalElement;
 
@@ -147,13 +148,28 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 
 	/**
 	 * Returns the formula factory associated with this root element. If this
-	 * element is newly created, it will get a dynamically built formula
-	 * factory, otherwise the formula factory will be the one previously set for
-	 * this root element.
+	 * element is newly created, it will get a dynamically built formula factory,
+	 * otherwise the formula factory will be the one previously set for this root
+	 * element.
 	 * 
-	 * @return the associated formula factory
+	 * @return the associated formula factory or a default factory if an exception
+	 *         is thrown
 	 * @since 2.0
+	 * @deprecated use {@link #getSafeFormulaFactory()} and handle the exception
 	 */
+	@Deprecated
 	FormulaFactory getFormulaFactory();
+
+	/**
+	 * Returns the formula factory associated with this root element. If this
+	 * element is newly created, it will get a dynamically built formula factory,
+	 * otherwise the formula factory will be the one previously set for this root
+	 * element.
+	 *
+	 * @return the associated formula factory
+	 * @throws CoreException if the formula extension provider failed
+	 * @since 3.7
+	 */
+	FormulaFactory getSafeFormulaFactory() throws CoreException;
 
 }
