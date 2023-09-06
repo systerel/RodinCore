@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinElement;
 /**
  * @author htson
  *         <p>
- *         This is the commond inteface for the Event-B Editor.
+ *         This is the common interface for the Event-B Editor.
  * @param <R>
  *            This specifies the "input type" of the editor, e.g. IMachineRoot
  *            or IContextRoot.
