@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@
  *     Systerel - added removal of temporary file
  *******************************************************************************/
 package org.eventb.core.sc;
+
+import static org.eventb.core.sc.GraphProblem.RepositoryFactoryLoadingError;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -49,13 +51,19 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 
-		final SCStateRepository repository = new SCStateRepository(
-				(IEventBRoot) file.getRoot());
+		try {
+			SCStateRepository repository = new SCStateRepository((IEventBRoot) file.getRoot());
 
-		if (SCUtil.DEBUG_STATE)
-			repository.debug();
-		
-		return repository;
+			if (SCUtil.DEBUG_STATE)
+				repository.debug();
+
+			return repository;
+		} catch (CoreException e) {
+			SCUtil.createProblemMarker(file, RepositoryFactoryLoadingError, e.getLocalizedMessage());
+			if (SCUtil.DEBUG_STATE)
+				System.out.println("SC: failed to load factory of " + file);
+			return null;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -204,8 +212,6 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 			scTmpFile.create(true, sMonitor.split(1));
 
-			ISCStateRepository repository = createRepository(sourceFile, sMonitor.split(1));
-
 			sourceFile.open(sMonitor.split(1));
 			scTmpFile.open(sMonitor.split(1));
 
@@ -217,11 +223,15 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 				deleteAllRodinMarkers(sourceFile);
 
-				final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
+				ISCStateRepository repository = createRepository(sourceFile, sMonitor.split(1));
 
-				if (rootModule != null) {
-					runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(), repository,
-							sMonitor.split(childCount));
+				if (repository != null) {
+					final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
+
+					if (rootModule != null) {
+						runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(), repository,
+								sMonitor.split(childCount));
+					}
 				}
 
 			}

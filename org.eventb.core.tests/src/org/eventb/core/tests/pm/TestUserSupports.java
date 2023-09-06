@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -822,11 +822,20 @@ public class TestUserSupports extends TestPM {
 	 * proof obligation file when no proof has been selected.
 	 */
 	@Test
+	@Deprecated
 	public void formulaFactoryNoCurrentProof() throws Exception {
 		assertSame(DEFAULT, userSupport.getFormulaFactory());
 
 		PrimeFormulaExtensionProvider.add(poRoot);
 		assertSame(EXT_FACTORY, userSupport.getFormulaFactory());
+
+		PrimeFormulaExtensionProvider.erroneousGetExtensionsCoreExn = true;
+		try {
+			// Fallback to default when loading extension fails
+			assertSame(DEFAULT, userSupport.getFormulaFactory());
+		} finally {
+			PrimeFormulaExtensionProvider.reset();
+		}
 	}
 
 	/**
@@ -834,6 +843,7 @@ public class TestUserSupports extends TestPM {
 	 * tree, independently of the factory of the proof obligation file.
 	 */
 	@Test
+	@Deprecated
 	public void formulaFactoryCurrentProof() throws Exception {
 		userSupport.nextUndischargedPO(false, monitor);
 		assertSame(DEFAULT, userSupport.getFormulaFactory());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,9 @@ public class WizardProposalProvider extends ProposalProvider {
 	}
 
 	@Override
-	protected IContentProposal[] makeAllProposals(String contents,
-			int position, String prefix) {
-		final IContentProposal[] globalProposal = super.makeAllProposals(
-				contents, position, prefix);
-		final IContentProposal[] localProposal = getLocalProposal(contents,
-				position, prefix);
+	public IContentProposal[] getProposals(String contents, int position) {
+		final IContentProposal[] globalProposal = super.getProposals(contents, position);
+		final IContentProposal[] localProposal = getLocalProposal(contents, position);
 
 		final IContentProposal[] result = new IContentProposal[localProposal.length
 				+ globalProposal.length];
@@ -50,9 +47,8 @@ public class WizardProposalProvider extends ProposalProvider {
 		return result;
 	}
 
-	private IContentProposal[] getLocalProposal(String contents, int position,
-			String prefix) {
+	private IContentProposal[] getLocalProposal(String contents, int position) {
 		final Set<String> completions = new HashSet<String>(identifiers);
-		return makeProposals(contents, position, prefix, completions);
+		return makeProposals(contents, position, getPrefix(contents, position), completions);
 	}
 }

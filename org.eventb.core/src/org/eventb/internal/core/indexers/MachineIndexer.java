@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExpressionElement;
@@ -84,14 +85,14 @@ public class MachineIndexer extends EventBIndexer {
 	};
 
 	@Override
-	protected void index(IInternalElement root) throws RodinDBException {
+	protected void index(IInternalElement root) throws CoreException {
 		if (!(root instanceof IMachineRoot)) {
 			throwIllArgException(root);
 		}
 		index((IMachineRoot) root);
 	}
 
-	private void index(IMachineRoot root) throws RodinDBException {
+	private void index(IMachineRoot root) throws CoreException {
 		checkCancel();
 		
 		indexAndExportRoot(root);
@@ -169,7 +170,7 @@ public class MachineIndexer extends EventBIndexer {
 	}
 
 	private void processVariables(IIdentifierElement[] idents,
-			SymbolTable declImports) throws RodinDBException {
+			SymbolTable declImports) throws CoreException {
 
 		for (IIdentifierElement ident : idents) {
 			final String name = getIdentifierName(ident);
@@ -196,7 +197,7 @@ public class MachineIndexer extends EventBIndexer {
 	}
 
 	private void processExpressionElements(IExpressionElement[] exprs,
-			SymbolTable symbolTable) throws RodinDBException {
+			SymbolTable symbolTable) throws CoreException {
 		for (IExpressionElement expr : exprs) {
 			final ExpressionIndexer exprIndexer =
 					new ExpressionIndexer(expr, symbolTable, currentBridge);
@@ -208,7 +209,7 @@ public class MachineIndexer extends EventBIndexer {
 
 	private void processEvents(IEvent[] events,
 			Map<IEvent, SymbolTable> absParamTables, SymbolTable eventST,
-			SymbolTable declImportST) throws RodinDBException {
+			SymbolTable declImportST) throws CoreException {
 		for (IEvent event : events) {
 			final EventIndexer eventIndexer =
 					new EventIndexer(event, absParamTables, eventST,

@@ -149,7 +149,9 @@ public enum GraphProblem implements IRodinProblem {
 	/** @since 3.4 */
 	VariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_VariantLabelConflict),
 	/** @since 3.4 */
-	VariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariantLabelConflict);
+	VariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariantLabelConflict),
+	/** @since 3.7 */
+	RepositoryFactoryLoadingError(IMarker.SEVERITY_ERROR, Messages.scuser_RepositoryFactoryLoadingError);
 	
 	private final String errorCode;
 	

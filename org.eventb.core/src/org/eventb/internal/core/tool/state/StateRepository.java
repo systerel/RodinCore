@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,11 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	
 	private FormulaFactory factory;
 	
-	public StateRepository(IEventBRoot root) {
+	public StateRepository(IEventBRoot root) throws CoreException {
 		if (DEBUG)
 			System.out.println("NEW STATE REPOSITORY ##################");
 		// init with root factory
-		factory = root.getFormulaFactory();
+		factory = root.getSafeFormulaFactory();
 		environment = factory.makeTypeEnvironment();
 		repository = new HashMap<IStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;

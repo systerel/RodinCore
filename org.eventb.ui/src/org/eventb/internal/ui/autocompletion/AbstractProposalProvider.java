@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,15 +60,6 @@ public abstract class AbstractProposalProvider implements
 
 	public AbstractProposalProvider(FormulaFactory factory) {
 		this.factory = factory;
-	}
-
-	protected abstract IContentProposal[] makeAllProposals(String contents,
-			int position, String prefix);
-
-	@Override
-	public final IContentProposal[] getProposals(String contents, int position) {
-		final String prefix = getPrefix(contents, position);
-		return makeAllProposals(contents, position, prefix);
 	}
 
 	protected String getPrefix(String contents, int position) {

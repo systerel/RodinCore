@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
 package org.eventb.core.basis;
 
 import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
+import static org.eventb.internal.core.Util.log;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
@@ -102,7 +104,18 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	 * @since 2.0
 	 */
 	@Override
+	@Deprecated
 	public final FormulaFactory getFormulaFactory() {
+		try {
+			return getExtensionProviderRegistry().getFormulaFactory(this);
+		} catch (CoreException e) {
+			log(e, "while getting formula extensions for " + getPath());
+			return FormulaFactory.getDefault();
+		}
+	}
+
+	@Override
+	public final FormulaFactory getSafeFormulaFactory() throws CoreException {
 		return getExtensionProviderRegistry().getFormulaFactory(this);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -429,11 +429,42 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * its proof obligation file.
 	 */
 	@Test
+	@Deprecated
 	public void formulaFactory() throws Exception {
 		assertSame(DEFAULT, pc.getFormulaFactory());
 
 		PrimeFormulaExtensionProvider.add(poRoot);
 		assertSame(EXT_FACTORY, pc.getFormulaFactory());
+
+		PrimeFormulaExtensionProvider.erroneousGetExtensionsCoreExn = true;
+		try {
+			// Fallback to default when loading extension fails
+			assertSame(DEFAULT, pc.getFormulaFactory());
+		} finally {
+			PrimeFormulaExtensionProvider.reset();
+		}
+	}
+
+	/**
+	 * Ensures that a proof component returns the formula factory associated to
+	 * its proof obligation file.
+	 */
+	@Test
+	public void formulaFactorySafe() throws Exception {
+		assertSame(DEFAULT, pc.getSafeFormulaFactory());
+
+		PrimeFormulaExtensionProvider.add(poRoot);
+		assertSame(EXT_FACTORY, pc.getSafeFormulaFactory());
+
+		PrimeFormulaExtensionProvider.erroneousGetExtensionsCoreExn = true;
+		try {
+			pc.getSafeFormulaFactory();
+			fail("Loading formula factory should have failed");
+		} catch (CoreException e) {
+			// OK
+		} finally {
+			PrimeFormulaExtensionProvider.reset();
+		}
 	}
 
 }

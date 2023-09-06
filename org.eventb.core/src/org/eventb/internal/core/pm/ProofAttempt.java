@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		this.component = component;
 		this.name = name;
 		this.owner = owner;
-		this.ff = component.getFormulaFactory();
+		this.ff = component.getSafeFormulaFactory();
 		final IPOSequent poSequent = getPOSequent();
 		this.proofTree = createProofTree(poSequent);
 		if (poSequent.hasPOStamp()) {
@@ -161,7 +161,13 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 	}
 	
 	private boolean languageHasChanged() {
-		return ff != component.getFormulaFactory();
+		try {
+			return ff != component.getSafeFormulaFactory();
+		} catch (CoreException e) {
+			// Since we could load the formula factory and can't now, we can consider that
+			// the language changed (although it is now broken...)
+			return true;
+		}
 	}
 
 	private boolean stampHasChanged() throws RodinDBException {

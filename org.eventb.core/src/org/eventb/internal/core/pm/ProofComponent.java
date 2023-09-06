@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -200,8 +201,14 @@ public class ProofComponent implements IProofComponent {
 	}
 
 	@Override
+	@Deprecated
 	public FormulaFactory getFormulaFactory() {
 		return getPORoot().getFormulaFactory();
+	}
+
+	@Override
+	public FormulaFactory getSafeFormulaFactory() throws CoreException {
+		return getPORoot().getSafeFormulaFactory();
 	}
 
 }

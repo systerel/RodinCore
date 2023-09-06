@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,7 @@ public class ProposalProvider extends AbstractProposalProvider implements IEvent
 	}
 
 	@Override
-	protected IContentProposal[] makeAllProposals(String contents,
-			int position, String prefix) {
+	public IContentProposal[] getProposals(String contents, int position) {
 		if (location == null) {
 			UIUtils.log(null, "auto completion location is not initialized !");
 			return NO_PROPOSALS;
@@ -42,7 +41,7 @@ public class ProposalProvider extends AbstractProposalProvider implements IEvent
 
 		final Set<String> completions = EventBPlugin.getProposals(location,
 				false);
-		return makeProposals(contents, position, prefix, completions);
+		return makeProposals(contents, position, getPrefix(contents, position), completions);
 	}
 
 	/**

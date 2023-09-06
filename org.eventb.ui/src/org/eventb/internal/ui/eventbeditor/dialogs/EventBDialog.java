@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
 import static org.eclipse.jface.dialogs.IDialogConstants.CLIENT_ID;
-import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactoryOrDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
@@ -539,10 +540,8 @@ public abstract class EventBDialog extends Dialog {
 		return new Pair<IEventBInputText, IEventBInputText>(name, content);
 	}
 	
-	protected static boolean checkNewIdentifiers(List<String> names,
-			boolean showInfoOnProblem, FormulaFactory ff) {
-		final Collection<String> invalidIdentifiers = getInvalidIdentifiers(
-				names, ff);
+	protected boolean checkNewIdentifiers(List<String> names, boolean showInfoOnProblem) {
+		final Collection<String> invalidIdentifiers = getInvalidIdentifiers(names);
 		if (!invalidIdentifiers.isEmpty()) {
 			if (showInfoOnProblem) {
 				UIUtils.showInfo(Messages.dialogs_invalidIdentifiers + ":\n"
@@ -561,8 +560,16 @@ public abstract class EventBDialog extends Dialog {
 		return true;
 	}
 
-	private static Collection<String> getInvalidIdentifiers(
-			Collection<String> names, FormulaFactory ff) {
+	private Collection<String> getInvalidIdentifiers(Collection<String> names) {
+		FormulaFactory ff;
+		try {
+			ff = root.getSafeFormulaFactory();
+		} catch (CoreException e) {
+			// If the root's factory is broken, we check identifiers against a default
+			// factory. It's better than nothing and keeps the UI working. The error must
+			// have been reported by the static checker.
+			ff = FormulaFactory.getDefault();
+		}
 		final List<String> invalidIdentifiers = new ArrayList<String>();
 		for (String name : names) {
 			if (!ff.isValidIdentifierName(name)) {
@@ -599,7 +606,7 @@ public abstract class EventBDialog extends Dialog {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
 		ContentProposalFactory.makeContentProposal(location,
-				input.getTextWidget(), getFormulaFactory(root));
+				input.getTextWidget(), getFormulaFactoryOrDefault(root));
 	}
 	
 	/**
@@ -647,7 +654,7 @@ public abstract class EventBDialog extends Dialog {
 			IInternalElement element, IAttributeType attributeType) {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
-		return new WizardProposalProvider(location, getFormulaFactory(root));
+		return new WizardProposalProvider(location, getFormulaFactoryOrDefault(root));
 	}
 	
 	public IEventBRoot getRoot() {

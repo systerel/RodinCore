@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,7 +374,7 @@ public class NewEventDialog extends EventBDialog {
 
 		final List<String> names = new ArrayList<String>(parsResult);
 		names.add(labelResult);
-		if (!checkNewIdentifiers(names, true, root.getFormulaFactory())) {
+		if (!checkNewIdentifiers(names, true)) {
 			labelResult = null;
 			parsResult.clear();
 			return false;

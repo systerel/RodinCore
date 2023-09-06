@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,43 +124,102 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	//Helpers for the creation of element default values
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getPrd_Default()}
 	 */
+	@Deprecated
 	public static String getPrd_Default(FormulaFactory ff) {
 		return ff.makeLiteralPredicate(Formula.BTRUE, null).toString();
 	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getInv_Default()}
 	 */
+	@Deprecated
 	public static String getInv_Default(FormulaFactory ff){
 		return getPrd_Default(ff);
 	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getAxm_Default()}
 	 */
+	@Deprecated
 	public static String getAxm_Default(FormulaFactory ff) {
 		return getPrd_Default(ff);
 	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getThm_Default()}
 	 */
+	@Deprecated
 	public static String getThm_Default(FormulaFactory ff) {
 		return getPrd_Default(ff);
 	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getGrd_Default()}
 	 */
+	@Deprecated
 	public static String getGrd_Default(FormulaFactory ff) {
 		return getPrd_Default(ff);
 	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated use {@link #getSub_Default()}
 	 */
+	@Deprecated
 	public static String getSub_Default(FormulaFactory ff) {
+		return "";
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getPrd_Default() {
+		/*
+		 * Since we only want the string representation of a literal predicate, using
+		 * the default factory is enough. Formula extensions that could exist in another
+		 * factory would not change the result.
+		 */
+		return FormulaFactory.getDefault().makeLiteralPredicate(Formula.BTRUE, null).toString();
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getInv_Default(){
+		return getPrd_Default();
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getAxm_Default() {
+		return getPrd_Default();
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getThm_Default() {
+		return getPrd_Default();
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getGrd_Default() {
+		return getPrd_Default();
+	}
+
+	/**
+	 * @since 3.8
+	 */
+	public static String getSub_Default() {
 		return "";
 	}
 

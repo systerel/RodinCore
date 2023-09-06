@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -21,7 +22,7 @@ import org.eventb.internal.core.tool.state.StateRepository;
  */
 public class SCStateRepository extends StateRepository<ISCState> implements ISCStateRepository {
 
-	public SCStateRepository(IEventBRoot root) {
+	public SCStateRepository(IEventBRoot root) throws CoreException {
 		super(root);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -337,7 +337,13 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		// Backward compatibility: return the factory of the proof component
 		final IEventBRoot root = (IEventBRoot) getRoot();
 		final IProofComponent pc = getProofManager().getProofComponent(root);
-		return pc.getFormulaFactory();
+		try {
+			return pc.getSafeFormulaFactory();
+		} catch (CoreException e) {
+			// Since this code path is for backward compatibility, we maintain it by
+			// ignoring the exception and returning a default factory, as before
+			return FormulaFactory.getDefault();
+		}
 	}
 
 	private void setFormulaFactory(FormulaFactory factory, IProgressMonitor pm)

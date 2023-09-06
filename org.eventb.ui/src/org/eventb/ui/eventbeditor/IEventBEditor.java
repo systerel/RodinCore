@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eventb.ui.eventbeditor;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.ui.IStatusChangedListener;
 import org.rodinp.core.IElementChangedListener;
@@ -23,7 +24,7 @@ import org.rodinp.core.IRodinElement;
 /**
  * @author htson
  *         <p>
- *         This is the commond inteface for the Event-B Editor.
+ *         This is the common interface for the Event-B Editor.
  * @param <R>
  *            This specifies the "input type" of the editor, e.g. IMachineRoot
  *            or IContextRoot.
@@ -112,6 +113,12 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * 
 	 * @return the formula factory used
 	 * @since 2.0
+	 * @deprecated the underlying method is deprecated and this method was not
+	 *             actually needed by the UI; if the formula factory is needed at
+	 *             some point, it can typically be obtained through
+	 *             {@link #getRodinInput()} and
+	 *             {@link IEventBRoot#getSafeFormulaFactory()}
 	 */
+	@Deprecated
 	public FormulaFactory getFormulaFactory();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.pm;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eventb.core.IEventBRoot;
@@ -175,8 +176,21 @@ public interface IProofComponent {
 	 * 
 	 * @return the formula factory of the proof obligations
 	 * @since 3.0
+	 * @deprecated use {@link #getSafeFormulaFactory()} and handle the exception
 	 */
+	@Deprecated
 	FormulaFactory getFormulaFactory();
+
+	/**
+	 * Returns the formula factory which is used for constructing new proof
+	 * attempts. It is also the factory to use for parsing the proof obligations
+	 * of this component.
+	 *
+	 * @return the formula factory of the proof obligations
+	 * @throws CoreException if the formula extension provider failed
+	 * @since 3.7
+	 */
+	FormulaFactory getSafeFormulaFactory() throws CoreException;
 
 	/**
 	 * Returns the Rodin root associated with this proof component and

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,11 +173,17 @@ public class PSUpdater {
 
 		final IPOSequent poSequent = status.getPOSequent();
 		final IPRProof prProof = status.getProof();
-		final boolean broken;
+		boolean broken;
 		if (prProof.exists()) {
-			final FormulaFactory ff = pc.getFormulaFactory();
-			final IProverSequent seq = POLoader.readPO(poSequent, ff);
-			broken = isBroken(seq, prProof, monitor);
+			final FormulaFactory ff;
+			try {
+				ff = pc.getSafeFormulaFactory();
+				final IProverSequent seq = POLoader.readPO(poSequent, ff);
+				broken = isBroken(seq, prProof, monitor);
+			} catch (CoreException e) {
+				log(e, "while updating status of proof " + prProof);
+				broken = true;
+			}
 			if (AutoPOM.PERF_PROOFREUSE) 
 			{
 				if (broken) 

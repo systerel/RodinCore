@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	private boolean checkAndSetFieldValues() {
 		fillResult(namesTexts, namesResults);
-		if (!checkNewIdentifiers(namesResults, true, root.getFormulaFactory())) {
+		if (!checkNewIdentifiers(namesResults, true)) {
 			namesResults.clear();
 			return false;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -775,6 +775,33 @@ public class PSUpdateTests extends BuilderTest {
 
 		changePO("1");
 		PrimeFormulaExtensionProvider.clear();
+		runBuilder("1");
+		assertFalse(psRoot.getStatus("1").isBroken());
+	}
+
+	/**
+	 * Ensure that a non-empty proof becomes invalid when updating a proof
+	 * obligation without really changing it, if PO factory can't be loaded and that
+	 * it gets recovered when resetting the PO factory.
+	 */
+	@Test
+	public void specializedFactoryChangedToDefaultOnException() throws Exception {
+		createPOFile();
+		PrimeFormulaExtensionProvider.add(poRoot);
+		addPO("1", null, genPred(EXT_FACTORY, "⊤"));
+		runBuilder("1");
+
+		addProof("1");
+		changePO("1");
+		PrimeFormulaExtensionProvider.erroneousGetExtensionsCoreExn = true;
+		try {
+			runBuilder("1");
+		} finally {
+			PrimeFormulaExtensionProvider.reset();
+		}
+		assertTrue(psRoot.getStatus("1").isBroken());
+
+		changePO("1");
 		runBuilder("1");
 		assertFalse(psRoot.getStatus("1").isBroken());
 	}

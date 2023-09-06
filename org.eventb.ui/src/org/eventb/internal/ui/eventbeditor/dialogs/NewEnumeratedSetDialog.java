@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 		final List<String> allNames = new ArrayList<String>(elements);
 		allNames.add(name);
 		
-		if (!checkNewIdentifiers(allNames, true, root.getFormulaFactory())) {
+		if (!checkNewIdentifiers(allNames, true)) {
 			name = null;
 			elements.clear();
 			return false;

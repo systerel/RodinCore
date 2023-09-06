@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
@@ -177,7 +178,18 @@ public class AutoCompletion {
 	private static Set<String> getPrimedDisapVarNames(IEvent event) {
 		final Set<String> disapNames = getDisapVarNames(event);
 		final IEventBRoot root = (IEventBRoot) event.getRoot();
-		return getPrimedNames(disapNames, root.getFormulaFactory());
+		FormulaFactory ff;
+		try {
+			ff = root.getSafeFormulaFactory();
+		} catch (CoreException e) {
+			// Since we only want to get a primed identifier, we can try to keep going with
+			// the default factory.
+			ff = FormulaFactory.getDefault();
+			// It's probably better not to log the exception to avoid cluttering the error
+			// log with a message on each completion attempt. Anyway, if the factory can't
+			// be loaded, static checking surely failed and the error was reported then.
+		}
+		return getPrimedNames(disapNames, ff);
 	}
 
 	private static void removeDeterministicallyAssigned(Set<IDeclaration> vars,
