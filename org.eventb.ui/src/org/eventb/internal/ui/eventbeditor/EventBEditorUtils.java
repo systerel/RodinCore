@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,6 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -265,9 +264,8 @@ public class EventBEditorUtils {
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
-					final FormulaFactory ff = editor.getFormulaFactory();
 					AtomicOperation operation = OperationFactory.createAction(
-							event, null, EventBUIPlugin.getSub_Default(ff), null);
+							event, null, EventBUIPlugin.getSub_Default(), null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation
 							.getCreatedElement());
@@ -320,7 +318,6 @@ public class EventBEditorUtils {
 	 */
 	public static void addWitness(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
-		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
 			public void run() {
@@ -329,7 +326,7 @@ public class EventBEditorUtils {
 					AtomicOperation op = OperationFactory.createElement(event,
 							IWitness.ELEMENT_TYPE,
 							EventBAttributes.PREDICATE_ATTRIBUTE,
-							EventBUIPlugin.getPrd_Default(ff));
+							EventBUIPlugin.getPrd_Default());
 					History.getInstance().addOperation(op);
 					displayInSynthesis(viewer, event, op.getCreatedElement());
 				}
@@ -348,14 +345,13 @@ public class EventBEditorUtils {
 	 */
 	public static void addGuard(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
-		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@Override
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
 					AtomicOperation operation = OperationFactory.createGuard(
-							event, null, EventBUIPlugin.getGrd_Default(ff), null);
+							event, null, EventBUIPlugin.getGrd_Default(), null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation.getCreatedElement());
 				}
@@ -422,10 +418,9 @@ public class EventBEditorUtils {
 	 */
 	public static void addInvariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
-		final FormulaFactory ff = editor.getFormulaFactory();
 		final AtomicOperation op = OperationFactory.createInvariantWizard(
 				editor.getRodinInput(), null,
-				EventBUIPlugin.getInv_Default(ff), false);
+				EventBUIPlugin.getInv_Default(), false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
@@ -443,15 +438,14 @@ public class EventBEditorUtils {
 
 		final String name = null;
 
-		final FormulaFactory ff = editor.getFormulaFactory();
 		final String[] varNames = defaultArray(3, null);
 		final String[] grdNames = defaultArray(3, null);
 		final String[] grdPredicates = defaultArray(3,
-				EventBUIPlugin.getPrd_Default(ff));
+				EventBUIPlugin.getPrd_Default());
 		final boolean[] grdIsTheorems = defaultArray(3, false);
 		final String[] actNames = defaultArray(3, null);
 		final String[] actSubstitutions = defaultArray(3,
-				EventBUIPlugin.getSub_Default(ff));
+				EventBUIPlugin.getSub_Default());
 		final AtomicOperation op = OperationFactory.createEvent(
 				editor.getRodinInput(), name, varNames, grdNames,
 				grdPredicates, grdIsTheorems, actNames, actSubstitutions);
@@ -563,9 +557,8 @@ public class EventBEditorUtils {
 	public static void addAxiom(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		final IContextRoot input = editor.getRodinInput();
-		final FormulaFactory ff = input.getFormulaFactory();
 		final AtomicOperation op = OperationFactory.createAxiomWizard(input,
-				null, getAxm_Default(ff), false);
+				null, getAxm_Default(), false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
