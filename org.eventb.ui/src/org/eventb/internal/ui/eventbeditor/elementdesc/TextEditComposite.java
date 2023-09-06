@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
-import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactoryOrDefault;
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import org.eclipse.core.resources.IMarker;
@@ -152,7 +152,7 @@ public class TextEditComposite extends AbstractEditComposite {
 
 			final IAttributeType attType = attrDesc.getAttributeType();
 			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
-			adapter = ContentProposalFactory.makeContentProposal(location, text, getFormulaFactory(element));
+			adapter = ContentProposalFactory.makeContentProposal(location, text, getFormulaFactoryOrDefault(element));
 			text.addVerifyKeyListener(new VerifyKeyListener() {
 				@Override
 				public void verifyKey(VerifyEvent event) {

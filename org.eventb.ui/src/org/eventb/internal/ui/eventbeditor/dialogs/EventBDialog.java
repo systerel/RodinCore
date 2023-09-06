@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
 import static org.eclipse.jface.dialogs.IDialogConstants.CLIENT_ID;
-import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactoryOrDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -599,7 +599,7 @@ public abstract class EventBDialog extends Dialog {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
 		ContentProposalFactory.makeContentProposal(location,
-				input.getTextWidget(), getFormulaFactory(root));
+				input.getTextWidget(), getFormulaFactoryOrDefault(root));
 	}
 	
 	/**
@@ -647,7 +647,7 @@ public abstract class EventBDialog extends Dialog {
 			IInternalElement element, IAttributeType attributeType) {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
-		return new WizardProposalProvider(location, getFormulaFactory(root));
+		return new WizardProposalProvider(location, getFormulaFactoryOrDefault(root));
 	}
 	
 	public IEventBRoot getRoot() {

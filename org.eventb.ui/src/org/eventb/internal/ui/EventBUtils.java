@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.core.EventBAttributes;
@@ -353,13 +354,24 @@ public class EventBUtils {
 	/**
 	 * Returns the formula factory used by the root element of the element given
 	 * as parameter.
+	 *
+	 * If the formula factory used by the root element can't be obtained (typically
+	 * because an extension provider failed), then a default is returned instead.
 	 * 
 	 * @param element
 	 *            the element considered
-	 * @return the factory associated to the EventBRoot owning the given element
+	 * @return the factory associated to the EventBRoot owning the given element or
+	 *         a default factory
 	 */
-	public static FormulaFactory getFormulaFactory(IInternalElement element) {
-		return ((IEventBRoot) element.getRoot()).getFormulaFactory();
+	public static FormulaFactory getFormulaFactoryOrDefault(IInternalElement element) {
+		try {
+			return ((IEventBRoot) element.getRoot()).getSafeFormulaFactory();
+		} catch (CoreException e) {
+			// Callers of this method accept to receive a default factory instead of the
+			// exception. We do not log the exception to avoid cluttering the error log; the
+			// error should have been reported at least by the static checker.
+			return FormulaFactory.getDefault();
+		}
 	}
 
 }

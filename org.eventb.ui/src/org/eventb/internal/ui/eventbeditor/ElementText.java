@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactoryOrDefault;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -232,7 +232,7 @@ public abstract class ElementText extends TimerText {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attrType);
 		return ContentProposalFactory.makeContentProposal(location, txt,
-				getFormulaFactory(element));
+				getFormulaFactoryOrDefault(element));
 	}
 
 	/*
