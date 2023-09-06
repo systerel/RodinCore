@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class PredicateRow {
 		this.appliMaker = appliMaker;
 		this.yellowBoxMaker = yellowBoxMaker;
 
-		final FormulaFactory ff = userSupport.getFormulaFactory();
+		final FormulaFactory ff = pred.getFactory();
 		final String parsedString = pred.toString();		
 		// Predicate containing the SourceLocations
 		this.parsedPredicate = getParsed(parsedString, ff);
