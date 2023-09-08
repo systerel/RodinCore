@@ -147,11 +147,10 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	IPSRoot getPSRoot();
 
 	/**
-	 * Returns the formula factory associated with this root element. If this
-	 * element is newly created, it will get a dynamically built formula factory,
-	 * otherwise the formula factory will be the one previously set for this root
-	 * element.
+	 * Returns the formula factory associated with this root element.
 	 * 
+	 * The returned factory must be used to manipulate children of this root.
+	 *
 	 * @return the associated formula factory or a default factory if an exception
 	 *         is thrown
 	 * @since 2.0
@@ -161,10 +160,9 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	FormulaFactory getFormulaFactory();
 
 	/**
-	 * Returns the formula factory associated with this root element. If this
-	 * element is newly created, it will get a dynamically built formula factory,
-	 * otherwise the formula factory will be the one previously set for this root
-	 * element.
+	 * Returns the formula factory associated with this root element.
+	 *
+	 * The returned factory must be used to manipulate children of this root.
 	 *
 	 * @return the associated formula factory
 	 * @throws CoreException if the formula extension provider failed
