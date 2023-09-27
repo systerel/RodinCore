@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -257,12 +257,13 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 					IProofState currentPO = userSupport.getCurrentPO();
 					if (currentPO != null)
 						selectCurrentNode(currentPO.getCurrentNode());
+
+					if (groupActionSet != null) {
+						groupActionSet.updateEnabledState();
+					}
 				}
 				control.setRedraw(true);
 			}
-		}
-		if (groupActionSet != null) {
-			groupActionSet.updateEnabledState();
 		}
 	}
 
