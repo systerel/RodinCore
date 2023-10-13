@@ -18,8 +18,7 @@ import org.eventb.ui.EventBUIPlugin;
 /**
  * @author htson
  *         <p>
- *         Implementation of the Cache Hypothesis View. This might be removed in
- *         the future (since the view is hardly used now).
+ *         Implementation of the Cache Hypothesis View.
  */
 public class CacheHypothesis extends ProverContentOutline {
 
