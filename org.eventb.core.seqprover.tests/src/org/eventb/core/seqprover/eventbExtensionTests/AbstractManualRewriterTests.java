@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -21,13 +25,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
 //import com.b4free.rodin.core.B4freeCore;
@@ -62,65 +64,44 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		String predicateImage;
 		String positionImage;
 		String[] results;
-		FormulaFactory factory;
-
-		public SuccessfulTest(String predicateImage, String positionImage,
-				FormulaFactory ff, String... results) {
-			this.predicateImage = predicateImage;
-			this.positionImage = positionImage;
-			this.factory = ff;
-			this.results = results;
-		}
 
 		public SuccessfulTest(String predicateImage, String positionImage, String... results) {
-			this(predicateImage, positionImage, FormulaFactory.getDefault(), results);
+			this.predicateImage = predicateImage;
+			this.positionImage = positionImage;
+			this.results = results;
 		}
 
 	}
 
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
-			FormulaFactory ff, String predicateImage, String positionImage,
-			String[] results) {
+			 String predicateImage, String positionImage, String[] results) {
 		final List<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();		
 		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
-		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
+		final Predicate predicate = genPred(typenv, predicateImage);
+		IPosition position = makePosition(positionImage);
 
 		// Successful in goal
-		IReasonerInput input = new AbstractManualRewrites.Input(null,
-				makePosition(positionImage));
+		IReasonerInput input = new AbstractManualRewrites.Input(null, position);
 		final IProverSequent[] expecteds = new IProverSequent[results.length];
 		for (int i = 0; i < expecteds.length; i++) {
-			expecteds[i] = TestLib.genFullSeq(typenv, "", "", "⊤", results[i]);
+			expecteds[i] = genFullSeq(typenv, "", "", "⊤", results[i]);
 		}
-		apps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- " + predicate), input, expecteds));
+		apps.add(new SuccessfullReasonerApplication(genSeq(" ⊤ |- " + predicate), input, expecteds));
 
 		// Successful in hypothesis
-		input = new AbstractManualRewrites.Input(predicate,
-				makePosition(positionImage));
+		input = new AbstractManualRewrites.Input(predicate, position);
 		
-		final StringBuilder sb = new StringBuilder();
-		String sep = "";
-		for (String result : results) {
-			if (result.trim().equals("⊤")) {
-				continue;
-			}
-			sb.append(sep);
-			sb.append(result);
-			sep = " ;; ";
-		}
-		final IProverSequent expected = TestLib.genFullSeq(typenv, predicate
-				.toString(), "", sb.toString(), "⊤");
-		apps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(predicate + " |- ⊤"), input, expected));
+		String newHyps = stream(results).filter(res -> !res.trim().equals("⊤")).collect(joining(" ;; "));
+		final IProverSequent expected = genFullSeq(typenv, predicate.toString(), "", newHyps, "⊤");
+		apps.add(new SuccessfullReasonerApplication(genSeq(predicate + " |- ⊤"), input, expected));
 		return apps;
 	}
 	
 
 	protected Collection<UnsuccessfullReasonerApplication> makeHypNotPresent() {
 		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
-		IProverSequent sequent = TestLib.genSeq(" ⊤ |- ⊤ ");
-		Predicate pred = TestLib.genPred("⊥");
+		IProverSequent sequent = genSeq(" ⊤ |- ⊤ ");
+		Predicate pred = genPred("⊥");
 		IReasonerInput input = new AbstractManualRewrites.Input(pred,
 				IPosition.ROOT);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
@@ -134,12 +115,11 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 			String predicateImage, String positionImage) {
 		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
 
-		Predicate predicate = TestLib.genPred(predicateImage);
-		predicate.typeCheck(ff.makeTypeEnvironment());
+		Predicate predicate = genPred(predicateImage);
 		IPosition position = makePosition(positionImage);
 		IReasonerInput input = new AbstractManualRewrites.Input(null, position);
 
-		IProverSequent sequent = TestLib.genSeq(" ⊤ |- " + predicateImage);
+		IProverSequent sequent = genSeq(" ⊤ |- " + predicateImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
@@ -147,7 +127,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 						+ " is inapplicable for goal " + predicate
 						+ " at position " + position));
 
-		sequent = TestLib.genSeq(predicateImage + " |- ⊤");
+		sequent = genSeq(predicateImage + " |- ⊤");
 		input = new AbstractManualRewrites.Input(predicate, position);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
@@ -164,8 +144,8 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
 		SuccessfulTest [] successfulTests = getSuccessfulTests();
 		for (SuccessfulTest test : successfulTests) {
-			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(test.factory,
-					test.predicateImage, test.positionImage, test.results);
+			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(test.predicateImage,
+					test.positionImage, test.results);
 			successfullReasonerApps.addAll(apps);
 
 		}
