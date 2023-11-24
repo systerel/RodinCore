@@ -477,6 +477,31 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRootL1("R ∈ {0} ↔ ℕ ", "R ⊆ {0} × ℕ");
 	}
 
+	// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
+	@Test
+	public void testSIMP_IN_COMPSET() throws Exception {
+		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
+				"∃x,y· (x≥0 ∧ y≥0) ∧ x+y = n");
+	}
+
+	// E : {x . P(x) | x} == P(E)
+	@Test
+	public void testSIMP_IN_COMPSET_ONEPOINT() throws Exception {
+		// One point rule on single variable
+		rewriteRootL1("n ∈ {x ∣ x≥0}", "n ≥ 0");
+		rewriteRootL1("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
+
+		// One point rule on all variables
+		rewriteRootL1("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRootL1("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
+
+		// One point rule on first variable only
+		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
+
+		// One point rule applies only to the last conjunct of the result
+		rewriteRootL1("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
+	}
+
 	/*
 	 * Ensures that we do not apply a rule of the auto-rewriter when applied to an
 	 * invalid position.
