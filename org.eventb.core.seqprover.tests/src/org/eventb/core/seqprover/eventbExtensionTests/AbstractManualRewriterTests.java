@@ -30,6 +30,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
 //import com.b4free.rodin.core.B4freeCore;
@@ -97,6 +98,12 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		return apps;
 	}
 	
+	protected void assertReasonerSuccess(String predicateImage, String positionImage, String... results)
+			throws UntranslatableException {
+		for (var app : makeSuccessfullReasonerApplication(predicateImage, positionImage, results)) {
+			testSuccessfulReasonerApplications("successful rewriting expected", app);
+		}
+	}
 
 	protected Collection<UnsuccessfullReasonerApplication> makeHypNotPresent() {
 		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
@@ -139,6 +146,12 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		return unsuccessfullReasonerApps;
 	}
 
+	protected void assertReasonerFailure(String predicateImage, String positionImage) {
+		for (var app : makeIncorrectPositionApplication(predicateImage, positionImage)) {
+			testUnsuccessfulReasonerApplications("unsuccessful rewriting expected", app);
+		}
+	}
+
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
@@ -154,7 +167,18 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 						.size()]); 
 	}
 	
-	protected abstract SuccessfulTest[] getSuccessfulTests();
+	/**
+	 * Returns successful test cases
+	 *
+	 * @return successful test cases
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #assertReasonerSuccess(String, String, String...)}
+	 *             with each test case instead.
+	 */
+	@Deprecated
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[0];
+	}
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
@@ -175,7 +199,18 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 						.size()]);
 	}
 
-	protected abstract String[] getUnsuccessfulTests();
+	/**
+	 * Returns unsuccessful test cases
+	 *
+	 * @return unsuccessful test cases
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #assertReasonerFailure(String, String)}
+	 *             with each test case instead.
+	 */
+	@Deprecated
+	protected String[] getUnsuccessfulTests() {
+		return new String[0];
+	}
 
 //	@Override
 //	public ITactic getJustDischTactic() {

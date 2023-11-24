@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2023 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     UPEC - refactored to use new test methods
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
+import org.junit.Test;
 
 /**
  * Unit tests for the rm level L1 reasoner {@link RemoveMembershipL1}
@@ -27,66 +29,49 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 		super(REASONER_ID, RMLevel.L1);
 	}
 
-	// E : NAT == 0 <= E
-	private static final String P1 = "(0 = 1) ⇒ (1 ∈ ℕ)";
+	@Test
+	public void testPositions() {
+		// E : NAT == 0 <= E
+		assertGetPositions("(0 = 1) ⇒ (1 ∈ ℕ)", "1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ ℕ", "1.1");
 
-	private static final String resultP1 = "0=1⇒0≤1";
+		// E : NAT1 == 1 <= E
+		assertGetPositions("(0 = 1) ⇒ 2 ∈ ℕ1", "1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ ℕ1", "1.1");
 
-	private static final String P2 = "∀x·x = 0 ⇒ x ∈ ℕ";
-
-	private static final String resultP2 = "∀x·x=0⇒0≤x";
-
-	// E : NAT1 == 1 <= E
-	private static final String P3 = "(0 = 1) ⇒ 2 ∈ ℕ1";
-
-	private static final String resultP3 = "0=1⇒1≤2";
-
-	private static final String P4 = "∀x·x = 0 ⇒ x ∈ ℕ1";
-
-	private static final String resultP4 = "∀x·x=0⇒1≤x";
-
-	// r : S <-> T == r <: S x T
-	private static final String P5 = " 0 = x ⇒ f ∈ ℕ ↔ BOOL";
-	 	
-	private static final String resultP5 = "0 = x ⇒ f ⊆ ℕ × BOOL";
-		
-	private static final String P6 = "∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL";
-		
-	private static final String resultP6 = "∀x·0 = x ⇒ f ⊆ ℕ × BOOL";
-
-	public String[] getTestGetPositions() {
-		return new String[] {
-				P1, "1",
-				P2, "1.1",
-				P3, "1",
-				P4, "1.1",
-				P5, "1",
-				P6, "1.1",
-		};
+		// r : S <-> T == r <: S x T
+		assertGetPositions(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "1");
+		assertGetPositions("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "1.1");
 	}
 
-	@Override
-	protected SuccessfulTest[] getSuccessfulTests() {
-		return new SuccessfulTest[] { 
-				new SuccessfulTest(P1, "1", resultP1),
-				new SuccessfulTest(P2, "1.1", resultP2),
-				new SuccessfulTest(P3, "1", resultP3),
-				new SuccessfulTest(P4, "1.1", resultP4),
-				new SuccessfulTest(P5, "1", resultP5),
-				new SuccessfulTest(P6, "1.1", resultP6),
-		};
+	@Test
+	public void testSuccessful() throws Exception {
+		// E : NAT == 0 <= E
+		assertReasonerSuccess("(0 = 1) ⇒ (1 ∈ ℕ)", "1", "0=1⇒0≤1");
+		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ℕ", "1.1", "∀x·x=0⇒0≤x");
+
+		// E : NAT1 == 1 <= E
+		assertReasonerSuccess("(0 = 1) ⇒ 2 ∈ ℕ1", "1", "0=1⇒1≤2");
+		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ℕ1", "1.1", "∀x·x=0⇒1≤x");
+
+		// r : S <-> T == r <: S x T
+		assertReasonerSuccess(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "1", "0 = x ⇒ f ⊆ ℕ × BOOL");
+		assertReasonerSuccess("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "1.1", "∀x·0 = x ⇒ f ⊆ ℕ × BOOL");
 	}
 
-	@Override
-	protected String[] getUnsuccessfulTests() {
-		return new String[] {
-				P1, "0",
-				P2, "1.0",
-				P3, "0",
-				P4, "1.0",
-				P5, "0",
-				P6, "0",
-		};
+	@Test
+	public void testUnsuccessful() {
+		// E : NAT == 0 <= E
+		assertReasonerFailure("(0 = 1) ⇒ (1 ∈ ℕ)", "0");
+		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ ℕ", "1.0");
+
+		// E : NAT1 == 1 <= E
+		assertReasonerFailure("(0 = 1) ⇒ 2 ∈ ℕ1", "0");
+		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ ℕ1", "1.0");
+
+		// r : S <-> T == r <: S x T
+		assertReasonerFailure(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "0");
+		assertReasonerFailure("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "0");
 	}
 
 }
