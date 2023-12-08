@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	protected final boolean level2AndHigher;
 	protected final boolean level3AndHigher;
 	protected final boolean level4AndHigher;
+	protected final boolean level5AndHigher;
 
 	/**
 	 * Constructor.
@@ -70,6 +71,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
 		this.level3AndHigher = rewriter.getLevel().from(Level.L3);
 		this.level4AndHigher = rewriter.getLevel().from(Level.L4);
+		this.level5AndHigher = rewriter.getLevel().from(Level.L5);
 	}
 
 	/**
@@ -1518,6 +1520,22 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 
 		// Don't rewrite if different expressions
 		noRewriteExpr("prj1(E) ↦ prj2(F)", "E=S×T; F=S×T");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MIN_IN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MIN_IN() {
+		rewritePred("min(A)∈A", "⊤", "", level5AndHigher);
+	}
+
+	/**
+	 * Ensures that rule SIMP_MAX_IN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MAX_IN() {
+		rewritePred("max(A)∈A", "⊤", "", level5AndHigher);
 	}
 
 }

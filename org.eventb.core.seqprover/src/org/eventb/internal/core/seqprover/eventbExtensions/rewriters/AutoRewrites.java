@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 	/**
 	 * Default instance of this family of reasoners.
 	 */
-	public static final IReasoner DEFAULT = new AutoRewritesL4();
+	public static final IReasoner DEFAULT = new AutoRewritesL5();
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".autoRewrites";
@@ -49,7 +49,7 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		// The parameter is the version of the associated level.
 		// Names of existing levels must not be changed to ensure backward
 		// compatibility of reasoner ids.
-		L0(4), L1(1), L2(1), L3(1), L4(0);
+		L0(4), L1(1), L2(1), L3(1), L4(0), L5(0);
 
 		public static final Level LATEST = Level.latest();
 

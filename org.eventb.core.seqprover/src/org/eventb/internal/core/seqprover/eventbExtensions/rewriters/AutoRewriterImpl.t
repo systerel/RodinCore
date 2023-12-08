@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,6 +127,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	private final boolean level2;
 	private final boolean level3;
 	private final boolean level4;
+	private final boolean level5;
 
 	private static int optionsForLevel(Level level) {
 		int result = 0;
@@ -147,6 +148,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		this.level2 = level.from(Level.L2);
 		this.level3 = level.from(Level.L3);
 		this.level4 = level.from(Level.L4);
+		this.level5 = level.from(Level.L5);
 	}
 
 	public Level getLevel() {
@@ -661,7 +663,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
 			"SIMP_SPECIAL_EQUAL_COMPSET", "DEF_IN_MAPSTO", "DERIV_MULTI_IN_SETMINUS", 
 			"DERIV_MULTI_IN_BUNION", "DERIV_PRJ1_SURJ", "DERIV_PRJ2_SURJ",
-			"DERIV_ID_BIJ", })
+			"DERIV_ID_BIJ", "SIMP_MIN_IN", "SIMP_MAX_IN" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final FormulaFactory ff = predicate.getFactory();
@@ -1546,6 +1548,30 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				           && `Ty2.isATypeExpression()) {
 					result = DLib.True(ff);
 					trace(predicate, result, "DERIV_ID_BIJ");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MIN_IN
+			 *    min(S)∈S == ⊤
+			 */
+			In(Min(S), S) -> {
+				if (level5) {
+					result = DLib.True(ff);
+					trace(predicate, result, "SIMP_MIN_IN");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MAX_IN
+			 *    max(S)∈S == ⊤
+			 */
+			In(Max(S), S) -> {
+				if (level5) {
+					result = DLib.True(ff);
+					trace(predicate, result, "SIMP_MAX_IN");
 					return result;
 				}
 			}
