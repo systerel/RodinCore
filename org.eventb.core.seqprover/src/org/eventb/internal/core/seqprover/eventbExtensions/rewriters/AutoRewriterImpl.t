@@ -4306,7 +4306,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    return expression;
 	}
 
-	@ProverRule( { "SIMP_SPECIAL_KBOOL_BFALSE", "SIMP_SPECIAL_KBOOL_BTRUE" })
+	@ProverRule( { "SIMP_SPECIAL_KBOOL_BFALSE", "SIMP_SPECIAL_KBOOL_BTRUE",
+			"SIMP_KBOOL_LIT_EQUAL_TRUE" })
     @Override
 	public Expression rewrite(BoolExpression expression) {
 		final FormulaFactory ff = expression.getFactory();
@@ -4330,6 +4331,19 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				result = DLib.TRUE(ff);
 	    		trace(expression, result, "SIMP_SPECIAL_KBOOL_BTRUE");
 	    		return result;
+			}
+
+			/**
+			 * SIMP_KBOOL_LIT_EQUAL_TRUE
+			 *    bool(B = TRUE) == B
+			 *    bool(TRUE = B) == B
+			 */
+			Bool(Equal(B, TRUE())) || Bool(Equal(TRUE(), B)) << expression -> {
+				if (level5) {
+					result = `B;
+					trace(expression, result, "SIMP_KBOOL_LIT_EQUAL_TRUE");
+					return result;
+				}
 			}
     	}
 	    return expression;

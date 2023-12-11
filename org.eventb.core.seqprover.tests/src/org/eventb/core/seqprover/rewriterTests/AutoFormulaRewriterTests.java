@@ -1538,4 +1538,15 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("max(A)∈A", "⊤", "", level5AndHigher);
 	}
 
+	/**
+	 * Ensures that rule SIMP_KBOOL_LIT_EQUAL_TRUE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_KBOOL_LIT_EQUAL_TRUE() {
+		rewriteExpr("bool(B=TRUE)", "B", "", level5AndHigher);
+		rewriteExpr("bool(TRUE=B)", "B", "", level5AndHigher);
+		noRewriteExpr("bool(B=FALSE)");
+		noRewriteExpr("bool(A=B)", "A=BOOL");
+	}
+
 }
