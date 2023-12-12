@@ -50,9 +50,6 @@ public abstract class ContributedItemTypes<T extends IContributedItemType> {
 			final T type = makeType(element);
 			map.put(type.getId(), type);
 		}
-		if (RodinDBManager.RODINTYPES_VERBOSE) {
-			showMap();
-		}
 	}
 
 	protected IConfigurationElement[] readExtensions() {

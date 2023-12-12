@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static org.rodinp.internal.core.ElementTypeManager.debug;
 import static org.rodinp.internal.core.ElementTypeManager.getSortedIds;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
@@ -56,8 +59,15 @@ public class InternalElementTypes extends
 			debug("  " + type.getId());
 			debug("    name: " + type.getName());
 			debug("    class: " + type.getClassName());
+			debug("    attributes: " + arrayToString(type.getAttributeTypes(), AttributeType::getId));
+			debug("    parents: " + arrayToString(type.getParentTypes(), InternalElementType::getId));
+			debug("    children: " + arrayToString(type.getChildTypes(), InternalElementType::getId));
 		}
 		debug("---------------------------------------------------");
+	}
+
+	private <T> String arrayToString(T[] elements, Function<T, String> getName) {
+		return "[" + stream(elements).map(getName).collect(joining(", ")) + "]";
 	}
 
 	public void finalizeRelations() {

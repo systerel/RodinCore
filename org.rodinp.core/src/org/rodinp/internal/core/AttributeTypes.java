@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static org.rodinp.internal.core.ElementTypeManager.debug;
 import static org.rodinp.internal.core.ElementTypeManager.getSortedIds;
 
@@ -57,6 +59,7 @@ public class AttributeTypes extends ContributedItemTypes<AttributeType<?>> {
 				debug("    kind:  " + ((AttributeType<?>) type).getKind());
 			}
 			debug("    class: " + type.getClass());
+			debug("    elements: [" + stream(type.getElementTypes()).map(e -> e.getId()).collect(joining(", ")) + "]");
 		}
 		debug("--------------------------------------------");
 	}
