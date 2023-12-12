@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class FileAssociations {
 			fileContentTypes.put(type.getContentTypeId(), type);
 		}
 
-		if (ElementTypeManager.VERBOSE) {
+		if (RodinDBManager.RODINTYPES_VERBOSE) {
 			debug("-----------------------------------------------");
 			debug("File association known to the Rodin database:");
 			for (String id : getSortedIds(fileContentTypes)) {

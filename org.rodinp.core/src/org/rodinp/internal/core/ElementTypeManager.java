@@ -45,9 +45,6 @@ import org.rodinp.internal.core.relations.ItemRelations;
  */
 public class ElementTypeManager {
 	
-	// Debug flag set from tracing options 
-	public static boolean VERBOSE = false;
-
 	/**
 	 * The singleton manager
 	 */

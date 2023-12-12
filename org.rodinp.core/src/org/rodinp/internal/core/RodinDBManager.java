@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class RodinDBManager implements ISaveParticipant {
 	public static final IContentType rodinContentType =
 		Platform.getContentTypeManager().getContentType(RODIN_CONTENT_TYPE);
 	
+	public static boolean RODINTYPES_VERBOSE = false;
 	
 //	private static final String INDEX_MANAGER_DEBUG = RodinCore.PLUGIN_ID + "/debug/indexmanager" ; //$NON-NLS-1$
 //	private static final String COMPILER_DEBUG = RodinCore.PLUGIN_ID + "/debug/compiler" ; //$NON-NLS-1$
@@ -116,7 +117,7 @@ public class RodinDBManager implements ISaveParticipant {
 //	private static final String RESOLUTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/resolution" ; //$NON-NLS-1$
 //	private static final String SELECTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/selection" ; //$NON-NLS-1$
 //	private static final String SEARCH_DEBUG = RodinCore.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
-	private static final String RODINTYPES_VERBOSE = RodinCore.PLUGIN_ID + "/debug/rodintypes/verbose" ; //$NON-NLS-1$
+	private static final String RODINTYPES_VERBOSE_OPTION = RodinCore.PLUGIN_ID + "/debug/rodintypes/verbose" ; //$NON-NLS-1$
 
 //	public static final String COMPLETION_PERF = RodinCore.PLUGIN_ID + "/perf/completion" ; //$NON-NLS-1$
 //	public static final String SELECTION_PERF = RodinCore.PLUGIN_ID + "/perf/selection" ; //$NON-NLS-1$
@@ -328,8 +329,8 @@ public class RodinDBManager implements ISaveParticipant {
 //			option = Platform.getDebugOption(SOURCE_MAPPER_DEBUG_VERBOSE);
 //			if(option != null) SourceMapper.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
-			option = Platform.getDebugOption(RODINTYPES_VERBOSE);
-			if(option != null) ElementTypeManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			option = Platform.getDebugOption(RODINTYPES_VERBOSE_OPTION);
+			if(option != null) RODINTYPES_VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			option = Platform.getDebugOption(BUFFER_DEBUG);
 			if(option != null) Buffer.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
