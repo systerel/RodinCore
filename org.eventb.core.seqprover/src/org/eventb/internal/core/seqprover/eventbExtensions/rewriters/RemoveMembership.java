@@ -34,6 +34,11 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	protected RemoveMembership(RMLevel level) {
 		this.level = level;
 	}
+
+	public RMLevel getLevel() {
+		return level;
+	}
+
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred != null)
