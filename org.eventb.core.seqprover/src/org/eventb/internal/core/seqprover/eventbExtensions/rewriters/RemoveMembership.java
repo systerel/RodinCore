@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - refactor code
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -42,13 +43,13 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(level);
-		Formula<?> predicate = pred.getSubFormula(position);
+		Formula<?> subFormula = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;
-		if (predicate instanceof Predicate
-				&& Lib.isInclusion((Predicate) predicate))
-			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);
-		if (newSubPredicate == null || newSubPredicate == predicate)
+		if (subFormula instanceof Predicate
+				&& Lib.isInclusion((Predicate) subFormula))
+			newSubPredicate = rewriter.rewrite((RelationalPredicate) subFormula);
+		if (newSubPredicate == null || newSubPredicate == subFormula)
 			return null;
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
