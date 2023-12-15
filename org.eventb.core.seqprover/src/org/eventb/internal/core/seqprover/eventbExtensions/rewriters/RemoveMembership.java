@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.ast.Formula.IN;
+
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public abstract class RemoveMembership extends AbstractManualRewrites {
 
@@ -46,8 +47,7 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 		Formula<?> subFormula = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;
-		if (subFormula instanceof Predicate
-				&& Lib.isInclusion((Predicate) subFormula))
+		if (subFormula.getTag() == IN)
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) subFormula);
 		if (newSubPredicate == null || newSubPredicate == subFormula)
 			return null;
