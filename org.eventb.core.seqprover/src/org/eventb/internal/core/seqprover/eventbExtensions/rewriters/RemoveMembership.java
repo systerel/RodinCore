@@ -45,12 +45,15 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(level);
 		Formula<?> subFormula = pred.getSubFormula(position);
-
-		Formula<?> newSubPredicate = null;
-		if (subFormula.getTag() == IN)
-			newSubPredicate = rewriter.rewrite((RelationalPredicate) subFormula);
-		if (newSubPredicate == null || newSubPredicate == subFormula)
+		if (subFormula.getTag() != IN) {
 			return null;
+		}
+
+		Predicate newSubPredicate = rewriter.rewrite((RelationalPredicate) subFormula);
+		if (newSubPredicate == null || newSubPredicate == subFormula) {
+			return null;
+		}
+
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
