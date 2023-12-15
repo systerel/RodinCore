@@ -19,6 +19,7 @@ import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
@@ -241,6 +242,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final Predicate expected = genPred(typenv, expectedImage);
 		final IPosition pos = makePosition(posImage);
 		final Predicate actual = rewriter.rewrite(input, pos);
+		assertNotNull("the rewrite failed", actual);
 		assertEquals(expected, actual);
 	}
 
@@ -268,7 +270,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final Predicate input = genPred(typenv, inputImage);
 		final IPosition pos = makePosition(posImage);
 		final Predicate actual = rewriter.rewrite(input, pos);
-		assertNull(actual);
+		assertNull("the rewrite succeeded unexpectedly", actual);
 	}
 
 	protected void noRewritePred(String inputImage, String posImage) {
