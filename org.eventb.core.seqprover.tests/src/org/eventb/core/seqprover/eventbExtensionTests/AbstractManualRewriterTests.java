@@ -25,12 +25,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.UntranslatableException;
+import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
 //import com.b4free.rodin.core.B4freeCore;
@@ -218,26 +220,19 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 //	}
 
 	/**
-	 * Test the rewriter for rewriting from an input predicate (represented by
-	 * its string image) at a given position to an expected predicate
-	 * (represented by its string image).
+	 * Test the rewriter for rewriting from an input predicate (represented by its
+	 * string image) at a given position to an expected predicate (represented by
+	 * its string image).
 	 * <p>
-	 * The type environment is described by a list of strings which must contain
-	 * an even number of elements. It contains alternatively names and types to
-	 * assign to them in the environment. For instance, to describe a type
-	 * environment where <code>S</code> is a given set and <code>x</code> is an
-	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * The type environment should be in the format accepted by the method
+	 * {@link TestLib#mTypeEnvironment(String, FormulaFactory)}.
 	 * </p>
 	 * 
-	 * @param inputImage
-	 *            the string image of the input predicate
-	 * @param pos
-	 *            the string image of the position to rewrite
-	 * @param expectedImage
-	 *            the string image of the expected predicate
-	 * @param env
-	 *            a list of strings describing the type environment to use for
-	 *            type-checking
+	 * @param inputImage    the string image of the input predicate
+	 * @param pos           the string image of the position to rewrite
+	 * @param expectedImage the string image of the expected predicate
+	 * @param env           the image of the type environment to be parsed by
+	 *                      {@code mTypeEnvironment} and used for type-checking
 	 */
 	protected void rewritePred(String inputImage, String posImage,
 			String expectedImage, String typenvImage) {
@@ -255,23 +250,17 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	}
 
 	/**
-	 * Test the rewriter for not rewriting an input predicate (represented by
-	 * its string image) at a given position.
+	 * Test the rewriter for not rewriting an input predicate (represented by its
+	 * string image) at a given position.
 	 * <p>
-	 * The type environment is described by a list of strings which must contain
-	 * an even number of elements. It contains alternatively names and types to
-	 * assign to them in the environment. For instance, to describe a type
-	 * environment where <code>S</code> is a given set and <code>x</code> is an
-	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * The type environment should be in the format accepted by the method
+	 * {@link TestLib#mTypeEnvironment(String, FormulaFactory)}.
 	 * </p>
 	 * 
-	 * @param inputImage
-	 *            the string image of the input predicate
-	 * @param pos
-	 *            the string image of the position to rewrite
-	 * @param env
-	 *            a list of strings describing the type environment to use for
-	 *            type-checking
+	 * @param inputImage the string image of the input predicate
+	 * @param pos        the string image of the position to rewrite
+	 * @param env        the image of the type environment to be parsed by
+	 *                   {@code mTypeEnvironment} and used for type-checking
 	 */
 	protected void noRewritePred(String inputImage, String posImage,
 			String typenvImage) {
