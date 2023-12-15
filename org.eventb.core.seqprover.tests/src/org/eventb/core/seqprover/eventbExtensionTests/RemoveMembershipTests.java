@@ -38,8 +38,11 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	private final IFormulaFilter posFilter;
 
-	public RemoveMembershipTests(String reasonerId, final RMLevel level) {
-		this.reasonerId = reasonerId;
+	private final RMLevel level;
+
+	public RemoveMembershipTests(RemoveMembership rewriter) {
+		super(rewriter);
+		this.reasonerId = rewriter.getReasonerID();
 		this.posFilter = new DefaultFilter() {
 			@Override
 			public boolean select(RelationalPredicate predicate) {
@@ -47,6 +50,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 						.isApplicableOrRewrite(predicate);
 			}
 		};
+		this.level = rewriter.getLevel();
 	}
 
 	@Override

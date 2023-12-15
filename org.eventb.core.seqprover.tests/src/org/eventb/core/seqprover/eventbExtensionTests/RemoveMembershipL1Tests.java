@@ -11,22 +11,18 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
-
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
 import org.junit.Test;
 
 /**
- * Unit tests for the rm level L1 reasoner {@link RemoveMembershipL1}
+ * Unit tests for the rm level L1 reasoner {@link RemoveMembershipL1}.
  * 
  * @author htson
  */
 public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 
-	private static final String REASONER_ID = "org.eventb.core.seqprover.rmL1";
-
 	public RemoveMembershipL1Tests() {
-		super(REASONER_ID, RMLevel.L1);
+		super(new RemoveMembershipL1());
 	}
 
 	@Test
