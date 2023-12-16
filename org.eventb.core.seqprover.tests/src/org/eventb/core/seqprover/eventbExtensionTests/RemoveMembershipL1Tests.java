@@ -26,21 +26,6 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 	}
 
 	@Test
-	public void testPositions() {
-		// E : NAT == 0 <= E
-		assertGetPositions("(0 = 1) ⇒ (1 ∈ ℕ)", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ ℕ", "1.1");
-
-		// E : NAT1 == 1 <= E
-		assertGetPositions("(0 = 1) ⇒ 2 ∈ ℕ1", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ ℕ1", "1.1");
-
-		// r : S <-> T == r <: S x T
-		assertGetPositions(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "1");
-		assertGetPositions("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "1.1");
-	}
-
-	@Test
 	public void testSuccessful() throws Exception {
 		// E : NAT == 0 <= E
 		assertReasonerSuccess("(0 = 1) ⇒ (1 ∈ ℕ)", "1", "0=1⇒0≤1");

@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
+
 import java.util.List;
 
-import org.eventb.core.ast.DefaultFilter;
-import org.eventb.core.ast.IFormulaFilter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
 import org.junit.Test;
 
 /**
@@ -36,209 +34,41 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	private final String reasonerId;
 
-	private final IFormulaFilter posFilter;
-
 	private final RMLevel level;
 
 	public RemoveMembershipTests(RemoveMembership rewriter) {
 		super(rewriter);
 		this.reasonerId = rewriter.getReasonerID();
-		this.posFilter = new DefaultFilter() {
-			@Override
-			public boolean select(RelationalPredicate predicate) {
-				return new RemoveMembershipRewriterImpl(level, false)
-						.isApplicableOrRewrite(predicate);
-			}
-		};
 		this.level = rewriter.getLevel();
 	}
 
 	@Override
 	protected final List<IPosition> getPositions(Predicate predicate) {
-		return predicate.getPositions(posFilter);
+		return rmGetPositions(predicate);
 	}
 
 	@Override
 	public String getReasonerID() {
 		return reasonerId;
 	}
-		
+
 	@Test
 	public void testPositions() {
-		// E |-> F : S ** T == E : S & F : T
-		assertGetPositions("(0 = 1) ⇒ (1 ↦ 2 ∈ ℕ × ℕ)", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ x ∈ ℕ × ℕ", "1.1");
+		// General machinery
+		assertGetPositions("x ∈ {0}", "ROOT");
+		assertGetPositions("0 = 1 ⇒ x ∈ {0}", "1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ {0}", "1.1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ {0} ∪ {x ∣ x ∈ {0}}", "1.1", "1.1.1.1.1");
 
-		// E : POW(S) == E <: S
-		assertGetPositions("(0 = 1) ⇒ {1} ∈ ℙ(ℕ)", "1");
-		assertGetPositions("∀x·x = 0 ⇒ {x} ∈ ℙ(ℕ)", "1.1");
-
-		// E : S \/ ... \/ T == E : S or ... or E : T
-		assertGetPositions("(0 = 1) ⇒ 1 ∈ {1} ∪ {2} ∪ {3}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {1} ∪ {2} ∪ {3}", "1.1");
-
-		// E : S /\ ... /\ T == E : S & ... & E : T
-		assertGetPositions("(0 = 1) ⇒ 1 ∈ {1} ∩ {2} ∩ {3}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {1} ∩ {2} ∩ {3}", "1.1");
-
-		// E : S \ T == E : S & not(E : T)
-		assertGetPositions("(0 = 1) ⇒ 1 ∈ {1} ∖ {2}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {x} ∖ {1}", "1.1");
-
-		// E : {A, ..., B} == E = A or ... or E = B
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ {1, 2, 3}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {1, 2, 3}", "1.1");
-
-		// B : {A, ..., B, ..., C} == true
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ {0, 1, 2}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {1, x, 3}", "1.1");
-
-		// E : {F} == E = F (where F is a single expression)
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ {1}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ {1}", "1.1");
-
-		// E : union(S) == #s.s : S & E : s
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ union({{1},{2}})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ union({{1},{2}})", "1.1");
-
-		// E : inter(S) == !s.s : S => E :s
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ inter({{1},{2}})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ inter({{1},{2}})", "1.1");
-
-		// E : (UNION x. P | T) == #x. P & E : T
-		assertGetPositions("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.1");
-
-		// E : (INTER x. P | T) == !x. P => E : T
-		assertGetPositions("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ (⋂ y·y∈ℕ ∣ {x + y})", "1.1");
-
-		// E : dom(r) == #y. E |-> y : r
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ dom({x ↦ 1, x ↦ 2})", "1.1");
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ dom({0 ↦ (1↦BOOL↦0)})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ dom({x ↦ (1↦BOOL↦0), x ↦ (2↦BOOL↦0)})", "1.1");
-
-		// F : ran(r) == #y. y |-> F : r
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ ran({x ↦ 1, 2 ↦ x})", "1.1");
-		assertGetPositions("(0 = 1) ⇒ 0 ∈ ran({1 ↦ BOOL ↦ 0 ↦ 1})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ ran({1 ↦ BOOL ↦ x ↦ 1, 2 ↦ BOOL ↦ 0 ↦ x})", "1.1");
-
-		// E |-> F :r~ == F |-> E : r
-		assertGetPositions("(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)", "1");
-		assertGetPositions("∀x·x = 0 ⇒ (x ↦ 1 ∈ {1 ↦ x, x ↦ 2}∼)", "1.1");
-
-		// E |-> F : S <| r == E : S & E |-> F : r
-		assertGetPositions("(0 = 1) ⇒ (1 ↦ 0 ∈ {1} ◁ {1 ↦ 0})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ (1 ↦ x ∈ {1} ◁ {1 ↦ x, x ↦ 2})", "1.1");
-
-		// E |-> F : S <<| r == E /: S & E |-> F : r
-		assertGetPositions("(0 = 1) ⇒ (1 ↦ 0 ∈ {1} ⩤ {1 ↦ 0})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ (1 ↦ x ∈ {1} ⩤ {1 ↦ x, x ↦ 2})", "1.1");
-
-		// E |-> F : r |> T == E |-> F : r & F : T
-		assertGetPositions("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ▷ {0})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ▷ {x})", "1.1");
-
-		// E |-> F : r |>> T == E |-> F : r & F /: T
-		assertGetPositions("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ⩥ {0})", "1");
-		assertGetPositions("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ⩥ {x})", "1.1");
-
-		// F : r[w] = #x.x : w & x |-> F : r
-		assertGetPositions("(0 = 1) ⇒ 1 ∈ r[{0, 1}]", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ r[{0, x}]", "1.1");
-		assertGetPositions("(0 = 1) ⇒ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.1");
-		assertGetPositions("(0 = 1) ⇒ 1 ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.1");
-
-		// E |-> F : id == E = F
-		assertGetPositions("(0 = 1) ⇒ x ↦ 1 ∈ id", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ y ∈ id", "1.1");
-
-		// E |-> F : (p_1; p_2;...; p_n) ==
-		// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
-		//                            x_1 |-> x_2 : p2 &
-		// ... &
-		// x_(n-1) |-> F : pn &
-		assertGetPositions("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "1.1");
-		assertGetPositions("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}", "1.1");
-		assertGetPositions(
-				"(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}",
-				"1");
-		assertGetPositions(
-				"∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}",
-				"1.1");
-		assertGetPositions("(0 = 1) ⇒ (0 ↦ (0 ↦ 1)) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};"
-				+ "{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ (0 ↦ 1) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};"
-				+ "{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}", "1.1");
-		assertGetPositions("∀x, x0 · x ↦ x0 ∈ t ⇒ x ↦ x0 ∈ ℕ × ℕ ∧ x ↦ x0 ∈ t∼;((ℕ × ℕ) ∖ t)", "2.1.0", "2.1.1");
-
-		// r : S <<-> T == r : S <-> T & dom(r) = S
-		assertGetPositions("(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ r ∈ {x}×BOOL  ℕ", "1.1");
-
-		// r : S <->> T == r : S <-> T & ran(r) = T
-		assertGetPositions("(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ r ∈ ℕ  {x}×BOOL", "1.1");
-
-		// r : S <<->> T == r : S <->> T & r : S <<-> T
-		assertGetPositions("(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ r ∈ ℕ  {x}×BOOL", "1.1");
-
-		// f : S +-> T == f : S <-> T & !x,y,z. x |-> y : f & x |-> z : f => y = z
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ {x ↦ TRUE ↦ 1} ∈ {x}×BOOL ⇸ ℕ", "1.1");
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ BOOL×ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ {x ↦ TRUE ↦ (FALSE ↦ 1)} ∈ {x}×BOOL ⇸ BOOL×ℕ", "1.1");
-
-		// f : S --> T == f : S +-> T & dom(f) = S
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL → ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ → {x}×BOOL", "1.1");
-
-		// f : S >+> T == f : S +-> T & f : T +-> S
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ⤔ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ ⤔ {x}×BOOL", "1.1");
-
-		// f : S >-> T == f : S >+> T & dom(f) = S
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ↣ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ ↣ {x}×BOOL", "1.1");
-
-		// f : S +>> T == f : S +-> T & ran(f) = T
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ⤀ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ ⤀ {x}×BOOL", "1.1");
-
-		// f : S ->> T == f : S +>> T & dom(f) = S
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ↠ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ ↠ {x}×BOOL", "1.1");
-
-		// f : S >->> T == f : S >-> T & ran(f) = T
-		assertGetPositions("(0 = 1) ⇒ f ∈ ℕ×BOOL ⤖ ℕ", "1");
-		assertGetPositions("∀x·x = 0 ⇒ f ∈ ℕ ⤖ {x}×BOOL", "1.1");
-
-		// E |-> (F |-> G) : p >< q == E |-> F : p & E |-> G : q
-		assertGetPositions("(0 = x) ⇒ x ↦ (1 ↦ 2 ↦ 3) ∈ p ⊗ q", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ (1 ↦ 2 ↦ 3) ∈ p ⊗ q", "1.1");
-
-		// E |-> G |-> (F |-> H) : p || q == E |-> F : p & G |-> H : q
-		assertGetPositions("(0 = x) ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "1.1");
-
-		// S : POW1(T) == S : POW(T) & S /= {}
-		assertGetPositions("(0 = x) ⇒ {x, 1} ∈ ℙ1(T)", "1");
-		assertGetPositions("∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)", "1.1");
-
-		// E : a .. b == a <= E & E <=b
-		assertGetPositions("0 = x ⇒ x ∈ 0‥1", "1");
-
+		// Predicates where this reasoner is not applicable
+		assertGetPositions("x = {0}");
 		assertGetPositions("e ∈ {1} ◁ {1 ↦ 0}");
 		assertGetPositions("e ∈ {1} ⩤ {1 ↦ 0}");
 		assertGetPositions("e ∈ {1 ↦ 0} ▷ {0}");
 		assertGetPositions("e ∈ {1 ↦ 0} ⩥ {0}");
+
+		// Ensures that level 1 positions are computed
+		assertGetPositions("1 ∈ ℕ", "ROOT");
 	}
 
 	@Test
