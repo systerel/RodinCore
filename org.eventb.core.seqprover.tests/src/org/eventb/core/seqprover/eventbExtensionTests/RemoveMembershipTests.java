@@ -160,12 +160,16 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("1 ∈ inter(s)", "(∀t· t ∈ s ⇒ 1 ∈ t)");
 	}
 
+	// E : (UNION x. P | T) == #x. P & E : T
+	@Test
+	public void testDEF_IN_QUNION() throws Exception {
+		rewriteRoot("y ∈ (⋃x· x ∈ ℕ ∣ {x+1})", "(∃x· x ∈ ℕ ∧ y ∈ {x+1})");
+		rewriteRoot("y ∈ (⋃y· y ∈ ℕ ∣ {y+1})", "(∃x· x ∈ ℕ ∧ y ∈ {x+1})");
+		rewriteRoot("z ∈ (⋃x,y· x ∈ ℕ ∣ {x+y})", "(∃x,y· x ∈ ℕ ∧ z ∈ {x+y})");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : (UNION x. P | T) == #x. P & E : T
-		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "1", "0=1⇒(∃x·x∈ℕ∧0∈{x+1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.1", "∀x·x=0⇒(∃y·y∈ℕ∧x∈{x+y})");
-
 		// E : (INTER x. P | T) == !x. P => E : T
 		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "1", "0=1⇒(∀x·x∈ℕ⇒0∈{x+1})");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (⋂ y·y∈ℕ ∣ {x + y})", "1.1", "∀x·x=0⇒(∀y·y∈ℕ⇒x∈{x+y})");
@@ -330,10 +334,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E : (UNION x. P | T) == #x. P & E : T
-		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.0");
 
 		// E : (INTER x. P | T) == !x. P => E : T
 		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "0");
