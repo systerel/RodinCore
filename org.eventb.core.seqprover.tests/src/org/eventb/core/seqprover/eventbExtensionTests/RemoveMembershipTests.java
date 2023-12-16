@@ -400,21 +400,22 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		noRewriteRoot("x ∈ {1 ↦ 2} ∥ {1 ↦ TRUE}");
 	}
 
+	// S : POW1(T) == S : POW(T) & S /= {}
+	@Test
+	public void testDEF_IN_POW1() throws Exception {
+		rewriteRoot("{1} ∈ ℙ1(ℕ)", "{1} ∈ ℙ(ℕ) ∧ {1} ≠ ∅");
+		rewriteRoot("{x} ∈ ℙ1(ℕ)", "{x} ∈ ℙ(ℕ) ∧ {x} ≠ ∅");
+		rewriteRoot("A ∪ B ∈ ℙ1(ℕ)", "A ∪ B ∈ ℙ(ℕ) ∧ A ∪ B ≠ ∅");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// S : POW1(T) == S : POW(T) & S /= {}
-		assertReasonerSuccess("(0 = x) ⇒ {x, 1} ∈ ℙ1(T)", "1", "0=x⇒{x,1}∈ℙ(T)∧{x,1}≠∅");
-		assertReasonerSuccess("∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)", "1.1", "∀x·x=0⇒{x,1}∈ℙ(T)∧{x,1}≠∅");
-
 		// E : a .. b == a <= E & E <=b
 		assertReasonerSuccess("0 = x ⇒ x ∈ 0‥1", "1", "0=x⇒0≤x∧x≤1");
 	}
 
 	@Test
 	public void testUnsuccessful() {
-		// S : POW1(T) == S : POW(T) & S /= {}
-		assertReasonerFailure("(0 = x) ⇒ {x, 1} ∈ ℙ1(T)", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)", "1.0");
 	}
 
 	// Commented out, makes the tests NOT succeed
