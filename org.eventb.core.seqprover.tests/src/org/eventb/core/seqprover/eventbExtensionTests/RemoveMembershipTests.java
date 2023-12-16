@@ -56,6 +56,14 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		}
 	}
 
+	private void rewriteRoot(String inputImage, String expectedImage) {
+		rewritePred(inputImage, "", expectedImage);
+	}
+
+	private void noRewriteRoot(String inputImage) {
+		noRewritePred(inputImage, "");
+	}
+
 	@Test
 	public void testPositions() {
 		// General machinery
@@ -75,12 +83,16 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertGetPositions("1 ∈ ℕ", "ROOT");
 	}
 
+	// E |-> F : S ** T == E : S & F : T
+	@Test
+	public void testDEF_IN_MAPSTO() throws Exception {
+		rewriteRoot("1 ↦ 2 ∈ ℕ × ℕ", "1 ∈ ℕ ∧ 2 ∈ ℕ");
+		noRewriteRoot("1 ↦ 2 ∈ A");
+		noRewriteRoot("a ∈ ℕ × ℕ");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> F : S ** T == E : S & F : T
-		assertReasonerSuccess("(0 = 1) ⇒ (1 ↦ 2 ∈ ℕ × ℕ)", "1", "0=1⇒1∈ℕ∧2∈ℕ");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ x ∈ ℕ × ℕ", "1.1", "∀x·x=0⇒x∈ℕ∧x∈ℕ");
-
 		// E : POW(S) == E <: S
 		assertReasonerSuccess("(0 = 1) ⇒ {1} ∈ ℙ(ℕ)", "1", "0=1⇒{1}⊆ℕ");
 		assertReasonerSuccess("∀x·x = 0 ⇒ {x} ∈ ℙ(ℕ)", "1.1", "∀x·x=0⇒{x}⊆ℕ");
@@ -285,10 +297,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E |-> F : S ** T == E : S & F : T
-		assertReasonerFailure("(0 = 1) ⇒ (1 ↦ 2 ∈ ℕ × ℕ)", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ x ∈ ℕ × ℕ", "1.0");
 
 		// E : POW(S) == E <: S
 		assertReasonerFailure("(0 = 1) ⇒ {1} ∈ ℙ(ℕ)", "0");
