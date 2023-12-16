@@ -129,12 +129,17 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("x ∈ {1, 2, 3}", "x = 1 ∨ x = 2 ∨ x = 3");
 	}
 
+	// B : {A, ..., B, ..., C} == true
+	@Test
+	public void testSIMP_MULTI_IN() throws Exception {
+		rewriteRoot("1 ∈ {1}", "⊤");
+		rewriteRoot("1 ∈ {1, 2}", "⊤");
+		rewriteRoot("2 ∈ {1, 2}", "⊤");
+		rewriteRoot("2 ∈ {1, 2, 3}", "⊤");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// B : {A, ..., B, ..., C} == true
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {0, 1, 2}", "1", "0=1⇒⊤");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1, x, 3}", "1.1", "∀x·x=0⇒⊤");
-
 		// E : {F} == E = F (where F is a single expression)
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {1}", "1", "0=1⇒0=1");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1}", "1.1", "∀x·x=0⇒x=1");
@@ -315,10 +320,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// B : {A, ..., B, ..., C} == true
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {0, 1, 2}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ {1, x, 3}", "1.0");
 
 		// E : {F} == E = F (where F is a single expression)
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {1}", "0");
