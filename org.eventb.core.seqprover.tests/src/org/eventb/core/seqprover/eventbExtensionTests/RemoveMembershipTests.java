@@ -238,12 +238,15 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		noRewriteRoot("a ∈ A ◁ {1 ↦ 2}");
 	}
 
+	// E |-> F : r |> T == E |-> F : r & F : T
+	@Test
+	public void testDEF_IN_RANRES() throws Exception {
+		rewriteRoot("1 ↦ 2 ∈ R ▷ A", "1 ↦ 2 ∈ R ∧ 2 ∈ A");
+		noRewriteRoot("a ∈ {1 ↦ 2} ▷ A");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> F : r |> T == E |-> F : r & F : T
-		assertReasonerSuccess("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ▷ {0})", "1", "0=1⇒1 ↦ 0∈{1 ↦ 0}∧0∈{0}");
-		assertReasonerSuccess("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ▷ {x})", "1.1", "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∈{x}");
-
 		// E |-> F : r |>> T == E |-> F : r & F /: T
 		assertReasonerSuccess("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ⩥ {0})", "1", "0=1⇒1 ↦ 0∈{1 ↦ 0}∧0∉{0}");
 		assertReasonerSuccess("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ⩥ {x})", "1.1", "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∉{x}");
@@ -368,12 +371,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E |-> F : r |> T == E |-> F : r & F : T
-		assertReasonerFailure("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ▷ {0})", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ (1 ↦ x ∈ {1 ↦ x, x ↦ 2} ▷ {x})", "1.0");
 
 		// E |-> F : r |>> T == E |-> F : r & F /: T
 		assertReasonerFailure("(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ⩥ {0})", "0");
