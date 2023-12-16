@@ -271,12 +271,15 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 				"∃y, z, t· y ↦ (z ↦ t) ∈ A ∧ y ↦ (z ↦ t) ↦ x ∈ {1 ↦ (2 ↦ 3) ↦ 4}");
 	}
 
+	// E |-> F : id == E = F
+	@Test
+	public void testDEF_IN_ID() throws Exception {
+		rewriteRoot("1 ↦ x ∈ id", "1 = x");
+		noRewriteRoot("{1 ↦ (2 ↦ 3)}(1) ∈ id");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> F : id == E = F
-		assertReasonerSuccess("(0 = 1) ⇒ x ↦ 1 ∈ id", "1", "0=1⇒x=1");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ y ∈ id", "1.1", "∀x·x=0⇒x=y");
-
 		// E |-> F : (p_1; p_2;...; p_n) ==
 		// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
 		//                            x_1 |-> x_2 : p2 &
@@ -382,10 +385,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// E |-> F : id == E = F
-		assertReasonerFailure("(0 = 1) ⇒ x ↦ 1 ∈ id", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ y ∈ id", "1.0");
-
 		// E |-> F : (p_1; p_2;...; p_n) ==
 		// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
 		//                            x_1 |-> x_2 : p2 &
