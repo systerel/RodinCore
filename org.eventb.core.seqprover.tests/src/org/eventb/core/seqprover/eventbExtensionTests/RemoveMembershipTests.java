@@ -122,12 +122,15 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("x ∈ {1} ∖ ({2} ∖ {3})", "x ∈ {1} ∧ ¬ x ∈ {2} ∖ {3}");
 	}
 
+	// E : {A, ..., B} == E = A or ... or E = B
+	@Test
+	public void testDEF_IN_SETENUM() throws Exception {
+		rewriteRoot("x ∈ {1, 2}", "x = 1 ∨ x = 2");
+		rewriteRoot("x ∈ {1, 2, 3}", "x = 1 ∨ x = 2 ∨ x = 3");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : {A, ..., B} == E = A or ... or E = B
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {1, 2, 3}", "1", "0=1⇒0=1∨0=2∨0=3");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1, 2, 3}", "1.1", "∀x·x=0⇒x=1∨x=2∨x=3");
-
 		// B : {A, ..., B, ..., C} == true
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {0, 1, 2}", "1", "0=1⇒⊤");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1, x, 3}", "1.1", "∀x·x=0⇒⊤");
@@ -312,10 +315,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E : {A, ..., B} == E = A or ... or E = B
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {1, 2, 3}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ {1, 2, 3}", "1.0");
 
 		// B : {A, ..., B, ..., C} == true
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {0, 1, 2}", "0");
