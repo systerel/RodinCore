@@ -321,20 +321,32 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("R ∈ {0}  ℕ", "R ∈ {0} ↔ ℕ ∧ dom(R) = {0} ∧ ran(R) = ℕ");
 	}
 
+	// f : S +-> T == f : S <-> T & !x,y,z. x |-> y : f & x |-> z : f => y = z
+	@Test
+	public void testDEF_IN_FCT() throws Exception {
+		rewriteRoot("R ∈ {0} ⇸ ℕ", //
+				"R ∈ {0} ↔ ℕ ∧ (∀x,y1,y2· x ↦ y1 ∈ R ∧ x ↦ y2 ∈ R ⇒ y1 = y2)");
+
+		// We create as many variables as components in the domain and range.
+		rewriteRoot("R ∈ {0}×{1} ⇸ ℕ", //
+				"R ∈ {0}×{1} ↔ ℕ " + //
+						"∧ (∀x1,x2,y1,y2· x1 ↦ x2 ↦ y1 ∈ R" + //
+						"               ∧ x1 ↦ x2 ↦ y2 ∈ R " + //
+						"              ⇒ y1 = y2)");
+		rewriteRoot("R ∈ {0} ⇸ ℕ×ℕ", //
+				"R ∈ {0} ↔ ℕ×ℕ " + //
+						"∧ (∀x,y1,z1,y2,z2· x ↦ (y1 ↦ z1) ∈ R" + //
+						"                 ∧ x ↦ (y2 ↦ z2) ∈ R " + //
+						"                ⇒ y1 ↦ z1 = y2 ↦ z2)");
+		rewriteRoot("R ∈ {0}×{1} ⇸ ℕ×ℕ", //
+				"R ∈ {0}×{1} ↔ ℕ×ℕ " + //
+						"∧ (∀x1,x2,y1,z1,y2,z2· x1 ↦ x2 ↦ (y1 ↦ z1) ∈ R" + //
+						"                     ∧ x1 ↦ x2 ↦ (y2 ↦ z2) ∈ R " + //
+						"                    ⇒ y1 ↦ z1 = y2 ↦ z2)");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// f : S +-> T == f : S <-> T & !x,y,z. x |-> y : f & x |-> z : f => y = z
-		assertReasonerSuccess("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ ℕ", "1",
-				"0=1⇒f∈ℕ × BOOL ↔ ℕ∧(∀x,x0,x1,x2·x ↦ x0 ↦ x1∈f∧x ↦ x0 ↦ x2∈f⇒x1=x2)");
-		assertReasonerSuccess("∀x·x = 0 ⇒ {x ↦ TRUE ↦ 1} ∈ {x}×BOOL ⇸ ℕ", "1.1",
-				"∀x·x=0⇒{x ↦ TRUE ↦ 1}∈{x} × BOOL ↔ ℕ∧(∀x0,x1,x2,x3·x0 ↦ x1 ↦ x2∈{x ↦ TRUE ↦ 1}∧x0 ↦ x1 ↦ x3∈{x ↦ TRUE ↦ 1}⇒x2=x3)");
-		assertReasonerSuccess("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ BOOL×ℕ", "1",
-				"0=1⇒f∈ℕ × BOOL ↔ BOOL × ℕ∧(∀x,x0,x1,x2,x3,x4·x ↦ x0 ↦ (x1 ↦ x2)∈f∧x ↦ x0 ↦ (x3 ↦ x4)∈f⇒x1 ↦ x2=x3 ↦ x4)");
-		assertReasonerSuccess("∀x·x = 0 ⇒ {x ↦ TRUE ↦ (FALSE ↦ 1)} ∈ {x}×BOOL ⇸ BOOL×ℕ", "1.1",
-				"∀x·x=0⇒{x ↦ TRUE ↦ (FALSE ↦ 1)}∈{x} × BOOL ↔ BOOL × ℕ∧"
-						+ "(∀x0,x1,x2,x3,x4,x5·x0 ↦ x1 ↦ (x2 ↦ x3)∈{x ↦ TRUE ↦ (FALSE ↦ 1)}∧"
-						+ "x0 ↦ x1 ↦ (x4 ↦ x5)∈{x ↦ TRUE ↦ (FALSE ↦ 1)}⇒x2 ↦ x3=x4 ↦ x5)");
-
 		// f : S --> T == f : S +-> T & dom(f) = S
 		assertReasonerSuccess("(0 = 1) ⇒ f ∈ ℕ×BOOL → ℕ", "1", "0=1⇒f∈ℕ × BOOL ⇸ ℕ∧dom(f)=ℕ × BOOL");
 		assertReasonerSuccess("∀x·x = 0 ⇒ f ∈ ℕ → {x}×BOOL", "1.1", "∀x·x=0⇒f∈ℕ ⇸ {x} × BOOL∧dom(f)=ℕ");
@@ -378,12 +390,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// f : S +-> T == f : S <-> T & !x,y,z. x |-> y : f & x |-> z : f => y = z
-		assertReasonerFailure("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ ℕ", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ {x ↦ TRUE ↦ 1} ∈ {x}×BOOL ⇸ ℕ", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ f ∈ ℕ×BOOL ⇸ BOOL×ℕ", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ {x ↦ TRUE ↦ (FALSE ↦ 1)} ∈ {x}×BOOL ⇸ BOOL×ℕ", "1.0");
-
 		// f : S --> T == f : S +-> T & dom(f) = S
 		assertReasonerFailure("(0 = 1) ⇒ f ∈ ℕ×BOOL → ℕ", "0");
 		assertReasonerFailure("∀x·x = 0 ⇒ f ∈ ℕ → {x}×BOOL", "1.0");
