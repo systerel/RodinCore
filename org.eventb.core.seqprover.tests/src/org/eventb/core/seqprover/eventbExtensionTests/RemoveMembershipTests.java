@@ -217,12 +217,15 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 				"∃y, z, t· y ↦ (z ↦ t) ↦ x ∈ {1 ↦ (2 ↦ 3) ↦ 4}");
 	}
 
+	// E |-> F :r~ == F |-> E : r
+	@Test
+	public void testDEF_IN_CONVERSE() throws Exception {
+		rewriteRoot("1 ↦ 2 ∈ R∼", "2 ↦ 1 ∈ R");
+		noRewriteRoot("a ∈ succ∼");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> F :r~ == F |-> E : r
-		assertReasonerSuccess("(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)", "1", "0=1⇒1 ↦ 0∈{1 ↦ 0}");
-		assertReasonerSuccess("∀x·x = 0 ⇒ (x ↦ 1 ∈ {1 ↦ x, x ↦ 2}∼)", "1.1", "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}");
-
 		// E |-> F : S <| r == E : S & E |-> F : r
 		assertReasonerSuccess("(0 = 1) ⇒ (1 ↦ 0 ∈ {1} ◁ {1 ↦ 0})", "1", "0=1⇒1∈{1}∧1 ↦ 0∈{1 ↦ 0}");
 		assertReasonerSuccess("∀x·x = 0 ⇒ (1 ↦ x ∈ {1} ◁ {1 ↦ x, x ↦ 2})", "1.1", "∀x·x=0⇒1∈{1}∧1 ↦ x∈{1 ↦ x,x ↦ 2}");
@@ -363,10 +366,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E |-> F :r~ == F |-> E : r
-		assertReasonerFailure("(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ (x ↦ 1 ∈ {1 ↦ x, x ↦ 2}∼)", "1.0");
 
 		// E |-> F : S <| r == E : S & E |-> F : r
 		assertReasonerFailure("(0 = 1) ⇒ (1 ↦ 0 ∈ {1} ◁ {1 ↦ 0})", "0");
