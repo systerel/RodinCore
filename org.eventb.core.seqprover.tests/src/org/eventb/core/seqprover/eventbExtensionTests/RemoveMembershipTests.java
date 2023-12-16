@@ -196,16 +196,29 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 				"∃y, z, t· x ↦ (y ↦ (z ↦ t)) ∈ {1 ↦ (2 ↦ (3 ↦ 4))}");
 	}
 
+	// F : ran(r) == #y. y |-> F : r
+	@Test
+	public void testDEF_IN_RAN() throws Exception {
+		rewriteRoot("0 ∈ ran(R ∪ succ)", "∃x· x ↦ 0 ∈ R ∪ succ");
+		rewriteRoot("y ∈ ran(R ∪ succ)", "∃x· x ↦ y ∈ R ∪ succ");
+		rewriteRoot("y ∈ ran({1 ↦ y, 1 ↦ 2})", "∃x· x ↦ y ∈ {1 ↦ y, 1 ↦ 2}");
+		rewriteRoot("y ∈ ran({{1 ↦ 2} ↦ 3})", "∃x· x ↦ y ∈ {{1 ↦ 2} ↦ 3}");
+
+		// LHS may be a pair
+		rewriteRoot("pair ∈ ran({1 ↦ (2 ↦ 3)})", //
+				"∃x· x ↦ pair ∈ {1 ↦ (2 ↦ 3)}");
+
+		// We create as many variables as components in the domain.
+		rewriteRoot("x ∈ ran({1 ↦ 2 ↦ 3})", //
+				"∃y, z· y ↦ z ↦ x ∈ {1 ↦ 2 ↦ 3}");
+		rewriteRoot("x ∈ ran({1 ↦ 2 ↦ 3 ↦ 4})", //
+				"∃y, z, t· y ↦ z ↦ t ↦ x ∈ {1 ↦ 2 ↦ 3 ↦ 4}");
+		rewriteRoot("x ∈ ran({1 ↦ (2 ↦ 3) ↦ 4})", //
+				"∃y, z, t· y ↦ (z ↦ t) ↦ x ∈ {1 ↦ (2 ↦ 3) ↦ 4}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// F : ran(r) == #y. y |-> F : r
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})", "1", "0=1⇒(∃x·x ↦ 0∈{0 ↦ 1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ran({x ↦ 1, 2 ↦ x})", "1.1", "∀x·x=0⇒(∃x0·x0 ↦ x∈{x ↦ 1,2 ↦ x})");
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ ran({1 ↦ BOOL ↦ 0 ↦ 1})", "1",
-				"0=1⇒(∃x,x0,x1·x ↦ x0 ↦ x1 ↦ 0∈{1 ↦ BOOL ↦ 0 ↦ 1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ran({1 ↦ BOOL ↦ x ↦ 1, 2 ↦ BOOL ↦ 0 ↦ x})", "1.1",
-				"∀x·x=0⇒(∃x0,x1,x2·x0 ↦ x1 ↦ x2 ↦ x∈{1 ↦ BOOL ↦ x ↦ 1,2 ↦ BOOL ↦ 0 ↦ x})");
-
 		// E |-> F :r~ == F |-> E : r
 		assertReasonerSuccess("(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)", "1", "0=1⇒1 ↦ 0∈{1 ↦ 0}");
 		assertReasonerSuccess("∀x·x = 0 ⇒ (x ↦ 1 ∈ {1 ↦ x, x ↦ 2}∼)", "1.1", "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}");
@@ -350,12 +363,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// F : ran(r) == #y. y |-> F : r
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ ran({x ↦ 1, 2 ↦ x})", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ ran({1 ↦ BOOL ↦ 0 ↦ 1})", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ ran({1 ↦ BOOL ↦ x ↦ 1, 2 ↦ BOOL ↦ 0 ↦ x})", "1.0");
 
 		// E |-> F :r~ == F |-> E : r
 		assertReasonerFailure("(0 = 1) ⇒ (0 ↦ 1 ∈ {1 ↦ 0}∼)", "0");
