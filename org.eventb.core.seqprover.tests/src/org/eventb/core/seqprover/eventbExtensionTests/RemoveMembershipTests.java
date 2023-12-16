@@ -391,13 +391,17 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		noRewriteRoot("x ∈ {1 ↦ 2} ⊗ {1 ↦ TRUE}");
 	}
 
+	// E |-> G |-> (F |-> H) : p || q == E |-> F : p & G |-> H : q
+	@Test
+	public void testDEF_IN_PPROD() throws Exception {
+		rewriteRoot("1 ↦ 2 ↦ (3 ↦ 4) ∈ p ∥ q", "1 ↦ 3 ∈ p ∧ 2 ↦ 4 ∈ q");
+		noRewriteRoot("x ↦ y ↦ z ∈ {1 ↦ 2} ∥ {1 ↦ TRUE}");
+		noRewriteRoot("x ↦ (y ↦ z) ∈ {1 ↦ 2} ∥ {1 ↦ TRUE}");
+		noRewriteRoot("x ∈ {1 ↦ 2} ∥ {1 ↦ TRUE}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> G |-> (F |-> H) : p || q == E |-> F : p & G |-> H : q
-		assertReasonerSuccess("(0 = x) ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "1", "0=x⇒x ↦ (1 ↦ 2)∈p∧2 ↦ x ↦ 3∈q");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "1.1",
-				"∀x·x=0⇒x ↦ (1 ↦ 2)∈p∧2 ↦ x ↦ 3∈q");
-
 		// S : POW1(T) == S : POW(T) & S /= {}
 		assertReasonerSuccess("(0 = x) ⇒ {x, 1} ∈ ℙ1(T)", "1", "0=x⇒{x,1}∈ℙ(T)∧{x,1}≠∅");
 		assertReasonerSuccess("∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)", "1.1", "∀x·x=0⇒{x,1}∈ℙ(T)∧{x,1}≠∅");
@@ -408,10 +412,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// E |-> G |-> (F |-> H) : p || q == E |-> F : p & G |-> H : q
-		assertReasonerFailure("(0 = x) ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ (2 ↦ x) ↦ (1 ↦ 2 ↦ 3) ∈ p ∥ q", "1.0");
-
 		// S : POW1(T) == S : POW(T) & S /= {}
 		assertReasonerFailure("(0 = x) ⇒ {x, 1} ∈ ℙ1(T)", "0");
 		assertReasonerFailure("∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)", "1.0");
