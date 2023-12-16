@@ -278,45 +278,33 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		noRewriteRoot("{1 ↦ (2 ↦ 3)}(1) ∈ id");
 	}
 
+	// E |-> F : (p_1; p_2;...; p_n) ==
+	// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
+	// x_1 |-> x_2 : p2 &
+	// ... &
+	// x_(n-1) |-> F : pn &
+	@Test
+	public void testDEF_IN_FCOMP() throws Exception {
+		rewriteRoot("x ↦ y ∈ id ; {0 ↦ 1}", //
+				"∃a· x ↦ a ∈ id ∧ a ↦ y ∈ {0 ↦ 1}");
+		rewriteRoot("x ↦ y ∈ id ; {0 ↦ 1} ; succ", //
+				"∃a,b· x ↦ a ∈ id ∧ a ↦ b ∈ {0 ↦ 1} ∧ b ↦ y ∈ succ");
+
+		// We create as many variables as components in the intermediate sets.
+		rewriteRoot("x ↦ y ∈ {1 ↦ (2 ↦ 3)} ; {0 ↦ 1 ↦ (2 ↦ 3)}", //
+				"∃a,b· x ↦ (a ↦ b) ∈ {1 ↦ (2 ↦ 3)} " + //
+						"∧ a ↦ b ↦ y ∈ {0 ↦ 1 ↦ (2 ↦ 3)}");
+		rewriteRoot("x ↦ y ∈ {1 ↦ (2 ↦ 3)} ; {0 ↦ 1 ↦ (2 ↦ 3)} ; {1 ↦ 2 ↦ 3}", //
+				"∃a,b,c,d· x ↦ (a ↦ b) ∈ {1 ↦ (2 ↦ 3)} " + //
+						"∧ a ↦ b ↦ (c ↦ d) ∈ {0 ↦ 1 ↦ (2 ↦ 3)} " + //
+						"∧ c ↦ d ↦ y ∈ {1 ↦ 2 ↦ 3}");
+
+		// LHS must be an explicit pair
+		noRewriteRoot("pair ∈ id ; {0 ↦ 1}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E |-> F : (p_1; p_2;...; p_n) ==
-		// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
-		//                            x_1 |-> x_2 : p2 &
-		// ... &
-		// x_(n-1) |-> F : pn &
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "1",
-				"0=1⇒(∃x·0 ↦ x∈{0 ↦ TRUE,1 ↦ FALSE}∧x ↦ 1∈{TRUE ↦ 1,FALSE ↦ 0})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "1.1",
-				"∀x·x=0⇒(∃x0·x ↦ x0∈{0 ↦ TRUE,1 ↦ FALSE}∧x0 ↦ 1∈{TRUE ↦ 1,FALSE ↦ 0})");
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}", "1",
-				"0=1⇒(∃x,x0·0 ↦ (x ↦ x0)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧x ↦ x0 ↦ 1∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}",
-				"1.1",
-				"∀x·x=0⇒(∃x0,x1·x ↦ (x0 ↦ x1)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧x0 ↦ x1 ↦ 1∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0})");
-		assertReasonerSuccess(
-				"(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}", "1",
-				"0=1⇒(∃x,x0,x1·0 ↦ (x ↦ x0)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧"
-						+ "x ↦ x0 ↦ x1∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0}∧x1 ↦ 1∈{0 ↦ 0,1 ↦ 1})");
-		assertReasonerSuccess(
-				"∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}",
-				"1.1",
-				"∀x·x=0⇒(∃x0,x1,x2·x ↦ (x0 ↦ x1)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧"
-						+ "x0 ↦ x1 ↦ x2∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0}∧x2 ↦ 1∈{0 ↦ 0,1 ↦ 1})");
-		assertReasonerSuccess(
-				"(0 = 1) ⇒ (0 ↦ (0 ↦ 1)) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};"
-						+ "{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}",
-				"1",
-				"0=1⇒(∃x,x0,x1,x2·0 ↦ (x ↦ x0)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧"
-						+ "x ↦ x0 ↦ x1∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0}∧x1 ↦ x2∈{0 ↦ FALSE,1 ↦ TRUE}∧x2 ↦ (0 ↦ 1)∈{TRUE ↦ (0 ↦ 1)})");
-		assertReasonerSuccess(
-				"∀x·x = 0 ⇒ x ↦ (0 ↦ 1) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};"
-						+ "{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}",
-				"1.1", "∀x·x=0⇒(∃x0,x1,x2,x3·x ↦ (x0 ↦ x1)∈{0 ↦ (TRUE ↦ 1),1 ↦ (FALSE ↦ 1)}∧"
-						+ "x0 ↦ x1 ↦ x2∈{TRUE ↦ 1 ↦ 1,FALSE ↦ 0 ↦ 0}∧x2 ↦ x3∈{0 ↦ FALSE,1 ↦ TRUE}∧x3 ↦ (0 ↦ 1)∈{TRUE ↦ (0 ↦ 1)})");
-		assertReasonerSuccess("∀x, x0 · x ↦ x0 ∈ t ⇒ x ↦ x0 ∈ ℕ × ℕ ∧ x ↦ x0 ∈ t∼;((ℕ × ℕ) ∖ t)", "2.1.1",
-				"∀x,x0·x ↦ x0∈t⇒x ↦ x0∈ℕ × ℕ∧(∃x1·x ↦ x1∈t∼∧x1 ↦ x0∈(ℕ × ℕ) ∖ t)");
-
 		// r : S <<-> T == r : S <-> T & dom(r) = S
 		assertReasonerSuccess("(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ", "1", "0=1⇒r∈ℕ × BOOL ↔ ℕ∧dom(r)=ℕ × BOOL");
 		assertReasonerSuccess("∀x·x = 0 ⇒ r ∈ {x}×BOOL  ℕ", "1.1", "∀x·x=0⇒r∈{x} × BOOL ↔ ℕ∧dom(r)={x} × BOOL");
@@ -385,32 +373,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// E |-> F : (p_1; p_2;...; p_n) ==
-		// #x_1, x_2, ..., x_(n-1) . E |-> x_1 : p1 &
-		//                            x_1 |-> x_2 : p2 &
-		// ... &
-		// x_(n-1) |-> F : pn &
-		assertReasonerFailure("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ TRUE, 1 ↦ FALSE};{TRUE ↦ 1, FALSE ↦ 0}", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0}",
-				"1.0");
-		assertReasonerFailure(
-				"(0 = 1) ⇒ 0 ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}",
-				"0");
-		assertReasonerFailure(
-				"∀x·x = 0 ⇒ x ↦ 1 ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ 0, 1 ↦ 1}",
-				"1.0");
-		assertReasonerFailure(
-				"(0 = 1) ⇒ (0 ↦ (0 ↦ 1)) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};"
-						+ "{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}",
-				"0");
-		assertReasonerFailure(
-				"∀x·x = 0 ⇒ x ↦ (0 ↦ 1) ∈ {0 ↦ (TRUE ↦ 1), 1 ↦ (FALSE ↦ 1)};"
-						+ "{TRUE ↦ 1 ↦ 1, FALSE ↦ 0 ↦ 0};{0 ↦ FALSE, 1 ↦ TRUE};{TRUE ↦ (0 ↦ 1)}",
-				"1.0");
-		assertReasonerFailure("∀x, x0 · x ↦ x0 ∈ t ⇒ x ↦ x0 ∈ ℕ × ℕ ∧ x ↦ x0 ∈ t∼;((ℕ × ℕ) ∖ t)", "2.0.0");
-
 		// r : S <<-> T == r : S <-> T & dom(r) = S
 		assertReasonerFailure("(0 = 1) ⇒ r ∈ ℕ×BOOL  ℕ", "0");
 		assertReasonerFailure("∀x·x = 0 ⇒ r ∈ {x}×BOOL  ℕ", "1.0");
