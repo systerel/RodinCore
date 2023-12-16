@@ -252,19 +252,27 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		noRewriteRoot("a ∈ {1 ↦ 2} ⩥ A");
 	}
 
+	// F : r[w] = #x.x : w & x |-> F : r
+	@Test
+	public void testDEF_IN_RELIMAGE() throws Exception {
+		rewriteRoot("1 ∈ R[{0}]", "∃x· x ∈ {0} ∧ x ↦ 1 ∈ R");
+		rewriteRoot("x+1 ∈ R[{0}]", "∃y· y ∈ {0} ∧ y ↦ x+1 ∈ R");
+
+		// LHS may be a pair
+		rewriteRoot("pair ∈ {1 ↦ (2 ↦ 3)}[A]", //
+				"∃x· x ∈ A ∧ x ↦ pair ∈ {1 ↦ (2 ↦ 3)}");
+
+		// We create as many variables as components in the domain.
+		rewriteRoot("x ∈ {1 ↦ 2 ↦ 3}[A]", //
+				"∃y, z· y ↦ z ∈ A ∧ y ↦ z ↦ x ∈ {1 ↦ 2 ↦ 3}");
+		rewriteRoot("x ∈ {1 ↦ 2 ↦ 3 ↦ 4}[A]", //
+				"∃y, z, t· y ↦ z ↦ t ∈ A ∧ y ↦ z ↦ t ↦ x ∈ {1 ↦ 2 ↦ 3 ↦ 4}");
+		rewriteRoot("x ∈ {1 ↦ (2 ↦ 3) ↦ 4}[A]", //
+				"∃y, z, t· y ↦ (z ↦ t) ∈ A ∧ y ↦ (z ↦ t) ↦ x ∈ {1 ↦ (2 ↦ 3) ↦ 4}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// F : r[w] = #x.x : w & x |-> F : r
-		assertReasonerSuccess("(0 = 1) ⇒ 1 ∈ r[{0, 1}]", "1", "0=1⇒(∃x·x∈{0,1}∧x ↦ 1∈r)");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ r[{0, x}]", "1.1", "∀x·x=0⇒(∃x0·x0∈{0,x}∧x0 ↦ x∈r)");
-		assertReasonerSuccess("(0 = 1) ⇒ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1", "0=1⇒(∃x,x0·x ↦ x0∈{0 ↦ 1,1 ↦ 2}∧x ↦ x0 ↦ 1∈r)");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.1",
-				"∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{0 ↦ 1,1 ↦ 2}∧x0 ↦ x1 ↦ x∈r)");
-		assertReasonerSuccess("(0 = 1) ⇒ 1 ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1",
-				"0=1⇒(∃x,x0·x ↦ x0∈{0 ↦ 1,1 ↦ 2}∧x ↦ x0 ↦ (1 ↦ 1)∈r)");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.1",
-				"∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{0 ↦ 1,1 ↦ 2}∧x0 ↦ x1 ↦ (x ↦ 1)∈r)");
-
 		// E |-> F : id == E = F
 		assertReasonerSuccess("(0 = 1) ⇒ x ↦ 1 ∈ id", "1", "0=1⇒x=1");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ↦ y ∈ id", "1.1", "∀x·x=0⇒x=y");
@@ -374,14 +382,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// F : r[w] = #x.x : w & x |-> F : r
-		assertReasonerFailure("(0 = 1) ⇒ 1 ∈ r[{0, 1}]", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ r[{0, x}]", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ 1 ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ 1 ∈ r[{0 ↦ 1, 1 ↦ 2}]", "1.0");
-
 		// E |-> F : id == E = F
 		assertReasonerFailure("(0 = 1) ⇒ x ↦ 1 ∈ id", "0");
 		assertReasonerFailure("∀x·x = 0 ⇒ x ↦ y ∈ id", "1.0");
