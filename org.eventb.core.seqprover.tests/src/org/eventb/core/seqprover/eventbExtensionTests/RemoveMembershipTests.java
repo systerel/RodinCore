@@ -408,14 +408,10 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("A ∪ B ∈ ℙ1(ℕ)", "A ∪ B ∈ ℙ(ℕ) ∧ A ∪ B ≠ ∅");
 	}
 
+	// E : a .. b == a <= E & E <=b
 	@Test
-	public void testSuccessful() throws Exception {
-		// E : a .. b == a <= E & E <=b
-		assertReasonerSuccess("0 = x ⇒ x ∈ 0‥1", "1", "0=x⇒0≤x∧x≤1");
-	}
-
-	@Test
-	public void testUnsuccessful() {
+	public void testDEF_IN_UPTO() throws Exception {
+		rewriteRoot("x ∈ 0‥1", "0 ≤ x ∧ x ≤ 1");
 	}
 
 	// Commented out, makes the tests NOT succeed
