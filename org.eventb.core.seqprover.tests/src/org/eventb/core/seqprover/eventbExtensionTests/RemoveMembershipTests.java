@@ -138,12 +138,16 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("2 ∈ {1, 2, 3}", "⊤");
 	}
 
+	// E : {F} == E = F (where F is a single expression)
+	@Test
+	public void testSIMP_IN_SING() throws Exception {
+		rewriteRoot("1 ∈ {1}", "⊤");
+		rewriteRoot("A ∪ ℕ ∈ {A ∪ ℕ}", "⊤");
+		rewriteRoot("x ∈ {1}", "x=1");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : {F} == E = F (where F is a single expression)
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {1}", "1", "0=1⇒0=1");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1}", "1.1", "∀x·x=0⇒x=1");
-
 		// E : union(S) == #s.s : S & E : s
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ union({{1},{2}})", "1", "0=1⇒(∃s·s∈{{1},{2}}∧0∈s)");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ union({{1},{2}})", "1.1", "∀x·x=0⇒(∃s·s∈{{1},{2}}∧x∈s)");
@@ -320,10 +324,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E : {F} == E = F (where F is a single expression)
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {1}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ {1}", "1.0");
 
 		// E : union(S) == #s.s : S & E : s
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ union({{1},{2}})", "0");
