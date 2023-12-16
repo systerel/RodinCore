@@ -32,13 +32,10 @@ import org.junit.Test;
  */
 public abstract class RemoveMembershipTests extends AbstractManualRewriterTests {
 
-	private final String reasonerId;
-
 	private final RMLevel level;
 
 	public RemoveMembershipTests(RemoveMembership rewriter) {
 		super(rewriter);
-		this.reasonerId = rewriter.getReasonerID();
 		this.level = rewriter.getLevel();
 	}
 
@@ -49,7 +46,14 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Override
 	public String getReasonerID() {
-		return reasonerId;
+		switch (level) {
+		case L0:
+			return "org.eventb.core.seqprover.rm";
+		case L1:
+			return "org.eventb.core.seqprover.rmL1";
+		default:
+			return null;
+		}
 	}
 
 	@Test
