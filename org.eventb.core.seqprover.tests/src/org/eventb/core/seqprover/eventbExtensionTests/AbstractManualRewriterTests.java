@@ -39,12 +39,23 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
 //import com.b4free.rodin.core.B4freeCore;
 
 /**
- * Abstract unit tests for the Manual Rewrites reasoner
- * {@link AbstractManualRewrites}. Beyond the usual methods for testing success,
- * failure, positions and reasoner ID, subclasses can also do additional
- * rewriting tests with methods
+ * Abstract unit tests for the Manual Rewrites reasoners that implement the
+ * {@link AbstractManualRewrites} interface. The purpose of this class is to
+ * simplify the testing of such reasoners.
+ * <p>
+ * Implementers should define at least:
+ * <ul>
+ * <li>One method to test the function published in the reasoner tactic that
+ * allows to compute applicable positions using method
+ * {@link #assertGetPositions(String, String...).</li>
+ * <li>One method to test the overall integration of the reasoner in the {@link AbstractManualRewrites} class.
+ * It should test both for successful and failing reasoner applications.</li>
+ * <li>Then use as many methods as appropriate to verify the rewriting performed
+ * by the reasoner independently from the machinery in the abstract class.
+ * This should be done using the methods
  * {@link #rewritePred(String, String, String,String)} and
- * {@link #noRewritePred(String, String, String)}.
+ * {@link #noRewritePred(String, String, String)}.</li>
+ * </ul>
  * 
  * @author htson
  */
