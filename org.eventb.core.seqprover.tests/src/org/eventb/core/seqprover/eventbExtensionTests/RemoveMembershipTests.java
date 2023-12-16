@@ -115,12 +115,15 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("1 ∈ A ∩ B", "1 ∈ A ∧ 1 ∈ B");
 	}
 
+	// E : S \ T == E : S & not(E : T)
+	@Test
+	public void testDEF_IN_SETMINUS() throws Exception {
+		rewriteRoot("x ∈ {1} ∖ {2}", "x ∈ {1} ∧ ¬ x ∈ {2}");
+		rewriteRoot("x ∈ {1} ∖ ({2} ∖ {3})", "x ∈ {1} ∧ ¬ x ∈ {2} ∖ {3}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : S \ T == E : S & not(E : T)
-		assertReasonerSuccess("(0 = 1) ⇒ 1 ∈ {1} ∖ {2}", "1", "0=1⇒1∈{1}∧¬1∈{2}");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {x} ∖ {1}", "1.1", "∀x·x=0⇒x∈{x}∧¬x∈{1}");
-
 		// E : {A, ..., B} == E = A or ... or E = B
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ {1, 2, 3}", "1", "0=1⇒0=1∨0=2∨0=3");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ {1, 2, 3}", "1.1", "∀x·x=0⇒x=1∨x=2∨x=3");
@@ -309,10 +312,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E : S \ T == E : S & not(E : T)
-		assertReasonerFailure("(0 = 1) ⇒ 1 ∈ {1} ∖ {2}", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ {x} ∖ {1}", "1.0");
 
 		// E : {A, ..., B} == E = A or ... or E = B
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ {1, 2, 3}", "0");
