@@ -345,12 +345,14 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 						"                    ⇒ y1 ↦ z1 = y2 ↦ z2)");
 	}
 
+	// f : S --> T == f : S +-> T & dom(f) = S
+	@Test
+	public void testDEF_IN_TFCT() throws Exception {
+		rewriteRoot("R ∈ {0} → ℕ", "R ∈ {0} ⇸ ℕ ∧ dom(R) = {0}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// f : S --> T == f : S +-> T & dom(f) = S
-		assertReasonerSuccess("(0 = 1) ⇒ f ∈ ℕ×BOOL → ℕ", "1", "0=1⇒f∈ℕ × BOOL ⇸ ℕ∧dom(f)=ℕ × BOOL");
-		assertReasonerSuccess("∀x·x = 0 ⇒ f ∈ ℕ → {x}×BOOL", "1.1", "∀x·x=0⇒f∈ℕ ⇸ {x} × BOOL∧dom(f)=ℕ");
-
 		// f : S >+> T == f : S +-> T & f : T +-> S
 		assertReasonerSuccess("(0 = 1) ⇒ f ∈ ℕ×BOOL ⤔ ℕ", "1", "0=1⇒f∈ℕ × BOOL ⇸ ℕ∧f∼∈ℕ ⇸ ℕ × BOOL");
 		assertReasonerSuccess("∀x·x = 0 ⇒ f ∈ ℕ ⤔ {x}×BOOL", "1.1", "∀x·x=0⇒f∈ℕ ⇸ {x} × BOOL∧f∼∈{x} × BOOL ⇸ ℕ");
@@ -390,10 +392,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 	@Test
 	public void testUnsuccessful() {
-		// f : S --> T == f : S +-> T & dom(f) = S
-		assertReasonerFailure("(0 = 1) ⇒ f ∈ ℕ×BOOL → ℕ", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ f ∈ ℕ → {x}×BOOL", "1.0");
-
 		// f : S >+> T == f : S +-> T & f : T +-> S
 		assertReasonerFailure("(0 = 1) ⇒ f ∈ ℕ×BOOL ⤔ ℕ", "0");
 		assertReasonerFailure("∀x·x = 0 ⇒ f ∈ ℕ ⤔ {x}×BOOL", "1.0");
