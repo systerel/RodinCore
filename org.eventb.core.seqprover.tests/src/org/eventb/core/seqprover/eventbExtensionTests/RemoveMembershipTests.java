@@ -102,12 +102,12 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertGetPositions("∀x·x = 0 ⇒ x ∈ inter({{1},{2}})", "1.1");
 
 		// E : (UNION x. P | T) == #x. P & E : T
-		assertGetPositions("(0 = 1) ⇒ (0 ∈ (\u22c3 x · x ∈ ℕ \u2223 {x+1}))", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ (\u22c3 y·y∈ℕ \u2223 {x + y})", "1.1");
+		assertGetPositions("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.1");
 
 		// E : (INTER x. P | T) == !x. P => E : T
-		assertGetPositions("(0 = 1) ⇒ (0 ∈ (\u22c2 x · x ∈ ℕ \u2223 {x+1}))", "1");
-		assertGetPositions("∀x·x = 0 ⇒ x ∈ (\u22c2 y·y∈ℕ \u2223 {x + y})", "1.1");
+		assertGetPositions("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "1");
+		assertGetPositions("∀x·x = 0 ⇒ x ∈ (⋂ y·y∈ℕ ∣ {x + y})", "1.1");
 
 		// E : dom(r) == #y. E |-> y : r
 		assertGetPositions("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "1");
@@ -280,12 +280,12 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ inter({{1},{2}})", "1.1", "∀x·x=0⇒(∀s·s∈{{1},{2}}⇒x∈s)");
 
 		// E : (UNION x. P | T) == #x. P & E : T
-		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (\u22c3 x · x ∈ ℕ \u2223 {x+1}))", "1", "0=1⇒(∃x·x∈ℕ∧0∈{x+1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (\u22c3 y·y∈ℕ \u2223 {x + y})", "1.1", "∀x·x=0⇒(∃y·y∈ℕ∧x∈{x+y})");
+		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "1", "0=1⇒(∃x·x∈ℕ∧0∈{x+1})");
+		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.1", "∀x·x=0⇒(∃y·y∈ℕ∧x∈{x+y})");
 
 		// E : (INTER x. P | T) == !x. P => E : T
-		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (\u22c2 x · x ∈ ℕ \u2223 {x+1}))", "1", "0=1⇒(∀x·x∈ℕ⇒0∈{x+1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (\u22c2 y·y∈ℕ \u2223 {x + y})", "1.1", "∀x·x=0⇒(∀y·y∈ℕ⇒x∈{x+y})");
+		assertReasonerSuccess("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "1", "0=1⇒(∀x·x∈ℕ⇒0∈{x+1})");
+		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ (⋂ y·y∈ℕ ∣ {x + y})", "1.1", "∀x·x=0⇒(∀y·y∈ℕ⇒x∈{x+y})");
 
 		// E : dom(r) == #y. E |-> y : r
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "1", "0=1⇒(∃x·0 ↦ x∈{0 ↦ 1})");
@@ -489,12 +489,12 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ inter({{1},{2}})", "1.0");
 
 		// E : (UNION x. P | T) == #x. P & E : T
-		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (\u22c3 x · x ∈ ℕ \u2223 {x+1}))", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ (\u22c3 y·y∈ℕ \u2223 {x + y})", "1.0");
+		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (⋃ x · x ∈ ℕ ∣ {x+1}))", "0");
+		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ (⋃ y·y∈ℕ ∣ {x + y})", "1.0");
 
 		// E : (INTER x. P | T) == !x. P => E : T
-		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (\u22c2 x · x ∈ ℕ \u2223 {x+1}))", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ (\u22c2 y·y∈ℕ \u2223 {x + y})", "1.0");
+		assertReasonerFailure("(0 = 1) ⇒ (0 ∈ (⋂ x · x ∈ ℕ ∣ {x+1}))", "0");
+		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ (⋂ y·y∈ℕ ∣ {x + y})", "1.0");
 
 		// E : dom(r) == #y. E |-> y : r
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "0");
