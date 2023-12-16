@@ -176,16 +176,28 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("z ∈ (⋂x,y· x ∈ ℕ ∣ {x+y})", "(∀x,y· x ∈ ℕ ⇒ z ∈ {x+y})");
 	}
 
+	// E : dom(r) == #y. E |-> y : r
+	@Test
+	public void testDEF_IN_DOM() throws Exception {
+		rewriteRoot("0 ∈ dom(R ∪ succ)", "∃x· 0 ↦ x ∈ R ∪ succ");
+		rewriteRoot("x ∈ dom(R ∪ succ)", "∃y· x ↦ y ∈ R ∪ succ");
+		rewriteRoot("x ∈ dom({x ↦ 1, 1 ↦ 2})", "∃y· x ↦ y ∈ {x ↦ 1, 1 ↦ 2}");
+		rewriteRoot("x ∈ dom({1 ↦ {2 ↦ 3}})", "∃y· x ↦ y ∈ {1 ↦ {2 ↦ 3}}");
+
+		// LHS may be a pair
+		rewriteRoot("pair ∈ dom({1 ↦ 2 ↦ 3})", "∃y· pair ↦ y ∈ {1 ↦ 2 ↦ 3}");
+
+		// We create as many variables as components in the range.
+		rewriteRoot("x ∈ dom({1 ↦ (2 ↦ 3)})", //
+				"∃y, z· x ↦ (y ↦ z) ∈ {1 ↦ (2 ↦ 3)}");
+		rewriteRoot("x ∈ dom({1 ↦ (2 ↦ 3 ↦ 4)})", //
+				"∃y, z, t· x ↦ (y ↦ z ↦ t) ∈ {1 ↦ (2 ↦ 3 ↦ 4)}");
+		rewriteRoot("x ∈ dom({1 ↦ (2 ↦ (3 ↦ 4))})", //
+				"∃y, z, t· x ↦ (y ↦ (z ↦ t)) ∈ {1 ↦ (2 ↦ (3 ↦ 4))}");
+	}
+
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : dom(r) == #y. E |-> y : r
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "1", "0=1⇒(∃x·0 ↦ x∈{0 ↦ 1})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ dom({x ↦ 1, x ↦ 2})", "1.1", "∀x·x=0⇒(∃x0·x ↦ x0∈{x ↦ 1,x ↦ 2})");
-		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ dom({0 ↦ (1↦BOOL↦0)})", "1",
-				"0=1⇒(∃x,x0,x1·0 ↦ (x ↦ x0 ↦ x1)∈{0 ↦ (1 ↦ BOOL ↦ 0)})");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ dom({x ↦ (1↦BOOL↦0), x ↦ (2↦BOOL↦0)})", "1.1",
-				"∀x·x=0⇒(∃x0,x1,x2·x ↦ (x0 ↦ x1 ↦ x2)∈{x ↦ (1 ↦ BOOL ↦ 0),x ↦ (2 ↦ BOOL ↦ 0)})");
-
 		// F : ran(r) == #y. y |-> F : r
 		assertReasonerSuccess("(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})", "1", "0=1⇒(∃x·x ↦ 0∈{0 ↦ 1})");
 		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ran({x ↦ 1, 2 ↦ x})", "1.1", "∀x·x=0⇒(∃x0·x0 ↦ x∈{x ↦ 1,2 ↦ x})");
@@ -338,12 +350,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		assertReasonerFailure("e ∈ {1} ⩤ {1 ↦ 0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ▷ {0}", "");
 		assertReasonerFailure("e ∈ {1 ↦ 0} ⩥ {0}", "");
-
-		// E : dom(r) == #y. E |-> y : r
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ dom({0 ↦ 1})", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ dom({x ↦ 1, x ↦ 2})", "1.0");
-		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ dom({0 ↦ (1↦BOOL↦0)})", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ dom({x ↦ (1↦BOOL↦0), x ↦ (2↦BOOL↦0)})", "1.0");
 
 		// F : ran(r) == #y. y |-> F : r
 		assertReasonerFailure("(0 = 1) ⇒ 0 ∈ ran({0 ↦ 1})", "0");
