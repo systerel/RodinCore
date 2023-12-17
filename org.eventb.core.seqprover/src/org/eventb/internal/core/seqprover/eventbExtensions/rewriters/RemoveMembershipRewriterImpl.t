@@ -42,7 +42,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
-	private final RMLevel rmLevel;
+	private final RMLevel level;
 	
 	/**
 	 * Default rewriter.
@@ -56,9 +56,9 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel rmLevel, boolean isRewrite) {
+	public RemoveMembershipRewriterImpl(RMLevel level, boolean isRewrite) {
 		super(false, false, null);
-		this.rmLevel = rmLevel;
+		this.level = level;
 		this.isRewrite = isRewrite;
 	}
 
@@ -266,7 +266,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	    	 * Set Theory : r ∈  S ↔ T == r ⊆ S × T
 	    	 */
 	    	In(r, Rel(S, T) ) -> {
-	    		if(rmLevel.from(RMLevel.L1)) {
+	    		if(level.from(RMLevel.L1)) {
 	    			if(isRewrite){
 	    				final Expression cprod = makeBinaryExpression(Expression.CPROD,`S,`T);
 	    				rewrittenPredicate = makeRelationalPredicate(Predicate.SUBSETEQ, `r, cprod);
@@ -523,7 +523,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 0 ≤ E
              */
             In(E, Natural())->{
-            	if(rmLevel.from(RMLevel.L1)) {
+            	if(level.from(RMLevel.L1)) {
 	            	if (isRewrite) {
 						final Expression number0 = ff.makeIntegerLiteral(ZERO, null);
 	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
@@ -537,7 +537,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 1 ≤ E
              */
             In(E, Natural1())->{
-               	if(rmLevel.from(RMLevel.L1)) {
+               	if(level.from(RMLevel.L1)) {
                		if (isRewrite) {
 						final Expression number1 = ff.makeIntegerLiteral(ONE, null);
                			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
@@ -553,7 +553,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 			 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 			 */
 			In(_, Cset(_, _, _)) -> {
-				if (rmLevel.from(RMLevel.L1)) {
+				if (level.from(RMLevel.L1)) {
 					if (isRewrite) {
 						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
 						opp.matchAndInstantiate();
