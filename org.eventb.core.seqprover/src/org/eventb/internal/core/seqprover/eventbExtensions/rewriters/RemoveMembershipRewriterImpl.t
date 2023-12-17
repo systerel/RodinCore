@@ -15,6 +15,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
 
 import java.math.BigInteger;
 
@@ -31,7 +32,6 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 
 /**
@@ -42,7 +42,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
-	private final RMLevel level;
+	private final boolean level1;
 	
 	/**
 	 * Default rewriter.
@@ -58,8 +58,8 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	 */
 	public RemoveMembershipRewriterImpl(RMLevel level, boolean isRewrite) {
 		super(false, false, null);
-		this.level = level;
 		this.isRewrite = isRewrite;
+		this.level1 = level.from(L1);
 	}
 
 	%include {FormulaV2.tom}
@@ -266,7 +266,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	    	 * Set Theory : r ∈  S ↔ T == r ⊆ S × T
 	    	 */
 	    	In(r, Rel(S, T) ) -> {
-	    		if(level.from(RMLevel.L1)) {
+	    		if(level1) {
 	    			if(isRewrite){
 	    				final Expression cprod = makeBinaryExpression(Expression.CPROD,`S,`T);
 	    				rewrittenPredicate = makeRelationalPredicate(Predicate.SUBSETEQ, `r, cprod);
@@ -523,7 +523,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 0 ≤ E
              */
             In(E, Natural())->{
-            	if(level.from(RMLevel.L1)) {
+            	if(level1) {
 	            	if (isRewrite) {
 						final Expression number0 = ff.makeIntegerLiteral(ZERO, null);
 	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
@@ -537,7 +537,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 1 ≤ E
              */
             In(E, Natural1())->{
-               	if(level.from(RMLevel.L1)) {
+               	if(level1) {
                		if (isRewrite) {
 						final Expression number1 = ff.makeIntegerLiteral(ONE, null);
                			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
@@ -553,7 +553,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 			 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 			 */
 			In(_, Cset(_, _, _)) -> {
-				if (level.from(RMLevel.L1)) {
+				if (level1) {
 					if (isRewrite) {
 						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
 						opp.matchAndInstantiate();
