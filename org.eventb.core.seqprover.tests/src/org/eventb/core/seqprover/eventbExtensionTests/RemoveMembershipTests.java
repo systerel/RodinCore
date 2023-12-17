@@ -445,6 +445,12 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRootL1("x ∈ ℕ1", "1 ≤ x");
 	}
 
+	// r : S <-> T == r <: S x T
+	@Test
+	public void testDEF_IN_REL() throws Exception {
+		rewriteRootL1("R ∈ {0} ↔ ℕ ", "R ⊆ {0} × ℕ");
+	}
+
 	// Commented out, makes the tests NOT succeed
 	// TODO: Verify with another external prover
 //	@Override
