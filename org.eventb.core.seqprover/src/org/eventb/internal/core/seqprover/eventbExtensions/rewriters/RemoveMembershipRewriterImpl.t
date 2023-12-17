@@ -554,14 +554,16 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 			 */
 			In(_, Cset(_, _, _)) -> {
 				if (rmLevel.from(RMLevel.L1)) {
-					 final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
-					 opp.matchAndInstantiate();
-					 if (opp.wasSuccessfullyApplied()) {
-						 rewrittenPredicate = opp.getProcessedResult();
-					 } else {
-						 rewrittenPredicate = opp.getQuantifiedPredicate();
-					 }
-					 return true;
+					if (isRewrite) {
+						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
+						opp.matchAndInstantiate();
+						if (opp.wasSuccessfullyApplied()) {
+							rewrittenPredicate = opp.getProcessedResult();
+						} else {
+							rewrittenPredicate = opp.getQuantifiedPredicate();
+						}
+					}
+					return true;
 				}
 			}
 	    } // end of %match
