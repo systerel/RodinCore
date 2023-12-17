@@ -16,6 +16,7 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
 
 import java.util.List;
 
@@ -56,10 +57,28 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		}
 	}
 
+	/*
+	 * Ensures that the predicate is rewritten as expected at level L1 and above,
+	 * but not rewritten at level L0.
+	 */
+	private void rewriteRootL1(String inputImage, String expectedImage) {
+		if (level.from(L1)) {
+			rewriteRoot(inputImage, expectedImage);
+		} else {
+			noRewriteRoot(inputImage);
+		}
+	}
+
+	/*
+	 * Ensures that the predicate is rewritten as expected at all levels.
+	 */
 	private void rewriteRoot(String inputImage, String expectedImage) {
 		rewritePred(inputImage, "", expectedImage);
 	}
 
+	/*
+	 * Ensures that the predicate is never rewritten whatever the level.
+	 */
 	private void noRewriteRoot(String inputImage) {
 		noRewritePred(inputImage, "");
 	}
