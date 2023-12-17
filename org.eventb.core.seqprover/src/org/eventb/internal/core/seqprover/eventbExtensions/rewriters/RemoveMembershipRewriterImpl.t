@@ -15,6 +15,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
 
 import java.math.BigInteger;
 
@@ -30,7 +31,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.ProverRule;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 
 /**
@@ -41,7 +42,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
-	private final RMLevel rmLevel;
+	private final boolean level1;
 	
 	/**
 	 * Default rewriter.
@@ -55,10 +56,10 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel rmLevel, boolean isRewrite) {
+	public RemoveMembershipRewriterImpl(RMLevel level, boolean isRewrite) {
 		super(false, false, null);
-		this.rmLevel = rmLevel;
 		this.isRewrite = isRewrite;
+		this.level1 = level.from(L1);
 	}
 
 	%include {FormulaV2.tom}
@@ -265,7 +266,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	    	 * Set Theory : r ∈  S ↔ T == r ⊆ S × T
 	    	 */
 	    	In(r, Rel(S, T) ) -> {
-	    		if(rmLevel.from(RMLevel.L1)) {
+	    		if(level1) {
 	    			if(isRewrite){
 	    				final Expression cprod = makeBinaryExpression(Expression.CPROD,`S,`T);
 	    				rewrittenPredicate = makeRelationalPredicate(Predicate.SUBSETEQ, `r, cprod);
@@ -522,7 +523,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 0 ≤ E
              */
             In(E, Natural())->{
-            	if(rmLevel.from(RMLevel.L1)) {
+            	if(level1) {
 	            	if (isRewrite) {
 						final Expression number0 = ff.makeIntegerLiteral(ZERO, null);
 	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
@@ -536,13 +537,34 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
              * Set Theory: E ∈ NAT == 1 ≤ E
              */
             In(E, Natural1())->{
-               	if(rmLevel.from(RMLevel.L1)) {
+               	if(level1) {
                		if (isRewrite) {
 						final Expression number1 = ff.makeIntegerLiteral(ONE, null);
                			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
                		}
                		return true;
                	}
+			}
+
+			/**
+			 * SIMP_IN_COMPSET
+			 * Set Theory: F ∈ {x,y,... · P(x,y,...) | E(x,y,...)} == ∃x,y,...· P(x,y,...) ∧ E(x,y,...) = F
+			 * SIMP_IN_COMPSET_ONEPOINT
+			 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
+			 */
+			In(_, Cset(_, _, _)) -> {
+				if (level1) {
+					if (isRewrite) {
+						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
+						opp.matchAndInstantiate();
+						if (opp.wasSuccessfullyApplied()) {
+							rewrittenPredicate = opp.getProcessedResult();
+						} else {
+							rewrittenPredicate = opp.getQuantifiedPredicate();
+						}
+					}
+					return true;
+				}
 			}
 	    } // end of %match
     	rewrittenPredicate = predicate;
@@ -559,7 +581,8 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 		"DEF_IN_RELDOMRAN", "DEF_IN_FCT", "DEF_IN_TFCT", "DEF_IN_INJ",
 		"DEF_IN_TINJ", "DEF_IN_SURJ", "DEF_IN_TSURJ", "DEF_IN_BIJ",
 		"DEF_IN_DPROD", "DEF_IN_PPROD", "DEF_IN_POW1", "DEF_IN_UPTO",
-		"DEF_IN_NATURAL", "DEF_IN_NATURAL1"})
+		"DEF_IN_NATURAL", "DEF_IN_NATURAL1", "SIMP_IN_COMPSET",
+		"SIMP_IN_COMPSET_ONEPOINT"})
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		isApplicableOrRewrite(predicate);
