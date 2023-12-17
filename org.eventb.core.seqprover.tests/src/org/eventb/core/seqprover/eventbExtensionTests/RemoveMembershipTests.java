@@ -126,6 +126,9 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 		// Invalid position
 		assertReasonerFailure("1 ↦ 2 ∈ ℕ × ℕ", "1");
+
+		// Proper management of bound identifiers
+		assertReasonerSuccess("∃x· x ∈ (⋃x· x ∈ ℕ ∣ {x+1})", "1", "∃x· ∃x0· x0 ∈ ℕ ∧ x ∈ {x0+1}");
 	}
 
 	// E |-> F : S ** T == E : S & F : T
