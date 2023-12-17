@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,17 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - refactor code
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
+
+import static org.eventb.core.ast.Formula.IN;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public abstract class RemoveMembership extends AbstractManualRewrites {
 
@@ -32,6 +34,11 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	protected RemoveMembership(RMLevel level) {
 		this.level = level;
 	}
+
+	public RMLevel getLevel() {
+		return level;
+	}
+
 	@Override
 	protected String getDisplayName(Predicate pred, IPosition position) {
 		if (pred != null)
@@ -42,14 +49,16 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(level);
-		Formula<?> predicate = pred.getSubFormula(position);
-
-		Formula<?> newSubPredicate = null;
-		if (predicate instanceof Predicate
-				&& Lib.isInclusion((Predicate) predicate))
-			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);
-		if (newSubPredicate == null || newSubPredicate == predicate)
+		Formula<?> subFormula = pred.getSubFormula(position);
+		if (subFormula.getTag() != IN) {
 			return null;
+		}
+
+		Predicate newSubPredicate = rewriter.rewrite((RelationalPredicate) subFormula);
+		if (newSubPredicate == null || newSubPredicate == subFormula) {
+			return null;
+		}
+
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
