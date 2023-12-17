@@ -433,6 +433,12 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRoot("x ∈ 0‥1", "0 ≤ x ∧ x ≤ 1");
 	}
 
+	// E : NAT == 0 <= E
+	@Test
+	public void testDEF_IN_NATURAL() throws Exception {
+		rewriteRootL1("x ∈ ℕ", "0 ≤ x");
+	}
+
 	// Commented out, makes the tests NOT succeed
 	// TODO: Verify with another external prover
 //	@Override
