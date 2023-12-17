@@ -12,6 +12,7 @@
  *     Systerel - added DEF_IN_UPTO
  *     Systerel - refactored to introduce level L1
  *     UPEC - refactored to use new test methods
+ *     Systerel - complement of refactoring
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 import org.junit.Test;
@@ -29,7 +31,15 @@ import org.junit.Test;
 /**
  * Unit tests for the rm reasoner {@link RemoveMembership}
  * 
+ * Rationale for test organization: we know that the reasoner is implemented
+ * with the {@link AbstractManualRewrites} class, so we do not test everything
+ * in depth. We just test that the computation of the list of applicable
+ * positions is correctly implemented and takes into account the current level.
+ * Then we check the overall integration of the rewriter in the framework.
+ * Finally, we check each implemented rule as a rewriting at the root position.
+ *
  * @author htson
+ * @author Laurent Voisin
  */
 public abstract class RemoveMembershipTests extends AbstractManualRewriterTests {
 
@@ -100,6 +110,22 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 		// Ensures that level 1 positions are computed
 		assertGetPositions("1 ∈ ℕ", "ROOT");
+	}
+
+	/*
+	 * Ensures that the reasoner is well integrated in the manual rewrite framework.
+	 */
+	@Test
+	public void testIntegration() throws Exception {
+		// Rewrite at the root position and splitting.
+		assertReasonerSuccess("1 ↦ 2 ∈ ℕ × ℕ", "", "1 ∈ ℕ", "2 ∈ ℕ");
+
+		// Rewrite at a non-root position: Only the designated predicate gets rewritten
+		assertReasonerSuccess("1 ↦ 2 ∈ ℕ × ℕ ∨ A ∈ ℙ(ℕ)", "0", "(1 ∈ ℕ ∧ 2 ∈ ℕ) ∨ A ∈ ℙ(ℕ)");
+		assertReasonerSuccess("1 ↦ 2 ∈ ℕ × ℕ ∨ A ∈ ℙ(ℕ)", "1", "1 ↦ 2 ∈ ℕ × ℕ ∨ A ⊆ ℕ");
+
+		// Invalid position
+		assertReasonerFailure("1 ↦ 2 ∈ ℕ × ℕ", "1");
 	}
 
 	// E |-> F : S ** T == E : S & F : T
