@@ -27,10 +27,6 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 
 	@Test
 	public void testSuccessful() throws Exception {
-		// E : NAT1 == 1 <= E
-		assertReasonerSuccess("(0 = 1) ⇒ 2 ∈ ℕ1", "1", "0=1⇒1≤2");
-		assertReasonerSuccess("∀x·x = 0 ⇒ x ∈ ℕ1", "1.1", "∀x·x=0⇒1≤x");
-
 		// r : S <-> T == r <: S x T
 		assertReasonerSuccess(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "1", "0 = x ⇒ f ⊆ ℕ × BOOL");
 		assertReasonerSuccess("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "1.1", "∀x·0 = x ⇒ f ⊆ ℕ × BOOL");
@@ -38,10 +34,6 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 
 	@Test
 	public void testUnsuccessful() {
-		// E : NAT1 == 1 <= E
-		assertReasonerFailure("(0 = 1) ⇒ 2 ∈ ℕ1", "0");
-		assertReasonerFailure("∀x·x = 0 ⇒ x ∈ ℕ1", "1.0");
-
 		// r : S <-> T == r <: S x T
 		assertReasonerFailure(" 0 = x ⇒ f ∈ ℕ ↔ BOOL", "0");
 		assertReasonerFailure("∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL", "0");
