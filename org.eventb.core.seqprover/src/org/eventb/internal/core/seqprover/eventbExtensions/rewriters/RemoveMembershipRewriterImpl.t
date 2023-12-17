@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembe
  * Basic manual rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings({"unused", "cast"})
-public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
-	
-	private static Level[] RM_TO_AUTO_LEVEL = {Level.L0, Level.L1};
+public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
@@ -58,7 +56,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	 * possible.
 	 */
 	public RemoveMembershipRewriterImpl(RMLevel rmLevel, boolean isRewrite) {
-		super(RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
+		super(false, false, null);
 		this.rmLevel = rmLevel;
 		this.isRewrite = isRewrite;
 	}
@@ -564,10 +562,6 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		"DEF_IN_NATURAL", "DEF_IN_NATURAL1"})
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-		final Predicate newPredicate = super.rewrite(predicate);
-		if (!newPredicate.equals(predicate))
-			return newPredicate;
-
 		isApplicableOrRewrite(predicate);
 		return rewrittenPredicate;
 	}

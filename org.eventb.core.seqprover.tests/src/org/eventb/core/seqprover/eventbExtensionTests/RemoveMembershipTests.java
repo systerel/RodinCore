@@ -477,6 +477,16 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRootL1("R ∈ {0} ↔ ℕ ", "R ⊆ {0} × ℕ");
 	}
 
+	/*
+	 * Ensures that we do not apply a rule of the auto-rewriter when applied to an
+	 * invalid position.
+	 */
+	@Test
+	public void testNoAutoRewrite() throws Exception {
+		assertGetPositions("1 ∈ ∅");
+		noRewriteRoot("1 ∈ ∅");
+	}
+
 	// Commented out, makes the tests NOT succeed
 	// TODO: Verify with another external prover
 //	@Override

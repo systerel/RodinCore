@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2023 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ import org.eventb.core.seqprover.ProverRule;
  * simple rewrite rules.
  */
 @SuppressWarnings({"unused", "cast"})
-public class PredicateSimplifier extends DefaultRewriter {
+public class PredicateSimplifier extends AbstractRewriterImpl {
 
 	public static final int MULTI_IMP = 1 << 0;
 	public static final int MULTI_EQV_NOT = 1 << 1;
@@ -56,11 +56,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public static final int QUANT_DISTR = 1 << 4;
 	public static final int EXISTS_IMP = 1 << 5;
 	public static final int MULTI_AND_OR = 1 << 6;
-
-	// true enables trace messages
-	protected final boolean debug;
-	private final String rewriterName;
-
 
 	// Enabled options (public for testing purposes only)
 	public final boolean withMultiImp;
@@ -84,8 +79,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	 */
 	public PredicateSimplifier(int options, boolean debug,
 			String rewriterName) {
-		super(true);
-		this.debug = debug;
+		super(true, debug, rewriterName);
 		this.withMultiImp = isSet(options, MULTI_IMP);
 		this.withMultiEqvNot = isSet(options, MULTI_EQV_NOT);
 		this.withMultiImpNot = isSet(options, MULTI_IMP_NOT);
@@ -93,33 +87,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 		this.withQuantDistr = isSet(options, QUANT_DISTR);
 		this.withExistsImp = isSet(options, EXISTS_IMP);
 		this.withMultiAndOr = isSet(options, MULTI_AND_OR);
-		this.rewriterName = rewriterName;
-	}
-
-	protected final <T extends Formula<T>> void trace(T from, T to, String rule,
-			String... otherRules) {
-		if (!debug) {
-			return;
-		}
-		if (from == to) {
-			return;
-		}
-		final StringBuilder sb = new StringBuilder();
-		sb.append(rewriterName);
-		sb.append(": ");
-		sb.append(from);
-		sb.append("  \u219d  ");
-		sb.append(to);
-
-		sb.append("   (");
-		sb.append(rule);
-		for (final String r : otherRules) {
-			sb.append(" | ");
-			sb.append(r);
-		}
-		sb.append(")");
-
-		System.out.println(sb);
 	}
 
 	protected <T> boolean contains(T[] array, T key) {
@@ -129,23 +96,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 			}
 		}
 		return false;
-	}
-
-	protected AssociativePredicate makeAssociativePredicate(int tag,
-			Predicate... children) {
-		final FormulaFactory ff = children[0].getFactory();
-		return ff.makeAssociativePredicate(tag, children, null);
-	}
-
-	protected BinaryPredicate makeBinaryPredicate(int tag, Predicate left, Predicate right) {
-		final FormulaFactory ff = left.getFactory();
-		return ff.makeBinaryPredicate(tag, left, right, null);
-	}
-
-	protected QuantifiedPredicate makeQuantifiedPredicate(int tag,
-			BoundIdentDecl[] boundIdentifiers, Predicate child) {
-		final FormulaFactory ff = child.getFactory();
-		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
 
 	private Predicate distributeQuantifier(int tag, BoundIdentDecl[] bids,
