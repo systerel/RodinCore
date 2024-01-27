@@ -40,10 +40,10 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	 */
 	public static final RemoveMembership DEFAULT = new RemoveMembershipL1();
 
-	public static enum RMLevel {
+	public static enum Level {
 		L0, L1;
 		
-		public boolean from(RMLevel other) {
+		public boolean from(Level other) {
 			return this.ordinal() >= other.ordinal();
 		}
 	}
@@ -59,13 +59,13 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 		return TEST_REWRITER.isApplicableOrRewrite(predicate);
 	}
 
-	private final RMLevel level;
+	private final Level level;
 
-	protected RemoveMembership(RMLevel level) {
+	protected RemoveMembership(Level level) {
 		this.level = level;
 	}
 
-	public RMLevel getLevel() {
+	public Level getLevel() {
 		return level;
 	}
 

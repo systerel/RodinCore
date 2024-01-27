@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level;
 import org.junit.Test;
 
 /**
@@ -43,7 +43,7 @@ import org.junit.Test;
  */
 public abstract class RemoveMembershipTests extends AbstractManualRewriterTests {
 
-	private final RMLevel level;
+	private final Level level;
 
 	public RemoveMembershipTests(RemoveMembership rewriter) {
 		super(rewriter);

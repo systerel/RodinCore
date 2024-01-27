@@ -15,7 +15,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
 
 import java.math.BigInteger;
 
@@ -32,7 +32,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -47,7 +47,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	/**
 	 * Default rewriter.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel level) {
+	public RemoveMembershipRewriterImpl(Level level) {
 		this(level, true);
 	}
 	
@@ -56,7 +56,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel level, boolean isRewrite) {
+	public RemoveMembershipRewriterImpl(Level level, boolean isRewrite) {
 		super(false, false, null);
 		this.isRewrite = isRewrite;
 		this.level1 = level.from(L1);
