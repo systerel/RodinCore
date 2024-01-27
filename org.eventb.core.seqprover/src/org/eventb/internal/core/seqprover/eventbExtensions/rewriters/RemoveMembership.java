@@ -26,6 +26,15 @@ import org.eventb.core.ast.RelationalPredicate;
  */
 public abstract class RemoveMembership extends AbstractManualRewrites {
 
+	/*
+	 * HOW TO CREATE A NEW LEVEL OF THIS REASONER:
+	 *
+	 * - First create a new Level in the enum below
+	 * - Then create a new subclass of this class.
+	 * - Update plugin.xml to declare the new level.
+	 * - Change the value of DEFAULT below.
+	 */
+
 	/**
 	 * Default instance of this family of reasoners.
 	 */
