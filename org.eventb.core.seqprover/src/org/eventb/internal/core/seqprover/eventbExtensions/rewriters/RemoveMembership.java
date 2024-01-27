@@ -39,6 +39,17 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 		}
 	}
 
+	// For testing reasoner applicability
+	private static final RemoveMembershipRewriterImpl TEST_REWRITER //
+			= new RemoveMembershipRewriterImpl(DEFAULT.level, false);
+
+	/**
+	 * Tells whether this reasoner is applicable to the given predicate.
+	 */
+	public static final boolean isApplicableTo(Predicate predicate) {
+		return TEST_REWRITER.isApplicableOrRewrite(predicate);
+	}
+
 	private final RMLevel level;
 
 	protected RemoveMembership(RMLevel level) {

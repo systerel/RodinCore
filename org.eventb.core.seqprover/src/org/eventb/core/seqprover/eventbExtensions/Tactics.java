@@ -202,8 +202,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewri
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
@@ -1027,8 +1025,7 @@ public class Tactics {
 	 * @since 3.0
 	 */
 	public static boolean isRemoveMembershipApplicable(Predicate pred) {
-		return new RemoveMembershipRewriterImpl(RMLevel.L1, false)
-				.isApplicableOrRewrite(pred);
+		return RemoveMembership.isApplicableTo(pred);
 	}
 
 	public static ITactic removeMembership(Predicate hyp, IPosition position) {
