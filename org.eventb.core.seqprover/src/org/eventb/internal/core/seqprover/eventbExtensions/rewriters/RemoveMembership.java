@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,11 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 
+/**
+ * Common implementation of the {@code org.eventb.core.seqprover.rm} reasoner.
+ * 
+ * There are as many sub-classes as levels of this reasoner.
+ */
 public abstract class RemoveMembership extends AbstractManualRewrites {
 
 	public static enum RMLevel {
