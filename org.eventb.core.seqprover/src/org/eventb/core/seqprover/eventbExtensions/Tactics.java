@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,8 +201,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnion
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriterImpl;
@@ -1032,8 +1032,8 @@ public class Tactics {
 	}
 
 	public static ITactic removeMembership(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new RemoveMembershipL1(),
-				new RemoveMembershipL1.Input(hyp, position));
+		return BasicTactics.reasonerTac(RemoveMembership.DEFAULT,
+				new RemoveMembership.Input(hyp, position));
 	}
 
 	public static List<IPosition> riGetPositions(Predicate pred) {

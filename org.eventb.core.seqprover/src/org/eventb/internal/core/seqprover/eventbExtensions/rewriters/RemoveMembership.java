@@ -26,6 +26,11 @@ import org.eventb.core.ast.RelationalPredicate;
  */
 public abstract class RemoveMembership extends AbstractManualRewrites {
 
+	/**
+	 * Default instance of this family of reasoners.
+	 */
+	public static final RemoveMembership DEFAULT = new RemoveMembershipL1();
+
 	public static enum RMLevel {
 		L0, L1;
 		
