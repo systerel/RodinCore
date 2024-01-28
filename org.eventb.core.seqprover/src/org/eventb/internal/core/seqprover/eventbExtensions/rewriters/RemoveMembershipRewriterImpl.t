@@ -45,6 +45,9 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	private Predicate rewrittenPredicate;
 	private final boolean level1;
 	private final boolean level2;
+
+	// For backward compatibility with a mistake at levels 0 and 1
+	private final AutoRewriterImpl autoRewriter;
 	
 	/**
 	 * Default rewriter.
@@ -63,6 +66,25 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 		this.isRewrite = isRewrite;
 		this.level1 = level.from(L1);
 		this.level2 = level.from(L2);
+
+		// For backward compatibility
+		if (isRewrite) {
+			switch (level) {
+			case L0:
+				this.autoRewriter = new AutoRewriterImpl(AutoRewrites.Level.L0);
+				break;
+			case L1:
+				this.autoRewriter = new AutoRewriterImpl(AutoRewrites.Level.L1);
+				break;
+			default:
+				// Should never use any auto-rewriter at higher levels
+				this.autoRewriter = null;
+				break;
+			}
+		} else {
+			// No need to perform any rewrite
+			this.autoRewriter = null;
+		}
 	}
 
 	%include {FormulaV2.tom}
@@ -588,6 +610,13 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 		"SIMP_IN_COMPSET_ONEPOINT"})
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
+		// for backward compatibility at low levels
+		if (autoRewriter != null) {
+			final Predicate newPredicate = autoRewriter.rewrite(predicate);
+			if (!newPredicate.equals(predicate))
+				return newPredicate;
+		}
+
 		isApplicableOrRewrite(predicate);
 		return rewrittenPredicate;
 	}

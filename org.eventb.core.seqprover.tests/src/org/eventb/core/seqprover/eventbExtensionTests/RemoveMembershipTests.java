@@ -76,10 +76,6 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		rewriteRootFrom(L1, inputImage, expectedImage);
 	}
 
-	private void rewriteRootL2(String inputImage, String expectedImage) {
-		rewriteRootFrom(L2, inputImage, expectedImage);
-	}
-
 	/*
 	 * Ensures that the predicate is rewritten as expected at the given level and above,
 	 * but not rewritten at levels below.
@@ -499,36 +495,54 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 	// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
 	@Test
 	public void testSIMP_IN_COMPSET() throws Exception {
-		rewriteRootL2("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
+		/*
+		 * This rule is implemented in all levels (in level 0 and 1 by the
+		 * auto-rewriter, in level 2 explicitly).
+		 */
+
+		rewriteRoot("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
 				"∃x,y· (x≥0 ∧ y≥0) ∧ x+y = n");
 	}
 
 	// E : {x . P(x) | x} == P(E)
 	@Test
 	public void testSIMP_IN_COMPSET_ONEPOINT() throws Exception {
+		/*
+		 * This rule is implemented in all levels (in level 0 and 1 by the
+		 * auto-rewriter, in level 2 explicitly).
+		 */
+
 		// One point rule on single variable
-		rewriteRootL2("n ∈ {x ∣ x≥0}", "n ≥ 0");
-		rewriteRootL2("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
+		rewriteRoot("n ∈ {x ∣ x≥0}", "n ≥ 0");
+		rewriteRoot("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
 
 		// One point rule on all variables
-		rewriteRootL2("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
-		rewriteRootL2("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRoot("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRoot("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
 
 		// One point rule on first variable only
-		rewriteRootL2("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
+		rewriteRoot("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
 
 		// One point rule applies only to the last conjunct of the result
-		rewriteRootL2("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
+		rewriteRoot("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
 	}
 
 	/*
-	 * Ensures that we do not apply a rule of the auto-rewriter when applied to an
-	 * invalid position.
+	 * Ensures that levels 0 and 1 remain backward compatible with the use of the
+	 * auto-rewriter even when this reasoner is not applicable, while higher levels
+	 * do not use it anymore.
 	 */
 	@Test
-	public void testNoAutoRewrite() throws Exception {
+	public void testBackwardCompatibility() throws Exception {
+		// We are not applicable to this predicate
 		assertGetPositions("1 ∈ ∅");
-		noRewriteRoot("1 ∈ ∅");
+
+		// However, in levels 0 and 1, we rewrite it.
+		if (level.from(L2)) {
+			noRewriteRoot("1 ∈ ∅");
+		} else {
+			rewriteRoot("1 ∈ ∅", "⊥");
+		}
 	}
 
 	// Commented out, makes the tests NOT succeed
