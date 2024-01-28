@@ -46,10 +46,10 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
  * Basic manual rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings({"unused", "cast"})
-public class InclusionSetMinusLeftRewriterImpl extends AutoRewriterImpl {
+public class InclusionSetMinusLeftRewriterImpl extends AbstractRewriterImpl {
 
 	public InclusionSetMinusLeftRewriterImpl() {
-		super(Level.L0);
+		super(false, false, "InclusionSetMinusLeftRewriter");
 	}
 
 	%include {FormulaV2.tom}

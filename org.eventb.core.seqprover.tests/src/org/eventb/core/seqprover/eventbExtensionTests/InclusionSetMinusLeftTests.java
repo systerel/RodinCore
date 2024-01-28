@@ -69,6 +69,8 @@ public class InclusionSetMinusLeftTests extends AbstractManualRewriterTests {
 		assertReasonerFailure("A ∖ B ⊆ {x ∣ x > 0}", "0");
 		assertReasonerFailure("∀x·x = 1 ⇒ {x ↦ {2}, 2 ↦ {3}} ∖ {2 ↦ {x}} ⊆ {1 ↦ {x}}", "1.0");
 
+		// Does not implement auto-rewriting
+		assertReasonerFailure("1 ∈ ∅", "");
 	}
 
 	// Commented out, but makes the tests succeed
