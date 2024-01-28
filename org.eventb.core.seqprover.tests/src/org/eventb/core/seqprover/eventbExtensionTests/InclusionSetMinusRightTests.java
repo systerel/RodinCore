@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored to use new test methods
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
@@ -26,19 +27,19 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSe
 public class InclusionSetMinusRightTests extends AbstractManualRewriterTests {
 	
 	// S <: A \ B == S <: A & S /\ B = {} 
-	String P1 = "{1 ↦ {x}} ⊆ {x ↦ {2}, 2 ↦ {3}} ∖ {2 ↦ {x}}";
+	String P1 = "{x} ⊆ {x+1} ∖ {x+2}";
 
-	String resultP1A = "{1 ↦ {x}}⊆{x ↦ {2},2 ↦ {3}}";
-	
-	String resultP1B = "{1 ↦ {x}}∩{2 ↦ {x}}=∅";
+	String resultP1A = "{x} ⊆ {x+1}";
 
-	String P2 = "(0 = 1) ⇒ {1 ↦ {x}} ⊆ {x ↦ {2}, 2 ↦ {3}} ∖ {2 ↦ {x}}";
+	String resultP1B = "{x} ∩ {x+2} = ∅";
 
-	String resultP2 = "0=1⇒{1 ↦ {x}}⊆{x ↦ {2},2 ↦ {3}}∧{1 ↦ {x}}∩{2 ↦ {x}}=∅";
+	String P2 = "0=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}";
 
-	String P3 = "∀x·x = 1 ⇒ {1 ↦ {x}} ⊆ {x ↦ {2}, 2 ↦ {3}} ∖ {2 ↦ {x}}";
+	String resultP2 = "0=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅";
 
-	String resultP3 = "∀x·x=1⇒{1 ↦ {x}}⊆{x ↦ {2},2 ↦ {3}}∧{1 ↦ {x}}∩{2 ↦ {x}}=∅";
+	String P3 = "∀x· x=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}";
+
+	String resultP3 = "∀x· x=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅";
 	
 	@Override
 	public String getReasonerID() {
