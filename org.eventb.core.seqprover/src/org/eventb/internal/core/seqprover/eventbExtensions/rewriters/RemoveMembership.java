@@ -39,10 +39,10 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	/**
 	 * Default instance of this family of reasoners.
 	 */
-	public static final RemoveMembership DEFAULT = new RemoveMembershipL1();
+	public static final RemoveMembership DEFAULT = new RemoveMembershipL2();
 
 	public static enum Level {
-		L0, L1;
+		L0, L1, L2;
 		
 		public boolean from(Level other) {
 			return this.ordinal() >= other.ordinal();

@@ -63,6 +63,8 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 			return "org.eventb.core.seqprover.rm";
 		case L1:
 			return "org.eventb.core.seqprover.rmL1";
+		case L2:
+			return "org.eventb.core.seqprover.rmL2";
 		default:
 			fail("Missing expected reasoner id");
 			return null;
@@ -112,6 +114,9 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 		// Ensures that level 1 positions are computed
 		assertGetPositions("1 ∈ ℕ", "ROOT");
+
+		// Ensures that level 2 positions are computed
+		assertGetPositions("n ∈ {x ∣ x≥0}", "ROOT");
 	}
 
 	/*
