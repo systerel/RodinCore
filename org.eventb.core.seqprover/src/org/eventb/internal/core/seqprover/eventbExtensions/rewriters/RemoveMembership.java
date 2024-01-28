@@ -18,6 +18,7 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.seqprover.SequentProver;
 
 /**
  * Common implementation of the {@code org.eventb.core.seqprover.rm} reasoner.
@@ -48,6 +49,9 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 		}
 	}
 
+	// Base name for reasoner id.
+	private static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
+
 	// For testing reasoner applicability
 	private static final RemoveMembershipRewriterImpl TEST_REWRITER //
 			= new RemoveMembershipRewriterImpl(DEFAULT.level, false);
@@ -67,6 +71,14 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 
 	public Level getLevel() {
 		return level;
+	}
+
+	@Override
+	public String getReasonerID() {
+		if (level == Level.L0) {
+			return REASONER_ID;
+		}
+		return REASONER_ID + level;
 	}
 
 	@Override

@@ -10,19 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import org.eventb.core.seqprover.SequentProver;
-
 public class RemoveMembershipL0 extends RemoveMembership {
-
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
 
 	public RemoveMembershipL0() {
 		super(Level.L0);
-	}
-
-	@Override
-	public String getReasonerID() {
-		return REASONER_ID;
 	}
 
 }
