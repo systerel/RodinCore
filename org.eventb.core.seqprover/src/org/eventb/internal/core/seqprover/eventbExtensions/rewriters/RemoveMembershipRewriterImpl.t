@@ -16,6 +16,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L2;
 
 import java.math.BigInteger;
 
@@ -43,6 +44,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
 	private final boolean level1;
+	private final boolean level2;
 	
 	/**
 	 * Default rewriter.
@@ -60,6 +62,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 		super(false, false, null);
 		this.isRewrite = isRewrite;
 		this.level1 = level.from(L1);
+		this.level2 = level.from(L2);
 	}
 
 	%include {FormulaV2.tom}
@@ -553,7 +556,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 			 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 			 */
 			In(_, Cset(_, _, _)) -> {
-				if (level1) {
+				if (level2) {
 					if (isRewrite) {
 						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
 						opp.matchAndInstantiate();

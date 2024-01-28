@@ -18,6 +18,7 @@ package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L2;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -71,12 +72,20 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		}
 	}
 
-	/*
-	 * Ensures that the predicate is rewritten as expected at level L1 and above,
-	 * but not rewritten at level L0.
-	 */
 	private void rewriteRootL1(String inputImage, String expectedImage) {
-		if (level.from(L1)) {
+		rewriteRootFrom(L1, inputImage, expectedImage);
+	}
+
+	private void rewriteRootL2(String inputImage, String expectedImage) {
+		rewriteRootFrom(L2, inputImage, expectedImage);
+	}
+
+	/*
+	 * Ensures that the predicate is rewritten as expected at the given level and above,
+	 * but not rewritten at levels below.
+	 */
+	private void rewriteRootFrom(Level start, String inputImage, String expectedImage) {
+		if (level.from(start)) {
 			rewriteRoot(inputImage, expectedImage);
 		} else {
 			noRewriteRoot(inputImage);
@@ -490,7 +499,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 	// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
 	@Test
 	public void testSIMP_IN_COMPSET() throws Exception {
-		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
+		rewriteRootL2("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
 				"∃x,y· (x≥0 ∧ y≥0) ∧ x+y = n");
 	}
 
@@ -498,18 +507,18 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 	@Test
 	public void testSIMP_IN_COMPSET_ONEPOINT() throws Exception {
 		// One point rule on single variable
-		rewriteRootL1("n ∈ {x ∣ x≥0}", "n ≥ 0");
-		rewriteRootL1("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
+		rewriteRootL2("n ∈ {x ∣ x≥0}", "n ≥ 0");
+		rewriteRootL2("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
 
 		// One point rule on all variables
-		rewriteRootL1("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
-		rewriteRootL1("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRootL2("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRootL2("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
 
 		// One point rule on first variable only
-		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
+		rewriteRootL2("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
 
 		// One point rule applies only to the last conjunct of the result
-		rewriteRootL1("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
+		rewriteRootL2("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
 	}
 
 	/*
