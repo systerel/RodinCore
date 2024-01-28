@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,15 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
  */
 @SuppressWarnings({"unused", "cast"})
 public class RemoveInclusionRewriterImpl extends AutoRewriterImpl {
+
+	/*
+	 * CAUTION
+	 *
+	 * When this class gets modified to add new rules, please create a new level for
+	 * this reasoner and disconnect it from the AutoRewriterImpl class, like what
+	 * has been done in level L2 of RemoveMembership. It was indeed a big mistake to
+	 * run the auto-rewriter within this reasoner.
+	 */
 
 	public RemoveInclusionRewriterImpl() {
 		super(Level.L0);
