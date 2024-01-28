@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L2;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level;
 import org.junit.Test;
 
 /**
@@ -43,7 +45,7 @@ import org.junit.Test;
  */
 public abstract class RemoveMembershipTests extends AbstractManualRewriterTests {
 
-	private final RMLevel level;
+	private final Level level;
 
 	public RemoveMembershipTests(RemoveMembership rewriter) {
 		super(rewriter);
@@ -62,17 +64,24 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 			return "org.eventb.core.seqprover.rm";
 		case L1:
 			return "org.eventb.core.seqprover.rmL1";
+		case L2:
+			return "org.eventb.core.seqprover.rmL2";
 		default:
+			fail("Missing expected reasoner id");
 			return null;
 		}
 	}
 
-	/*
-	 * Ensures that the predicate is rewritten as expected at level L1 and above,
-	 * but not rewritten at level L0.
-	 */
 	private void rewriteRootL1(String inputImage, String expectedImage) {
-		if (level.from(L1)) {
+		rewriteRootFrom(L1, inputImage, expectedImage);
+	}
+
+	/*
+	 * Ensures that the predicate is rewritten as expected at the given level and above,
+	 * but not rewritten at levels below.
+	 */
+	private void rewriteRootFrom(Level start, String inputImage, String expectedImage) {
+		if (level.from(start)) {
 			rewriteRoot(inputImage, expectedImage);
 		} else {
 			noRewriteRoot(inputImage);
@@ -110,6 +119,9 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 		// Ensures that level 1 positions are computed
 		assertGetPositions("1 ∈ ℕ", "ROOT");
+
+		// Ensures that level 2 positions are computed
+		assertGetPositions("n ∈ {x ∣ x≥0}", "ROOT");
 	}
 
 	/*
@@ -483,36 +495,54 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 	// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
 	@Test
 	public void testSIMP_IN_COMPSET() throws Exception {
-		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
+		/*
+		 * This rule is implemented in all levels (in level 0 and 1 by the
+		 * auto-rewriter, in level 2 explicitly).
+		 */
+
+		rewriteRoot("n ∈ {x,y· x≥0 ∧ y≥0 ∣ x+y}", //
 				"∃x,y· (x≥0 ∧ y≥0) ∧ x+y = n");
 	}
 
 	// E : {x . P(x) | x} == P(E)
 	@Test
 	public void testSIMP_IN_COMPSET_ONEPOINT() throws Exception {
+		/*
+		 * This rule is implemented in all levels (in level 0 and 1 by the
+		 * auto-rewriter, in level 2 explicitly).
+		 */
+
 		// One point rule on single variable
-		rewriteRootL1("n ∈ {x ∣ x≥0}", "n ≥ 0");
-		rewriteRootL1("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
+		rewriteRoot("n ∈ {x ∣ x≥0}", "n ≥ 0");
+		rewriteRoot("n ∈ {x· x≥0 ∣ x}", "n ≥ 0");
 
 		// One point rule on all variables
-		rewriteRootL1("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
-		rewriteRootL1("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRoot("m ↦ n ∈ {x ↦ y ∣ x≥0 ∧ y≥1}", "m ≥ 0 ∧ n ≥ 1");
+		rewriteRoot("m ↦ n ∈ {x,y· x≥0 ∧ y≥1 ∣ x ↦ y}", "m ≥ 0 ∧ n ≥ 1");
 
 		// One point rule on first variable only
-		rewriteRootL1("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
+		rewriteRoot("n ∈ {x,y· x≥0 ∧ y≥1 ∣ x}", "∃y· n≥0 ∧ y≥1");
 
 		// One point rule applies only to the last conjunct of the result
-		rewriteRootL1("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
+		rewriteRoot("n ∈ {x· x=0 ∣ x+1}", "∃x· x=0 ∧ x+1 = n");
 	}
 
 	/*
-	 * Ensures that we do not apply a rule of the auto-rewriter when applied to an
-	 * invalid position.
+	 * Ensures that levels 0 and 1 remain backward compatible with the use of the
+	 * auto-rewriter even when this reasoner is not applicable, while higher levels
+	 * do not use it anymore.
 	 */
 	@Test
-	public void testNoAutoRewrite() throws Exception {
+	public void testBackwardCompatibility() throws Exception {
+		// We are not applicable to this predicate
 		assertGetPositions("1 ∈ ∅");
-		noRewriteRoot("1 ∈ ∅");
+
+		// However, in levels 0 and 1, we rewrite it.
+		if (level.from(L2)) {
+			noRewriteRoot("1 ∈ ∅");
+		} else {
+			rewriteRoot("1 ∈ ∅", "⊥");
+		}
 	}
 
 	// Commented out, makes the tests NOT succeed

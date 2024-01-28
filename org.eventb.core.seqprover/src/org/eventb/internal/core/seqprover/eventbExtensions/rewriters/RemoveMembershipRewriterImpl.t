@@ -15,7 +15,8 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L2;
 
 import java.math.BigInteger;
 
@@ -32,7 +33,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -43,11 +44,15 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
 	private final boolean level1;
+	private final boolean level2;
+
+	// For backward compatibility with a mistake at levels 0 and 1
+	private final AutoRewriterImpl autoRewriter;
 	
 	/**
 	 * Default rewriter.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel level) {
+	public RemoveMembershipRewriterImpl(Level level) {
 		this(level, true);
 	}
 	
@@ -56,10 +61,30 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(RMLevel level, boolean isRewrite) {
+	public RemoveMembershipRewriterImpl(Level level, boolean isRewrite) {
 		super(false, false, null);
 		this.isRewrite = isRewrite;
 		this.level1 = level.from(L1);
+		this.level2 = level.from(L2);
+
+		// For backward compatibility
+		if (isRewrite) {
+			switch (level) {
+			case L0:
+				this.autoRewriter = new AutoRewriterImpl(AutoRewrites.Level.L0);
+				break;
+			case L1:
+				this.autoRewriter = new AutoRewriterImpl(AutoRewrites.Level.L1);
+				break;
+			default:
+				// Should never use any auto-rewriter at higher levels
+				this.autoRewriter = null;
+				break;
+			}
+		} else {
+			// No need to perform any rewrite
+			this.autoRewriter = null;
+		}
 	}
 
 	%include {FormulaV2.tom}
@@ -553,7 +578,7 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 			 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 			 */
 			In(_, Cset(_, _, _)) -> {
-				if (level1) {
+				if (level2) {
 					if (isRewrite) {
 						final OnePointProcessorRewriting opp = new OnePointProcessorRewriting((RelationalPredicate) predicate, ff);
 						opp.matchAndInstantiate();
@@ -585,6 +610,13 @@ public class RemoveMembershipRewriterImpl extends AbstractRewriterImpl {
 		"SIMP_IN_COMPSET_ONEPOINT"})
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
+		// for backward compatibility at low levels
+		if (autoRewriter != null) {
+			final Predicate newPredicate = autoRewriter.rewrite(predicate);
+			if (!newPredicate.equals(predicate))
+				return newPredicate;
+		}
+
 		isApplicableOrRewrite(predicate);
 		return rewrittenPredicate;
 	}
