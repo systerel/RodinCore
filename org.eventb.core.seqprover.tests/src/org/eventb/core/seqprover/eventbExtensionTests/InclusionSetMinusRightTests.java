@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.inclusionSetMinusRightRewritesGetPositions;
+
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
+import org.junit.Test;
 
 /**
  * Unit tests for the Rewrite inclusion with set minus on the right reasoner
@@ -25,55 +27,50 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSe
  * @author htson
  */
 public class InclusionSetMinusRightTests extends AbstractManualRewriterTests {
-	
-	// S <: A \ B == S <: A & S /\ B = {} 
-	String P1 = "{x} ⊆ {x+1} ∖ {x+2}";
 
-	String resultP1A = "{x} ⊆ {x+1}";
-
-	String resultP1B = "{x} ∩ {x+2} = ∅";
-
-	String P2 = "0=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}";
-
-	String resultP2 = "0=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅";
-
-	String P3 = "∀x· x=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}";
-
-	String resultP3 = "∀x· x=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅";
-	
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.inclusionSetMinusRightRewrites";
 	}
 
-	public String [] getTestGetPositions() {
-		return new String[] {
-				P1, "ROOT",
-				P2, "1",
-				P3, "1.1",
-		};
-	}
-
 	protected List<IPosition> getPositions(Predicate predicate) {
-		return Tactics.inclusionSetMinusRightRewritesGetPositions(predicate);
+		return inclusionSetMinusRightRewritesGetPositions(predicate);
 	}
 
-	@Override
-	protected SuccessfulTest[] getSuccessfulTests() {
-		return new SuccessfulTest[] {
-				new SuccessfulTest(P1, "", resultP1A, resultP1B),
-				new SuccessfulTest(P2, "1", resultP2),
-				new SuccessfulTest(P3, "1.1", resultP3),
-		};
+	@Test
+	public void testPositions() {
+		// Applicable positions
+		assertGetPositions("{x} ⊆ {x+1} ∖ {x+2}", "ROOT");
+		assertGetPositions("0=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "1");
+		assertGetPositions("∀x· x=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "1.1");
+
+		// Not applicable
+		assertGetPositions("1 ∈ ∅");
 	}
 
-	@Override
-	protected String[] getUnsuccessfulTests() {
-		return new String[] {
-				P1, "0",
-				P2, "0",
-				P3, "1.0",
-		};
+	/*
+	 * Ensures that the reasoner behaves as expected when succeeding.
+	 */
+	@Test
+	public void testSuccess() throws Exception {
+		// DERIV_SUBSETEQ_SETMINUS_R
+		// S <: A \ B == S <: A & S /\ B = {}
+		assertReasonerSuccess("{x} ⊆ {x+1} ∖ {x+2}", "", //
+				"{x} ⊆ {x+1}", "{x} ∩ {x+2} = ∅");
+		assertReasonerSuccess("0=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "1", //
+				"0=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅");
+		assertReasonerSuccess("∀x· x=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "1.1", //
+				"∀x· x=1 ⇒ {x} ⊆ {x+1} ∧ {x} ∩ {x+2} = ∅");
+	}
+
+	/*
+	 * Ensures that the reasoner behaves as expected when failing.
+	 */
+	@Test
+	public void testFailure() throws Exception {
+		assertReasonerFailure("{x} ⊆ {x+1} ∖ {x+2}", "0");
+		assertReasonerFailure("0=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "0");
+		assertReasonerFailure("∀x· x=1 ⇒ {x} ⊆ {x+1} ∖ {x+2}", "1.0");
 	}
 
 	// Commented out, but makes the tests succeed
