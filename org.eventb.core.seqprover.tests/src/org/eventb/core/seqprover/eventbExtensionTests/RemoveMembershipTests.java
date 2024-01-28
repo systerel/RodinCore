@@ -18,6 +18,7 @@ package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.rmGetPositions;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.Level.L1;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -63,6 +64,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		case L1:
 			return "org.eventb.core.seqprover.rmL1";
 		default:
+			fail("Missing expected reasoner id");
 			return null;
 		}
 	}
