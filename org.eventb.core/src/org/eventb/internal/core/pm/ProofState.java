@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.ITacticRunner;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IConfidence;
@@ -672,36 +673,38 @@ public class ProofState implements IProofState {
 
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
 			final boolean applyPostTactic, final IProgressMonitor monitor) {
-		usm.run(new Runnable() {
+		applyTactic(t, node, applyPostTactic ? SIMPLE_RUNNER : null, monitor);
+	}
 
+	public void applyTactic(final ITactic t, final IProofTreeNode node,
+			final ITacticRunner postTacticRunner, final IProgressMonitor monitor) {
+		usm.run(new Runnable() {
 			@Override
 			public void run() {
-				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
-						applyPostTactic)) {
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor), postTacticRunner)) {
 					selectNextUndischargedSubGoal(node);
 				}
 			}
-
 		});
-
 	}
 
 	public void applyTacticToHypotheses(final ITactic t,
 			final IProofTreeNode node, final Set<Predicate> hyps,
 			final boolean applyPostTactic, final IProgressMonitor monitor) {
-		usm.run(new Runnable() {
+		applyTacticToHypotheses(t, node, hyps, applyPostTactic ? SIMPLE_RUNNER : null, monitor);
+	}
 
+	public void applyTacticToHypotheses(final ITactic t, final IProofTreeNode node, final Set<Predicate> hyps,
+			final ITacticRunner postTacticRunner, final IProgressMonitor monitor) {
+		usm.run(new Runnable() {
 			@Override
 			public void run() {
 				ProofState.this.addAllToCached(hyps);
-				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
-						applyPostTactic)) {
+				if (internalApplyTactic(t, node, new ProofMonitor(monitor), postTacticRunner)) {
 					selectNextUndischargedSubGoal(node);
 				}
 			}
-
 		});
-
 	}
 
 	/**
@@ -734,12 +737,16 @@ public class ProofState implements IProofState {
 		return null;
 	}
 
+	private static final ITacticRunner SIMPLE_RUNNER = postTacticRunnable -> {
+		postTacticRunnable.accept(null);
+	};
+
 	protected boolean internalApplyTactic(ITactic t, IProofTreeNode node,
-			IProofMonitor pm, boolean applyPostTactic) {
+			IProofMonitor pm, ITacticRunner postTacticRunner) {
 		Object info = t.apply(node, pm);
 		if (info == null) {
 			info = "Tactic applied successfully";
-			if (applyPostTactic) {
+			if (postTacticRunner != null) {
 				if (pa != null) {
 					final IEventBRoot root = pa.getComponent().getPORoot();
 					final IAutoPostTacticManager manager = EventBPlugin
@@ -750,7 +757,7 @@ public class ProofState implements IProofState {
 							info = "Canceled";
 						} else {
 							final ITactic postTactic = manager.getSelectedPostTactics(root);
-							postTactic.apply(node, pm);
+							postTacticRunner.run(progress -> postTactic.apply(node, new ProofMonitor(progress)));
 						}
 					}
 				}

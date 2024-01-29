@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
+import org.eventb.core.pm.ITacticRunner;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
@@ -246,14 +245,6 @@ public class ProverUIUtils {
 		}
 	}
 
-	// A tactic that does nothing, used to apply post tactic
-	private static final ITactic IDENTITY_TACTIC = new ITactic() {
-		@Override
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return null;
-		}
-	};
-
 	/**
 	 * Applies the given tactic using the given user support and arguments.
 	 *
@@ -287,21 +278,16 @@ public class ProverUIUtils {
 				}
 			});
 		} else {
-			// The tactic must be applied in the UI thread,
-			// so we apply it alone without the post tactic
-			if (hyps == null) {
-				userSupport.applyTactic(tactic, false, null);
-			} else {
-				userSupport.applyTacticToHypotheses(tactic, hyps, false, null);
-			}
+			// The tactic must be applied in the UI thread, so we apply it here and, if a
+			// post tactic has to be applied, we run it while showing a progress bar
+			ITacticRunner postTacticRunner = null;
 			if (!skipPostTactic) {
-				// In order to apply the post tactic (with a progress bar), we apply an
-				// "identity tactic" that does nothing on its own but triggers the
-				// application of the post tactic
-				applyTacticWithProgress(pm -> {
-					pm.beginTask("Proving with post tactic", IProgressMonitor.UNKNOWN);
-					userSupport.applyTactic(IDENTITY_TACTIC, true, pm);
-				});
+				postTacticRunner = runnable -> applyTacticWithProgress(runnable::accept);
+			}
+			if (hyps == null) {
+				userSupport.applyTactic(tactic, postTacticRunner, null);
+			} else {
+				userSupport.applyTacticToHypotheses(tactic, hyps, postTacticRunner, null);
 			}
 		}
 	}

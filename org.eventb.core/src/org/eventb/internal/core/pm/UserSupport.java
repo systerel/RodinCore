@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.ITacticRunner;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -453,11 +454,25 @@ public class UserSupport implements IUserSupport {
 	}
 
 	@Override
+	public void applyTactic(ITactic t, ITacticRunner postTacticRunner, IProgressMonitor monitor) {
+		checkCurrentPS();
+		IProofTreeNode node = currentPS.getCurrentNode();
+		currentPS.applyTactic(t, node, postTacticRunner, monitor);
+	}
+
+	@Override
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			boolean applyPostTactic, IProgressMonitor monitor) {
 		checkCurrentPS();
 		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(), hyps,
 				applyPostTactic, monitor);
+	}
+
+	@Override
+	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps, ITacticRunner postTacticRunner,
+			IProgressMonitor monitor) {
+		checkCurrentPS();
+		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(), hyps, postTacticRunner, monitor);
 	}
 
 	void refresh() {

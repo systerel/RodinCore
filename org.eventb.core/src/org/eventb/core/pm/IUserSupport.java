@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,6 +243,26 @@ public interface IUserSupport extends IElementChangedListener {
 			boolean applyPostTactic, IProgressMonitor monitor);
 
 	/**
+	 * Apply a tactic to the current proof obligation to a set of hypothesis
+	 * <p>
+	 * The provided post tactic runner should execute its argument to run the post
+	 * tactic; it can be done directly (e.g.
+	 * {@code runnable -> runnable.accept(newMonitor)}) or through a worker thread,
+	 * as long as the runner waits for the worker to finish before returning. If
+	 * running the post tactic is not desired, please provide {@code null} rather
+	 * than a runner that does nothing.
+	 *
+	 * @param t                a proof tactic
+	 * @param hyps             a set of hypothesis
+	 * @param postTacticRunner runner for the post tactic (or {@code null} if it
+	 *                         should not be applied)
+	 * @param monitor          a progress monitor
+	 * @since 3.7
+	 */
+	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps, ITacticRunner postTacticRunner,
+			IProgressMonitor monitor);
+
+	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
 	 * node.
 	 * <p>
@@ -256,6 +276,25 @@ public interface IUserSupport extends IElementChangedListener {
 	 */
 	void applyTactic(ITactic t, boolean applyPostTactic,
 			IProgressMonitor monitor);
+
+	/**
+	 * Apply a tactic to the current proof obligation at the current proof tree
+	 * node.
+	 * <p>
+	 * The provided post tactic runner should execute its argument to run the post
+	 * tactic; it can be done directly (e.g.
+	 * {@code runnable -> runnable.accept(newMonitor)}) or through a worker thread,
+	 * as long as the runner waits for the worker to finish before returning. If
+	 * running the post tactic is not desired, please provide {@code null} rather
+	 * than a runner that does nothing.
+	 *
+	 * @param t                a proof tactic
+	 * @param postTacticRunner runner for the post tactic (or {@code null} if it
+	 *                         should not be applied)
+	 * @param monitor          a progress monitor
+	 * @since 3.7
+	 */
+	void applyTactic(ITactic t, ITacticRunner postTacticRunner, IProgressMonitor monitor);
 
 	/**
 	 * Backtracking from the current proof tree node in the current proof
