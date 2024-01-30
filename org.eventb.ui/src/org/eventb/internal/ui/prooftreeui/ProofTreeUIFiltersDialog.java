@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,7 +205,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		// Description
 		info = new Label(parent, SWT.LEFT);
 		// info.setText(FilterMessages.CustomFiltersDialog_description_label);
-		info.setText("Desciption of the rule");
+		info.setText("Description of the rule");
 
 		final Text description = new Text(parent, SWT.LEFT | SWT.WRAP
 				| SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
@@ -272,8 +272,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		};
 		selectButton.addSelectionListener(listener);
 
-		// De-select All button
-		label = "De-select all";
+		// Deselect All button
+		label = "Deselect all";
 		// label= FilterMessages.CustomFiltersDialog_DeselectAllButton_label;
 		Button deselectButton = createButton(buttonComposite,
 				IDialogConstants.DESELECT_ALL_ID, label, false);
