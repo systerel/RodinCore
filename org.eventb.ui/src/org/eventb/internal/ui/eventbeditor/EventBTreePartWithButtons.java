@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -150,7 +152,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 */
 	@Override
 	public void statusChanged(final IRodinElement element) {
-		Display display = this.getViewer().getControl().getDisplay();
+		Display display = getWorkbench().getDisplay();
 		display.syncExec(new Runnable() {
 
 			@Override

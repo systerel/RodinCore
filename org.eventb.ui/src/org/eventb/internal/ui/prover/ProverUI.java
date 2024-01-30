@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eclipse.jface.window.Window.CANCEL;
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eventb.internal.ui.UIUtils.runWithProgressDialog;
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
@@ -573,7 +574,7 @@ public class ProverUI extends EventBFormEditor implements
 			return; // Do nothing
 		}
 
-		Display display = this.getEditorSite().getShell().getDisplay();
+		Display display = getWorkbench().getDisplay();
 		
 		display.syncExec(new Runnable() {
 			@Override
