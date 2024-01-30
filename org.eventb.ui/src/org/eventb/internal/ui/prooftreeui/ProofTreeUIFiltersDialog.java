@@ -136,7 +136,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		// Checkbox
 		fEnableUserDefinedPatterns = new Button(group, SWT.CHECK);
 		fEnableUserDefinedPatterns.setFocus();
-		// fEnableUserDefinedPatterns.setText(FilterMessages.CustomFiltersDialog_enableUserDefinedPattern);
 		fEnableUserDefinedPatterns.setText("A Simple Message");
 
 		// Pattern field
@@ -182,7 +181,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		new Label(parent, SWT.NONE);
 
 		Label info = new Label(parent, SWT.LEFT);
-		// info.setText(FilterMessages.CustomFiltersDialog_filterList_label);
 		info.setText("Select the rules to be filtered");
 
 		fCheckBoxList = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
@@ -204,7 +202,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		// Description
 		info = new Label(parent, SWT.LEFT);
-		// info.setText(FilterMessages.CustomFiltersDialog_description_label);
 		info.setText("Description of the rule");
 
 		final Text description = new Text(parent, SWT.LEFT | SWT.WRAP
@@ -226,9 +223,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 					}
 				});
 		fCheckBoxList.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
@@ -256,8 +250,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		// Select All button
 		String label = "Select all";
-		// String label=
-		// FilterMessages.CustomFiltersDialog_SelectAllButton_label;
 		Button selectButton = createButton(buttonComposite,
 				IDialogConstants.SELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(selectButton);
@@ -274,7 +266,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		// Deselect All button
 		label = "Deselect all";
-		// label= FilterMessages.CustomFiltersDialog_DeselectAllButton_label;
 		Button deselectButton = createButton(buttonComposite,
 				IDialogConstants.DESELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(deselectButton);
