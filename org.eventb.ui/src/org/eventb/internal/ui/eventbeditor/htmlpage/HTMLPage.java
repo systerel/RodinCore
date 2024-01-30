@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *     Systerel - added implicit children for events
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
+
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -186,8 +188,7 @@ public class HTMLPage extends EventBEditorPage implements
 		if (isActive() && needsUpdate) {
 			// We are switching to this page - refresh it
 			// if needed.
-			final Display display = this.getEditorSite().getShell()
-					.getDisplay();
+			final Display display = getWorkbench().getDisplay();
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {

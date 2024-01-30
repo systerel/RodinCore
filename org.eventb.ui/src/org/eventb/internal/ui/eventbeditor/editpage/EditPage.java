@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.util.ArrayList;
@@ -851,7 +852,7 @@ public class EditPage extends EventBEditorPage implements
 	}
 
 	private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
-		final Display display = this.getSite().getShell().getDisplay();
+		final Display display = getWorkbench().getDisplay();
 		if (display.isDisposed()) {
 			return;
 		}

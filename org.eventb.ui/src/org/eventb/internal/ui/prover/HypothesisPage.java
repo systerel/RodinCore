@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eventb.internal.ui.prover.ProverUI.PROVERUI_SCOPE;
 
 import org.eclipse.core.runtime.Assert;
@@ -251,7 +252,7 @@ public abstract class HypothesisPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = this.getSite().getShell().getDisplay();
+		Display display = getWorkbench().getDisplay();
 
 		display.syncExec(new Runnable() {
 			@Override
