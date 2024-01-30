@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,17 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L0;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L2;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
@@ -50,10 +54,16 @@ public class EhTests extends AbstractReasonerTests {
 
 	@Override
 	public String getReasonerID() {
-		if (level.from(L1)) {
+		switch (level) {
+		case L2:
+			return "org.eventb.core.seqprover.eqL2";
+		case L1:
 			return "org.eventb.core.seqprover.eqL1";
-		} else {
+		case L0:
 			return "org.eventb.core.seqprover.eq";
+		default:
+			fail("unknown reasoner level");
+			return null;
 		}
 	}
 
@@ -87,6 +97,28 @@ public class EhTests extends AbstractReasonerTests {
 		// Behavior is not modified when rewriting a complex expression
 		assertReasonerSuccess("y + 1 = x |- x + 1 = 1 + y + 1", makeInput("y + 1 = x"),
 				"{}[][][y + 1 = x] |- x + 1 = 1 + x");
+	}
+
+	/**
+	 * Ensures that we have the correct behavior when the rewritten variable occurs
+	 * in a hypothesis which is not selected nor hidden (i.e., default hypothesis).
+	 */
+	@Test
+	public void testBug818() throws Exception {
+		final IProverSequent sequent = genFullSeq("x = y + 1 ;; x > 0 ;H; ;S; x = y + 1 |- x + 1 = 1 + y + 1", ff);
+		final String expectedHyps;
+		if (level.from(L2)) {
+			// x occurs in 'x > 0', just deselect the equality
+			expectedHyps = "{}[][x = y + 1 ;; x > 0][]";
+		} else if (level.from(L1)) {
+			// the equality gets hidden despite the default hypothesis 'x > 0'
+			expectedHyps = "{}[x = y + 1][x > 0][]";
+		} else {
+			// old behavior that does not deselect the equality
+			expectedHyps = "{}[][x > 0][x = y + 1]";
+		}
+		assertReasonerSuccess(sequent, makeInput("x = y + 1"), //
+				expectedHyps + " |- y + 1 + 1 = 1 + y + 1");
 	}
 
 	@Test

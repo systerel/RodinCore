@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2023 Systerel and others.
+ * Copyright (c) 2014, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
-import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
 
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.Set;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -91,13 +91,14 @@ public abstract class EqvEq<T extends Formula<T>> extends HypothesisReasoner {
 	protected abstract Rewriter getRewriter(Predicate hyp, T from, T to);
 
 	/**
-	 * Determines if the hypothesis should be hidden.
+	 * Determines if the hypothesis should be deselected or hidden.
 	 *
-	 * @param hyp the equivalence/equality predicate in hypothesis
-	 * @return {@code true} to hide it, {@code false} to do nothing
+	 * @param sequent prover sequent
+	 * @param hyp     the equivalence/equality predicate in hypothesis
+	 * @return an action to hide or deselect it, {@code null} otherwise
 	 */
-	protected boolean hidePredicate(Predicate hyp) {
-		return false;
+	protected ISelectionHypAction hideOrDeselectPredicate(IProverSequent sequent, Predicate hyp) {
+		return null;
 	}
 
 	@Override
@@ -120,8 +121,9 @@ public abstract class EqvEq<T extends Formula<T>> extends HypothesisReasoner {
 		final Rewriter rewriter = getRewriter(hypEq, getFrom(hypEq),
 				getTo(hypEq));
 		final List<IHypAction> actions = rewriteHypotheses(sequent, rewriter);
-		if (hidePredicate(hypEq)) {
-			actions.add(makeHideHypAction(singleton(hypEq)));
+		var hypEqAction = hideOrDeselectPredicate(sequent, hypEq);
+		if (hypEqAction != null) {
+			actions.add(hypEqAction);
 		}
 		final Predicate newGoal = rewriteGoal(sequent, rewriter);
 		goalDependant = newGoal != null;

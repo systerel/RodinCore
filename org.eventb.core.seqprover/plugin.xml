@@ -64,6 +64,10 @@
             id="eqL1"
             name="%eqName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.EqL2"
+            id="eqL2"
+            name="%eqName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.ExE"
             id="exE"
             name="%exEName"/>
@@ -182,6 +186,10 @@
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.HeL1"
             id="heL1"
+            name="%heName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.HeL2"
+            id="heL2"
             name="%heName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L0;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L1;
+import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L2;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.UntranslatableException;
@@ -41,10 +44,16 @@ public class HeTests extends AbstractReasonerTests {
 
 	@Override
 	public String getReasonerID() {
-		if (level.from(L1)) {
+		switch (level) {
+		case L2:
+			return "org.eventb.core.seqprover.heL2";
+		case L1:
 			return "org.eventb.core.seqprover.heL1";
-		} else {
+		case L0:
 			return "org.eventb.core.seqprover.he";
+		default:
+			fail("unknown reasoner level");
+			return null;
 		}
 	}
 
@@ -64,6 +73,19 @@ public class HeTests extends AbstractReasonerTests {
 		} else {
 			assertReasonerSuccess("y + 1 = x |- x + 1 = 1 + y + 1", makeInput("y + 1 = x"),
 					"{}[][][y + 1 = x] |- y + 1 + 1 = 1 + y + 1");
+		}
+		// Bug #818
+		if (level.from(L2)) {
+			// Hypothesis is deselected (not hidden) when rewriting an identifier that is
+			// used in deselected hypotheses
+			assertReasonerSuccess(genFullSeq("y + 1 = x ;; x > 0 ;H; ;S; y + 1 = x |- x + 1 = 1 + y + 1", ff),
+					makeInput("y + 1 = x"), "{}[][y + 1 = x ;; x > 0][] |- y + 1 + 1 = 1 + y + 1");
+		} else if (level.from(L1)) {
+			assertReasonerSuccess(genFullSeq("y + 1 = x ;; x > 0 ;H; ;S; y + 1 = x |- x + 1 = 1 + y + 1", ff),
+					makeInput("y + 1 = x"), "{}[y + 1 = x][x > 0][] |- y + 1 + 1 = 1 + y + 1");
+		} else {
+			assertReasonerSuccess(genFullSeq("y + 1 = x ;; x > 0 ;H; ;S; y + 1 = x |- x + 1 = 1 + y + 1", ff),
+					makeInput("y + 1 = x"), "{}[][x > 0][y + 1 = x] |- y + 1 + 1 = 1 + y + 1");
 		}
 		// Behavior is not modified when rewriting a complex expression
 		assertReasonerSuccess("x = y + 1 |- x + 1 = 1 + y + 1", makeInput("x = y + 1"),
