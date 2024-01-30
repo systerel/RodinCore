@@ -15,7 +15,6 @@ import static java.util.Comparator.comparing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -36,7 +35,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -238,8 +236,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 				Object element = event.getElement();
 				if (element instanceof ViewerFilter) {
 					// renew if already touched
-					if (fFilterDescriptorChangeHistory.contains(element))
-						fFilterDescriptorChangeHistory.remove(element);
+					fFilterDescriptorChangeHistory.remove(element);
 					fFilterDescriptorChangeHistory.push((ViewerFilter) element);
 				}
 			}
@@ -292,9 +289,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	}
 
 	private void checkInitialSelections() {
-		Iterator<?> itemsToCheck = getInitialElementSelections().iterator();
-		while (itemsToCheck.hasNext())
-			fCheckBoxList.setChecked(itemsToCheck.next(), true);
+		for (Object itemToCheck : getInitialElementSelections())
+			fCheckBoxList.setChecked(itemToCheck, true);
 	}
 
 	@Override
@@ -313,11 +309,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	private ILabelProvider createLabelProvider() {
 		return new LabelProvider() {
-			@Override
-			public Image getImage(Object element) {
-				return null;
-			}
-
 			@Override
 			public String getText(Object element) {
 				var filter = (RuleFilter) element;
