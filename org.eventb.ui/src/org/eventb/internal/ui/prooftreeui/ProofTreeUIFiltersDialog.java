@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
+import static java.util.Comparator.comparing;
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -43,6 +46,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -60,7 +64,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	// private String[] fPatterns;
 	// private String[] fEnabledFilterIds;
 
-	static Collection<RuleFilter> fBuiltInFilters = null;
+	static List<RuleFilter> fBuiltInFilters = null;
+	static Map<String, IReasonerDesc> reasonerDescs = null;
 
 	CheckboxTableViewer fCheckBoxList;
 
@@ -95,12 +100,15 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			SequentProver.getReasonerRegistry();
 		String[] reasoners = reasonerRegistry.getRegisteredIDs();
 		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.length);
+		reasonerDescs = new HashMap<>(reasoners.length);
 		for (String reasoner : reasoners) {
 			fBuiltInFilters.add(new RuleFilter(reasoner));
-			// TODO : display or use reasoner name from
-			// reasonerRegistry.getReasonerName(reasoner)
-
+			reasonerDescs.put(reasoner, reasonerRegistry.getReasonerDesc(reasoner));
 		}
+		// First, sort by user-facing name; if equal (reasoners that have several levels
+		// have the same name), use ID to sort by level
+		fBuiltInFilters.sort(comparing((RuleFilter filter) -> reasonerDescs.get(filter.reasonerID).getName())
+				.thenComparing(filter -> filter.reasonerID));
 	}
 
 	@Override
@@ -188,9 +196,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		data.heightHint = fCheckBoxList.getTable().getItemHeight() * 10;
 		fCheckBoxList.getTable().setLayoutData(data);
 
-		fCheckBoxList.setLabelProvider(createLabelPrivder());
+		fCheckBoxList.setLabelProvider(createLabelProvider());
 		fCheckBoxList.setContentProvider(new ArrayContentProvider());
-		// Arrays.sort(fBuiltInFilters);
 		fCheckBoxList.setInput(fBuiltInFilters);
 		Object[] filters = proofTreeUI.getFilters();
 		if (filters != null)
@@ -214,11 +221,14 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						ISelection selection = event.getSelection();
-						if (selection instanceof IStructuredSelection) {
-							Object selectedElement = ((IStructuredSelection) selection)
-									.getFirstElement();
-							if (selectedElement instanceof String)
-								description.setText(((String) selectedElement));
+						if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+							var filter = (RuleFilter) ((IStructuredSelection) selection).getFirstElement();
+							String text = "Id: " + filter.reasonerID;
+							int version = reasonerDescs.get(filter.reasonerID).getVersion();
+							if (version != IReasonerDesc.NO_VERSION) {
+								text += "\nVersion: " + version;
+							}
+							description.setText(text);
 						}
 					}
 				});
@@ -301,7 +311,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		super.okPressed();
 	}
 
-	private ILabelProvider createLabelPrivder() {
+	private ILabelProvider createLabelProvider() {
 		return new LabelProvider() {
 			@Override
 			public Image getImage(Object element) {
@@ -310,10 +320,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 			@Override
 			public String getText(Object element) {
-				// if (element instanceof FilterDescriptor)
-				// return ((FilterDescriptor)element).getName();
-				// else
-				return element.toString();
+				var filter = (RuleFilter) element;
+				return reasonerDescs.get(filter.reasonerID).getName();
 			}
 		};
 	}
