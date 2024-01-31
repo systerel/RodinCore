@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
@@ -50,17 +52,9 @@ import org.eventb.core.seqprover.SequentProver;
 
 public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
-	// private static final String SEPARATOR = ","; //$NON-NLS-1$
-
-	private static final String MESSAGE = "The patterns are separated by commas, where * = anystring, ? = anycharacter,  ,, = ,";
+	private static final String SEPARATOR = ","; //$NON-NLS-1$
 
 	private ProofTreeUIPage proofTreeUI;
-
-	// private String fViewId;
-	private boolean fEnablePatterns;
-
-	// private String[] fPatterns;
-	// private String[] fEnabledFilterIds;
 
 	static List<RuleFilter> fBuiltInFilters = null;
 	static Map<String, IReasonerDesc> reasonerDescs = null;
@@ -142,7 +136,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		// Checkbox
 		fEnableUserDefinedPatterns = new Button(group, SWT.CHECK);
 		fEnableUserDefinedPatterns.setFocus();
-		fEnableUserDefinedPatterns.setText("A Simple Message");
+		fEnableUserDefinedPatterns.setText("Filter nodes based on their label");
 
 		// Pattern field
 		fUserDefinedPatterns = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -150,25 +144,21 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 				| GridData.GRAB_HORIZONTAL);
 		data.widthHint = convertWidthInCharsToPixels(59);
 		fUserDefinedPatterns.setLayoutData(data);
-		// String patterns= convertToString(fPatterns, SEPARATOR);
 		String patterns = "Some patterns";
 		fUserDefinedPatterns.setText(patterns);
 
 		// Info text
 		final Label info = new Label(group, SWT.LEFT);
-		info.setText(MESSAGE);
-		fEnableUserDefinedPatterns.setText("Another message");
+		info.setText("The patterns are separated by commas, where * = anystring, ? = anycharacter");
 
 		// Enabling / disabling of pattern group
-		fEnableUserDefinedPatterns.setSelection(fEnablePatterns);
-		fUserDefinedPatterns.setEnabled(fEnablePatterns);
-		info.setEnabled(fEnablePatterns);
+		fEnableUserDefinedPatterns.setSelection(false);
+		fUserDefinedPatterns.setEnabled(false);
 		fEnableUserDefinedPatterns.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state = fEnableUserDefinedPatterns.getSelection();
 				fUserDefinedPatterns.setEnabled(state);
-				info.setEnabled(fEnableUserDefinedPatterns.getSelection());
 				if (state)
 					fUserDefinedPatterns.setFocus();
 			}
@@ -289,8 +279,22 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	}
 
 	private void checkInitialSelections() {
-		for (Object itemToCheck : getInitialElementSelections())
-			fCheckBoxList.setChecked(itemToCheck, true);
+		var patternBuilder = new StringBuilder();
+		String separator = "";
+		for (Object itemToCheck : getInitialElementSelections()) {
+			if (itemToCheck instanceof RuleFilter) {
+				fCheckBoxList.setChecked(itemToCheck, true);
+			} else if (itemToCheck instanceof RulePatternFilter) {
+				patternBuilder.append(separator).append(((RulePatternFilter) itemToCheck).pattern);
+				separator = SEPARATOR;
+			}
+		}
+		String pattern = patternBuilder.toString();
+		if (!pattern.isEmpty()) {
+			fUserDefinedPatterns.setText(pattern);
+			fUserDefinedPatterns.setEnabled(true);
+			fEnableUserDefinedPatterns.setSelection(true);
+		}
 	}
 
 	@Override
@@ -300,6 +304,14 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			for (ViewerFilter filter : fBuiltInFilters) {
 				if (fCheckBoxList.getChecked(filter)) {
 					result.add(filter);
+				}
+			}
+			if (fUserDefinedPatterns.isEnabled()) {
+				String rawPattern = fUserDefinedPatterns.getText();
+				if (!rawPattern.isBlank()) {
+					for (String pattern : rawPattern.split(SEPARATOR)) {
+						result.add(new RulePatternFilter(pattern.strip()));
+					}
 				}
 			}
 			setResult(result);
@@ -323,6 +335,31 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	 */
 	public Stack<ViewerFilter> getFilterDescriptorChangeHistory() {
 		return fFilterDescriptorChangeHistory;
+	}
+
+	/**
+	 * A custom pattern filter for rules.
+	 *
+	 * Contrary to the default pattern filter, this one only matches the current
+	 * element (not its children: this is done in ProofTreeUIPage) and the match is
+	 * reversed: elements that match the pattern are hidden, not shown.
+	 *
+	 * The original pattern is also kept to restore the contents of the text field
+	 * when re-opening the filters dialog.
+	 */
+	private static class RulePatternFilter extends PatternFilter {
+		protected final String pattern;
+
+		public RulePatternFilter(String pattern) {
+			super();
+			this.pattern = pattern;
+			setPattern(pattern);
+		}
+
+		@Override
+		public boolean isElementVisible(Viewer viewer, Object element) {
+			return !isLeafMatch(viewer, element);
+		}
 	}
 
 }
