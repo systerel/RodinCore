@@ -2064,6 +2064,15 @@
             tooltip="%proofTactic.finitePositiveGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
+            id="org.eventb.ui.finiteCompsetGoal"
+            interrupt="false"
+            name="%proofTactic.finiteCompsetGoal.name"
+            priority="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteCompsetGoal"
+            target="goal"
+            tooltip="%proofTactic.finiteCompsetGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
             id="org.eventb.ui.cardComparisonGoal"
             interrupt="false"
             name="%proofTactic.cardComparisonGoal.name"

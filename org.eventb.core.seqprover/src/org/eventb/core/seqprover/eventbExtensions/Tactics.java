@@ -133,6 +133,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.EqvLR;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvRL;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteCompset;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunDom;
@@ -2891,6 +2892,28 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new FinitePositive(), EMPTY_INPUT);
 	}
 
+	/**
+	 * Returns the list of applicable positions of the tactic "finite of set
+	 * comprehension" to a goal predicate.
+	 *
+	 * @param predicate predicate
+	 * @return a list of applicable positions
+	 * @see FiniteCompset
+	 * @since 3.7
+	 */
+	public static List<IPosition> finiteCompsetGetPositions(Predicate predicate) {
+		return FiniteCompset.isApplicable(predicate) ? POSITION_ROOT : NO_POSITIONS;
+	}
+
+	/**
+	 * Returns the tactic "Finite of Set Comprehension" {@link FiniteCompset}.
+	 *
+	 * @return The tactic "finite of set comprehension"
+	 * @since 3.7
+	 */
+	public static ITactic finiteCompset() {
+		return BasicTactics.reasonerTac(new FiniteCompset(), EMPTY_INPUT);
+	}
 
 	/**
 	 * Return the list of applicable positions of the tactic "cardinality

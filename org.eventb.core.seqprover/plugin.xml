@@ -429,6 +429,10 @@
             id="finitePositive"
             name="%finitePositiveName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteCompset"
+            id="finiteCompset"
+            name="%finiteCompsetName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites"
             id="partitionRewrites"
             name="%partitionRewritesName">
