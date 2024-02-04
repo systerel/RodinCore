@@ -302,7 +302,7 @@ public class SubParsers {
 		}
 
 		@Override
-		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
+		public final SubParseResult<? extends R> nud(ParserContext pc) throws SyntaxError {
 			final Set<ASTProblem> errors = new LinkedHashSet<ASTProblem>();
 			final Iterator<INudParser<? extends R>> iter = nudParsers.iterator();
 			final SavedContext savedContext = pc.save();

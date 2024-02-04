@@ -111,7 +111,7 @@ public class MainParsers {
 			// avoid synthetic accessor method emulation
 		}
 		
-		public SubParseResult<Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
+		public SubParseResult<? extends Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
 			final P parser = getParser(pc);
 			pc.pushParentKind();
 			try {
@@ -122,7 +122,7 @@ public class MainParsers {
 		}
 		
 		protected abstract P getParser(ParserContext pc) throws SyntaxError;
-		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
+		protected abstract SubParseResult<? extends Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
 		
 		protected static ASTProblem newOperatorError(ParserContext pc,
 				ProblemKind problemKind) throws SyntaxError {
@@ -186,7 +186,7 @@ public class MainParsers {
 		}
 		
 		@Override
-		protected SubParseResult<Formula<?>> apply(ParserContext pc,
+		protected SubParseResult<? extends Formula<?>> apply(ParserContext pc,
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> ledResult = parser.led(left, pc);
@@ -199,13 +199,13 @@ public class MainParsers {
 	static final int[] NO_TAGS = new int[0];
 	
 	// Core algorithm implementation
-	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
+	static final INudParser<Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
 		
 		@Override
-		public SubParseResult<Formula<?>> nud(ParserContext pc)
+		public SubParseResult<? extends Formula<?>> nud(ParserContext pc)
 				throws SyntaxError {
 		
-			SubParseResult<Formula<?>> left = NUD_APPLIER.apply(pc, null);
+			SubParseResult<? extends Formula<?>> left = NUD_APPLIER.apply(pc, null);
 
 			while (pc.giveProgressDirection() == RIGHT) {
 				left = LED_APPLIER.apply(pc, left.getParsed());
@@ -227,7 +227,7 @@ public class MainParsers {
 		public SubParseResult<Type> nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
 			try {
-				final SubParseResult<Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
+				final SubParseResult<? extends Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
 				final Expression expression = exprResult.getParsed();
 				if (!expression.isATypeExpression()) {
 					throw pc.syntaxError(newInvalidTypeExpr(pc));

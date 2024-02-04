@@ -380,8 +380,8 @@ public class ParserContext {
 		startPos.pop();
 	}
 
-	public <T> SubParseResult<T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
-		final SubParseResult<T> parseRes = subParseNoCheckRes(parser);
+	public <T> SubParseResult<? extends T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
+		final SubParseResult<? extends T> parseRes = subParseNoCheckRes(parser);
 		if (!parseRes.isClosed()) {
 			final int childKind = parseRes.getKind();
 			if (grammar.needsParentheses(isRightChild, childKind, parentKind.val)) {
@@ -399,7 +399,7 @@ public class ParserContext {
 		return subParseRes(parser, isRightChild).getParsed();
 	}
 	
-	public <T> SubParseResult<T> subParseNoCheckRes(INudParser<T> parser)
+	public <T> SubParseResult<? extends T> subParseNoCheckRes(INudParser<T> parser)
 			throws SyntaxError {
 		pushPos();
 		try {
