@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,9 @@ import static org.eventb.core.ast.Formula.BECOMES_MEMBER_OF;
 import static org.eventb.core.ast.Formula.BECOMES_SUCH_THAT;
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.ProblemKind.MisplacedLedOperator;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
+import static org.eventb.core.ast.ProblemKind.UnknownOperator;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
@@ -155,10 +157,10 @@ public class MainParsers {
 				final ILedParser<? extends Formula<?>> ledParser = pc.getLedParser();
 				if (ledParser == null) { // no parser exists for current token
 					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.UnknownOperator));
+							UnknownOperator));
 				} else { // operator is misplaced
 					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.MisplacedLedOperator));
+							MisplacedLedOperator));
 				}
 			}
 			return subParsers;
