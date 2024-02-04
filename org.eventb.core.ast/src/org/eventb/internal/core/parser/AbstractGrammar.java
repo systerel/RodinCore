@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,11 +287,16 @@ public abstract class AbstractGrammar {
 	// TODO remove all other addOperator() methods
 	public void addOperator(IOperatorInfo<? extends Formula<?>> operInfo)
 			throws OverrideException {
+		addOperatorWithoutParser(operInfo);
+		// kind is unstable at this stage, subParsers are populated later
+		deferredOperators.add(operInfo);
+	}
+
+	public void addOperatorWithoutParser(IOperatorInfo<? extends Formula<?>> operInfo)
+			throws OverrideException {
 		final int kind = tokens.getOrAdd(operInfo.getImage());
 		initOpRegistry.addOperator(kind, operInfo.getId(),
 				operInfo.getGroupId(), operInfo.isSpaced());
-		// kind is unstable at this stage, subParsers are populated later
-		deferredOperators.add(operInfo);
 	}
 
 	// must be called only with subparsers getting their kind dynamically from a
