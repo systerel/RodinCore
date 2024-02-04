@@ -37,7 +37,6 @@ import static org.eventb.internal.core.parser.SubParsers.BoundIdentDeclSubParser
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +61,6 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
-import org.eventb.internal.core.parser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
@@ -147,10 +145,10 @@ public class MainParsers {
 
 	}
 	
-	static final ParserApplier<List<INudParser<? extends Formula<?>>>> NUD_APPLIER = new ParserApplier<List<INudParser<? extends Formula<?>>>>() {
+	static final ParserApplier<INudParser<? extends Formula<?>>> NUD_APPLIER = new ParserApplier<INudParser<? extends Formula<?>>>() {
 		
 		@Override
-		protected List<INudParser<? extends Formula<?>>> getParser(ParserContext pc)
+		protected INudParser<? extends Formula<?>> getParser(ParserContext pc)
 		throws SyntaxError {
 			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
 			if (subParsers.isEmpty()) {
@@ -163,41 +161,15 @@ public class MainParsers {
 				}
 				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
-			return subParsers;
+			return subParsers.get(0);
 		}
 		
 		@Override
-		protected SubParseResult<Formula<?>> apply(ParserContext pc,
-				List<INudParser<? extends Formula<?>>> nudParsers,
-				Formula<?> left) throws SyntaxError {
-			final Set<ASTProblem> errors = new LinkedHashSet<ASTProblem>();
-			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
-			final SavedContext savedContext = pc.save();
-			while(iter.hasNext()) {
-				final INudParser<? extends Formula<?>> nudParser = iter.next();
-				try {
-					// FIXME the call to nud may add problems to pc.result
-					// without throwing an exception
-					// => convention: exception + problem if not recoverable
-					//                problem only if recoverable
-					final SubParseResult<? extends Formula<?>> nudResult = nudParser
-							.nud(pc);
+		protected SubParseResult<Formula<?>> apply(ParserContext pc, INudParser<? extends Formula<?>> nudParser,
+						Formula<?> left) throws SyntaxError {
+			final SubParseResult<? extends Formula<?>> nudResult = nudParser.nud(pc);
 
-					return new SubParseResult<Formula<?>>(
-							nudResult.getParsed(), nudResult.getKind(),
-							nudResult.isClosed());
-					// FIXME check for ambiguities (several succeeding parsers)
-				} catch (SyntaxError e) {
-					errors.add(pc.takeProblem());
-					pc.restore(savedContext);
-				}
-			}
-			if (errors.size() == 1) {
-				throw pc.syntaxError(errors.iterator().next());
-			} else {
-				throw pc.syntaxError(newCompoundError(
-						pc.makeSourceLocation(pc.t), errors));
-			}
+			return new SubParseResult<Formula<?>>(nudResult.getParsed(), nudResult.getKind(), nudResult.isClosed());
 		}
 		
 	};
