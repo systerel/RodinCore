@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativeExpression;
@@ -89,6 +92,7 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.MainParsers.BoundIdentDeclListParser;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;
+import org.eventb.internal.core.parser.ParserContext.SavedContext;
 
 /**
  * Sub-parsers are specialized parsers; they are usually bound to an operator.
@@ -272,6 +276,56 @@ public class SubParsers {
 		 */
 		protected abstract R makeValue(ParserContext pc, String tokenVal, SourceLocation loc) throws SyntaxError;
 
+	}
+
+	/**
+	 * A parser that performs a choice between several prefix nud parsers, without
+	 * consuming any token.
+	 * 
+	 * @param <R> return type of the parser.
+	 */
+	private static abstract class ChoiceNudParser<R> extends AbstractNudParser<R> {
+
+		// True if this operator is syntactically closed, e.g. surrounded by
+		// mandatory brackets (including leading reserved word).
+		private final List<INudParser<? extends R>> nudParsers;
+
+		protected ChoiceNudParser(int kind, int tag, List<INudParser<? extends R>> nudParsers) {
+			super(kind, tag);
+			this.nudParsers = nudParsers;
+		}
+
+		@Override
+		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
+			final Set<ASTProblem> errors = new LinkedHashSet<ASTProblem>();
+			final Iterator<INudParser<? extends R>> iter = nudParsers.iterator();
+			final SavedContext savedContext = pc.save();
+			while (iter.hasNext()) {
+				final INudParser<? extends R> nudParser = iter.next();
+				try {
+					SubParseResult<? extends R> result = nudParser.nud(pc);
+					return new SubParseResult<R>(result.getParsed(), result.getKind(), result.isClosed());
+				} catch (SyntaxError e) {
+					errors.add(pc.takeProblem());
+					pc.restore(savedContext);
+				}
+			}
+			if (errors.size() == 1) {
+				throw pc.syntaxError(errors.iterator().next());
+			} else {
+				throw pc.syntaxError(newCompoundError(pc.makeSourceLocation(pc.t), errors));
+			}
+		}
+
+		protected static ASTProblem newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
+			return new ASTProblem(loc, ProblemKind.VariousPossibleErrors, ProblemSeverities.Error,
+					ProblemKind.makeCompoundMessage(errors));
+		}
+
+		@Override
+		public void toString(IToStringMediator mediator, R toPrint) {
+			// Nothing to do as we do not consume anything
+		}
 	}
 
 	// TODO use the possibility to have Left different from Right to make
@@ -1269,6 +1323,17 @@ public class SubParsers {
 		}
 	}
 	
+	/**
+	 * Choice parser for quantified expressions that can be either explicit or implicit.
+	 */
+	public static class QuantExpr extends ChoiceNudParser<QuantifiedExpression> {
+
+		public QuantExpr(int kind, int tag) {
+			super(kind, tag, asList(new ExplicitQuantExpr(kind, tag), //
+					new ImplicitQuantExpr(kind, tag)));
+		}
+	}
+
 	public static class ExplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ExplicitQuantExpr(int kind, int tag) {

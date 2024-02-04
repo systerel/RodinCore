@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eventb.internal.core.parser.SubParsers.CSetLambda;
 import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
 import org.eventb.internal.core.parser.SubParsers.IQuantifiedParser;
 import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
+import org.eventb.internal.core.parser.SubParsers.QuantExpr;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -238,14 +239,51 @@ public class QuantifiedExpression extends Expression {
 	// For testing purposes
 	public static final int TAGS_LENGTH = 3; // FIXME cannot be (easily) computed from Operators
 
+	private static IOperatorInfo<QuantifiedExpression> makeOperInfo(final int tag, final Operators operator) {
+		return new IOperatorInfo<QuantifiedExpression>() {
+
+			@Override
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new QuantExpr(kind, tag);
+			}
+
+			@Override
+			public String getImage() {
+				return operator.getImage();
+			}
+
+			@Override
+			public String getId() {
+				return operator.getId();
+			}
+
+			@Override
+			public String getGroupId() {
+				return operator.getGroupId();
+			}
+
+			@Override
+			public boolean isSpaced() {
+				return operator.isSpaced();
+			}
+		};
+	}
+	
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
 			for(Operators operInfo: Operators.values()) {
+				if (operInfo.getId() == QUNION_ID || operInfo.getId() == QINTER_ID) {
+					continue; // Set separately
+				}
 				grammar.addOperator(operInfo);
 			}
+
+			grammar.addOperator(makeOperInfo(QUNION, Operators.OP_QUNION_EXPL));
+			grammar.addOperator(makeOperInfo(QINTER, Operators.OP_QINTER_EXPL));
+		
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
