@@ -309,8 +309,7 @@ public class SubParsers {
 			while (iter.hasNext()) {
 				final INudParser<? extends R> nudParser = iter.next();
 				try {
-					SubParseResult<? extends R> result = nudParser.nud(pc);
-					return new SubParseResult<R>(result.getParsed(), result.getKind(), result.isClosed());
+					return nudParser.nud(pc);
 				} catch (SyntaxError e) {
 					errors.add(pc.takeProblem());
 					pc.restore(savedContext);

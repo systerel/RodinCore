@@ -157,11 +157,9 @@ public class MainParsers {
 		}
 		
 		@Override
-		protected SubParseResult<Formula<?>> apply(ParserContext pc, INudParser<? extends Formula<?>> nudParser,
+		protected SubParseResult<? extends Formula<?>> apply(ParserContext pc, INudParser<? extends Formula<?>> nudParser,
 						Formula<?> left) throws SyntaxError {
-			final SubParseResult<? extends Formula<?>> nudResult = nudParser.nud(pc);
-
-			return new SubParseResult<Formula<?>>(nudResult.getParsed(), nudResult.getKind(), nudResult.isClosed());
+			return nudParser.nud(pc);
 		}
 		
 	};
@@ -189,9 +187,7 @@ public class MainParsers {
 		protected SubParseResult<? extends Formula<?>> apply(ParserContext pc,
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
-			final SubParseResult<? extends Formula<?>> ledResult = parser.led(left, pc);
-			return new SubParseResult<Formula<?>>(ledResult.getParsed(),
-					ledResult.getKind(), ledResult.isClosed());
+			return parser.led(left, pc);
 		}
 		
 	};
