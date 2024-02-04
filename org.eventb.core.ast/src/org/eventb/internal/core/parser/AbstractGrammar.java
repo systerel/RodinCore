@@ -332,7 +332,7 @@ public abstract class AbstractGrammar {
 	}
 
 	public void addReservedSubParser(DefaultToken token,
-			INudParser<? extends Formula<?>> subParser) {
+			INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		assert token.isReserved();
 		final int reservedKind = getKind(token);
 		subParsers.addNud(reservedKind, subParser);

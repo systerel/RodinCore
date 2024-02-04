@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * This is the base class for all identifiers in an event-B formula.
@@ -34,7 +35,7 @@ public abstract class Identifier extends Expression {
 	/**
 	 * @since 2.0
 	 */
-	public static void init(AbstractGrammar grammar) {
+	public static void init(AbstractGrammar grammar) throws OverrideException {
 		grammar.addReservedSubParser(IDENT, IDENT_SUBPARSER);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,11 @@ public class LexKindParserDB {
 			ledParsers.add(subParser);
 		}
 
-		public void addNud(INudParser<? extends Formula<?>> subParser) {
+		public void addNud(INudParser<? extends Formula<?>> subParser) throws OverrideException {
+			if (!nudParsers.isEmpty()) {
+				throw new OverrideException(
+						"Cannot add several nud parsers for one kind (nud backtracking is not supported)");
+			}
 			if (!nudParsers.contains(subParser)) {
 				nudParsers.add(subParser);
 			}
@@ -84,7 +88,7 @@ public class LexKindParserDB {
 		return ledParsers.get(0);
 	}
 	
-	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) {
+	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		final KindParsers parsers = fetchParsers(kind);
 		parsers.addNud(subParser);
 	}
