@@ -20,7 +20,6 @@ import static org.eventb.core.ast.Formula.KBOOL;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.MAPSTO;
-import static org.eventb.core.ast.Formula.NO_TAG;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
@@ -115,11 +114,9 @@ public class SubParsers {
 	static abstract class AbstractSubParser {
 
 		protected final int kind;
-		protected final int tag;
 
-		protected AbstractSubParser(int kind, int tag) {
+		protected AbstractSubParser(int kind) {
 			this.kind = kind;
-			this.tag = tag;
 		}
 
 		public final int getKind() {
@@ -127,7 +124,17 @@ public class SubParsers {
 		}
 	}
 
-	static abstract class AbstractNudParser<R> extends AbstractSubParser implements INudParser<R> {
+	private static abstract class AbstractSubParserWithTag extends AbstractSubParser {
+
+		protected final int tag;
+
+		protected AbstractSubParserWithTag(int kind, int tag) {
+			super(kind);
+			this.tag = tag;
+		}
+	}
+
+	static abstract class AbstractNudParser<R> extends AbstractSubParserWithTag implements INudParser<R> {
 
 		protected AbstractNudParser(int kind, int tag) {
 			super(kind, tag);
@@ -135,7 +142,7 @@ public class SubParsers {
 
 	}
 
-	private static abstract class AbstractLedParser<R> extends AbstractSubParser implements ILedParser<R> {
+	private static abstract class AbstractLedParser<R> extends AbstractSubParserWithTag implements ILedParser<R> {
 
 		protected AbstractLedParser(int kind, int tag) {
 			super(kind, tag);
@@ -285,12 +292,12 @@ public class SubParsers {
 	 * 
 	 * @param <R> return type of the parser.
 	 */
-	private static abstract class ChoiceNudParser<R> extends AbstractNudParser<R> {
+	private static abstract class ChoiceNudParser<R> extends AbstractSubParser implements INudParser<R> {
 
 		private final List<INudParser<? extends R>> nudParsers;
 
-		protected ChoiceNudParser(int kind, int tag, List<INudParser<? extends R>> nudParsers) {
-			super(kind, tag);
+		protected ChoiceNudParser(int kind, List<INudParser<? extends R>> nudParsers) {
+			super(kind);
 			this.nudParsers = nudParsers;
 		}
 
@@ -1328,7 +1335,7 @@ public class SubParsers {
 	public static class QuantExpr extends ChoiceNudParser<QuantifiedExpression> {
 
 		public QuantExpr(int kind, int tag) {
-			super(kind, tag, asList(new ExplicitQuantExpr(kind, tag), //
+			super(kind, asList(new ExplicitQuantExpr(kind, tag), //
 					new ImplicitQuantExpr(kind, tag)));
 		}
 	}
@@ -1343,7 +1350,7 @@ public class SubParsers {
 			 * The tag passed to the super constructor is not used for parsing, only for
 			 * printing, hence we can use an invalid one here.
 			 */
-			super(kind, NO_TAG, asList(new CSetExplicit(kind), //
+			super(kind, asList(new CSetExplicit(kind), //
 					new CSetImplicit(kind), //
 					new SetExtParser(kind)));
 		}
