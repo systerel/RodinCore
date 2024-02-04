@@ -274,15 +274,9 @@ public class QuantifiedExpression extends Expression {
 	 */
 	public static void init(BMath grammar) {
 		try {
-			for(Operators operInfo: Operators.values()) {
-				if (operInfo.getId() == QUNION_ID || operInfo.getId() == QINTER_ID) {
-					continue; // Set separately
-				}
-				grammar.addOperator(operInfo);
-			}
-
 			grammar.addOperator(makeOperInfo(QUNION, Operators.OP_QUNION_EXPL));
 			grammar.addOperator(makeOperInfo(QINTER, Operators.OP_QINTER_EXPL));
+			grammar.addOperator(Operators.OP_CSET_LAMBDA);
 		
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block

@@ -45,6 +45,7 @@ import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.SetExpr;
 import org.eventb.internal.core.parser.operators.BracketCompactor;
 import org.eventb.internal.core.parser.operators.Brackets;
 import org.eventb.internal.core.parser.operators.ExternalViewUtils;
@@ -183,6 +184,7 @@ public abstract class AbstractGrammar {
 
 			updateDefaultKinds();
 
+			subParsers.addNud(getKind(LBRACE), new SetExpr(getKind(LBRACE)));
 			for (IOperatorInfo<? extends Formula<?>> operInfo : deferredOperators) {
 				populateSubParsers(operInfo);
 			}

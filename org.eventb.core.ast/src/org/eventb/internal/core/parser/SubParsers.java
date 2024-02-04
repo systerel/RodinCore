@@ -20,6 +20,7 @@ import static org.eventb.core.ast.Formula.KBOOL;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.NO_TAG;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
@@ -1329,6 +1330,22 @@ public class SubParsers {
 		public QuantExpr(int kind, int tag) {
 			super(kind, tag, asList(new ExplicitQuantExpr(kind, tag), //
 					new ImplicitQuantExpr(kind, tag)));
+		}
+	}
+
+	/**
+	 * Choice parser for sets defined in comprehension or in extension.
+	 */
+	public static class SetExpr extends ChoiceNudParser<Expression> {
+
+		public SetExpr(int kind) {
+			/*
+			 * The tag passed to the super constructor is not used for parsing, only for
+			 * printing, hence we can use an invalid one here.
+			 */
+			super(kind, NO_TAG, asList(new CSetExplicit(kind), //
+					new CSetImplicit(kind), //
+					new SetExtParser(kind)));
 		}
 	}
 
