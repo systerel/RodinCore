@@ -154,14 +154,14 @@ public class MainParsers {
 		throws SyntaxError {
 			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
 			if (subParsers.isEmpty()) {
+				final ProblemKind problemKind;
 				final ILedParser<? extends Formula<?>> ledParser = pc.getLedParser();
 				if (ledParser == null) { // no parser exists for current token
-					throw pc.syntaxError(newOperatorError(pc,
-							UnknownOperator));
+					problemKind = UnknownOperator;
 				} else { // operator is misplaced
-					throw pc.syntaxError(newOperatorError(pc,
-							MisplacedLedOperator));
+					problemKind = MisplacedLedOperator;
 				}
+				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
 			return subParsers;
 		}
@@ -209,14 +209,14 @@ public class MainParsers {
 				throws SyntaxError {
 			final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
 			if (subParser == null) {
+				final ProblemKind problemKind;
 				final List<INudParser<? extends Formula<?>>> nudParsers = pc.getNudParsers();
 				if (nudParsers.isEmpty()) { // no parser exists for current token
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.UnknownOperator));
+					problemKind = ProblemKind.UnknownOperator;
 				} else { // operator is misplaced
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.MisplacedNudOperator));
+					problemKind = ProblemKind.MisplacedNudOperator;
 				}
+				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
 			return subParser;
 		}
