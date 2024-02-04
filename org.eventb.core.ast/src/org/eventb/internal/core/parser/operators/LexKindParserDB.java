@@ -111,13 +111,17 @@ public class LexKindParserDB {
 	}
 
 	public void redistribute(Instantiator<Integer, Integer> opKindInst) {
-		final Map<Integer, KindParsers> newKindParsers = new HashMap<Integer, KindParsers>();
-		for (Entry<Integer, KindParsers> entry : kindParsers.entrySet()) {
-			final Integer newKind = opKindInst.instantiate(entry.getKey());
-			newKindParsers.put(newKind, entry.getValue());
+		remapKinds(opKindInst, kindParsers);
+	}
+
+	private static <T> void remapKinds(Instantiator<Integer, Integer> opKinInst, Map<Integer, T> map) {
+		final Map<Integer, T> newMap = new HashMap<Integer, T>();
+		for (Entry<Integer, T> entry : map.entrySet()) {
+			final Integer newKind = opKinInst.instantiate(entry.getKey());
+			newMap.put(newKind, entry.getValue());
 		}
-		kindParsers.clear();
-		kindParsers.putAll(newKindParsers);
+		map.clear();
+		map.putAll(newMap);
 	}
 
 }
