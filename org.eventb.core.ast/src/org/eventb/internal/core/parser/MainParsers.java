@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -134,13 +133,6 @@ public class MainParsers {
 			}
 			return new ASTProblem(srcLoc, problemKind, ProblemSeverities.Error,
 					pc.t.val);
-		}
-
-		// errors must be non empty 
-		protected static ASTProblem newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
-			return new ASTProblem(loc,
-					ProblemKind.VariousPossibleErrors, ProblemSeverities.Error,
-					ProblemKind.makeCompoundMessage(errors));
 		}
 
 	}
