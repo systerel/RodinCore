@@ -142,8 +142,8 @@ public class MainParsers {
 		@Override
 		protected INudParser<? extends Formula<?>> getParser(ParserContext pc)
 		throws SyntaxError {
-			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
-			if (subParsers.isEmpty()) {
+			final INudParser<? extends Formula<?>> subParser = pc.getNudParser();
+			if (subParser == null) {
 				final ProblemKind problemKind;
 				final ILedParser<? extends Formula<?>> ledParser = pc.getLedParser();
 				if (ledParser == null) { // no parser exists for current token
@@ -153,7 +153,7 @@ public class MainParsers {
 				}
 				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
-			return subParsers.get(0);
+			return subParser;
 		}
 		
 		@Override
@@ -174,8 +174,8 @@ public class MainParsers {
 			final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
 			if (subParser == null) {
 				final ProblemKind problemKind;
-				final List<INudParser<? extends Formula<?>>> nudParsers = pc.getNudParsers();
-				if (nudParsers.isEmpty()) { // no parser exists for current token
+				final INudParser<? extends Formula<?>> nudParser = pc.getNudParser();
+				if (nudParser == null) { // no parser exists for current token
 					problemKind = ProblemKind.UnknownOperator;
 				} else { // operator is misplaced
 					problemKind = ProblemKind.MisplacedNudOperator;

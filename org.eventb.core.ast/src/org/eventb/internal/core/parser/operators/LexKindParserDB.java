@@ -11,7 +11,6 @@
 package org.eventb.internal.core.parser.operators;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +19,9 @@ import java.util.Map.Entry;
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.ILedParser;
 import org.eventb.internal.core.parser.INudParser;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger
@@ -67,12 +66,16 @@ public class LexKindParserDB {
 
 	private final Map<Integer, KindParsers> kindParsers = new HashMap<Integer, KindParsers>();
 	
-	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
+	public INudParser<? extends Formula<?>> getNudParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null) {
-			return Collections.emptyList();
+			return null;
 		}
-		return parsers.getNudParsers(); 
+		final List<INudParser<? extends Formula<?>>> nudParsers = parsers.getNudParsers();
+		if (nudParsers.isEmpty()) {
+			return null;
+		}
+		return nudParsers.get(0); 
 	}
 	
 	public ILedParser<? extends Formula<?>> getLedParser(Token token) {

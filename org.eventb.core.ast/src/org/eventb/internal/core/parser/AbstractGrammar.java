@@ -266,8 +266,8 @@ public abstract class AbstractGrammar {
 		initOpRegistry.addGroupPriority(lowGroupId, highGroupId);
 	}
 
-	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
-		return subParsers.getNudParsers(token);
+	public INudParser<? extends Formula<?>> getNudParser(Token token) {
+		return subParsers.getNudParser(token);
 	}
 	
 	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
