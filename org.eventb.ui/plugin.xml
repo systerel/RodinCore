@@ -2215,6 +2215,28 @@
             target="any"
             tooltip="%proofTactic.bcompDef.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.equalFunImgDefLeft"
+            interrupt="true"
+            name="%proofTactic.equalFunImgDefLeft.name"
+            priority="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Left"
+            target="any"
+            tooltip="%proofTactic.equalFunImgDefLeft.tooltip">
+      </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.equalFunImgDefRight"
+            interrupt="true"
+            name="%proofTactic.equalFunImgDefRight.name"
+            priority="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Right"
+            target="any"
+            tooltip="%proofTactic.equalFunImgDefRight.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

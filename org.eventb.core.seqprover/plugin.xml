@@ -536,6 +536,11 @@
       	    id="bcompDefRewrites"
       	    name="%bcompDefRewritesName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualFunImgDefRewrites"
+            id="equalFunImgDefRewrites"
+            name="%equalFunImgDefRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

@@ -33,6 +33,7 @@ import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KINTER;
@@ -185,6 +186,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplH
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualCardRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualFunImgDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
@@ -3603,6 +3605,43 @@ public class Tactics {
 			@Override
 			public boolean select(AssociativeExpression expr) {
 				return expr.getTag() == BCOMP;
+			}
+		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link EqualFunImgDefRewrites} reasoner for a
+	 * given position where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "functional image equality definition"
+	 * @since 3.7
+	 */
+	public static ITactic equalFunImgDef(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new EqualFunImgDefRewrites(), new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner
+	 * {@link EqualFunImgDefRewrites} to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.7
+	 */
+	public static List<IPosition> equalFunImgDefGetPositions(Predicate predicate) {
+		return predicate.inspect(new DefaultInspector<IPosition>() {
+			@Override
+			public void inspect(RelationalPredicate pred, IAccumulator<IPosition> accumulator) {
+				if (pred.getTag() == EQUAL) {
+					if (pred.getLeft().getTag() == FUNIMAGE) {
+						accumulator.add(accumulator.getCurrentPosition().getFirstChild());
+					}
+					if (pred.getRight().getTag() == FUNIMAGE) {
+						accumulator.add(accumulator.getCurrentPosition().getChildAtIndex(1));
+					}
+				}
 			}
 		});
 	}

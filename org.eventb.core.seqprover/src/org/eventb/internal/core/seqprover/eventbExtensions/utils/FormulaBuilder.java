@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Université de Lorraine and others.
+ * Copyright (c) 2022, 2024 Université de Lorraine and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.TBIJ;
 import static org.eventb.core.ast.Formula.UPTO;
 
@@ -216,6 +217,17 @@ public class FormulaBuilder {
 	 */
 	public Expression upto(Expression left, Expression right) {
 		return ff.makeBinaryExpression(UPTO, left, right, null);
+	}
+
+	/**
+	 * Build a maps to.
+	 *
+	 * @param left  left-hand side of the expression
+	 * @param right right-hand side of the expression
+	 * @return the expression left ↦ right
+	 */
+	public Expression mapsTo(Expression left, Expression right) {
+		return ff.makeBinaryExpression(MAPSTO, left, right, null);
 	}
 
 	// Predicates

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2022 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -55,6 +56,20 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 		List<IPosition> positions = getPositions(predicate);
 		assertPositions("Applicable positions are incorrect for "
 				+ predicateImage, expected, positions);
+	}
+
+	/**
+	 * Test the get applicable position for the reasoner.
+	 *
+	 * @param typeEnv        type environment used to type check predicateImage
+	 * @param predicateImage The string image of the predicate
+	 * @param expected       The string images of expected applicable positions
+	 * @see #getPositions(Predicate)
+	 */
+	protected void assertGetPositions(ITypeEnvironmentBuilder typeEnv, String predicateImage, String... expected) {
+		Predicate predicate = TestLib.genPred(typeEnv, predicateImage);
+		List<IPosition> positions = getPositions(predicate);
+		assertPositions("Applicable positions are incorrect for " + predicateImage, expected, positions);
 	}
 
 	/**
