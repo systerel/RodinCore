@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 
 public class Messages {
 	private static final String BUNDLE_NAME = "org.eventb.internal.ui.prooftreeui.messages"; //$NON-NLS-1$
+
 	public static String RuleDetailsProvider_addedfreeidentifiers_title;
 	public static String RuleDetailsProvider_antecedent_title;
 	public static String RuleDetailsProvider_deselect_title;
@@ -28,6 +29,15 @@ public class Messages {
 	public static String RuleDetailsProvider_rule_title;
 	public static String RuleDetailsProvider_select_title;
 	public static String RuleDetailsProvider_show_title;
+
+	public static String ProofTreeUIFilters_DeselectAll;
+	public static String ProofTreeUIFilters_SelectAll;
+	public static String ProofTreeUIFilters_RuleDescription;
+	public static String ProofTreeUIFilters_PatternHelp;
+	public static String ProofTreeUIFilters_FilterTitle;
+	public static String ProofTreeUIFilters_Message;
+	public static String ProofTreeUIFilters_Title;
+
 	static {
 		// initialize resource bundle
 		initializeMessages(BUNDLE_NAME, Messages.class);

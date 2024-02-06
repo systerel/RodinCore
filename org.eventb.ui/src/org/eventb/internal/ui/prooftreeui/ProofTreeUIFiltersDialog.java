@@ -14,6 +14,13 @@ package org.eventb.internal.ui.prooftreeui;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_DeselectAll;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_FilterTitle;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_Message;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_PatternHelp;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_RuleDescription;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_SelectAll;
+import static org.eventb.internal.ui.prooftreeui.Messages.ProofTreeUIFilters_Title;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,8 +102,8 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	@Override
 	protected void configureShell(Shell shell) {
-		setTitle("Proof Rule Filters");
-		setMessage("Please choose a set of reasoners to filter out");
+		setTitle(ProofTreeUIFilters_Title);
+		setMessage(ProofTreeUIFilters_Message);
 		super.configureShell(shell);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 		// IJavaHelpContextIds.CUSTOM_FILTERS_DIALOG);
@@ -126,7 +133,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		// Checkbox
 		fEnableUserDefinedPatterns = new Button(group, SWT.CHECK);
 		fEnableUserDefinedPatterns.setFocus();
-		fEnableUserDefinedPatterns.setText("Filter nodes based on their label");
+		fEnableUserDefinedPatterns.setText(ProofTreeUIFilters_FilterTitle);
 
 		// Pattern field
 		fUserDefinedPatterns = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -139,7 +146,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		// Info text
 		final Label info = new Label(group, SWT.LEFT);
-		info.setText("The patterns are separated by commas, where * = anystring, ? = anycharacter");
+		info.setText(ProofTreeUIFilters_PatternHelp);
 
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(false);
@@ -183,7 +190,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 		// Description
 		info = new Label(parent, SWT.LEFT);
-		info.setText("Description of the rule");
+		info.setText(ProofTreeUIFilters_RuleDescription);
 
 		final Text description = new Text(parent, SWT.LEFT | SWT.WRAP
 				| SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
@@ -219,18 +226,16 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		composite.setData(data);
 
 		// Select All button
-		String label = "Select all";
 		Button selectButton = createButton(buttonComposite,
-				IDialogConstants.SELECT_ALL_ID, label, false);
+				IDialogConstants.SELECT_ALL_ID, ProofTreeUIFilters_SelectAll, false);
 		// SWTUtil.setButtonDimensionHint(selectButton);
 		selectButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			fCheckBoxList.setAllChecked(true);
 		}));
 
 		// Deselect All button
-		label = "Deselect all";
 		Button deselectButton = createButton(buttonComposite,
-				IDialogConstants.DESELECT_ALL_ID, label, false);
+				IDialogConstants.DESELECT_ALL_ID, ProofTreeUIFilters_DeselectAll, false);
 		// SWTUtil.setButtonDimensionHint(deselectButton);
 		deselectButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			fCheckBoxList.setAllChecked(false);
