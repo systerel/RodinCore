@@ -13,6 +13,7 @@ package org.eventb.internal.ui.prooftreeui;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,15 +26,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -148,15 +144,12 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		// Enabling / disabling of pattern group
 		fEnableUserDefinedPatterns.setSelection(false);
 		fUserDefinedPatterns.setEnabled(false);
-		fEnableUserDefinedPatterns.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean state = fEnableUserDefinedPatterns.getSelection();
-				fUserDefinedPatterns.setEnabled(state);
-				if (state)
-					fUserDefinedPatterns.setFocus();
-			}
-		});
+		fEnableUserDefinedPatterns.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean state = fEnableUserDefinedPatterns.getSelection();
+			fUserDefinedPatterns.setEnabled(state);
+			if (state)
+				fUserDefinedPatterns.setFocus();
+		}));
 
 		// Filters provided by extension point
 		if (fBuiltInFilters.size() > 0)
@@ -197,24 +190,20 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = convertHeightInCharsToPixels(3);
 		description.setLayoutData(data);
-		fCheckBoxList
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						ISelection selection = event.getSelection();
-						if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-							var filter = (RuleFilter) ((IStructuredSelection) selection).getFirstElement();
-							Set<String> ids = filter.reasonerIDs;
-							String text;
-							if (ids.size() == 1) {
-								text = "ID: " + ids.iterator().next();
-							} else {
-								text = "IDs:" + ids.stream().map(id -> "\n- " + id).collect(joining());
-							}
-							description.setText(text);
-						}
-					}
-				});
+		fCheckBoxList.addSelectionChangedListener(event -> {
+			ISelection selection = event.getSelection();
+			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+				var filter = (RuleFilter) ((IStructuredSelection) selection).getFirstElement();
+				Set<String> ids = filter.reasonerIDs;
+				String text;
+				if (ids.size() == 1) {
+					text = "ID: " + ids.iterator().next();
+				} else {
+					text = "IDs:" + ids.stream().map(id -> "\n- " + id).collect(joining());
+				}
+				description.setText(text);
+			}
+		});
 
 		addSelectionButtons(parent);
 	}
@@ -234,26 +223,18 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		Button selectButton = createButton(buttonComposite,
 				IDialogConstants.SELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(selectButton);
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fCheckBoxList.setAllChecked(true);
-			}
-		};
-		selectButton.addSelectionListener(listener);
+		selectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fCheckBoxList.setAllChecked(true);
+		}));
 
 		// Deselect All button
 		label = "Deselect all";
 		Button deselectButton = createButton(buttonComposite,
 				IDialogConstants.DESELECT_ALL_ID, label, false);
 		// SWTUtil.setButtonDimensionHint(deselectButton);
-		listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fCheckBoxList.setAllChecked(false);
-			}
-		};
-		deselectButton.addSelectionListener(listener);
+		deselectButton.addSelectionListener(widgetSelectedAdapter(e -> {
+			fCheckBoxList.setAllChecked(false);
+		}));
 	}
 
 	private void checkInitialSelections() {
