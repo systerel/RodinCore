@@ -19,14 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -64,8 +61,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 
 	Text fUserDefinedPatterns;
 
-	Stack<ViewerFilter> fFilterDescriptorChangeHistory;
-
 	/**
 	 * Creates a dialog to customize Java element filters.
 	 * 
@@ -80,7 +75,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		if (fBuiltInFilters == null)
 			getFilters();
 
-		fFilterDescriptorChangeHistory = new Stack<ViewerFilter>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -221,17 +215,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 						}
 					}
 				});
-		fCheckBoxList.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof ViewerFilter) {
-					// renew if already touched
-					fFilterDescriptorChangeHistory.remove(element);
-					fFilterDescriptorChangeHistory.push((ViewerFilter) element);
-				}
-			}
-		});
 
 		addSelectionButtons(parent);
 	}
@@ -255,9 +238,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(true);
-				fFilterDescriptorChangeHistory.clear();
-				for (ViewerFilter filter : fBuiltInFilters)
-					fFilterDescriptorChangeHistory.push(filter);
 			}
 		};
 		selectButton.addSelectionListener(listener);
@@ -271,9 +251,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(false);
-				fFilterDescriptorChangeHistory.clear();
-				for (ViewerFilter filter : fBuiltInFilters)
-					fFilterDescriptorChangeHistory.push(filter);
 			}
 		};
 		deselectButton.addSelectionListener(listener);
@@ -318,14 +295,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			setResult(result);
 		}
 		super.okPressed();
-	}
-
-	/**
-	 * @return a stack with the filter descriptor check history
-	 * @since 3.0
-	 */
-	public Stack<ViewerFilter> getFilterDescriptorChangeHistory() {
-		return fFilterDescriptorChangeHistory;
 	}
 
 	/**
