@@ -15,6 +15,8 @@
 package org.eventb.internal.core.seqprover;
 
 import static java.util.Collections.sort;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Stream.concat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,8 +24,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -468,20 +470,24 @@ public final class ProverSequent implements IInternalProverSequent{
 		return true;
 	}
 
+	private Stream<Predicate> hypStream() {
+		return concat(globalHypotheses.stream(), localHypotheses.stream());
+	}
+
 	@Override
 	public Iterable<Predicate> hypIterable() {
-		return () -> new CompositeIterator<Predicate>(globalHypotheses.iterator(), localHypotheses.iterator());
+		return () -> hypStream().iterator();
 	}
 	
 	@Override
 	public Iterable<Predicate> hiddenHypIterable() {
-		return () -> new ImmutableIterator<Predicate>(hiddenHypotheses);
+		return () -> hiddenHypotheses.stream().iterator();
 	}
 
 
 	@Override
 	public Iterable<Predicate> selectedHypIterable() {
-		return () -> new ImmutableIterator<Predicate>(selectedHypotheses);
+		return () -> selectedHypotheses.stream().iterator();
 	}
 
 	@Override
@@ -494,16 +500,18 @@ public final class ProverSequent implements IInternalProverSequent{
 		return selectedHypotheses.contains(hyp);
 	}
 
+	private Stream<Predicate> visibleHypStream() {
+		return hypStream().filter(not(hiddenHypotheses::contains));
+	}
+
 	@Override
 	public Iterable<Predicate> visibleHypIterable() {
-		return () -> new DifferenceIterator<Predicate>(
-				new CompositeIterator<Predicate>(globalHypotheses.iterator(), localHypotheses.iterator()),
-				hiddenHypotheses);
+		return () -> visibleHypStream().iterator();
 	}
 
 	@Override
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
-		return () -> new DifferenceIterator<Predicate>(visibleHypIterable().iterator(), selectedHypotheses);
+		return () -> visibleHypStream().filter(not(selectedHypotheses::contains)).iterator();
 	}
 
 	@Override
@@ -514,156 +522,6 @@ public final class ProverSequent implements IInternalProverSequent{
 	@Override
 	public Object getOrigin() {
 		return origin;
-	}
-	
-	/**
-	 * An implementation for an iterator that is the combination of
-	 * two (a first and a second) iterators.
-	 * 
-	 * <p>
-	 * This iterator first returns the elements contained in the first iterator, followed
-	 * by the elements contained in the second iterator.
-	 * </p>
-	 * <p>
-	 * Removal of elements is unsupported for this iterator.
-	 * </p>
-	 * 
-	 * @author Farhad Mehta
-	 *
-	 * @param <T> 
-	 * 		The base type for the elements returnded by the iterator.
-	 */
-	static class CompositeIterator<T> implements Iterator<T>{
-
-		private Iterator<T> fst;
-		private Iterator<T> snd;
-
-		public CompositeIterator(Iterator<T> fst, Iterator<T> snd) {
-			this.fst = fst;
-			this.snd = snd;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return fst.hasNext() || snd.hasNext();
-		}
-
-		@Override
-		public T next() {
-			if (fst.hasNext()) return fst.next();
-			if (snd.hasNext()) return snd.next();
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}	
-	}
-
-	/**
-	 * An implementation for an iterator that returns the elements of an 'original'
-	 * iterator, without the elements in a 'removed' collection.
-	 * 
-	 * <p>
-	 * This iterator is implemented by doing a pre-emptive lookup to check if the resulting
-	 * iterator still has more elements.
-	 * </p>
-	 * <p>
-	 * Removal of elements is unsupported for this iterator.
-	 * </p>
-	 * 
-	 * @author Farhad Mehta
-	 *
-	 * @param <T> 
-	 * 		The base type for the elements returnded by the iterator.
-	 */
-	static class DifferenceIterator<T> implements Iterator<T>{
-
-		private Iterator<T> iterator;
-		private Collection<T> removed;
-
-		/**
-		 * This local variable contains the result of the pre-emptive lookup.
-		 * If it is null, the iterator has no further elements, otherwise its
-		 * value is the next next element for this iterator. 
-		 */
-		private T nextNext;
-
-
-		public DifferenceIterator(Iterator<T> iterator, Collection<T> removed) {
-			this.iterator = iterator;
-			this.removed = removed;
-			this.nextNext = nextNextLookup();
-		}
-
-		private T nextNextLookup(){
-			while (iterator.hasNext()) {
-				T next = iterator.next();
-				if (! removed.contains(next)) return next;
-			}
-			return null; 
-		}
-
-		@Override
-		public boolean hasNext() {
-			return (nextNext != null);
-		}
-
-		@Override
-		public T next() {
-			if (nextNext != null) {
-				T next = nextNext;
-				nextNext = nextNextLookup();
-				return next;
-			}
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}	
-	}
-
-	/**
-	 * An implementation for an iterator that provides an immutable version of a 
-	 * given iterator. 
-	 * <p>
-	 * Removal of elements is unsupported for this iterator.
-	 * </p>
-	 * 
-	 * @author Farhad Mehta
-	 *
-	 * @param <T> 
-	 * 		The base type for the elements returnded by the iterator.
-	 */
-	static class ImmutableIterator<T> implements Iterator<T>{
-
-		private Iterator<T> iterator;	
-
-		public ImmutableIterator(Iterator<T> iterator) {
-			this.iterator = iterator;
-		}
-
-		public ImmutableIterator(Iterable<T> iterable) {
-			this.iterator = iterable.iterator();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return iterator.hasNext();
-		}
-
-		@Override
-		public T next() {
-			return iterator.next();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}		
 	}
 	
 	private static LinkedHashSet<Predicate> translatePreds(
