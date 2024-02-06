@@ -470,38 +470,18 @@ public final class ProverSequent implements IInternalProverSequent{
 
 	@Override
 	public Iterable<Predicate> hypIterable() {
-		return new Iterable<Predicate>(){
-
-			@Override
-			public Iterator<Predicate> iterator() {
-				return new CompositeIterator<Predicate>(
-						globalHypotheses.iterator(),
-						localHypotheses.iterator());
-			}
-		};
+		return () -> new CompositeIterator<Predicate>(globalHypotheses.iterator(), localHypotheses.iterator());
 	}
 	
 	@Override
 	public Iterable<Predicate> hiddenHypIterable() {
-		return new Iterable<Predicate>(){
-
-			@Override
-			public Iterator<Predicate> iterator() {
-				return new ImmutableIterator<Predicate>(hiddenHypotheses);
-			}
-		};
+		return () -> new ImmutableIterator<Predicate>(hiddenHypotheses);
 	}
 
 
 	@Override
 	public Iterable<Predicate> selectedHypIterable() {
-		return new Iterable<Predicate>(){
-
-			@Override
-			public Iterator<Predicate> iterator() {
-				return new ImmutableIterator<Predicate>(selectedHypotheses);
-			}
-		};
+		return () -> new ImmutableIterator<Predicate>(selectedHypotheses);
 	}
 
 	@Override
@@ -516,29 +496,14 @@ public final class ProverSequent implements IInternalProverSequent{
 
 	@Override
 	public Iterable<Predicate> visibleHypIterable() {
-		return new Iterable<Predicate>(){
-
-			@Override
-			public Iterator<Predicate> iterator() {
-				return new DifferenceIterator<Predicate>(
-						new CompositeIterator<Predicate>(
-								globalHypotheses.iterator(),localHypotheses.iterator()),
-						hiddenHypotheses);
-			}
-		};
+		return () -> new DifferenceIterator<Predicate>(
+				new CompositeIterator<Predicate>(globalHypotheses.iterator(), localHypotheses.iterator()),
+				hiddenHypotheses);
 	}
 
 	@Override
 	public Iterable<Predicate> visibleMinusSelectedIterable() {
-		return new Iterable<Predicate>(){
-
-			@Override
-			public Iterator<Predicate> iterator() {
-				return new DifferenceIterator<Predicate>(
-						visibleHypIterable().iterator(),
-						selectedHypotheses);
-			}
-		};
+		return () -> new DifferenceIterator<Predicate>(visibleHypIterable().iterator(), selectedHypotheses);
 	}
 
 	@Override
