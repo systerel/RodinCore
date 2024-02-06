@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,6 +220,28 @@ public interface IProverSequent{
 	 * @return an iterator for all visible hypotheses of this sequent
 	 */
 	Iterable<Predicate> visibleHypIterable();
+
+	/**
+	 * Returns an iterator for all visible but not selected (i.e., deselected)
+	 * hypotheses of this sequent.
+	 * <p>
+	 * This iterator returns hypotheses in the same order as this set was
+	 * constructed.
+	 * </p>
+	 * <p>
+	 * It is intended to be used in the following way:<br>
+	 * <code>
+	 * for (Predicate hyp : seq.visibleMinusSelectedIterable())<br>
+	 * {
+	 * 		// do something with hyp <br>
+	 * }
+	 * </code>
+	 * </p>
+	 *
+	 * @return an iterator for all deselected hypotheses of this sequent
+	 * @since 3.7
+	 */
+	Iterable<Predicate> visibleMinusSelectedIterable();
 	
 	/**
 	 * Returns the formula factory to use with this sequent.
