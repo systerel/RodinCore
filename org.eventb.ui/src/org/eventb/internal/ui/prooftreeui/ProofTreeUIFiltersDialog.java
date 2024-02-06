@@ -27,11 +27,9 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -186,7 +184,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		data.heightHint = fCheckBoxList.getTable().getItemHeight() * 10;
 		fCheckBoxList.getTable().setLayoutData(data);
 
-		fCheckBoxList.setLabelProvider(createLabelProvider());
 		fCheckBoxList.setContentProvider(new ArrayContentProvider());
 		fCheckBoxList.setInput(fBuiltInFilters);
 		Object[] filters = proofTreeUI.getFilters();
@@ -321,15 +318,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			setResult(result);
 		}
 		super.okPressed();
-	}
-
-	private ILabelProvider createLabelProvider() {
-		return new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return element.toString();
-			}
-		};
 	}
 
 	/**
