@@ -12,12 +12,15 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -46,7 +49,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -57,7 +59,6 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 	private ProofTreeUIPage proofTreeUI;
 
 	static List<RuleFilter> fBuiltInFilters = null;
-	static Map<String, IReasonerDesc> reasonerDescs = null;
 
 	CheckboxTableViewer fCheckBoxList;
 
@@ -90,17 +91,18 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			ProofTreeUIUtils.debug("Get initial filter list");
 		final IReasonerRegistry reasonerRegistry = 
 			SequentProver.getReasonerRegistry();
-		String[] reasoners = reasonerRegistry.getRegisteredIDs();
-		fBuiltInFilters = new ArrayList<RuleFilter>(reasoners.length);
-		reasonerDescs = new HashMap<>(reasoners.length);
-		for (String reasoner : reasoners) {
-			fBuiltInFilters.add(new RuleFilter(reasoner));
-			reasonerDescs.put(reasoner, reasonerRegistry.getReasonerDesc(reasoner));
+		// Group reasoners with several levels by name
+		Map<String, Set<String>> reasonersByName = new HashMap<>();
+		for (String reasonerID : reasonerRegistry.getRegisteredIDs()) {
+			String name = reasonerRegistry.getReasonerDesc(reasonerID).getName();
+			reasonersByName.computeIfAbsent(name, key -> new TreeSet<>()).add(reasonerID);
 		}
-		// First, sort by user-facing name; if equal (reasoners that have several levels
-		// have the same name), use ID to sort by level
-		fBuiltInFilters.sort(comparing((RuleFilter filter) -> reasonerDescs.get(filter.reasonerID).getName())
-				.thenComparing(filter -> filter.reasonerID));
+		// Display a filter for each name (sorted), with possibly several levels
+		fBuiltInFilters = new ArrayList<RuleFilter>(reasonersByName.size());
+		for (var reasonerGroup : reasonersByName.entrySet()) {
+			fBuiltInFilters.add(new RuleFilter(reasonerGroup.getKey(), reasonerGroup.getValue()));
+		}
+		fBuiltInFilters.sort(comparing(filter -> filter.reasonerName));
 	}
 
 	@Override
@@ -211,10 +213,12 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 						ISelection selection = event.getSelection();
 						if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 							var filter = (RuleFilter) ((IStructuredSelection) selection).getFirstElement();
-							String text = "Id: " + filter.reasonerID;
-							int version = reasonerDescs.get(filter.reasonerID).getVersion();
-							if (version != IReasonerDesc.NO_VERSION) {
-								text += "\nVersion: " + version;
+							Set<String> ids = filter.reasonerIDs;
+							String text;
+							if (ids.size() == 1) {
+								text = "ID: " + ids.iterator().next();
+							} else {
+								text = "IDs:" + ids.stream().map(id -> "\n- " + id).collect(joining());
 							}
 							description.setText(text);
 						}
@@ -323,8 +327,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		return new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				var filter = (RuleFilter) element;
-				return reasonerDescs.get(filter.reasonerID).getName();
+				return element.toString();
 			}
 		};
 	}
