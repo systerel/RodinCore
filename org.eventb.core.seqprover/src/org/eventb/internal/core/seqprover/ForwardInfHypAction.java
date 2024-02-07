@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - implement toString()
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -121,4 +122,16 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 		return skipped;
 	}
 
+	@Override
+	public String toString() {
+		return print(new RecordPrinter()).toString();
+	}
+
+	@Override
+	public RecordPrinter printBody(RecordPrinter printer) {
+		return printer //
+				.printLines("Needed hypotheses", getHyps()) //
+				.print("New identifiers", getAddedFreeIdents()) //
+				.printLines("Inferred hypotheses", getInferredHyps());
+	}
 }

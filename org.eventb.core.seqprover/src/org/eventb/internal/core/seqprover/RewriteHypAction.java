@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,5 +94,16 @@ public class RewriteHypAction implements IInternalHypAction, IRewriteHypAction {
 				.translate(factory);
 
 		return new RewriteHypAction(trFwdInf, trHide);
+	}
+
+	@Override
+	public String toString() {
+		return print(new RecordPrinter()).toString();
+	}
+
+	@Override
+	public RecordPrinter printBody(RecordPrinter printer) {
+		return fwdInf.printBody(printer) //
+				.printLines("Hidden hypotheses", getDisappearingHyps());
 	}
 }
