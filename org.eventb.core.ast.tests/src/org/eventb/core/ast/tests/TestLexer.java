@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,6 +130,7 @@ public class TestLexer extends AbstractTests {
 	}
 	
 	@Test 
+	@SuppressWarnings("deprecation")
 	public void testCodePoint() throws Exception {
 		final int codePoint = 0x27C54;
 		
@@ -185,6 +186,7 @@ public class TestLexer extends AbstractTests {
 	}
 
 	@Test 
+	@SuppressWarnings("deprecation")
 	public void testCheckSymbol() throws Exception {
 		assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL"));
 		assertTrue(FormulaFactory.checkSymbol("\u2b50"));

@@ -263,11 +263,19 @@ public class FormulaFactory {
 	 * symbol must either be an identifier, or must be not empty and purely
 	 * symbolic (i.e., not contain any character allowable in an identifier).
 	 * 
+	 * Identifier symbols with a prime are rejected by this method.
+	 *
+	 * Note that the symbol is tested with the generic scanner. This method does not
+	 * check if the symbol is used by the extensions of a particular factory. To
+	 * check this, use {@link #isValidExtensionSymbol(String)}.
+	 *
 	 * @param symbol
 	 *            symbol to test
 	 * @return <code>true</code> iff the given symbol is valid
 	 * @since 2.0
+	 * @deprecated use {@link #isValidExtensionSymbol(String)} instead
 	 */
+	@Deprecated(since="3.8")
 	public static boolean checkSymbol(String symbol) {
 		if (GenLexer.isIdent(symbol)) {
 			return true;
@@ -2234,6 +2242,11 @@ public class FormulaFactory {
 	 * identifier name which is not used as a keyword in event-B concrete
 	 * syntax).
 	 * 
+	 * A name with a prime at the end is considered to be a valid identifier by this
+	 * method. On the other hand, {@link #isValidExtensionSymbol(String)} only
+	 * accepts identifiers without a prime (but it also accepts purely symbolic
+	 * strings).
+	 *
 	 * @param name
 	 *            the name to test
 	 * @return <code>true</code> if the given name is a valid name for an
