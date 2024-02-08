@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2198,6 +2198,35 @@ public class FormulaFactory {
 	 */
 	public ISpecialization makeSpecialization() {
 		return new Specialization(this);
+	}
+
+	/**
+	 * Returns whether the given symbol is valid for an extension.
+	 *
+	 * This will check that the symbol is an identifier or is purely symbolic and
+	 * that it does not conflict with existing extensions. Note that, contrary to
+	 * {@link #isValidIdentifierName(String)}, this rejects identifiers with a
+	 * prime.
+	 *
+	 * @param symbol symbol to test
+	 * @return whether the given symbol is valid or not
+	 * @since 3.8
+	 */
+	public boolean isValidExtensionSymbol(String symbol) {
+		return checkSymbol(symbol) && !EXTN_UNICITY_CHECKER.isUsedSymbol(symbol, getExtensions());
+	}
+
+	/**
+	 * Returns whether the given id is valid for an extension.
+	 *
+	 * This will check that the id does not conflict with existing extensions.
+	 *
+	 * @param id id to test
+	 * @return whether the given id is valid or not
+	 * @since 3.8
+	 */
+	public boolean isValidExtensionId(String id) {
+		return !EXTN_UNICITY_CHECKER.isUsedId(id, getExtensions());
 	}
 
 	/**

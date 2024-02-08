@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2022 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Collections.singleton;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EQUAL;
@@ -34,6 +35,7 @@ import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.old_fooS;
+import static org.eventb.core.ast.tests.ExtensionHelper.DIRECT_PRODUCT;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
@@ -216,6 +218,96 @@ public class TestFormulaFactory extends AbstractTests {
 		assertTrue(ffV1.isValidIdentifierName(destructorName));
 		assertTrue(ff.isValidIdentifierName(destructorName));
 		assertFalse(LIST_FAC.isValidIdentifierName(destructorName));
+	}
+
+	@Test
+	public void validExtensionSymbol() throws Exception {
+		final FormulaFactory DIR_PROD_FAC = ff.withExtensions(singleton(DIRECT_PRODUCT));
+
+		// Valid name not used in any extension
+		final String validName = "foo";
+		assertTrue(ff.isValidExtensionSymbol(validName));
+		assertTrue(LIST_FAC.isValidExtensionSymbol(validName));
+		assertTrue(DIR_PROD_FAC.isValidExtensionSymbol(validName));
+
+		// Invalid names for the lexer
+		final String[] invalidNames = new String[] { "a'", "x++", "≥R", "−1" };
+		for (String invalidName : invalidNames) {
+			assertFalse(invalidName + " should be invalid", ff.isValidExtensionSymbol(invalidName));
+			assertFalse(invalidName + " should be invalid", LIST_FAC.isValidExtensionSymbol(invalidName));
+			assertFalse(invalidName + " should be invalid", DIR_PROD_FAC.isValidExtensionSymbol(invalidName));
+		}
+
+		// Invalid name used by the standard grammar
+		final String operatorName = "partition";
+		assertFalse(ff.isValidExtensionSymbol(operatorName));
+		assertFalse(LIST_FAC.isValidExtensionSymbol(operatorName));
+		assertFalse(DIR_PROD_FAC.isValidExtensionSymbol(operatorName));
+
+		// Name used by a datatype
+		final String typeConstructorName = "List";
+		assertTrue(ff.isValidExtensionSymbol(typeConstructorName));
+		assertFalse(LIST_FAC.isValidExtensionSymbol(typeConstructorName));
+		assertTrue(DIR_PROD_FAC.isValidExtensionSymbol(typeConstructorName));
+
+		// Name used by a datatype constructor
+		final String valueConstructorName = "cons";
+		assertTrue(ff.isValidExtensionSymbol(valueConstructorName));
+		assertFalse(LIST_FAC.isValidExtensionSymbol(valueConstructorName));
+		assertTrue(DIR_PROD_FAC.isValidExtensionSymbol(valueConstructorName));
+
+		// Name used by a datatype destructor
+		final String destructorName = "head";
+		assertTrue(ff.isValidExtensionSymbol(destructorName));
+		assertFalse(LIST_FAC.isValidExtensionSymbol(destructorName));
+		assertTrue(DIR_PROD_FAC.isValidExtensionSymbol(destructorName));
+
+		// Name used by an expression extension
+		final String directProductExtName = "§";
+		assertTrue(ff.isValidExtensionSymbol(directProductExtName));
+		assertTrue(LIST_FAC.isValidExtensionSymbol(directProductExtName));
+		assertFalse(DIR_PROD_FAC.isValidExtensionSymbol(directProductExtName));
+	}
+
+	@Test
+	public void validExtensionId() throws Exception {
+		final FormulaFactory DIR_PROD_FAC = ff.withExtensions(singleton(DIRECT_PRODUCT));
+
+		// Valid ID not used in any extension
+		final String validId = "foo";
+		assertTrue(ff.isValidExtensionId(validId));
+		assertTrue(LIST_FAC.isValidExtensionId(validId));
+		assertTrue(DIR_PROD_FAC.isValidExtensionId(validId));
+
+		// Invalid ID used by the standard grammar
+		final String operatorId = "plus";
+		assertFalse(ff.isValidExtensionId(operatorId));
+		assertFalse(LIST_FAC.isValidExtensionId(operatorId));
+		assertFalse(DIR_PROD_FAC.isValidExtensionId(operatorId));
+
+		// ID used by a datatype
+		final String typeConstructorId = "List0";
+		assertTrue(ff.isValidExtensionId(typeConstructorId));
+		assertFalse(LIST_FAC.isValidExtensionId(typeConstructorId));
+		assertTrue(DIR_PROD_FAC.isValidExtensionId(typeConstructorId));
+
+		// ID used by a datatype constructor
+		final String valueConstructorId = "cons2";
+		assertTrue(ff.isValidExtensionId(valueConstructorId));
+		assertFalse(LIST_FAC.isValidExtensionId(valueConstructorId));
+		assertTrue(DIR_PROD_FAC.isValidExtensionId(valueConstructorId));
+
+		// ID used by a datatype destructor
+		final String destructorId = "head3";
+		assertTrue(ff.isValidExtensionId(destructorId));
+		assertFalse(LIST_FAC.isValidExtensionId(destructorId));
+		assertTrue(DIR_PROD_FAC.isValidExtensionId(destructorId));
+
+		// ID used by an expression extension
+		final String directProductExtId = "direct product extension";
+		assertTrue(ff.isValidExtensionId(directProductExtId));
+		assertTrue(LIST_FAC.isValidExtensionId(directProductExtId));
+		assertFalse(DIR_PROD_FAC.isValidExtensionId(directProductExtId));
 	}
 
 	/*----------------------------------------------------------------

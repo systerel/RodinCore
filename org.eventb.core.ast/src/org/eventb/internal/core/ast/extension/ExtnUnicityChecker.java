@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,37 @@ public class ExtnUnicityChecker {
 
 	public ExtnUnicityChecker(AbstractGrammar standardGrammar) {
 		this.standardGrammar = standardGrammar;
+	}
+
+	/**
+	 * Tests if a symbol is used in a set of extensions.
+	 *
+	 * This will only test if the symbol appears in the set of extensions or the
+	 * standard grammar. The unicity of the extension symbols among each other is
+	 * not tested. To do so, use {@link #checkUnicity(Set)}.
+	 *
+	 * @param symbol symbol to check
+	 * @param extns  extensions to consider
+	 * @return whether the symbol is used in the extensions
+	 */
+	public boolean isUsedSymbol(String symbol, Set<IFormulaExtension> extns) {
+		return standardGrammar.getTokens().contains(symbol)
+				|| extns.stream().anyMatch(extn -> extn.getSyntaxSymbol().equals(symbol));
+	}
+
+	/**
+	 * Tests if an ID is used in a set of extensions.
+	 *
+	 * This will only test if the ID appears in the set of extensions or the
+	 * standard grammar. The unicity of the extension IDs among each other is not
+	 * tested. To do so, use {@link #checkUnicity(Set)}.
+	 *
+	 * @param id    id to check
+	 * @param extns extensions to consider
+	 * @return whether the id is used in the extensions
+	 */
+	public boolean isUsedId(String id, Set<IFormulaExtension> extns) {
+		return standardGrammar.isDeclared(id) || extns.stream().anyMatch(extn -> extn.getId().equals(id));
 	}
 
 	public void checkUnicity(Set<IFormulaExtension> extns) {
