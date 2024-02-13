@@ -1226,7 +1226,6 @@
             interrupt="false"
             name="%proofTactics.impCase.name"
             priority="3"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpCaseProvider"
             target="hypothesis"
             tooltip="%proofTactics.impCase.tooltip"/>
@@ -2134,7 +2133,6 @@
             interrupt="true"
             name="%proofTactic.dtDistinctCase.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
             target="any"
             tooltip="%proofTactic.dtDistinctCase.tooltip">
@@ -2145,7 +2143,6 @@
             interrupt="true"
             name="%proofTactic.dtInduction.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTInduction"
             target="goal"
             tooltip="%proofTactic.dtInduction.tooltip">
@@ -2156,7 +2153,6 @@
             interrupt="true"
             name="%proofTactic.finiteDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteDef"
             target="any"
             tooltip="%proofTactic.finiteDef.tooltip">
@@ -2177,7 +2173,6 @@
             interrupt="true"
             name="%proofTactic.cardDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardDef"
             target="any"
             tooltip="%proofTactic.cardDef.tooltip">
@@ -2188,7 +2183,6 @@
             interrupt="true"
             name="%proofTactic.equalCard.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualCard"
             target="any"
             tooltip="%proofTactic.equalCard.tooltip">
@@ -2199,7 +2193,6 @@
             interrupt="true"
             name="%proofTactic.minMaxDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.MinMaxDef"
             target="any"
             tooltip="%proofTactic.minMaxDef.tooltip">
@@ -2210,7 +2203,6 @@
             interrupt="true"
             name="%proofTactic.bcompDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.BCompDef"
             target="any"
             tooltip="%proofTactic.bcompDef.tooltip">
@@ -2221,7 +2213,6 @@
             interrupt="true"
             name="%proofTactic.equalFunImgDefLeft.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Left"
             target="any"
             tooltip="%proofTactic.equalFunImgDefLeft.tooltip">
@@ -2232,7 +2223,6 @@
             interrupt="true"
             name="%proofTactic.equalFunImgDefRight.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Right"
             target="any"
             tooltip="%proofTactic.equalFunImgDefRight.tooltip">
