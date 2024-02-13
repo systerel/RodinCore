@@ -133,7 +133,7 @@ public class EhTests extends AbstractReasonerTests {
 		assertReasonerFailure("1=2 ;; 1=1 ;; 2=2 |- ⊤", makeInput("1=2"), "Nothing to rewrite");
 	}
 
-	private HypothesisReasoner.Input makeInput(String predImage) {
+	protected HypothesisReasoner.Input makeInput(String predImage) {
 		final Predicate pred = genPred(predImage, ff);
 		return new HypothesisReasoner.Input(pred);
 	}
