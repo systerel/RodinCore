@@ -12,10 +12,16 @@ package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L2;
 
-public class HeL2Tests extends HeTests {
+import org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level;
+
+public class HeL2Tests extends HeL1Tests {
 
 	public HeL2Tests() {
 		super(L2);
+	}
+
+	protected HeL2Tests(Level level) {
+		super(level);
 	}
 
 }
