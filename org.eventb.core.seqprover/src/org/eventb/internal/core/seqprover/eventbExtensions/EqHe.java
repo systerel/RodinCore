@@ -80,15 +80,21 @@ public abstract class EqHe extends EqvEq<Expression> implements
 		 * and the equality hypothesis is useless.
 		 * 
 		 * Since level 2, if the identifier is used in the default hypotheses, the
-		 * equality hypothesis is deselected instead of being hidden.
+		 * equality hypothesis is deselected instead of being hidden. Moreover,
+		 * recursive rewrites do not deselect nor hide the hypothesis.
 		 */
 		Expression from = getFrom(hyp);
 		if (level.from(L1) && from.getTag() == FREE_IDENT) {
-			if (level.from(L2) && identifierInDefaultHyps(sequent, (FreeIdentifier) from)) {
-				return makeDeselectHypAction(singleton(hyp));
-			} else {
-				return makeHideHypAction(singleton(hyp));
+			if (level.from(L2)) {
+				if (stream(getTo(hyp).getFreeIdentifiers()).anyMatch(from::equals)) {
+					// This is some kind of recursive rewriting (e.g., x = f(x)); it's probably
+					// better not to do anything and leave the hypothesis as-is
+					return null;
+				} else if (identifierInDefaultHyps(sequent, (FreeIdentifier) from)) {
+					return makeDeselectHypAction(singleton(hyp));
+				}
 			}
+			return makeHideHypAction(singleton(hyp));
 		}
 		return null;
 	}

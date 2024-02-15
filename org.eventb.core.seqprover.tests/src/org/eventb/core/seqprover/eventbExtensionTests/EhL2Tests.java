@@ -56,6 +56,9 @@ public class EhL2Tests extends EhL1Tests {
 		assertReasonerSuccess(genFullSeq("x < 15 ;; x = 0 ;; x < 10 ;H; x < 15 ;S; x = 0 |- x + 1 > 0", ff),
 				makeInput("x = 0"), //
 				"{}[x < 15][x < 10 ;; x = 0][] |- 0 + 1 > 0");
+		// Name used in right-hand-side part of equality: equality left as-is
+		assertReasonerSuccess("x = 1 + x |- x > 0", makeInput("x = 1 + x"), //
+				"{}[][][x = 1 + x] |- 1 + x > 0");
 	}
 
 }
