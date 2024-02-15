@@ -2170,7 +2170,7 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.cardDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.cardDef.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardDef"
@@ -2180,7 +2180,7 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalCard"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalCard.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualCard"
@@ -2190,7 +2190,7 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.minMaxDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.minMaxDef.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.MinMaxDef"
@@ -2200,7 +2200,7 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.bcompDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.bcompDef.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.BCompDef"
@@ -2210,7 +2210,7 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalFunImgDefLeft"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalFunImgDefLeft.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Left"
@@ -2220,13 +2220,18 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalFunImgDefRight"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalFunImgDefRight.name"
             priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Right"
             target="any"
             tooltip="%proofTactic.equalFunImgDefRight.tooltip">
       </tactic>
+      <!--
+        Note: the interrupt attribute should be false for most tactics.
+        Only long-running tactics that users may want to interrupt and
+        tactics that need to interact with the UI should have interrupt="true".
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.commands">
