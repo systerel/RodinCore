@@ -1115,6 +1115,7 @@
             interrupt="false"
             name="%proofTactics.postTactic.name"
             priority="4"
+            skipPostTactic="true"
             tacticProvider="org.eventb.internal.ui.prover.tactics.PostTactic"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
