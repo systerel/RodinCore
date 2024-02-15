@@ -1115,6 +1115,7 @@
             interrupt="false"
             name="%proofTactics.postTactic.name"
             priority="4"
+            skipPostTactic="true"
             tacticProvider="org.eventb.internal.ui.prover.tactics.PostTactic"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -1226,7 +1227,6 @@
             interrupt="false"
             name="%proofTactics.impCase.name"
             priority="3"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpCaseProvider"
             target="hypothesis"
             tooltip="%proofTactics.impCase.tooltip"/>
@@ -2134,7 +2134,6 @@
             interrupt="true"
             name="%proofTactic.dtDistinctCase.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
             target="any"
             tooltip="%proofTactic.dtDistinctCase.tooltip">
@@ -2145,7 +2144,6 @@
             interrupt="true"
             name="%proofTactic.dtInduction.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTInduction"
             target="goal"
             tooltip="%proofTactic.dtInduction.tooltip">
@@ -2156,7 +2154,6 @@
             interrupt="true"
             name="%proofTactic.finiteDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteDef"
             target="any"
             tooltip="%proofTactic.finiteDef.tooltip">
@@ -2174,10 +2171,9 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.cardDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.cardDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardDef"
             target="any"
             tooltip="%proofTactic.cardDef.tooltip">
@@ -2185,10 +2181,9 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalCard"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalCard.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualCard"
             target="any"
             tooltip="%proofTactic.equalCard.tooltip">
@@ -2196,10 +2191,9 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.minMaxDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.minMaxDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.MinMaxDef"
             target="any"
             tooltip="%proofTactic.minMaxDef.tooltip">
@@ -2207,10 +2201,9 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.bcompDef"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.bcompDef.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.BCompDef"
             target="any"
             tooltip="%proofTactic.bcompDef.tooltip">
@@ -2218,10 +2211,9 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalFunImgDefLeft"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalFunImgDefLeft.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Left"
             target="any"
             tooltip="%proofTactic.equalFunImgDefLeft.tooltip">
@@ -2229,14 +2221,18 @@
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.equalFunImgDefRight"
-            interrupt="true"
+            interrupt="false"
             name="%proofTactic.equalFunImgDefRight.name"
             priority="5"
-            skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.EqualFunImgDef$Right"
             target="any"
             tooltip="%proofTactic.equalFunImgDefRight.tooltip">
       </tactic>
+      <!--
+        Note: the interrupt attribute should be false for most tactics.
+        Only long-running tactics that users may want to interrupt and
+        tactics that need to interact with the UI should have interrupt="true".
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.commands">

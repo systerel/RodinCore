@@ -180,6 +180,7 @@
                <documentation>
                   Skips post tactic after tactic application.
 Most contributors need not use this option. You should have a strong reason to skip post tactic.
+This attribute is only used when &lt;code&gt;tacticProvider&lt;/code&gt; is set; it has no effect when &lt;code&gt;proofCommand&lt;/code&gt; is used.
                </documentation>
             </annotation>
          </attribute>
