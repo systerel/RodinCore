@@ -29,7 +29,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * <li> A set of <em>hypotheses</em>: predicates that can be used 
  * to prove the goal.
  * <li> A <em>type environment</em> containing all free identifiers 
- * and carrier sets appearing in the goal and hypotheses.
+ * (including carrier sets) appearing in the goal and hypotheses.
  * </ul>
  * The fact that all predicates in the sequent share a common type environment ensures
  * that every free identifier has a unique type and makes the search for fresh
@@ -78,7 +78,7 @@ public interface IProverSequent{
 	 * Returns the immutable type environment for this sequent.
 	 * 
 	 * <p>
-	 * This type environment contains all free identifiers and carrier sets
+	 * This type environment contains all free identifiers (including carrier sets)
 	 * appearing in the sequent and can be used to successfully type check all
 	 * predicates appearing in the sequent.
 	 * </p>
