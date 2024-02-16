@@ -54,8 +54,12 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * to sequents with a large number of hypotheses. Their sizes are intended to be
  * smaller in comparison with the set of all hypotheses.
  * </p>
- * 
- * 
+ * <p>
+ * Another way of seeing this categorization of hypotheses is that the set of
+ * all hypotheses is partitioned into three sets: <em>selected</em>,
+ * <em>hidden</em> and <em>default</em>. The default hypotheses are then all the
+ * hypotheses that are neither selected nor hidden.
+ * </p>
  * <p>
  * Prover sequents are implemented as immutable. They are created using factory methods
  * in {@link ProverFactory}.
@@ -202,6 +206,8 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all visible hypotheses of this sequent.
+	 * The visible hypotheses are all the hypotheses that are not hidden.
+	 * They may be selected or not.
 	 * <p>
 	 * This iterator returns hypotheses in the same order as this set was 
 	 * constructed.
