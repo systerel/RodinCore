@@ -110,7 +110,7 @@ public interface IProverSequent{
 	Iterable<Predicate> hypIterable();
 	
 	/**
-	 * Searches for the given predicate in the set of hypotheses.
+	 * Tells whether the given predicate belongs to the set of hypotheses.
 	 * 
 	 * @param pred
 	 * 		The predicate to search for
@@ -120,7 +120,7 @@ public interface IProverSequent{
 	boolean containsHypothesis(Predicate pred);
 	
 	/**
-	 * Searches for the given predicates in the set of hypotheses.
+	 * Tells whether the given predicates belongs to the set of hypotheses.
 	 * 
 	 * @param preds
 	 * 		The predicates to search for
@@ -139,7 +139,7 @@ public interface IProverSequent{
 	
 	
 	/**
-	 * Searches for the given predicate in the set of selected hypotheses.
+	 * Tells whether the given predicate belongs to the set of selected hypotheses.
 	 * 
 	 * @param pred
 	 * 		The predicate to search for
@@ -171,7 +171,7 @@ public interface IProverSequent{
 	Iterable<Predicate> selectedHypIterable();
 	
 	/**
-	 * Searches for the given predicate in the set of hidden hypotheses.
+	 * Tells whether the given predicate belongs to the set of hidden hypotheses.
 	 * 
 	 * @param pred
 	 * 		The predicate to search for.
