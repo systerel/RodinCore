@@ -52,7 +52,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * These two subsets are disjoint and need not contain all hypotheses. These
  * subsets have no logical significance. Their sole purpose is to add structure
  * to sequents with a large number of hypotheses. Their sizes are intended to be
- * smaller in comparison the set of all hypotheses.
+ * smaller in comparison with the set of all hypotheses.
  * </p>
  * 
  * 
@@ -75,7 +75,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
 public interface IProverSequent{
 	
 	/**
-	 * Returns the immutable type environment for the sequent.
+	 * Returns the immutable type environment for this sequent.
 	 * 
 	 * <p>
 	 * This type environment contains all free identifiers and carrier sets
@@ -105,7 +105,7 @@ public interface IProverSequent{
 	 * </code>
 	 * </p>
 	 * 
-	 * @return an iterator for all hypotheses occuring in the sequent
+	 * @return an iterator for all hypotheses occurring in the sequent
 	 */
 	Iterable<Predicate> hypIterable();
 	
@@ -113,7 +113,7 @@ public interface IProverSequent{
 	 * Searches for the given predicate in the set of hypotheses.
 	 * 
 	 * @param pred
-	 * 		The predicate to search for.
+	 * 		The predicate to search for
 	 * @return <code>true</code> iff the given predicate is a hypothesis
 	 * 	of this sequent.
 	 */
@@ -123,7 +123,7 @@ public interface IProverSequent{
 	 * Searches for the given predicates in the set of hypotheses.
 	 * 
 	 * @param preds
-	 * 		The predicates to search for.
+	 * 		The predicates to search for
 	 * @return <code>true</code> iff all the given predicates are hypotheses
 	 * 	of this sequent.
 	 */
@@ -142,7 +142,7 @@ public interface IProverSequent{
 	 * Searches for the given predicate in the set of selected hypotheses.
 	 * 
 	 * @param pred
-	 * 		The predicate to search for.
+	 * 		The predicate to search for
 	 * @return <code>true</code> iff the given predicate is a selected hypothesis
 	 * 	of this sequent.
 	 */
@@ -152,7 +152,7 @@ public interface IProverSequent{
 	/**
 	 * Returns an iterator for all selected hypotheses of this sequent.
 	 * <p>
-	 * This iterator mantains the order of selected hypotheses. This order is 
+	 * This iterator maintains the order of selected hypotheses. This order is 
 	 * the order in which hypotheses are selected. In case a hypothesis is selected
 	 * a second time, its order does not get modified.
 	 * </p>
@@ -165,7 +165,6 @@ public interface IProverSequent{
 	 * }
 	 * </code>
 	 * </p>
-	 * 
 	 * 
 	 * @return an iterator for all selected hypotheses of this sequent
 	 */
