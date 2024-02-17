@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added a constructor with IReasonerDesc
  *     Systerel - added unselected hypotheses
  *     Systerel - added used reasoners to proof dependencies
+ *     Systerel - implement toString()
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -175,7 +176,23 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 			return new Antecedent(trGoal, trAddedHypotheses,
 					trUnselectedAddedHyps, trAddedFreeIdentifiers, trHypActions);
 		}
-		
+
+		@Override
+		public String toString() {
+			return print(new RecordPrinter()).toString();
+		}
+
+		public RecordPrinter print(RecordPrinter printer) {
+			return printer //
+					.println("Antecedent") //
+					.indent()//
+					.print("New identifiers", getAddedFreeIdents()) //
+					.print("Goal", getGoal()) //
+					.printLines("New selected hypotheses", getAddedHyps())//
+					.printLines("New unselected hypotheses", getUnselectedAddedHyps())
+					.printRec("Actions", getHypActions())//
+					.dedent();
+		}
 	}
 	
 	private static FormulaFactory findFormulaFactory(
@@ -479,5 +496,22 @@ public class ProofRule extends ReasonerOutput implements IProofRule {
 		hyps.addAll(actedHyps());
 		return ProverFactory.makeSequent(typenv, hyps, null, hyps, newGoal, origin);
 
+	}
+
+	@Override
+	public String toString() {
+		return print(new RecordPrinter()).toString();
+	}
+
+	public RecordPrinter print(RecordPrinter printer) {
+		return printer //
+				.println("ProofRule") //
+				.indent()
+				.print("Display", getDisplayName()) //
+				.print("Confidence", getConfidence())//
+				.print("Needed goal", getGoal()) //
+				.printLines("Needed hypotheses", getNeededHyps())
+				.printRec("Antecedents", getAntecedents()) //
+				.dedent();
 	}
 }
