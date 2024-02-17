@@ -32,6 +32,8 @@ public class EhL2Tests extends EhL1Tests {
 	 */
 	@Test
 	public void testDeselectHide() throws Exception {
+		var patcher = new RulePatcher();
+
 		// Name not used in other hypotheses: equality hidden
 		assertReasonerSuccess("x = 0 |- x + 1 > 0", makeInput("x = 0"), //
 				"{}[x = 0][][] |- 0 + 1 > 0");
@@ -43,6 +45,7 @@ public class EhL2Tests extends EhL1Tests {
 				"{}[x < 10 ;; x = 0][][] |- 0 + 1 > 0");
 		// Name only used in default hypotheses: equality deselected
 		assertReasonerSuccess(genFullSeq("x < 10 ;; x = 0 ;H; ;S; x = 0 |- x + 1 > 0", ff), makeInput("x = 0"), //
+				patcher, //
 				"{}[][x < 10 ;; x = 0][] |- 0 + 1 > 0");
 		// Name used in selected and hidden hypotheses: equality hidden
 		assertReasonerSuccess(genFullSeq("x < 15 ;; x = 0 ;; x < 10 ;H; x < 15 ;S; x = 0 ;; x < 10 |- x + 1 > 0", ff),
@@ -51,10 +54,12 @@ public class EhL2Tests extends EhL1Tests {
 		// Name used in selected and default hypotheses: equality deselected
 		assertReasonerSuccess(genFullSeq("x < 15 ;; x = 0 ;; x < 10 ;H; ;S; x = 0 ;; x < 10 |- x + 1 > 0", ff),
 				makeInput("x = 0"), //
+				patcher, //
 				"{}[][x < 15 ;; x < 10 ;; x = 0][0 < 10] |- 0 + 1 > 0");
 		// Name used in hidden and default hypotheses: equality deselected
 		assertReasonerSuccess(genFullSeq("x < 15 ;; x = 0 ;; x < 10 ;H; x < 15 ;S; x = 0 |- x + 1 > 0", ff),
 				makeInput("x = 0"), //
+				patcher, //
 				"{}[x < 15][x < 10 ;; x = 0][] |- 0 + 1 > 0");
 		// Name used in right-hand-side part of equality: equality left as-is
 		assertReasonerSuccess("x = 1 + x |- x > 0", makeInput("x = 1 + x"), //

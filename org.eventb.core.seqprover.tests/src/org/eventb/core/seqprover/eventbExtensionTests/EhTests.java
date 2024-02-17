@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.DESELECT_ACTION_TYPE;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
@@ -22,6 +28,10 @@ import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.UntranslatableException;
@@ -107,18 +117,22 @@ public class EhTests extends AbstractReasonerTests {
 	public void testBug818() throws Exception {
 		final IProverSequent sequent = genFullSeq("x = y + 1 ;; x > 0 ;H; ;S; x = y + 1 |- x + 1 = 1 + y + 1", ff);
 		final String expectedHyps;
+		final IRulePatcher patcher;
 		if (level.from(L2)) {
 			// x occurs in 'x > 0', just deselect the equality
 			expectedHyps = "{}[][x = y + 1 ;; x > 0][]";
+			patcher = new RulePatcher();
 		} else if (level.from(L1)) {
 			// the equality gets hidden despite the default hypothesis 'x > 0'
 			expectedHyps = "{}[x = y + 1][x > 0][]";
+			patcher = NO_PATCH;
 		} else {
 			// old behavior that does not deselect the equality
 			expectedHyps = "{}[][x > 0][x = y + 1]";
+			patcher = NO_PATCH;
 		}
 		assertReasonerSuccess(sequent, makeInput("x = y + 1"), //
-				expectedHyps + " |- y + 1 + 1 = 1 + y + 1");
+				patcher, expectedHyps + " |- y + 1 + 1 = 1 + y + 1");
 	}
 
 	@Test
@@ -146,6 +160,42 @@ public class EhTests extends AbstractReasonerTests {
 	public void assertReasonerFailure(String sequentImage, IReasonerInput input, String reason)
 			throws UntranslatableException {
 		assertReasonerFailure(genSeq(sequentImage, ff), input, reason);
+	}
+
+	/**
+	 * Replaces any DESELECT action on the input predicate by a HIDE action.
+	 */
+	protected class RulePatcher implements IRulePatcher {
+
+		private Predicate inputPred;
+
+		/**
+		 * Returns the same rule, with any DESELECT action on the input predicate
+		 * replaced by a HIDE action
+		 */
+		public IProofRule patchRule(IProofRule rule, IReasonerInput input) {
+			inputPred = ((HypothesisReasoner.Input) input).getPred();
+
+			var newAntes = stream(rule.getAntecedents()).map(this::patchAntecedent).toArray(IAntecedent[]::new);
+			return makeProofRule(rule.generatedBy(), rule.generatedUsing(), rule.getGoal(), rule.getNeededHyps(),
+					rule.getConfidence(), rule.getDisplayName(), newAntes);
+		}
+
+		private IAntecedent patchAntecedent(IAntecedent ante) {
+			var newActions = ante.getHypActions().stream().map(this::patchHypAction).collect(toList());
+			return makeAntecedent(ante.getGoal(), ante.getAddedHyps(), ante.getUnselectedAddedHyps(),
+					ante.getAddedFreeIdents(), newActions);
+		}
+
+		private IHypAction patchHypAction(IHypAction action) {
+			if (action.getActionType() == DESELECT_ACTION_TYPE) {
+				var hyps = ((ISelectionHypAction) action).getHyps();
+				if (hyps.size() == 1 && hyps.contains(inputPred)) {
+					return makeHideHypAction(hyps);
+				}
+			}
+			return action;
+		}
 	}
 
 }
