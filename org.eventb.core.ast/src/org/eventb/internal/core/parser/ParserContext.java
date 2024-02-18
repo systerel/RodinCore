@@ -31,7 +31,6 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.internal.core.lexer.Scanner;
-import org.eventb.internal.core.lexer.Scanner.ScannerState;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ProgressDirection;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
@@ -78,11 +77,6 @@ public class ParserContext {
 		
 		public StackedValue(T initVal) {
 			this.val = initVal;
-		}
-		
-		public StackedValue(ParserContext.StackedValue<T> toCopy) {
-			this.val = toCopy.val;
-			this.stack.addAll(toCopy.stack);
 		}
 		
 		public void push(T newVal) {
@@ -214,45 +208,6 @@ public class ParserContext {
 			return;
 		}
 		parentKind.pop();
-	}
-	
-	public ParserContext.SavedContext save() {
-		return new SavedContext(scanner.save(), t, la, parsingType,
-				startPos, binding, parentKind);
-	}
-	
-	public void restore(ParserContext.SavedContext sc) {
-		scanner.restore(sc.scanState);
-		t = sc.t;
-		la = sc.la;
-		parsingType = sc.parsingType;
-		startPos = new ParserContext.StackedValue<Integer>(sc.startPos);
-		binding = new ParserContext.StackedValue<ParserContext.Binding>(sc.binding);
-		parentKind = new ParserContext.StackedValue<Integer>(sc.parentKind);
-	}
-	
-	static class SavedContext {
-		final ScannerState scanState;
-		final Token t;
-		final Token la;
-		final boolean parsingType;
-		final ParserContext.StackedValue<Integer> startPos;
-		final ParserContext.StackedValue<ParserContext.Binding> binding;
-		final ParserContext.StackedValue<Integer> parentKind;
-		
-		SavedContext(ScannerState scanState, Token t, Token la,
-				boolean parsingType, ParserContext.StackedValue<Integer> startPos,
-				ParserContext.StackedValue<ParserContext.Binding> binding,
-				ParserContext.StackedValue<Integer> parentKind) {
-			this.scanState = scanState;
-			this.t = t;
-			this.la = la;
-			this.parsingType = parsingType;
-			this.startPos = new ParserContext.StackedValue<Integer>(startPos);
-			this.binding = new ParserContext.StackedValue<ParserContext.Binding>(binding);
-			this.parentKind = new ParserContext.StackedValue<Integer>(parentKind);
-		}
-		
 	}
 	
 	public SyntaxError syntaxError(ASTProblem problem) throws SyntaxError {
@@ -505,11 +460,6 @@ public class ParserContext {
 
 	/**
 	 * Looks ahead for the given kind.
-	 * <p>
-	 * FIXME current implementation is not compatible with backtracking.
-	 * MUST NOT be called after a call to {@link ParserContext#save()};
-	 * @see Scanner#restore(ScannerState)
-	 * </p>
 	 * 
 	 * @param searchedKind
 	 *            a kind
