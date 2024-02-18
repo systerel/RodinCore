@@ -1030,25 +1030,11 @@ public class TestGenParser extends AbstractTests {
 		final ASTProblem identExpected = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "(");
 		
-		final ASTProblem errorOftype = new ASTProblem(new SourceLocation(2, 2),
-				ProblemKind.UnexpectedOftype, ProblemSeverities.Error);
-
 		final ASTProblem dotExpected = new ASTProblem(new SourceLocation(4, 4),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "·", "∣");
 
-		final ASTProblem identOrOftype = new ASTProblem(
-				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
-				ProblemSeverities.Error,
-				ProblemKind.makeCompoundMessage(asList(identExpected,
-						errorOftype)));
-		
-		final ASTProblem dotOrOftype = new ASTProblem(
-				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
-				ProblemSeverities.Error,
-				ProblemKind.makeCompoundMessage(asList(dotExpected,
-						errorOftype)));
-		assertFailure(parseExprRes("{(x⦂ℤ)∣ ⊤}"), identOrOftype);
-		assertFailure(parseExprRes("{x⦂ℤ∣ ⊤}"), dotOrOftype);
+		assertFailure(parseExprRes("{(x⦂ℤ)∣ ⊤}"), identExpected);
+		assertFailure(parseExprRes("{x⦂ℤ∣ ⊤}"), dotExpected);
 	}
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
@@ -2585,6 +2571,16 @@ public class TestGenParser extends AbstractTests {
 	public void testQUnionError() throws Exception {
 		final IParseResult result = parseExprRes("⋃ x · x ℕ ∣ {x}");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(8, 8), MisplacedNudOperator, Error, "ℕ");
+		assertFailure(result, expected);
+	}
+
+	/**
+	 * This is the example from the feature request #fr385.
+	 */
+	@Test
+	public void fr385() throws Exception {
+		final IParseResult result = parseExprRes("{x ∣ x > }");
+		final ASTProblem expected = new ASTProblem(new SourceLocation(9, 9), UnknownOperator, Error, "}");
 		assertFailure(result, expected);
 	}
 

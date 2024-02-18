@@ -24,8 +24,10 @@ import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MID;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
@@ -1394,19 +1396,86 @@ public class SubParsers {
 	}
 
 	/**
-	 * Choice parser for sets defined in comprehension or in extension.
+	 * Common parser for sets defined in comprehension or in extension. We use a
+	 * heuristic to decide which form seems to occur after the opening curly brace.
 	 */
-	public static class SetExpr extends ChoiceNudParser<Expression> {
+	public static class SetExpr implements INudParser<Expression> {
+
+		private final QuantifiedParser<QuantifiedExpression> explicitParser;
+		private final QuantifiedParser<QuantifiedExpression> implicitParser;
+		private final SetExtParser setExtParser;
 
 		public SetExpr(int kind) {
-			/*
-			 * The tag passed to the super constructor is not used for parsing, only for
-			 * printing, hence we can use an invalid one here.
-			 */
-			super(kind, asList(new CSetExplicit(kind), //
-					new CSetImplicit(kind), //
-					new SetExtParser(kind)));
+			this.explicitParser = new CSetExplicit(kind);
+			this.implicitParser = new CSetImplicit(kind);
+			this.setExtParser = new SetExtParser(kind);
 		}
+
+		@Override
+		public void toString(IToStringMediator mediator, Expression toPrint) {
+			throw new IllegalStateException("should never be called");
+		}
+
+		@Override
+		public SubParseResult<? extends Expression> nud(ParserContext pc) throws SyntaxError {
+			if (looksLikeComprehensionSet(pc)) {
+				pc.resetPeek();
+				if (QuantExpr.looksLikeIdentDeclList(pc)) {
+					return explicitParser.nud(pc);
+				} else {
+					return implicitParser.nud(pc);
+				}
+			} else {
+				return setExtParser.nud(pc);
+			}
+		}
+
+		/**
+		 * Figures out if the left brace just read starts a comprehension set. For that,
+		 * we search for a matching MID symbol, taking into account the other quantified
+		 * expressions that can appear inside the braces.
+		 */
+		private boolean looksLikeComprehensionSet(ParserContext pc) {
+			final int lpar = pc.getGrammar().getKind(LPAR);
+			final int rpar = pc.getGrammar().getKind(RPAR);
+			final int lbrace = pc.getGrammar().getKind(LBRACE);
+			final int rbrace = pc.getGrammar().getKind(RBRACE);
+			final int lambda = pc.getKind("\u03bb");
+			final int qinter = pc.getKind("\u22c2");
+			final int qunion = pc.getKind("\u22c3");
+			final int mid = pc.getGrammar().getKind(MID);
+			final int eof = pc.getGrammar().getKind(EOF);
+
+			int kind = pc.la.kind;
+			int parLvl = 0;
+			int innerQuantifiedExpressions = 0;
+			while (true) {
+				if (kind == lbrace || kind == lpar) {
+					++parLvl;
+				} else if (kind == rbrace || kind == rpar) {
+					--parLvl;
+					if (parLvl < 0) {
+						// We've gone past the closing brace.
+						return false;
+					}
+				} else if (parLvl == 0) {
+					if (kind == lambda || kind == qunion || kind == qinter) {
+						++innerQuantifiedExpressions;
+					} else if (kind == mid) {
+						--innerQuantifiedExpressions;
+						if (innerQuantifiedExpressions < 0) {
+							return true;
+						}
+					}
+				}
+				if (kind == eof) {
+					// Unbalanced parentheses.
+					return false;
+				}
+				kind = pc.peek().kind;
+			}
+		}
+
 	}
 
 	public static class ExplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
