@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,9 @@ public enum ProblemKind {
 	/**
 	 * Argument 1 is the compound message with all errors.
 	 * @since 2.0
+	 * @deprecated this error kind is no longer used.
 	 */
+	@Deprecated(since="3.8")
 	VariousPossibleErrors ("Parse failed because either:\n%1$s"),
 	
 	/**
@@ -238,7 +240,9 @@ public enum ProblemKind {
 	 *            a list of messages
 	 * @return a string
 	 * @since 2.0
+	 * @deprecated This method is no longer used.
 	 */
+	@Deprecated(since="3.8")
 	public static String makeCompoundMessage(Collection<ASTProblem> problems) {
 		if (problems.size() < 2) {
 			throw new IllegalArgumentException(
