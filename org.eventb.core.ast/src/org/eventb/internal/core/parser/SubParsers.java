@@ -22,13 +22,16 @@ import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MID;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.MainParsers.BOUND_IDENT_DECL_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_PARSER;
@@ -1329,14 +1332,65 @@ public class SubParsers {
 	}
 	
 	/**
-	 * Choice parser for quantified expressions that can be either explicit or implicit.
+	 * Choice parser for quantified expressions that can be either explicit or
+	 * implicit. We use the scanner peek facility to find out whether the beginning
+	 * of the expression after the quantifier looks like a list of identifiers or an
+	 * expression.
 	 */
-	public static class QuantExpr extends ChoiceNudParser<QuantifiedExpression> {
+	public static class QuantExpr implements INudParser<QuantifiedExpression> {
+
+		private final QuantifiedParser<QuantifiedExpression> explicitParser;
+		private final QuantifiedParser<QuantifiedExpression> implicitParser;
 
 		public QuantExpr(int kind, int tag) {
-			super(kind, asList(new ExplicitQuantExpr(kind, tag), //
-					new ImplicitQuantExpr(kind, tag)));
+			this.explicitParser = new ExplicitQuantExpr(kind, tag);
+			this.implicitParser = new ImplicitQuantExpr(kind, tag);
 		}
+
+		@Override
+		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
+			throw new IllegalStateException("should never be called");
+		}
+
+		@Override
+		public SubParseResult<QuantifiedExpression> nud(ParserContext pc) throws SyntaxError {
+			if (looksLikeIdentDeclList(pc)) {
+				return explicitParser.nud(pc);
+			} else {
+				return implicitParser.nud(pc);
+			}
+		}
+
+		/**
+		 * Figures out whether we are at the beginning of a list of bound identifier
+		 * declarations. We accept a bit more than needed, in particular, we accept
+		 * illegal open and close parenthesis. This is to provide a better experience
+		 * for people used to write classical B, where these parentheses are mandatory
+		 * when there are several identifiers (and optional for a single identifier).
+		 * 
+		 * When this method is called the current token of the parser context shall be
+		 * just after the quantifier (or the opening brace for a comprehension set).
+		 * 
+		 * @param pc the parser context
+		 * @return <code>true</code> iff this looks like a list of identifiers
+		 */
+		private static boolean looksLikeIdentDeclList(ParserContext pc) {
+			int kind = pc.la.kind;
+			if (kind == pc.getGrammar().getKind(LPAR)) {
+				kind = pc.peek().kind;
+			}
+			if (kind != pc.getGrammar().getKind(IDENT)) {
+				return false;
+			}
+			kind = pc.peek().kind;
+			if (kind == pc.getGrammar().getKind(RPAR)) {
+				kind = pc.peek().kind;
+			}
+			return kind == pc.getGrammar().getKind(COMMA) //
+					|| kind == pc.getGrammar().getKind(DOT) //
+					|| kind == pc.getGrammar().getKind(OFTYPE);
+		}
+
 	}
 
 	/**

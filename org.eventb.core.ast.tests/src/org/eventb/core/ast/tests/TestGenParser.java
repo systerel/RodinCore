@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ import static org.eventb.core.ast.Formula.TFUN;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.Formula.UPTO;
+import static org.eventb.core.ast.ProblemKind.MisplacedNudOperator;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.core.ast.ProblemKind.UnknownOperator;
 import static org.eventb.core.ast.ProblemKind.UnmatchedTokens;
@@ -2576,4 +2577,15 @@ public class TestGenParser extends AbstractTests {
 								ffDiff.makeIntegerLiteral(BigInteger.ZERO, null)),
 						Collections.<Predicate> emptyList(), null));
 	}
+
+	/**
+	 * A missing belongs to operator does not produce a cryptic error message.
+	 */
+	@Test
+	public void testQUnionError() throws Exception {
+		final IParseResult result = parseExprRes("⋃ x · x ℕ ∣ {x}");
+		final ASTProblem expected = new ASTProblem(new SourceLocation(8, 8), MisplacedNudOperator, Error, "ℕ");
+		assertFailure(result, expected);
+	}
+
 }
