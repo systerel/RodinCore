@@ -287,6 +287,25 @@ public class ParserContext {
 	}
 
 	/**
+	 * Returns the following token in the token stream from the underlying scanner.
+	 * The first returned token is the one just after the lookahead token
+	 * {@link #la}. The peek mechanism is reset by the next call to one of the
+	 * accept method.
+	 * 
+	 * @return the next token beyond the lookahead
+	 */
+	public Token peek() {
+		return scanner.Peek();
+	}
+
+	/**
+	 * Reset the scanner as if no {@link #peek()} had been called.
+	 */
+	public void resetPeek() {
+		scanner.ResetPeek();
+	}
+
+	/**
 	 * Checks that the expected token with the given kind is ahead, then
 	 * makes progress.
 	 * 
