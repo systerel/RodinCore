@@ -11,7 +11,10 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.utils;
 
 import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.DIV;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.IN;
@@ -21,6 +24,10 @@ import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.MINUS;
+import static org.eventb.core.ast.Formula.MUL;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.TBIJ;
 import static org.eventb.core.ast.Formula.UPTO;
 
@@ -230,6 +237,59 @@ public class FormulaBuilder {
 		return ff.makeBinaryExpression(MAPSTO, left, right, null);
 	}
 
+	/**
+	 * Build an addition.
+	 *
+	 * @param children children expressions
+	 * @return the expression children[0] + children[1] + ...
+	 */
+	public Expression plus(Expression... children) {
+		return ff.makeAssociativeExpression(PLUS, children, null);
+	}
+
+	/**
+	 * Build a multiplication.
+	 *
+	 * @param children children expressions
+	 * @return the expression children[0] ∗ children[1] ∗ ...
+	 */
+	public Expression mul(Expression... children) {
+		return ff.makeAssociativeExpression(MUL, children, null);
+	}
+
+	/**
+	 * Build a subtraction.
+	 *
+	 * @param left  left-hand side of the expression
+	 * @param right right-hand side of the expression
+	 * @return the expression left − right
+	 */
+	public Expression minus(Expression left, Expression right) {
+		return ff.makeBinaryExpression(MINUS, left, right, null);
+	}
+
+	/**
+	 * Build a division.
+	 *
+	 * @param left  left-hand side of the expression
+	 * @param right right-hand side of the expression
+	 * @return the expression left ÷ right
+	 */
+	public Expression div(Expression left, Expression right) {
+		return ff.makeBinaryExpression(DIV, left, right, null);
+	}
+
+	/**
+	 * Build an exponentiation.
+	 *
+	 * @param left  left-hand side of the expression
+	 * @param right right-hand side of the expression
+	 * @return the expression left ^ right
+	 */
+	public Expression expn(Expression left, Expression right) {
+		return ff.makeBinaryExpression(EXPN, left, right, null);
+	}
+
 	// Predicates
 
 	/**
@@ -275,6 +335,30 @@ public class FormulaBuilder {
 	}
 
 	/**
+	 * Build an equal relation.
+	 *
+	 * @param left left-hand side of the relation
+	 * @param right right-hand side of the relation
+	 * @return the predicate left = right
+	 */
+	public Predicate equal(Expression left, Expression right) {
+		return ff.makeRelationalPredicate(EQUAL, left, right, null);
+	}
+
+	/**
+	 * Build a not-equal relation.
+	 *
+	 * The not equal is returned normalised as the negation of an equality.
+	 *
+	 * @param left left-hand side of the relation
+	 * @param right right-hand side of the relation
+	 * @return the predicate ¬ left = right
+	 */
+	public Predicate notequal(Expression left, Expression right) {
+		return not(equal(left, right));
+	}
+
+	/**
 	 * Build a greater-or-equal relation.
 	 *
 	 * @param left left-hand side of the relation
@@ -304,6 +388,16 @@ public class FormulaBuilder {
 	 */
 	public Predicate or(Predicate... preds) {
 		return ff.makeAssociativePredicate(LOR, preds, null);
+	}
+
+	/**
+	 * Build the negation of a predicate.
+	 *
+	 * @param pred predicate to negate
+	 * @return negation of the given predicate
+	 */
+	public Predicate not(Predicate pred) {
+		return ff.makeUnaryPredicate(NOT, pred, null);
 	}
 
 }
