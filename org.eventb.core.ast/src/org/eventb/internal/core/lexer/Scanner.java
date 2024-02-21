@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class Scanner {
 	}
 
 	// Looks ahead the next token.
-	protected Token Peek() {
+	public Token Peek() {
 		if (iterator.hasNext()) {
 			return iterator.next();
 		} else {
@@ -84,7 +84,7 @@ public class Scanner {
 		}
 	}
 
-	protected void ResetPeek() {
+	public void ResetPeek() {
 		iterator = list.listIterator(0);
 	}
 

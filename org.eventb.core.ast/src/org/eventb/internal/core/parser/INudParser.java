@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,6 @@ public interface INudParser<R> extends IParserPrinter<R> {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	SubParseResult<R> nud(ParserContext pc) throws SyntaxError;
+	SubParseResult<? extends R> nud(ParserContext pc) throws SyntaxError;
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,18 @@ import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MID;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.MainParsers.BOUND_IDENT_DECL_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_PARSER;
@@ -110,11 +115,9 @@ public class SubParsers {
 	static abstract class AbstractSubParser {
 
 		protected final int kind;
-		protected final int tag;
 
-		protected AbstractSubParser(int kind, int tag) {
+		protected AbstractSubParser(int kind) {
 			this.kind = kind;
-			this.tag = tag;
 		}
 
 		public final int getKind() {
@@ -122,7 +125,17 @@ public class SubParsers {
 		}
 	}
 
-	static abstract class AbstractNudParser<R> extends AbstractSubParser implements INudParser<R> {
+	private static abstract class AbstractSubParserWithTag extends AbstractSubParser {
+
+		protected final int tag;
+
+		protected AbstractSubParserWithTag(int kind, int tag) {
+			super(kind);
+			this.tag = tag;
+		}
+	}
+
+	static abstract class AbstractNudParser<R> extends AbstractSubParserWithTag implements INudParser<R> {
 
 		protected AbstractNudParser(int kind, int tag) {
 			super(kind, tag);
@@ -130,7 +143,7 @@ public class SubParsers {
 
 	}
 
-	private static abstract class AbstractLedParser<R> extends AbstractSubParser implements ILedParser<R> {
+	private static abstract class AbstractLedParser<R> extends AbstractSubParserWithTag implements ILedParser<R> {
 
 		protected AbstractLedParser(int kind, int tag) {
 			super(kind, tag);
@@ -1269,6 +1282,151 @@ public class SubParsers {
 		}
 	}
 	
+	/**
+	 * Choice parser for quantified expressions that can be either explicit or
+	 * implicit. We use the scanner peek facility to find out whether the beginning
+	 * of the expression after the quantifier looks like a list of identifiers or an
+	 * expression.
+	 */
+	public static class QuantExpr implements INudParser<QuantifiedExpression> {
+
+		private final QuantifiedParser<QuantifiedExpression> explicitParser;
+		private final QuantifiedParser<QuantifiedExpression> implicitParser;
+
+		public QuantExpr(int kind, int tag) {
+			this.explicitParser = new ExplicitQuantExpr(kind, tag);
+			this.implicitParser = new ImplicitQuantExpr(kind, tag);
+		}
+
+		@Override
+		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
+			throw new IllegalStateException("should never be called");
+		}
+
+		@Override
+		public SubParseResult<QuantifiedExpression> nud(ParserContext pc) throws SyntaxError {
+			if (looksLikeIdentDeclList(pc)) {
+				return explicitParser.nud(pc);
+			} else {
+				return implicitParser.nud(pc);
+			}
+		}
+
+		/**
+		 * Figures out whether we are at the beginning of a list of bound identifier
+		 * declarations. We accept a bit more than needed, in particular, we accept
+		 * illegal open and close parenthesis. This is to provide a better experience
+		 * for people used to write classical B, where these parentheses are mandatory
+		 * when there are several identifiers (and optional for a single identifier).
+		 * 
+		 * When this method is called the current token of the parser context shall be
+		 * just after the quantifier (or the opening brace for a comprehension set).
+		 * 
+		 * @param pc the parser context
+		 * @return <code>true</code> iff this looks like a list of identifiers
+		 */
+		private static boolean looksLikeIdentDeclList(ParserContext pc) {
+			int kind = pc.la.kind;
+			if (kind == pc.getGrammar().getKind(LPAR)) {
+				kind = pc.peek().kind;
+			}
+			if (kind != pc.getGrammar().getKind(IDENT)) {
+				return false;
+			}
+			kind = pc.peek().kind;
+			if (kind == pc.getGrammar().getKind(RPAR)) {
+				kind = pc.peek().kind;
+			}
+			return kind == pc.getGrammar().getKind(COMMA) //
+					|| kind == pc.getGrammar().getKind(DOT) //
+					|| kind == pc.getGrammar().getKind(OFTYPE);
+		}
+
+	}
+
+	/**
+	 * Common parser for sets defined in comprehension or in extension. We use a
+	 * heuristic to decide which form seems to occur after the opening curly brace.
+	 */
+	public static class SetExpr implements INudParser<Expression> {
+
+		private final QuantifiedParser<QuantifiedExpression> explicitParser;
+		private final QuantifiedParser<QuantifiedExpression> implicitParser;
+		private final SetExtParser setExtParser;
+
+		public SetExpr(int kind) {
+			this.explicitParser = new CSetExplicit(kind);
+			this.implicitParser = new CSetImplicit(kind);
+			this.setExtParser = new SetExtParser(kind);
+		}
+
+		@Override
+		public void toString(IToStringMediator mediator, Expression toPrint) {
+			throw new IllegalStateException("should never be called");
+		}
+
+		@Override
+		public SubParseResult<? extends Expression> nud(ParserContext pc) throws SyntaxError {
+			if (looksLikeComprehensionSet(pc)) {
+				pc.resetPeek();
+				if (QuantExpr.looksLikeIdentDeclList(pc)) {
+					return explicitParser.nud(pc);
+				} else {
+					return implicitParser.nud(pc);
+				}
+			} else {
+				return setExtParser.nud(pc);
+			}
+		}
+
+		/**
+		 * Figures out if the left brace just read starts a comprehension set. For that,
+		 * we search for a matching MID symbol, taking into account the other quantified
+		 * expressions that can appear inside the braces.
+		 */
+		private boolean looksLikeComprehensionSet(ParserContext pc) {
+			final int lpar = pc.getGrammar().getKind(LPAR);
+			final int rpar = pc.getGrammar().getKind(RPAR);
+			final int lbrace = pc.getGrammar().getKind(LBRACE);
+			final int rbrace = pc.getGrammar().getKind(RBRACE);
+			final int lambda = pc.getKind("\u03bb");
+			final int qinter = pc.getKind("\u22c2");
+			final int qunion = pc.getKind("\u22c3");
+			final int mid = pc.getGrammar().getKind(MID);
+			final int eof = pc.getGrammar().getKind(EOF);
+
+			int kind = pc.la.kind;
+			int parLvl = 0;
+			int innerQuantifiedExpressions = 0;
+			while (true) {
+				if (kind == lbrace || kind == lpar) {
+					++parLvl;
+				} else if (kind == rbrace || kind == rpar) {
+					--parLvl;
+					if (parLvl < 0) {
+						// We've gone past the closing brace.
+						return false;
+					}
+				} else if (parLvl == 0) {
+					if (kind == lambda || kind == qunion || kind == qinter) {
+						++innerQuantifiedExpressions;
+					} else if (kind == mid) {
+						--innerQuantifiedExpressions;
+						if (innerQuantifiedExpressions < 0) {
+							return true;
+						}
+					}
+				}
+				if (kind == eof) {
+					// Unbalanced parentheses.
+					return false;
+				}
+				kind = pc.peek().kind;
+			}
+		}
+
+	}
+
 	public static class ExplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ExplicitQuantExpr(int kind, int tag) {

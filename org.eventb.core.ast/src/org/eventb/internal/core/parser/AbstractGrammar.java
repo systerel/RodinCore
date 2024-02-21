@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.SetExpr;
 import org.eventb.internal.core.parser.operators.BracketCompactor;
 import org.eventb.internal.core.parser.operators.Brackets;
 import org.eventb.internal.core.parser.operators.ExternalViewUtils;
@@ -183,6 +184,7 @@ public abstract class AbstractGrammar {
 
 			updateDefaultKinds();
 
+			subParsers.addNud(getKind(LBRACE), new SetExpr(getKind(LBRACE)));
 			for (IOperatorInfo<? extends Formula<?>> operInfo : deferredOperators) {
 				populateSubParsers(operInfo);
 			}
@@ -264,8 +266,8 @@ public abstract class AbstractGrammar {
 		initOpRegistry.addGroupPriority(lowGroupId, highGroupId);
 	}
 
-	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
-		return subParsers.getNudParsers(token);
+	public INudParser<? extends Formula<?>> getNudParser(Token token) {
+		return subParsers.getNudParser(token);
 	}
 	
 	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
@@ -287,11 +289,16 @@ public abstract class AbstractGrammar {
 	// TODO remove all other addOperator() methods
 	public void addOperator(IOperatorInfo<? extends Formula<?>> operInfo)
 			throws OverrideException {
+		addOperatorWithoutParser(operInfo);
+		// kind is unstable at this stage, subParsers are populated later
+		deferredOperators.add(operInfo);
+	}
+
+	public void addOperatorWithoutParser(IOperatorInfo<? extends Formula<?>> operInfo)
+			throws OverrideException {
 		final int kind = tokens.getOrAdd(operInfo.getImage());
 		initOpRegistry.addOperator(kind, operInfo.getId(),
 				operInfo.getGroupId(), operInfo.isSpaced());
-		// kind is unstable at this stage, subParsers are populated later
-		deferredOperators.add(operInfo);
 	}
 
 	// must be called only with subparsers getting their kind dynamically from a
@@ -325,7 +332,7 @@ public abstract class AbstractGrammar {
 	}
 
 	public void addReservedSubParser(DefaultToken token,
-			INudParser<? extends Formula<?>> subParser) {
+			INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		assert token.isReserved();
 		final int reservedKind = getKind(token);
 		subParsers.addNud(reservedKind, subParser);

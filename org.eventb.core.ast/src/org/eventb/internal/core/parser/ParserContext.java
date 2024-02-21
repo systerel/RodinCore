@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.internal.core.lexer.Scanner;
-import org.eventb.internal.core.lexer.Scanner.ScannerState;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ProgressDirection;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
@@ -78,11 +77,6 @@ public class ParserContext {
 		
 		public StackedValue(T initVal) {
 			this.val = initVal;
-		}
-		
-		public StackedValue(ParserContext.StackedValue<T> toCopy) {
-			this.val = toCopy.val;
-			this.stack.addAll(toCopy.stack);
 		}
 		
 		public void push(T newVal) {
@@ -216,45 +210,6 @@ public class ParserContext {
 		parentKind.pop();
 	}
 	
-	public ParserContext.SavedContext save() {
-		return new SavedContext(scanner.save(), t, la, parsingType,
-				startPos, binding, parentKind);
-	}
-	
-	public void restore(ParserContext.SavedContext sc) {
-		scanner.restore(sc.scanState);
-		t = sc.t;
-		la = sc.la;
-		parsingType = sc.parsingType;
-		startPos = new ParserContext.StackedValue<Integer>(sc.startPos);
-		binding = new ParserContext.StackedValue<ParserContext.Binding>(sc.binding);
-		parentKind = new ParserContext.StackedValue<Integer>(sc.parentKind);
-	}
-	
-	static class SavedContext {
-		final ScannerState scanState;
-		final Token t;
-		final Token la;
-		final boolean parsingType;
-		final ParserContext.StackedValue<Integer> startPos;
-		final ParserContext.StackedValue<ParserContext.Binding> binding;
-		final ParserContext.StackedValue<Integer> parentKind;
-		
-		SavedContext(ScannerState scanState, Token t, Token la,
-				boolean parsingType, ParserContext.StackedValue<Integer> startPos,
-				ParserContext.StackedValue<ParserContext.Binding> binding,
-				ParserContext.StackedValue<Integer> parentKind) {
-			this.scanState = scanState;
-			this.t = t;
-			this.la = la;
-			this.parsingType = parsingType;
-			this.startPos = new ParserContext.StackedValue<Integer>(startPos);
-			this.binding = new ParserContext.StackedValue<ParserContext.Binding>(binding);
-			this.parentKind = new ParserContext.StackedValue<Integer>(parentKind);
-		}
-		
-	}
-	
 	public SyntaxError syntaxError(ASTProblem problem) throws SyntaxError {
 		assert curProblem == null;
 		curProblem = problem;
@@ -284,6 +239,25 @@ public class ParserContext {
 	
 	public void stopParsingType() {
 		this.parsingType = false;
+	}
+
+	/**
+	 * Returns the following token in the token stream from the underlying scanner.
+	 * The first returned token is the one just after the lookahead token
+	 * {@link #la}. The peek mechanism is reset by the next call to one of the
+	 * accept method.
+	 * 
+	 * @return the next token beyond the lookahead
+	 */
+	public Token peek() {
+		return scanner.Peek();
+	}
+
+	/**
+	 * Reset the scanner as if no {@link #peek()} had been called.
+	 */
+	public void resetPeek() {
+		scanner.ResetPeek();
 	}
 
 	/**
@@ -320,8 +294,8 @@ public class ParserContext {
 		}
 	}
 	
-	public List<INudParser<? extends Formula<?>>> getNudParsers() {
-		return grammar.getNudParsers(t);
+	public INudParser<? extends Formula<?>> getNudParser() {
+		return grammar.getNudParser(t);
 	}
 	
 	public ILedParser<? extends Formula<?>> getLedParser() {
@@ -380,8 +354,8 @@ public class ParserContext {
 		startPos.pop();
 	}
 
-	public <T> SubParseResult<T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
-		final SubParseResult<T> parseRes = subParseNoCheckRes(parser);
+	public <T> SubParseResult<? extends T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
+		final SubParseResult<? extends T> parseRes = subParseNoCheckRes(parser);
 		if (!parseRes.isClosed()) {
 			final int childKind = parseRes.getKind();
 			if (grammar.needsParentheses(isRightChild, childKind, parentKind.val)) {
@@ -399,7 +373,7 @@ public class ParserContext {
 		return subParseRes(parser, isRightChild).getParsed();
 	}
 	
-	public <T> SubParseResult<T> subParseNoCheckRes(INudParser<T> parser)
+	public <T> SubParseResult<? extends T> subParseNoCheckRes(INudParser<T> parser)
 			throws SyntaxError {
 		pushPos();
 		try {
@@ -486,11 +460,6 @@ public class ParserContext {
 
 	/**
 	 * Looks ahead for the given kind.
-	 * <p>
-	 * FIXME current implementation is not compatible with backtracking.
-	 * MUST NOT be called after a call to {@link ParserContext#save()};
-	 * @see Scanner#restore(ScannerState)
-	 * </p>
 	 * 
 	 * @param searchedKind
 	 *            a kind

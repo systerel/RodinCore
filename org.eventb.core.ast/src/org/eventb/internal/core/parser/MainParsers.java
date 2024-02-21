@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,9 @@ import static org.eventb.core.ast.Formula.BECOMES_MEMBER_OF;
 import static org.eventb.core.ast.Formula.BECOMES_SUCH_THAT;
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.ProblemKind.MisplacedLedOperator;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
+import static org.eventb.core.ast.ProblemKind.UnknownOperator;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
@@ -35,9 +37,7 @@ import static org.eventb.internal.core.parser.SubParsers.BoundIdentDeclSubParser
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -60,7 +60,6 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
-import org.eventb.internal.core.parser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
@@ -112,7 +111,7 @@ public class MainParsers {
 			// avoid synthetic accessor method emulation
 		}
 		
-		public SubParseResult<Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
+		public SubParseResult<? extends Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
 			final P parser = getParser(pc);
 			pc.pushParentKind();
 			try {
@@ -123,7 +122,7 @@ public class MainParsers {
 		}
 		
 		protected abstract P getParser(ParserContext pc) throws SyntaxError;
-		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
+		protected abstract SubParseResult<? extends Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
 		
 		protected static ASTProblem newOperatorError(ParserContext pc,
 				ProblemKind problemKind) throws SyntaxError {
@@ -136,66 +135,31 @@ public class MainParsers {
 					pc.t.val);
 		}
 
-		// errors must be non empty 
-		protected static ASTProblem newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
-			return new ASTProblem(loc,
-					ProblemKind.VariousPossibleErrors, ProblemSeverities.Error,
-					ProblemKind.makeCompoundMessage(errors));
-		}
-
 	}
 	
-	static final ParserApplier<List<INudParser<? extends Formula<?>>>> NUD_APPLIER = new ParserApplier<List<INudParser<? extends Formula<?>>>>() {
+	static final ParserApplier<INudParser<? extends Formula<?>>> NUD_APPLIER = new ParserApplier<INudParser<? extends Formula<?>>>() {
 		
 		@Override
-		protected List<INudParser<? extends Formula<?>>> getParser(ParserContext pc)
+		protected INudParser<? extends Formula<?>> getParser(ParserContext pc)
 		throws SyntaxError {
-			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
-			if (subParsers.isEmpty()) {
+			final INudParser<? extends Formula<?>> subParser = pc.getNudParser();
+			if (subParser == null) {
+				final ProblemKind problemKind;
 				final ILedParser<? extends Formula<?>> ledParser = pc.getLedParser();
 				if (ledParser == null) { // no parser exists for current token
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.UnknownOperator));
+					problemKind = UnknownOperator;
 				} else { // operator is misplaced
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.MisplacedLedOperator));
+					problemKind = MisplacedLedOperator;
 				}
+				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
-			return subParsers;
+			return subParser;
 		}
 		
 		@Override
-		protected SubParseResult<Formula<?>> apply(ParserContext pc,
-				List<INudParser<? extends Formula<?>>> nudParsers,
-				Formula<?> left) throws SyntaxError {
-			final Set<ASTProblem> errors = new LinkedHashSet<ASTProblem>();
-			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
-			final SavedContext savedContext = pc.save();
-			while(iter.hasNext()) {
-				final INudParser<? extends Formula<?>> nudParser = iter.next();
-				try {
-					// FIXME the call to nud may add problems to pc.result
-					// without throwing an exception
-					// => convention: exception + problem if not recoverable
-					//                problem only if recoverable
-					final SubParseResult<? extends Formula<?>> nudResult = nudParser
-							.nud(pc);
-
-					return new SubParseResult<Formula<?>>(
-							nudResult.getParsed(), nudResult.getKind(),
-							nudResult.isClosed());
-					// FIXME check for ambiguities (several succeeding parsers)
-				} catch (SyntaxError e) {
-					errors.add(pc.takeProblem());
-					pc.restore(savedContext);
-				}
-			}
-			if (errors.size() == 1) {
-				throw pc.syntaxError(errors.iterator().next());
-			} else {
-				throw pc.syntaxError(newCompoundError(
-						pc.makeSourceLocation(pc.t), errors));
-			}
+		protected SubParseResult<? extends Formula<?>> apply(ParserContext pc, INudParser<? extends Formula<?>> nudParser,
+						Formula<?> left) throws SyntaxError {
+			return nudParser.nud(pc);
 		}
 		
 	};
@@ -207,25 +171,23 @@ public class MainParsers {
 				throws SyntaxError {
 			final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
 			if (subParser == null) {
-				final List<INudParser<? extends Formula<?>>> nudParsers = pc.getNudParsers();
-				if (nudParsers.isEmpty()) { // no parser exists for current token
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.UnknownOperator));
+				final ProblemKind problemKind;
+				final INudParser<? extends Formula<?>> nudParser = pc.getNudParser();
+				if (nudParser == null) { // no parser exists for current token
+					problemKind = ProblemKind.UnknownOperator;
 				} else { // operator is misplaced
-					throw pc.syntaxError(newOperatorError(pc,
-							ProblemKind.MisplacedNudOperator));
+					problemKind = ProblemKind.MisplacedNudOperator;
 				}
+				throw pc.syntaxError(newOperatorError(pc, problemKind));
 			}
 			return subParser;
 		}
 		
 		@Override
-		protected SubParseResult<Formula<?>> apply(ParserContext pc,
+		protected SubParseResult<? extends Formula<?>> apply(ParserContext pc,
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
-			final SubParseResult<? extends Formula<?>> ledResult = parser.led(left, pc);
-			return new SubParseResult<Formula<?>>(ledResult.getParsed(),
-					ledResult.getKind(), ledResult.isClosed());
+			return parser.led(left, pc);
 		}
 		
 	};
@@ -233,13 +195,13 @@ public class MainParsers {
 	static final int[] NO_TAGS = new int[0];
 	
 	// Core algorithm implementation
-	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
+	static final INudParser<Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
 		
 		@Override
-		public SubParseResult<Formula<?>> nud(ParserContext pc)
+		public SubParseResult<? extends Formula<?>> nud(ParserContext pc)
 				throws SyntaxError {
 		
-			SubParseResult<Formula<?>> left = NUD_APPLIER.apply(pc, null);
+			SubParseResult<? extends Formula<?>> left = NUD_APPLIER.apply(pc, null);
 
 			while (pc.giveProgressDirection() == RIGHT) {
 				left = LED_APPLIER.apply(pc, left.getParsed());
@@ -261,7 +223,7 @@ public class MainParsers {
 		public SubParseResult<Type> nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
 			try {
-				final SubParseResult<Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
+				final SubParseResult<? extends Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
 				final Expression expression = exprResult.getParsed();
 				if (!expression.isATypeExpression()) {
 					throw pc.syntaxError(newInvalidTypeExpr(pc));
