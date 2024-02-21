@@ -29,7 +29,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * <li> A set of <em>hypotheses</em>: predicates that can be used 
  * to prove the goal.
  * <li> A <em>type environment</em> containing all free identifiers 
- * and carrier sets appearing in the goal and hypotheses.
+ * (including carrier sets) appearing in the goal and hypotheses.
  * </ul>
  * The fact that all predicates in the sequent share a common type environment ensures
  * that every free identifier has a unique type and makes the search for fresh
@@ -52,10 +52,14 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * These two subsets are disjoint and need not contain all hypotheses. These
  * subsets have no logical significance. Their sole purpose is to add structure
  * to sequents with a large number of hypotheses. Their sizes are intended to be
- * smaller in comparison the set of all hypotheses.
+ * smaller in comparison with the set of all hypotheses.
  * </p>
- * 
- * 
+ * <p>
+ * Another way of seeing this categorization of hypotheses is that the set of
+ * all hypotheses is partitioned into three sets: <em>selected</em>,
+ * <em>hidden</em> and <em>default</em>. The default hypotheses are then all the
+ * hypotheses that are neither selected nor hidden.
+ * </p>
  * <p>
  * Prover sequents are implemented as immutable. They are created using factory methods
  * in {@link ProverFactory}.
@@ -75,10 +79,10 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
 public interface IProverSequent{
 	
 	/**
-	 * Returns the immutable type environment for the sequent.
+	 * Returns the immutable type environment for this sequent.
 	 * 
 	 * <p>
-	 * This type environment contains all free identifiers and carrier sets
+	 * This type environment contains all free identifiers (including carrier sets)
 	 * appearing in the sequent and can be used to successfully type check all
 	 * predicates appearing in the sequent.
 	 * </p>
@@ -105,25 +109,25 @@ public interface IProverSequent{
 	 * </code>
 	 * </p>
 	 * 
-	 * @return an iterator for all hypotheses occuring in the sequent
+	 * @return an iterator for all hypotheses occurring in the sequent
 	 */
 	Iterable<Predicate> hypIterable();
 	
 	/**
-	 * Searches for the given predicate in the set of hypotheses.
+	 * Tells whether the given predicate belongs to the set of hypotheses.
 	 * 
 	 * @param pred
-	 * 		The predicate to search for.
+	 * 		The predicate to search for
 	 * @return <code>true</code> iff the given predicate is a hypothesis
 	 * 	of this sequent.
 	 */
 	boolean containsHypothesis(Predicate pred);
 	
 	/**
-	 * Searches for the given predicates in the set of hypotheses.
+	 * Tells whether the given predicates belongs to the set of hypotheses.
 	 * 
 	 * @param preds
-	 * 		The predicates to search for.
+	 * 		The predicates to search for
 	 * @return <code>true</code> iff all the given predicates are hypotheses
 	 * 	of this sequent.
 	 */
@@ -139,10 +143,10 @@ public interface IProverSequent{
 	
 	
 	/**
-	 * Searches for the given predicate in the set of selected hypotheses.
+	 * Tells whether the given predicate belongs to the set of selected hypotheses.
 	 * 
 	 * @param pred
-	 * 		The predicate to search for.
+	 * 		The predicate to search for
 	 * @return <code>true</code> iff the given predicate is a selected hypothesis
 	 * 	of this sequent.
 	 */
@@ -152,7 +156,7 @@ public interface IProverSequent{
 	/**
 	 * Returns an iterator for all selected hypotheses of this sequent.
 	 * <p>
-	 * This iterator mantains the order of selected hypotheses. This order is 
+	 * This iterator maintains the order of selected hypotheses. This order is 
 	 * the order in which hypotheses are selected. In case a hypothesis is selected
 	 * a second time, its order does not get modified.
 	 * </p>
@@ -166,13 +170,12 @@ public interface IProverSequent{
 	 * </code>
 	 * </p>
 	 * 
-	 * 
 	 * @return an iterator for all selected hypotheses of this sequent
 	 */
 	Iterable<Predicate> selectedHypIterable();
 	
 	/**
-	 * Searches for the given predicate in the set of hidden hypotheses.
+	 * Tells whether the given predicate belongs to the set of hidden hypotheses.
 	 * 
 	 * @param pred
 	 * 		The predicate to search for.
@@ -203,6 +206,8 @@ public interface IProverSequent{
 	
 	/**
 	 * Returns an iterator for all visible hypotheses of this sequent.
+	 * The visible hypotheses are all the hypotheses that are not hidden.
+	 * They may be selected or not.
 	 * <p>
 	 * This iterator returns hypotheses in the same order as this set was 
 	 * constructed.
