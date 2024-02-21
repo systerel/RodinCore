@@ -286,8 +286,6 @@ public class SubParsers {
 	 */
 	private static abstract class ChoiceNudParser<R> extends AbstractNudParser<R> {
 
-		// True if this operator is syntactically closed, e.g. surrounded by
-		// mandatory brackets (including leading reserved word).
 		private final List<INudParser<? extends R>> nudParsers;
 
 		protected ChoiceNudParser(int kind, int tag, List<INudParser<? extends R>> nudParsers) {
