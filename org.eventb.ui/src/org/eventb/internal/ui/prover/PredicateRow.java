@@ -200,7 +200,7 @@ public class PredicateRow {
 		final boolean skipPostTactic = tacticAppli.isSkipPostTactic();
 		final Set<Predicate> hypSet = isGoal() ? null : singleton(getPredicate());
 		ProverUIUtils.applyTactic(tacticAppli.getTactic(inputs, globalInput),
-				us, hypSet, skipPostTactic, new NullProgressMonitor());
+				us, hypSet, skipPostTactic, tacticAppli.isInterruptable());
 	}
 
 	/**

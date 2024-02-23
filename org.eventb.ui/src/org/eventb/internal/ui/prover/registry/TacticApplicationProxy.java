@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,6 +125,10 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 
 	public boolean isSkipPostTactic() {
 		return provider.isSkipPostTactic();
+	}
+
+	public boolean isInterruptable() {
+		return provider.isInterruptable();
 	}
 
 }
