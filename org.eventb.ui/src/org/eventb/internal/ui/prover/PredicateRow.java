@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static java.util.Collections.singleton;
 import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -198,15 +198,9 @@ public class PredicateRow {
 		final String globalInput = getProverUI().getProofControl().getInput();
 		final IUserSupport us = getUserSupport();
 		final boolean skipPostTactic = tacticAppli.isSkipPostTactic();
-		if (isGoal()) {
-			ProverUIUtils.applyTactic(
-					tacticAppli.getTactic(inputs, globalInput), us, null,
-					skipPostTactic, new NullProgressMonitor());
-			return;
-		}
-		final Set<Predicate> hypSet = Collections.singleton(getPredicate());
+		final Set<Predicate> hypSet = isGoal() ? null : singleton(getPredicate());
 		ProverUIUtils.applyTactic(tacticAppli.getTactic(inputs, globalInput),
-				us, hypSet, skipPostTactic, new NullProgressMonitor());
+				us, hypSet, skipPostTactic, tacticAppli.isInterruptable());
 	}
 
 	/**
@@ -218,11 +212,7 @@ public class PredicateRow {
 		final IUserSupport us = getUserSupport();
 		final String[] inputs = getPredicateText().getResults();
 		final String globalInput = getProverUI().getProofControl().getInput();
-		if (isGoal) {
-			ProverUIUtils.applyInstantiation(null, us, inputs, globalInput);
-			return;
-		}
-		ProverUIUtils.applyInstantiation(pred, us, inputs, globalInput);
+		ProverUIUtils.applyInstantiation(isGoal() ? null : pred, us, inputs, globalInput);
 	}
 
 	/**

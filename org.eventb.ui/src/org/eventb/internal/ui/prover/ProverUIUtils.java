@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
@@ -214,39 +213,6 @@ public class ProverUIUtils {
 
 	/**
 	 * Applies the given tactic using the given user support and arguments.
-	 * 
-	 * @param tactic
-	 *            a tactic to apply
-	 * @param userSupport
-	 *            the user support on which the tactic is to be applied
-	 * @param hyps
-	 *            a set of hypotheses or <code>null</code>
-	 * @param skipPostTactic
-	 *            if <code>true</code>, post tactic will NOT be applied;
-	 *            otherwise post tactic will be applied provided that the user
-	 *            did not deactivate them
-	 * @param pm
-	 *            a progress monitor
-	 */
-	public static void applyTactic(ITactic tactic, IUserSupport userSupport,
-			Set<Predicate> hyps, boolean skipPostTactic, IProgressMonitor pm) {
-		if (pm != null)
-			pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-		try {
-			if (hyps == null) {
-				userSupport.applyTactic(tactic, !skipPostTactic, pm);
-			} else {
-				userSupport.applyTacticToHypotheses(tactic, hyps,
-						!skipPostTactic, pm);
-			}
-		} finally {
-			if (pm != null)
-				pm.done();
-		}
-	}
-
-	/**
-	 * Applies the given tactic using the given user support and arguments.
 	 *
 	 * A progress dialog will be displayed during application.
 	 * If {@code tacticProgress} is true, the dialog is displayed during the
@@ -334,7 +300,7 @@ public class ProverUIUtils {
 			IUserSupport us, String[] inputs, String globalInput) {
 		if (hypothesis == null) {
 			// Apply instantiation to the goal: it is an existential
-			applyTactic(exI(inputs), us, null, false, new NullProgressMonitor());
+			applyTactic(exI(inputs), us, null, false, false);
 		} else {
 			// Apply instantiation to a hypothesis: it is a universal
 			ITactic tactic;
@@ -344,7 +310,7 @@ public class ProverUIUtils {
 			} else {
 				tactic = allD(hypothesis, inputs);
 			}
-			applyTactic(tactic, us, singleton(hypothesis), false, new NullProgressMonitor());
+			applyTactic(tactic, us, singleton(hypothesis), false, false);
 		}
 	}
 	
