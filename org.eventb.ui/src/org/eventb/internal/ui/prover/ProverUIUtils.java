@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
@@ -334,7 +333,7 @@ public class ProverUIUtils {
 			IUserSupport us, String[] inputs, String globalInput) {
 		if (hypothesis == null) {
 			// Apply instantiation to the goal: it is an existential
-			applyTactic(exI(inputs), us, null, false, new NullProgressMonitor());
+			applyTactic(exI(inputs), us, null, false, false);
 		} else {
 			// Apply instantiation to a hypothesis: it is a universal
 			ITactic tactic;
@@ -344,7 +343,7 @@ public class ProverUIUtils {
 			} else {
 				tactic = allD(hypothesis, inputs);
 			}
-			applyTactic(tactic, us, singleton(hypothesis), false, new NullProgressMonitor());
+			applyTactic(tactic, us, singleton(hypothesis), false, false);
 		}
 	}
 	
