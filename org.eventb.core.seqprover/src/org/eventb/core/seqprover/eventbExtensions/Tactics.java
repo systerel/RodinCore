@@ -351,7 +351,7 @@ public class Tactics {
 			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				return (BasicTactics.reasonerTac(new AbstrExpr(),
-						new SingleExprInput(expression, pt.getSequent()
+						new AbstrExpr.Input(expression, pt.getSequent()
 								.typeEnvironment()))).apply(pt, pm);
 			}
 
@@ -385,7 +385,8 @@ public class Tactics {
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				
 				// Apply the abstract expression tactic
-				Object result = abstrExpr(expression).apply(pt, pm);
+				var aeInput = new AbstrExpr.Input(expression, pt.getSequent().typeEnvironment());
+				Object result = BasicTactics.reasonerTac(new AbstrExpr(), aeInput).apply(pt, pm);
 				
 				// Check if it was successful
 				if (result != null) return result;
@@ -413,7 +414,7 @@ public class Tactics {
 					// occur in the hyps or the goal.
 					// In this case, this tactic is unsuccessful. Undo the ae
 					pt.pruneChildren();
-					return "Expression " + expression + " does not occur in goal or selected hypotheses.";
+					return "Expression " + aeInput.getExpression() + " does not occur in goal or selected hypotheses.";
 				}
 				
 				// Immediately deselect the introduced equality so that

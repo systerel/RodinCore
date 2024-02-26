@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,10 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 			setError("Missing expression in Proof Control");
 			return;
 		}
-		final FormulaFactory ff = typeEnv.getFormulaFactory();
-		expression = DLib.parseExpression(ff, exprString);
+		expression = parseExpression(exprString, typeEnv);
 		if (expression == null)
 		{
-			setError("Parse error for expression: " + exprString);
+			// Error message set by parseExpression
 			return;
 		}
 		if (! Lib.typeCheckClosed(expression,typeEnv)){
@@ -51,6 +50,25 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 			return;
 		}
 		error = null;
+	}
+
+	/**
+	 * Try to parse the expression from the input.
+	 *
+	 * If there is an error, this method sets the appropriate error message with
+	 * {@link #setError(String)}.
+	 *
+	 * @param exprString input string to parse
+	 * @param typeEnv    type environment
+	 * @return parsed expression or {@code null} if an error occurred
+	 * @since 3.7
+	 */
+	protected Expression parseExpression(String exprString, ITypeEnvironment typeEnv) {
+		Expression expr = DLib.parseExpression(typeEnv.getFormulaFactory(), exprString);
+		if (expr == null) {
+			setError("Parse error for expression: " + exprString);
+		}
+		return expr;
 	}
 	
 	public SingleExprInput(Expression expression){

@@ -11,12 +11,19 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensionTests;
 
+import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
+import static org.eventb.core.seqprover.ProverLib.deepEquals;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.abstrExpr;
+import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.replay;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.junit.Test;
 
@@ -38,6 +45,10 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerFailure("⊤ |- ⊤", makeInput("@unparsable@"), "Parse error for expression: @unparsable@");
 		// Expression not typecheckable
 		assertReasonerFailure("⊤ |- ⊤", makeInput("x"), "Type check failed for expression: x");
+		// Input is a predicate, but not an equality
+		assertReasonerFailure("⊤ |- ⊤", makeInput("x>2"), "Expect an expression or a predicate in the form ident=expr");
+		// Expression instead of identifier for name
+		assertReasonerFailure("⊤ |- ⊤", makeInput("1=2"), "Expect an expression or a predicate in the form ident=expr");
 	}
 
 	@Test
@@ -49,14 +60,46 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerSuccess("|- a÷b = c", makeInput("a÷b", mTypeEnvironment("a=ℤ;b=ℤ;c=ℤ")),
 				"{a=ℤ; b=ℤ; c=ℤ}[][][] |- b ≠ 0", //
 				"{}[][][b ≠ 0 ;; ae=a÷b] |- a÷b = c");
+		// Fresh name provided
+		assertReasonerSuccess("|- 1+1 = 2", makeInput("two=1+1"),
+				"{}[][][] |- ⊤", //
+				"{}[][][two = 1+1] |- 1+1 = 2");
+		// Fresh name provided conflicts with type environment: fresh one generated
+		assertReasonerSuccess("|- x+1 = 2", makeInput("x=1"), //
+				"{x=ℤ}[][][] |- ⊤", //
+				"{}[][][x0 = 1] |- x+1 = 2");
+	}
+
+	@Test
+	public void replays() throws Exception {
+		// Replay on same sequent
+		assertReplay("|- ⊤", "x = 1", "|- ⊤", "x = 1 |- ⊤");
+		// Replay with additional hypothesis, no conflict
+		assertReplay("|- ⊤", "x = 1", "y = 0 |- ⊤", "y = 0 ;; x = 1 |- ⊤");
+		// Replay with additional hypothesis and conflict: ae generates a fresh ident
+		assertReplay("|- ⊤", "x = 1", "x = 0 |- ⊤", "x = 0 ;; x0 = 1 |- ⊤");
+		// Replay with additional hypothesis and conflict (different types): ae generates a fresh ident
+		assertReplay("|- ⊤", "x = 1", "x = TRUE |- ⊤", "x = TRUE ;; x0 = 1 |- ⊤");
+	}
+
+	/*
+	 * Applies ae(input) on firstSequent, then replays it on secondSequent and
+	 * checks that the result is equal to expectedReplayedSequent.
+	 */
+	private void assertReplay(String firstSequent, String input, String secondSequent, String expectedReplayedSequent) {
+		IProofTreeNode proofTree = makeProofTree(genSeq(firstSequent), null).getRoot();
+		assertNull(abstrExpr(input).apply(proofTree, null));
+		IProofTreeNode proofTree2 = makeProofTree(genSeq(secondSequent), null).getRoot();
+		assertTrue(replay(proofTree2, proofTree, null));
+		assertTrue(deepEquals(genSeq(expectedReplayedSequent), proofTree2.getChildNodes()[1].getSequent()));
 	}
 
 	private IReasonerInput makeInput(String input) {
-		return new SingleExprInput(input, ff.makeTypeEnvironment());
+		return new AbstrExpr.Input(input, ff.makeTypeEnvironment());
 	}
 
 	private IReasonerInput makeInput(String input, ITypeEnvironment typeEnv) {
-		return new SingleExprInput(input, typeEnv);
+		return new AbstrExpr.Input(input, typeEnv);
 	}
 	
 }
