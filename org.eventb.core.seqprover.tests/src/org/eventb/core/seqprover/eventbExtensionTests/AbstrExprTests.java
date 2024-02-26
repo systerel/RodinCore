@@ -23,8 +23,6 @@ import org.junit.Test;
 /**
  * Unit tests for the Abstract expression reasoner
  * 
- * TODO : test that WD lemmas are also added to the hyps
- * 
  * @author Farhad Mehta
  */
 public class AbstrExprTests extends AbstractReasonerTests {
@@ -47,6 +45,10 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerSuccess("x=1 ;; x+1 = 2 |- (x+1)+1 = 3", makeInput("x+1", mTypeEnvironment("x=ℤ")),
 				"{x=ℤ}[][][x=1;; x+1=2] |- ⊤", //
 				"{ae=ℤ; x=ℤ}[][][x=1;; x+1=2;; ae=x+1] |- (x+1)+1=3");
+		// WD added as hypothesis
+		assertReasonerSuccess("|- a÷b = c", makeInput("a÷b", mTypeEnvironment("a=ℤ;b=ℤ;c=ℤ")),
+				"{a=ℤ; b=ℤ; c=ℤ}[][][] |- b ≠ 0", //
+				"{}[][][b ≠ 0 ;; ae=a÷b] |- a÷b = c");
 	}
 
 	private IReasonerInput makeInput(String input) {
