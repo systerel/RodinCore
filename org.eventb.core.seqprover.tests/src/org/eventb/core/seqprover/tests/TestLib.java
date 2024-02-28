@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,14 +97,14 @@ public class TestLib {
 	/**
 	 * Constructs a sequent from a string of the form " Hyps ;H; Hyps ;S; Hyps |-
 	 * goal" where the hypothesis list Hyps is of the form " hyp ;; hyp ;; ... ;;
-	 * hyp ". (If the list is empty, Hyps should be at least as contain one blank space)
+	 * hyp ".
 	 * <p>
 	 * The first list of hypotheses is the list of all hypotheses. The second
 	 * list (after ;H;) is the list of hidden hypotheses. The third list (after
 	 * ;S;) is the list of selected hypotheses. The order of hypotheses in the
 	 * list are kept. Ignoring order, the set of hidden hypotheses and selected
-	 * hypotheses should be disjoint and both are subset of the set of all
-	 * hypotheses.
+	 * hypotheses should be disjoint; if some of their elements are not present
+	 * in the list of all hypotheses, they will be added to it.
 	 * </p>
 	 * <p>
 	 * The type environment of the sequent should be inferrable from the
