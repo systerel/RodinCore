@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,9 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.ui.translators;
 
-import static org.rodinp.keyboard.core.KeyboardUtils.debug;
-
-import java.util.Collection;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.rodinp.keyboard.core.ISymbol;
 
 /**
  * @author htson
@@ -73,37 +68,7 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 		translate(widget, beginIndex, endIndex);
 	}
 
-	/**
-	 * FIXME 
-	 * WARNING THIS IMPLEMENTATION DOES NOT WORK AT ALL
-	 * 
-	 * THIS IMPLEMENTATION IS OVERRIDDEN BY THE LEGACY CODE
-	 * @see LegacyRodinKeyboardTranslator
-	 */
-	protected void translate(AbstractWidgetWrapper widget, int beginIndex,
-			int subStringEndIndex) {
-		if (debug) {
-			debug("***************************************");
-			debug("Begin: " + beginIndex);
-			debug("End: " + subStringEndIndex);
-		}
-		if (beginIndex == subStringEndIndex) {
-			return;
-		}
-		int i = 0;
-		final SingleSymbolTranslator singleTranslator = new SingleSymbolTranslator(
-				widget, textTranslator, debug);
-		for (i = symbolComputer.getMaxSymbolSize(); i > 0; i--) {
-			final Collection<ISymbol> collection = symbolComputer.getSymbols(i);
-			if (collection == null) {
-				continue;
-			}
-			for (ISymbol symbol : collection) {
-				singleTranslator.setSymbol(symbol);
-				singleTranslator.translateAllOccurrences();
-
-			}
-		}
-	}
+	abstract protected void translate(AbstractWidgetWrapper widget, int beginIndex,
+			int subStringEndIndex);
 
 }
