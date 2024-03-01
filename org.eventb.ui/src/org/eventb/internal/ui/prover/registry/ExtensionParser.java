@@ -14,6 +14,8 @@ package org.eventb.internal.ui.prover.registry;
 
 import static org.eclipse.core.runtime.Status.OK_STATUS;
 import static org.eventb.internal.ui.UIUtils.log;
+import static org.eventb.internal.ui.prover.ProverUIUtils.DEBUG;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.duplicateId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidInstance;
@@ -183,9 +185,47 @@ public class ExtensionParser {
 
 		@Override
 		protected void parse(String id, IConfigurationElement element) {
-			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry,
-					dynDropdownRegistry, id));
+			toolbars.add(new ToolbarInfo(computeTactics(id), computeDropdowns(id), computeDynDropdowns(id), id));
 			printDebugRegistration(id, TOOLBAR_TAG);
+		}
+
+		private List<TacticUIInfo> computeTactics(String id) {
+			var tactics = new ArrayList<TacticUIInfo>();
+			for (TacticUIInfo info : globalRegistry.values()) {
+				if (id.equals(info.getToolbar())) {
+					tactics.add(info);
+					if (DEBUG) {
+						debug("Attached tactic " + info.getID() + " to toolbar " + id);
+					}
+				}
+			}
+			return tactics;
+		}
+
+		private ArrayList<DropdownInfo> computeDropdowns(String id) {
+			var dropdowns = new ArrayList<DropdownInfo>();
+			for (final DropdownInfo info : dropdownRegistry.values()) {
+				if (id.equals(info.getToolbar())) {
+					dropdowns.add(info);
+					if (DEBUG) {
+						debug("Attached dropdown " + info.getID() + " to toolbar " + id);
+					}
+				}
+			}
+			return dropdowns;
+		}
+
+		private ArrayList<DynamicDropdownInfo> computeDynDropdowns(String id) {
+			var dynDropdowns = new ArrayList<DynamicDropdownInfo>();
+			for (final DynamicDropdownInfo info : dynDropdownRegistry.values()) {
+				if (id.equals(info.getToolbar())) {
+					dynDropdowns.add(info);
+					if (DEBUG) {
+						debug("Attached dynamic dropdown " + info.getID() + " to toolbar " + id);
+					}
+				}
+			}
+			return dynDropdowns;
 		}
 
 	}
@@ -256,8 +296,8 @@ public class ExtensionParser {
 		tacticSet.parse();
 		mergeListsOfTactics();
 		dropdownSet.parse();
-		toolbarSet.parse();
 		dynDropdownSet.parse();
+		toolbarSet.parse();
 	}
 
 	/**
