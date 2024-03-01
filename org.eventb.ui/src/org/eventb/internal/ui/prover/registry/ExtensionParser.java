@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eventb.internal.ui.prover.registry;
 
 import static org.eclipse.core.runtime.Status.OK_STATUS;
 import static org.eventb.internal.ui.UIUtils.log;
+import static org.eventb.internal.ui.prover.ProverUIUtils.DEBUG;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.duplicateId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidInstance;
@@ -22,10 +24,12 @@ import static org.eventb.internal.ui.prover.registry.ErrorStatuses.missingId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.unknownElement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -183,9 +187,26 @@ public class ExtensionParser {
 
 		@Override
 		protected void parse(String id, IConfigurationElement element) {
-			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry,
-					dynDropdownRegistry, id));
+			toolbars.add(new ToolbarInfo(
+					computeToolbarItems(id, globalRegistry.values(), TacticUIInfo::getToolbar, "tactic"),
+					computeToolbarItems(id, dropdownRegistry.values(), DropdownInfo::getToolbar, "dropdown"),
+					computeToolbarItems(id, dynDropdownRegistry.values(), DynamicDropdownInfo::getToolbar, "dynamic dropdown"),
+					id));
 			printDebugRegistration(id, TOOLBAR_TAG);
+		}
+
+		private <T extends AbstractInfo> List<T> computeToolbarItems(String id, Collection<T> values,
+				Function<T, String> getToolbar, String debugName) {
+			var result = new ArrayList<T>();
+			for (T info : values) {
+				if (id.equals(getToolbar.apply(info))) {
+					result.add(info);
+					if (DEBUG) {
+						debug("Attached " + debugName + " " + info.getID() + " to toolbar " + id);
+					}
+				}
+			}
+			return result;
 		}
 
 	}
@@ -204,7 +225,6 @@ public class ExtensionParser {
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
 	private final List<TacticProviderInfo> anyTactics = new ArrayList<TacticProviderInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
-	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final List<ToolbarInfo> toolbars = new ArrayList<ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 	private final Map<String, DynamicDropdownInfo> dynDropdownRegistry = new HashMap<String, DynamicDropdownInfo>();
@@ -257,8 +277,8 @@ public class ExtensionParser {
 		tacticSet.parse();
 		mergeListsOfTactics();
 		dropdownSet.parse();
-		toolbarSet.parse();
 		dynDropdownSet.parse();
+		toolbarSet.parse();
 	}
 
 	/**
@@ -285,7 +305,6 @@ public class ExtensionParser {
 
 	private void putInRegistry(TacticUIInfo info) {
 		final String id = info.getID();
-		allTacticRegistry.put(id, info);
 
 		switch (info.getTarget()) {
 		case goal:
@@ -317,20 +336,8 @@ public class ExtensionParser {
 		return hypothesisTactics;
 	}
 
-	public Map<String, TacticUIInfo> getAllTacticRegistry() {
-		return allTacticRegistry;
-	}
-
 	public List<ToolbarInfo> getToolbars() {
 		return toolbars;
-	}
-
-	public Map<String, DropdownInfo> getDropdownRegistry() {
-		return dropdownRegistry;
-	}
-
-	public List<DynamicDropdownInfo> getDynTacticRegistry() {
-		return new ArrayList<DynamicDropdownInfo>(dynDropdownRegistry.values());
 	}
 
 }
