@@ -57,7 +57,7 @@ public class FormulaBuilder {
 	private final FormulaFactory ff;
 
 	/**
-	 * Create the builder.
+	 * Creates the builder.
 	 *
 	 * @param ff formula factory to use to build formulas
 	 */
@@ -68,7 +68,7 @@ public class FormulaBuilder {
 	// Types
 
 	/**
-	 * Build the integer type.
+	 * Builds the integer type.
 	 *
 	 * @return the integer type
 	 */
@@ -77,7 +77,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a type corresponding to the set of all relations between two given
+	 * Builds a type corresponding to the set of all relations between two given
 	 * types.
 	 *
 	 * The result is ℙ(left×right).
@@ -93,7 +93,7 @@ public class FormulaBuilder {
 	// Quantifiers
 
 	/**
-	 * Build a bound identifier with the given name and type.
+	 * Builds a bound identifier with the given name and type.
 	 *
 	 * @param name name of the identifier
 	 * @param type type of the identifier
@@ -104,7 +104,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a bound identifier with the given index and type.
+	 * Builds a bound identifier with the given index and type.
 	 *
 	 * @param index index of the identifier
 	 * @param type  type of the identifier
@@ -115,7 +115,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an existential quantification.
+	 * Builds an existential quantification.
 	 *
 	 * @param decls bound identifier declarations
 	 * @param pred  quantified predicate
@@ -126,7 +126,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an existential quantification with a single bound identifier.
+	 * Builds an existential quantification with a single bound identifier.
 	 *
 	 * @param decl bound identifier declaration
 	 * @param pred quantified predicate
@@ -137,7 +137,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a universal quantification.
+	 * Builds a universal quantification.
 	 *
 	 * @param decls bound identifier declarations
 	 * @param pred  quantified predicate
@@ -148,7 +148,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a universal quantification with a single bound identifier.
+	 * Builds a universal quantification with a single bound identifier.
 	 *
 	 * @param decl bound identifier declaration
 	 * @param pred quantified predicate
@@ -161,7 +161,7 @@ public class FormulaBuilder {
 	// Expressions
 
 	/**
-	 * Build a comprehension set.
+	 * Builds a comprehension set.
 	 *
 	 * Depending on {@code form}, the set can be: { expr ∣ pred }, { decls · pred ∣
 	 * expr } or {@code λ decls · pred ∣ expr}.
@@ -178,7 +178,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a comprehension set with a single bound identifier.
+	 * Builds a comprehension set with a single bound identifier.
 	 *
 	 * Depending on {@code form}, the set can be: { expr ∣ pred }, { decl · pred ∣
 	 * expr } or {@code λ decl · pred ∣ expr}.
@@ -195,7 +195,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an integer literal.
+	 * Builds an integer literal.
 	 *
 	 * @param i value of the literal
 	 * @return integer literal with the given value
@@ -205,7 +205,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a bijection.
+	 * Builds a bijection.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -216,7 +216,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an interval set.
+	 * Builds an interval set.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -227,7 +227,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a maps to.
+	 * Builds a maps to.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -238,7 +238,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an addition.
+	 * Builds an addition.
 	 *
 	 * @param children children expressions
 	 * @return the expression children[0] + children[1] + ...
@@ -248,7 +248,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a multiplication.
+	 * Builds a multiplication.
 	 *
 	 * @param children children expressions
 	 * @return the expression children[0] ∗ children[1] ∗ ...
@@ -258,7 +258,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a subtraction.
+	 * Builds a subtraction.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -269,7 +269,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a division.
+	 * Builds a division.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -280,7 +280,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an exponentiation.
+	 * Builds an exponentiation.
 	 *
 	 * @param left  left-hand side of the expression
 	 * @param right right-hand side of the expression
@@ -293,7 +293,7 @@ public class FormulaBuilder {
 	// Predicates
 
 	/**
-	 * Build a conjunction of predicates.
+	 * Builds a conjunction of predicates.
 	 *
 	 * @param preds predicates to conjunct
 	 * @return conjunction of the given predicates
@@ -313,10 +313,10 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a set membership predicate.
+	 * Builds a set membership predicate.
 	 *
 	 * @param element element to test
-	 * @param set set on which membership is tested
+	 * @param set     set on which membership is tested
 	 * @return the predicate element ∈ set
 	 */
 	public Predicate in(Expression element, Expression set) {
@@ -324,9 +324,9 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a logical implication.
+	 * Builds a logical implication.
 	 *
-	 * @param left left-hand side of the implication
+	 * @param left  left-hand side of the implication
 	 * @param right right-hand side of the implication
 	 * @return the predicate left ⇒ right
 	 */
@@ -335,9 +335,9 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build an equal relation.
+	 * Builds an equal relation.
 	 *
-	 * @param left left-hand side of the relation
+	 * @param left  left-hand side of the relation
 	 * @param right right-hand side of the relation
 	 * @return the predicate left = right
 	 */
@@ -346,11 +346,11 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a not-equal relation.
+	 * Builds a not-equal relation.
 	 *
 	 * The not equal is returned normalised as the negation of an equality.
 	 *
-	 * @param left left-hand side of the relation
+	 * @param left  left-hand side of the relation
 	 * @param right right-hand side of the relation
 	 * @return the predicate ¬ left = right
 	 */
@@ -359,9 +359,9 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a greater-or-equal relation.
+	 * Builds a greater-or-equal relation.
 	 *
-	 * @param left left-hand side of the relation
+	 * @param left  left-hand side of the relation
 	 * @param right right-hand side of the relation
 	 * @return the predicate left ≥ right
 	 */
@@ -370,9 +370,9 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a less-or-equal relation.
+	 * Builds a less-or-equal relation.
 	 *
-	 * @param left left-hand side of the relation
+	 * @param left  left-hand side of the relation
 	 * @param right right-hand side of the relation
 	 * @return the predicate left ≤ right
 	 */
@@ -381,7 +381,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build a disjunction of predicates.
+	 * Builds a disjunction of predicates.
 	 *
 	 * @param preds predicates to conjunct
 	 * @return disjunction of the given predicates
@@ -391,7 +391,7 @@ public class FormulaBuilder {
 	}
 
 	/**
-	 * Build the negation of a predicate.
+	 * Builds the negation of a predicate.
 	 *
 	 * @param pred predicate to negate
 	 * @return negation of the given predicate
