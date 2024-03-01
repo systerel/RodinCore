@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +64,18 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		withErrorMessage = true;
 	}
 
-	protected abstract SuccessfulTest[] getSuccessfulTests();
+	/**
+	 * Returns successful test cases.
+	 *
+	 * @return successful test cases
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #assertReasonerSuccess(String, IReasonerInput, String...)}
+	 *             with each test case instead.
+	 */
+	@Deprecated(since="3.7")
+	protected SuccessfulTest[] getSuccessfulTests() {
+		return new SuccessfulTest[0];
+	}
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
@@ -116,7 +128,18 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 						.size()]);
 	}
 
-	protected abstract String [] getUnsuccessfulTests();
+	/**
+	 * Returns unsuccessful test cases.
+	 *
+	 * @return unsuccessful test cases
+	 * @deprecated Do not override this method anymore. Call
+	 *             {@link #assertReasonerFailure(String, IReasonerInput, String)}
+	 *             with each test case instead.
+	 */
+	@Deprecated(since="3.7")
+	protected String[] getUnsuccessfulTests() {
+		return new String[0];
+	}
 	
 	protected Collection<UnsuccessfullReasonerApplication> makeIncorrectPositionApplication(
 			String sequentImage, String predicateImage, String positionImage) {
@@ -159,6 +182,14 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 							+ " at position " + position));
 		}
 		return unsuccessfullReasonerApps;
+	}
+
+	protected IReasonerInput input(String position) {
+		return new AbstractManualInference.Input(null, makePosition(position));
+	}
+
+	protected IReasonerInput input(String hyp, String position) {
+		return new AbstractManualInference.Input(genPred(hyp), makePosition(position));
 	}
 
 //	@Override
