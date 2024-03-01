@@ -24,10 +24,12 @@ import static org.eventb.internal.ui.prover.registry.ErrorStatuses.missingId;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.unknownElement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -185,47 +187,26 @@ public class ExtensionParser {
 
 		@Override
 		protected void parse(String id, IConfigurationElement element) {
-			toolbars.add(new ToolbarInfo(computeTactics(id), computeDropdowns(id), computeDynDropdowns(id), id));
+			toolbars.add(new ToolbarInfo(
+					computeToolbarItems(id, globalRegistry.values(), TacticUIInfo::getToolbar, "tactic"),
+					computeToolbarItems(id, dropdownRegistry.values(), DropdownInfo::getToolbar, "dropdown"),
+					computeToolbarItems(id, dynDropdownRegistry.values(), DynamicDropdownInfo::getToolbar, "dynamic dropdown"),
+					id));
 			printDebugRegistration(id, TOOLBAR_TAG);
 		}
 
-		private List<TacticUIInfo> computeTactics(String id) {
-			var tactics = new ArrayList<TacticUIInfo>();
-			for (TacticUIInfo info : globalRegistry.values()) {
-				if (id.equals(info.getToolbar())) {
-					tactics.add(info);
+		private <T extends AbstractInfo> List<T> computeToolbarItems(String id, Collection<T> values,
+				Function<T, String> getToolbar, String debugName) {
+			var result = new ArrayList<T>();
+			for (T info : values) {
+				if (id.equals(getToolbar.apply(info))) {
+					result.add(info);
 					if (DEBUG) {
-						debug("Attached tactic " + info.getID() + " to toolbar " + id);
+						debug("Attached " + debugName + " " + info.getID() + " to toolbar " + id);
 					}
 				}
 			}
-			return tactics;
-		}
-
-		private ArrayList<DropdownInfo> computeDropdowns(String id) {
-			var dropdowns = new ArrayList<DropdownInfo>();
-			for (final DropdownInfo info : dropdownRegistry.values()) {
-				if (id.equals(info.getToolbar())) {
-					dropdowns.add(info);
-					if (DEBUG) {
-						debug("Attached dropdown " + info.getID() + " to toolbar " + id);
-					}
-				}
-			}
-			return dropdowns;
-		}
-
-		private ArrayList<DynamicDropdownInfo> computeDynDropdowns(String id) {
-			var dynDropdowns = new ArrayList<DynamicDropdownInfo>();
-			for (final DynamicDropdownInfo info : dynDropdownRegistry.values()) {
-				if (id.equals(info.getToolbar())) {
-					dynDropdowns.add(info);
-					if (DEBUG) {
-						debug("Attached dynamic dropdown " + info.getID() + " to toolbar " + id);
-					}
-				}
-			}
-			return dynDropdowns;
+			return result;
 		}
 
 	}
