@@ -134,6 +134,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.EqvLR;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqvRL;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
+import org.eventb.internal.core.seqprover.eventbExtensions.ExponentiationStep;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteCompset;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteDom;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunConv;
@@ -184,9 +185,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRigh
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualCardRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualFunImgDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqualFunImgDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
@@ -3644,6 +3645,31 @@ public class Tactics {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link ExponentiationStep} reasoner for a given position
+	 * where it can be applied.
+	 *
+	 * @param hyp      a hypothesis or {@code null} if the application is in goal
+	 * @param position the position of the application
+	 * @return the tactic "definition of exponentiation step"
+	 * @since 3.7
+	 */
+	public static ITactic exponentiationStep(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new ExponentiationStep(), new ExponentiationStep.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner {@link ExponentiationStep}
+	 * to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.7
+	 */
+	public static List<IPosition> exponentiationStepGetPositions(Predicate predicate) {
+		return new ExponentiationStep().getPositions(predicate, true);
 	}
 
 }

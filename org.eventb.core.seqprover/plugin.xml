@@ -549,6 +549,11 @@
             id="equalFunImgDefRewrites"
             name="%equalFunImgDefRewritesName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ExponentiationStep"
+            id="exponentiationStep"
+            name="%exponentiationStepName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

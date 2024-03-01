@@ -131,27 +131,27 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 
 			@Override
 			public boolean select(AssociativeExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
 			public boolean select(AssociativePredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(AtomicExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
 			public boolean select(BinaryPredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(BoolExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
@@ -161,62 +161,62 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 
 			@Override
 			public boolean select(BoundIdentifier identifier) {
-				return isApplicable(identifier);
+				return isExpressionApplicable(identifier);
 			}
 
 			@Override
 			public boolean select(FreeIdentifier identifier) {
-				return isApplicable(identifier);
+				return isExpressionApplicable(identifier);
 			}
 
 			@Override
 			public boolean select(IntegerLiteral literal) {
-				return isApplicable(literal);
+				return isExpressionApplicable(literal);
 			}
 
 			@Override
 			public boolean select(LiteralPredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(QuantifiedExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
 			public boolean select(QuantifiedPredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(RelationalPredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(SetExtension expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
 			public boolean select(SimplePredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(UnaryExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 
 			@Override
 			public boolean select(UnaryPredicate pred) {
-				return isApplicable(pred);
+				return isPredicateApplicable(pred);
 			}
 
 			@Override
 			public boolean select(BinaryExpression expression) {
-				return isApplicable(expression);
+				return isExpressionApplicable(expression);
 			}
 		});
 
