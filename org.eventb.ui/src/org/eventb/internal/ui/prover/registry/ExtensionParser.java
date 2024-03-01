@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,7 +204,6 @@ public class ExtensionParser {
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
 	private final List<TacticProviderInfo> anyTactics = new ArrayList<TacticProviderInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
-	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final List<ToolbarInfo> toolbars = new ArrayList<ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 	private final Map<String, DynamicDropdownInfo> dynDropdownRegistry = new HashMap<String, DynamicDropdownInfo>();
@@ -285,7 +284,6 @@ public class ExtensionParser {
 
 	private void putInRegistry(TacticUIInfo info) {
 		final String id = info.getID();
-		allTacticRegistry.put(id, info);
 
 		switch (info.getTarget()) {
 		case goal:
@@ -317,20 +315,8 @@ public class ExtensionParser {
 		return hypothesisTactics;
 	}
 
-	public Map<String, TacticUIInfo> getAllTacticRegistry() {
-		return allTacticRegistry;
-	}
-
 	public List<ToolbarInfo> getToolbars() {
 		return toolbars;
-	}
-
-	public Map<String, DropdownInfo> getDropdownRegistry() {
-		return dropdownRegistry;
-	}
-
-	public List<DynamicDropdownInfo> getDynTacticRegistry() {
-		return new ArrayList<DynamicDropdownInfo>(dynDropdownRegistry.values());
 	}
 
 }
