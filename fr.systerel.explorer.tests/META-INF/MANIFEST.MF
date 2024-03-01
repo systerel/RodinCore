@@ -13,6 +13,6 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  org.rodinp.core,
  org.eventb.core.seqprover
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Automatic-Module-Name: fr.systerel.explorer.tests
