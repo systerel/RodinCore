@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,17 @@ public class DTInductionTests extends AbstractManualReasonerTests {
 				"{}[][][] |- ∀ l⦂Induc(ℤ) · l=ind0",
 				"{}[][][] |- ∀ p_ind1_0⦂Induc(ℤ) · (∀ l · l=p_ind1_0) ⇒ (∀ l · l=ind1(p_ind1_0))",
 				"{}[][][]|- ∀ p_ind2_0⦂Induc(ℤ), p_ind2_1 · (∀ l · l=p_ind2_0) ∧ (∀ l · l=p_ind2_1) ⇒ (∀ l · l=ind2(p_ind2_0, p_ind2_1))");
+
+		// Induction on a predicate with a guard
+		assertReasonerSuccess("|- ∀ x · x ∈ Induc(ℕ) ⇒ x ∈ S", input("0"), //
+				"{S=ℙ(Induc(ℤ))}[][][] |- ind0 ∈ Induc(ℕ) ⇒ ind0 ∈ S", //
+				"{S=ℙ(Induc(ℤ))}[][][] |- ∀ a ·" //
+						+ "   (a ∈ Induc(ℕ) ⇒ a ∈ S)" //
+						+ "⇒ (ind1(a) ∈ Induc(ℕ) ⇒ ind1(a) ∈ S)",
+				"{S=ℙ(Induc(ℤ))}[][][] |- ∀ a, b · " //
+						+ "   (a ∈ Induc(ℕ) ⇒ a ∈ S)" //
+						+ " ∧ (b ∈ Induc(ℕ) ⇒ b ∈ S)" //
+						+ "⇒ (ind2(a, b) ∈ Induc(ℕ) ⇒ ind2(a, b) ∈ S)");
 	}
 
 	@Test
