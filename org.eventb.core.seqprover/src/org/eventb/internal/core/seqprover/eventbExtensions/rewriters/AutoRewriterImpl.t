@@ -4524,7 +4524,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Cset(decls, SubsetEq(bi@BoundIdentifier(_), S), bi) -> {
 	    		final int nbBound = `decls.length;
-	    		if (level2 && notLocallyBound(`S, nbBound)) {
+	    		if (level2 && notLocallyBound(`S, nbBound) && ((BoundIdentifier)`bi).getBoundIndex() < nbBound) {
 	    			result = makeUnaryExpression(POW, `S.shiftBoundIdentifiers(-nbBound));
 	    			trace(expression, result, "SIMP_COMPSET_SUBSETEQ");
     				return result;

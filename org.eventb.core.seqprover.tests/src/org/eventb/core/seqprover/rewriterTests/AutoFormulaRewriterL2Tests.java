@@ -1667,6 +1667,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewriteExpr("{x, y⦂U · x⊆S ∣ y}", "S=ℙ(T)");
 		noRewriteExpr("{x, y· x×y⊆S ∣ x × y}", "S=ℙ(T×U)");
 		noRewriteExpr("{x, y⦂T · x⊆S∪{y} ∣ x}", "S=ℙ(T)");
+		noRewriteExpr("{y · y⊆S ∣ {x⦂ℙ(T) · y⊆S ∣ y}}", "S=ℙ(T)");
 	}
 
 	/**
