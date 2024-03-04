@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class ProofSerializationTests extends BuilderTest {
 
 	private static ITactic autoRewriteL2() {
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
-		final IReasonerDesc desc = registry.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2:1");
+		final IReasonerDesc desc = registry.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2:2");
 		return BasicTactics.reasonerTac(desc.getInstance(), new EmptyInput());
 	}
 
