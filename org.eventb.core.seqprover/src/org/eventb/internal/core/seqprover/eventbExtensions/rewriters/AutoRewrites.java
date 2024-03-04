@@ -55,7 +55,7 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		// The parameter is the version of the associated level.
 		// Names of existing levels must not be changed to ensure backward
 		// compatibility of reasoner ids.
-		L0(4), L1(1), L2(1), L3(1), L4(0), L5(0);
+		L0(4), L1(1), L2(2), L3(2), L4(1), L5(0);
 
 		public static final Level LATEST = Level.latest();
 

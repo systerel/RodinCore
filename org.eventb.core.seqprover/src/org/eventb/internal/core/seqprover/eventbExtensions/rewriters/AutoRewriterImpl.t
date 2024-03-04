@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4524,8 +4524,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Cset(decls, SubsetEq(bi@BoundIdentifier(_), S), bi) -> {
 	    		final int nbBound = `decls.length;
-	    		if (level2 && notLocallyBound(`S, nbBound)) {
-	    			result = makeUnaryExpression(POW, `S);
+	    		if (level2 && notLocallyBound(`S, nbBound) && ((BoundIdentifier)`bi).getBoundIndex() < nbBound) {
+	    			result = makeUnaryExpression(POW, `S.shiftBoundIdentifiers(-nbBound));
 	    			trace(expression, result, "SIMP_COMPSET_SUBSETEQ");
     				return result;
 	    		}
