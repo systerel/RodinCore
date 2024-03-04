@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1662,6 +1662,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	@Test
 	public void testSIMP_COMPSET_SUBSETEQ() {
 		rewriteExpr("{x, y⦂U · x⊆S ∣ x}", "ℙ(S)", "S=ℙ(T)");
+		rewriteExpr("{y · y⊆S ∣ {x · x⊆S∖y ∣ x}}", "{y · y⊆S ∣ ℙ(S∖y)}", "S=ℙ(T)");
 
 		noRewriteExpr("{x, y⦂U · x⊆S ∣ y}", "S=ℙ(T)");
 		noRewriteExpr("{x, y· x×y⊆S ∣ x × y}", "S=ℙ(T×U)");
