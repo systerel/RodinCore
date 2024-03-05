@@ -28,7 +28,7 @@ import org.eventb.core.seqprover.IReasonerInput;
  * @author Farhad Mehta
  * @since 1.0
  */
-public class ReplayHints {
+public class ReplayHints implements Cloneable {
 	
 	private HashMap<FreeIdentifier, Expression> freeIdentRename;
 	private final FormulaFactory factory;
