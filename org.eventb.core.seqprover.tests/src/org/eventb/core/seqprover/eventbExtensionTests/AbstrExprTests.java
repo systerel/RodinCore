@@ -44,7 +44,6 @@ public class AbstrExprTests extends AbstractReasonerTests {
 
 	@Test
 	public void success() throws Exception {
-		// hyp not univ quantified implication, but still univ quantified
 		assertReasonerSuccess("x=1 ;; x+1 = 2 |- (x+1)+1 = 3", makeInput("x+1", mTypeEnvironment("x=ℤ")),
 				"{x=ℤ}[][][x=1;; x+1=2] |- ⊤", //
 				"{ae=ℤ; x=ℤ}[][][x=1;; x+1=2;; ae=x+1] |- (x+1)+1=3");
