@@ -29,7 +29,6 @@ import org.eventb.core.seqprover.IReasonerInput;
  * @since 1.0
  */
 public class ReplayHints {
-//	 TODO : Make interface & cleanup
 	
 	private HashMap<FreeIdentifier, Expression> freeIdentRename;
 	private final FormulaFactory factory;
