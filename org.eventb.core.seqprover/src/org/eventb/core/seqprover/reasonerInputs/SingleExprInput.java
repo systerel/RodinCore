@@ -121,13 +121,13 @@ public class SingleExprInput implements IReasonerInput, ITranslatableReasonerInp
 	}
 	
 	public SingleExprInput(IReasonerInputReader reader) throws SerializeException {
-		final Expression[] preds = reader.getExpressions(SERIALIZATION_KEY);
-		if (preds.length != 1) {
+		final Expression[] exprs = reader.getExpressions(SERIALIZATION_KEY);
+		if (exprs.length != 1) {
 			throw new SerializeException(
 					new IllegalStateException("Expected exactly one expression")
 			);
 		}
-		expression = preds[0];
+		expression = exprs[0];
 	}
 
 	@Override
