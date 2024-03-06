@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2023 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,12 +59,10 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 		return Tactics.dtDCGetPositions(predicate);
 	}
 
-	@Override
-	protected String[] getTestGetPositions() {
-		return new String [] {
-				"∀ l⦂SD · l=l1", "1.1",
-				"∀ l ⦂ SD · destr1(l) = 0", "",
-		};
+	@Test
+	public void testGetPositions() {
+		assertGetPositions("∀ l⦂SD · l=l1", "1.1");
+		assertGetPositions("∀ l ⦂ SD · destr1(l) = 0");
 	}
 
 	@Test
