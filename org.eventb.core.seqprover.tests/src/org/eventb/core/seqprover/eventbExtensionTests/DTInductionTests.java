@@ -12,14 +12,12 @@ package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.dtInducGetPositions;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
 import org.junit.Test;
 
@@ -45,16 +43,6 @@ public class DTInductionTests extends AbstractManualReasonerTests {
 
 	protected IReasonerInput input(String input) {
 		return new DTInduction.Input(null, makePosition(input));
-	}
-
-	public void assertReasonerSuccess(String sequentImage, IReasonerInput input, String... newSequents)
-			throws UntranslatableException {
-		assertReasonerSuccess(genSeq(sequentImage, ff), input, newSequents);
-	}
-
-	public void assertReasonerFailure(String sequentImage, IReasonerInput input, String reason)
-			throws UntranslatableException {
-		assertReasonerFailure(genSeq(sequentImage, ff), input, reason);
 	}
 
 	@Test

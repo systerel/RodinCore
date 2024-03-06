@@ -20,7 +20,6 @@ import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L0;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L1;
 import static org.eventb.internal.core.seqprover.eventbExtensions.EqHe.Level.L2;
@@ -150,16 +149,6 @@ public class EhTests extends AbstractReasonerTests {
 	protected HypothesisReasoner.Input makeInput(String predImage) {
 		final Predicate pred = genPred(predImage, ff);
 		return new HypothesisReasoner.Input(pred);
-	}
-
-	public void assertReasonerSuccess(String sequentImage, IReasonerInput input, String... newSequents)
-			throws UntranslatableException {
-		assertReasonerSuccess(genSeq(sequentImage, ff), input, newSequents);
-	}
-
-	public void assertReasonerFailure(String sequentImage, IReasonerInput input, String reason)
-			throws UntranslatableException {
-		assertReasonerFailure(genSeq(sequentImage, ff), input, reason);
 	}
 
 	/**

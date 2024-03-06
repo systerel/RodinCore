@@ -215,7 +215,7 @@ public abstract class AbstractReasonerTests {
 	 */
 	public void assertReasonerFailure(String sequentImage, IReasonerInput input,
 			String reason) throws UntranslatableException {
-		assertReasonerFailure(genSeq(sequentImage), input, reason);
+		assertReasonerFailure(genSeq(sequentImage, ff), input, reason);
 	}
 
 	/**
@@ -318,7 +318,7 @@ public abstract class AbstractReasonerTests {
 	 */
 	public void assertReasonerSuccess(String sequentImage, IReasonerInput input,
 			String... newSequents) throws UntranslatableException {
-		assertReasonerSuccess(genSeq(sequentImage), input, newSequents);
+		assertReasonerSuccess(genSeq(sequentImage, ff), input, newSequents);
 	}
 
 	/**

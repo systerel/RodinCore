@@ -17,7 +17,6 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.UntranslatableException;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
@@ -47,11 +46,6 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 	protected IReasonerInput input(String hypothesis, String position) {
 		return new AbstractManualInference.Input(TestLib.genPred(ff.makeTypeEnvironment(), hypothesis),
 				makePosition(position));
-	}
-
-	public void assertReasonerSuccess(String sequent, IReasonerInput input, String... newSequentImages)
-			throws UntranslatableException {
-		assertReasonerSuccess(TestLib.genSeq(sequent, ff), input, newSequentImages);
 	}
 
 	@Override
