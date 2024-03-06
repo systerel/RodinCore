@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
 /**
- * Generates the introduntion rule for universal quantification.
+ * Generates the introduction rule for universal quantification.
  * 
  * <p>
  * This reasoner frees all universally quantified variables in a goal.
