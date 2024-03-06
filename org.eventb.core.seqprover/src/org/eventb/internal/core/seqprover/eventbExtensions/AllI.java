@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 
@@ -73,14 +75,7 @@ public class AllI extends EmptyInputReasoner {
 	}
 
 	private String displayFreeIdents(FreeIdentifier[] freeIdents) {
-		final StringBuilder sb = new StringBuilder();
-		String sep = "";
-		for (int i = 0; i < freeIdents.length; i++) {
-			sb.append(sep);
-			sep = ",";
-			sb.append(freeIdents[i].toString());
-		}
-		return sb.toString();
+		return stream(freeIdents).map(Object::toString).collect(joining(","));
 	}
 
 }
