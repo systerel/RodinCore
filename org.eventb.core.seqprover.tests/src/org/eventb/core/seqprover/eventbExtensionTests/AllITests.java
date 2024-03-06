@@ -11,7 +11,6 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ import org.junit.Test;
  */
 public class AllITests extends AbstractReasonerTests {
 	
-	private static final EmptyInput NO_INPUT = new EmptyInput();
+	private static final AllI.Input NO_INPUT = new AllI.Input();
 
 	@Override
 	public String getReasonerID() {
@@ -33,14 +32,24 @@ public class AllITests extends AbstractReasonerTests {
 	public void success() throws Exception {
 		// one bound variable
 		assertReasonerSuccess("|- ∀x·x=1", NO_INPUT, "{}[][][] |- x=1");
+		assertReasonerSuccess("|- ∀x·x=1", makeInput("n"), "{}[][][] |- n=1");
 		// two predicates generated
 		assertReasonerSuccess("|- ∀x·x=1 ∧ x=2", NO_INPUT, "{}[][][] |- x=1 ∧ x=2");
+		assertReasonerSuccess("|- ∀x·x=1 ∧ x=2", makeInput("n"), "{}[][][] |- n=1 ∧ n=2");
 		// two bound variables
 		assertReasonerSuccess("|- ∀x,y·x↦y = 1↦2", NO_INPUT, "{}[][][] |- x↦y = 1↦2");
+		assertReasonerSuccess("|- ∀x,y·x↦y = 1↦2", makeInput("n"), "{}[][][] |- n↦y = 1↦2");
+		assertReasonerSuccess("|- ∀x,y·x↦y = 1↦2", makeInput("n, m"), "{}[][][] |- n↦m = 1↦2");
 		// name collision
 		assertReasonerSuccess("x=3 |- ∀x·x=1", NO_INPUT, "{}[][][x=3] |- x0=1");
+		assertReasonerSuccess("n=3 |- ∀x·x=1", makeInput("n"), "{}[][][n=3] |- n0=1");
+		// name collision in user input
+		assertReasonerSuccess("|- ∀x,y·x↦y = 1↦2", makeInput("n, n"), "{}[][][] |- n↦n0 = 1↦2");
 		// name collision, different type
 		assertReasonerSuccess("x=TRUE |- ∀x·x=1", NO_INPUT, "{}[][][x=TRUE] |- x0=1");
+		assertReasonerSuccess("n=TRUE |- ∀x·x=1", makeInput("n"), "{}[][][n=TRUE] |- n0=1");
+		// extra names provided
+		assertReasonerSuccess("|- ∀x·x=1", makeInput("n, m"), "{}[][][] |- n=1");
 	}
 
 	@Test
@@ -49,6 +58,14 @@ public class AllITests extends AbstractReasonerTests {
 		assertReasonerFailure(" ⊤ |- ⊥ ", NO_INPUT, "Goal is not universally quantified");
 		// goal not universally quantified
 		assertReasonerFailure(" ⊤ |- ∃x·x=1 ", NO_INPUT, "Goal is not universally quantified");
+		// invalid names provided
+		assertReasonerFailure("|- ∀x·x=1", makeInput("1"), "Provided name '1' is not a valid identifier");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("1,x,+"), "Some provided names are not valid identifiers: 1, +");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("x'"), "Provided name 'x'' is not a valid identifier");
+	}
+
+	private AllI.Input makeInput(String input) {
+		return new AllI.Input(input, ff);
 	}
 
 }
