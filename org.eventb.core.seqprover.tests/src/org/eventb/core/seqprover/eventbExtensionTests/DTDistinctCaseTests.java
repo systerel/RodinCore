@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
 import java.util.List;
 
@@ -18,8 +19,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.junit.Test;
 
 /**
@@ -39,13 +39,17 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 
 	// Make an input from a position (in the goal)
 	protected IReasonerInput input(String position) {
-		return new AbstractManualInference.Input(null, makePosition(position));
+		return new DTDistinctCase.Input(null, makePosition(position));
+	}
+
+	// Make an input from a position (in the goal) and an input
+	protected IReasonerInput inputWithNames(String position, String input) {
+		return new DTDistinctCase.Input(null, makePosition(position), input, ff);
 	}
 
 	// Make an input from a position in a given hypothesis
 	protected IReasonerInput input(String hypothesis, String position) {
-		return new AbstractManualInference.Input(TestLib.genPred(ff.makeTypeEnvironment(), hypothesis),
-				makePosition(position));
+		return new DTDistinctCase.Input(genPred(hypothesis, ff), makePosition(position));
 	}
 
 	@Override
@@ -82,6 +86,30 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 				"{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l1∈Induc(ℕ);;p_ind1_0∈Induc(ℕ);;l1=ind1(p_ind1_0)] |- ⊥",
 				"{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l1∈Induc(ℕ);;p_ind2_0∈Induc(ℕ);;"
 						+ "p_ind2_1∈Induc(ℕ);;l1=ind2(p_ind2_0, p_ind2_1)] |- ⊥");
+		// Applied to the goal with user-provided names
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "a, b, c"),
+				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; a=ℤ}[][][l1=cons1(a)] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; b=ℤ; c=ℤ}[][][l1=cons2(b, c)] |- ∀ l⦂SD · l=l1");
+		// Applied to the goal with user-provided names (too few)
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "a"),
+				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; a=ℤ}[][][l1=cons1(a)] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l1=cons2(p_destr2_0, p_destr2_1)] |- ∀ l⦂SD · l=l1");
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "a, b"),
+				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; a=ℤ}[][][l1=cons1(a)] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; b=ℤ; p_destr2_1=ℤ}[][][l1=cons2(b, p_destr2_1)] |- ∀ l⦂SD · l=l1");
+		// Applied to the goal with user-provided names (too many)
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "a, b, c, d"),
+				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; a=ℤ}[][][l1=cons1(a)] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; b=ℤ; c=ℤ}[][][l1=cons2(b, c)] |- ∀ l⦂SD · l=l1");
+		// Applied to the goal with user-provided names (conflicts)
+		assertReasonerSuccess("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "l1, p_destr2_1"),
+				"{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; l2=ℤ}[][][l1=cons1(l2)] |- ∀ l⦂SD · l=l1",
+				"{l1=SD; p_destr2_1=ℤ; p_destr2_2=ℤ}[][][l1=cons2(p_destr2_1, p_destr2_2)] |- ∀ l⦂SD · l=l1");
 	}
 
 	@Test
@@ -92,6 +120,8 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 				"Inference " + getReasonerID() + " is not applicable for ∀l·l=l1 at position 1.0");
 		assertReasonerFailure("|- ∀ l ⦂ SD · destr1(l) = 0", input("1.0.0"),
 				"Inference " + getReasonerID() + " is not applicable for ∀l·destr1(l)=0 at position 1.0.0");
+		assertReasonerFailure("|- ∀ l⦂SD · l=l1", inputWithNames("1.1", "x, +, 1, y'"),
+				"Some provided names are not valid identifiers: +, 1, y'");
 	}
 
 }

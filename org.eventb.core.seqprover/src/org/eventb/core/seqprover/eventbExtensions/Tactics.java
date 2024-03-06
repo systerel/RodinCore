@@ -113,7 +113,6 @@ import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
@@ -3421,8 +3420,26 @@ public class Tactics {
 	 * @since 2.0
 	 */
 	public static ITactic dtDistinctCase(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DTDistinctCase(),
-				new AbstractManualInference.Input(hyp, position));
+		return reasonerTac(new DTDistinctCase(), new DTDistinctCase.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the tactic "Datatype Distinct Case" for a given position where this
+	 * tactic can be applied, with an input.
+	 *
+	 * The input should be the user-provided, comma-separated list of identifiers to
+	 * use to generate fresh names for the constructor parameters.
+	 *
+	 * @param hyp      a hypothesis or <code>null</code> if the application happens
+	 *                 in goal
+	 * @param position the position of the application
+	 * @param input    user input
+	 * @return the tactic "Datatype Distinct Case"
+	 * @since 3.7
+	 */
+	public static ITactic dtDistinctCase(Predicate hyp, IPosition position, String input) {
+		return (pt, pm) -> reasonerTac(new DTDistinctCase(),
+				new DTDistinctCase.Input(hyp, position, input, pt.getFormulaFactory())).apply(pt, pm);
 	}
 
 	/**
