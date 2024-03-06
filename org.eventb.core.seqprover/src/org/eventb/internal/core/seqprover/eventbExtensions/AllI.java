@@ -12,8 +12,10 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISealedTypeEnvironment;
@@ -25,10 +27,8 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
@@ -57,16 +57,15 @@ public class AllI extends EmptyInputReasoner {
 			IProofMonitor pm) {
 
 		final Predicate goal = seq.goal();
-		if (!Lib.isUnivQuant(goal)) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Goal is not universally quantified");
+		if (goal.getTag() != FORALL) {
+			return reasonerFailure(this, input, "Goal is not universally quantified");
 		}
 		final QuantifiedPredicate univQ = (QuantifiedPredicate) goal;
 		final ISealedTypeEnvironment typenv = seq.typeEnvironment();
 		final FreshInstantiation inst = new FreshInstantiation(univQ, typenv);
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
 		final IAntecedent[] antecedents = new IAntecedent[] {//
-		makeAntecedent(inst.getResult(), null, freshIdents, null),//
+				makeAntecedent(inst.getResult(), null, freshIdents, null),//
 		};
 		final IProofRule reasonerOutput = makeProofRule(this, input, goal,
 				"∀ goal (frees " + displayFreeIdents(freshIdents) + ")",
