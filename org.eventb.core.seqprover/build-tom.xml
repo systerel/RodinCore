@@ -90,7 +90,6 @@
 		<delete file="${inference.src}/FunInterImg.java" />
 		<delete file="${inference.src}/FunSetMinusImg.java" />
 		<delete file="${inference.src}/FunSingletonImg.java" />
-		<delete file="${inference.src}/OnePointFilterUtils.java" />
 		<delete file="${inference.src}/OnePointFilter.java" />
 
 		<delete file="${mbGoal.src}/MembershipGoalRules.java" />

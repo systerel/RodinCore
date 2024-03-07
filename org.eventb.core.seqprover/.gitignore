@@ -14,7 +14,6 @@
 /src/org/eventb/internal/core/seqprover/eventbExtensions/mbGoal/MembershipExtractor.java
 /src/org/eventb/internal/core/seqprover/eventbExtensions/mbGoal/MembershipGoalRules.java
 /src/org/eventb/internal/core/seqprover/eventbExtensions/OnePointFilter.java
-/src/org/eventb/internal/core/seqprover/eventbExtensions/OnePointFilterUtils.java
 /src/org/eventb/internal/core/seqprover/eventbExtensions/rewriters/AndOrDistRewriterImpl.java
 /src/org/eventb/internal/core/seqprover/eventbExtensions/rewriters/ArithRewriterImpl.java
 /src/org/eventb/internal/core/seqprover/eventbExtensions/rewriters/AutoRewriterImpl.java
