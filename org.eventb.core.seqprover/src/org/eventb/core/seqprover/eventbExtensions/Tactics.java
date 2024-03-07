@@ -805,6 +805,21 @@ public class Tactics {
 	}
 
 	/**
+	 * Returns the "free existential" tactic for a given hypothesis and user input.
+	 *
+	 * The input should be the user-provided, comma-separated list of identifiers to
+	 * use to generate fresh names for bound identifiers that will be freed.
+	 *
+	 * @param exHyp the hypothesis on which the tactic will apply
+	 * @param input user input
+	 * @return the tactic "free existential"
+	 * @since 3.7
+	 */
+	public static ITactic exF(Predicate exHyp, String input) {
+		return (pt, pm) -> reasonerTac(new ExF(), new ExF.Input(exHyp, input, pt.getFormulaFactory())).apply(pt, pm);
+	}
+
+	/**
 	 * @since 2.0
 	 */
 	public static ITactic removeNeg(Predicate hyp, IPosition position) {
