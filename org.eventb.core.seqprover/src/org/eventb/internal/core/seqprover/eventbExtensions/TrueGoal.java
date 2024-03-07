@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
+
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class TrueGoal extends EmptyInputReasoner{
@@ -34,16 +34,9 @@ public class TrueGoal extends EmptyInputReasoner{
 	@Override
 	@ProverRule("TRUE_GOAL")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm){
-	
-		if (! (seq.goal().equals(DLib.True(seq.getFormulaFactory()))))
-			return ProverFactory.reasonerFailure(this,input,"Goal is not a tautology");
-		
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				seq.goal(),"⊤ goal",
-				new IAntecedent[0]);
-		
-		return reasonerOutput;
+		if (seq.goal().getTag() != BTRUE)
+			return reasonerFailure(this, input, "Goal is not a tautology");
+		return makeProofRule(this, input, seq.goal(), "⊤ goal");
 	}
 
 }
