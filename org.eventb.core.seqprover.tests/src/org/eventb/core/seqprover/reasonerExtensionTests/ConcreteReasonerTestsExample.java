@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.tests.TestLib;
+import org.junit.Test;
 
 /**
  * This class demonstrates how to extend {@link AbstractReasonerTests} to test a particular 
@@ -37,19 +37,14 @@ public class ConcreteReasonerTestsExample extends AbstractReasonerTests {
 		return new AutoTactics.TrueGoalTac();
 	}
 
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[]{
-				new SuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤ "), input),
-		};
+	@Test
+	public void success() throws Exception {
+		assertReasonerSuccess(" ⊤ |- ⊤ ", input);
 	}
 
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[]{
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), input),
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), input, "Goal is not a tautology")
-		};
+	@Test
+	public void failure() throws Exception {
+		assertReasonerFailure(" ⊤ |- ⊥ ", input, "Goal is not a tautology");
 	}
 
 }
