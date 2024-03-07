@@ -13,6 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.singleton;
+import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.seqprover.ProverFactory.makeRewriteHypAction;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
@@ -37,7 +38,6 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation;
 
@@ -154,20 +154,16 @@ public class ExF extends ForwardInfReasoner {
 	@Override
 	protected IRewriteHypAction getRewriteAction(IProverSequent sequent,
 			Predicate pred) {
-
-		if (!Lib.isExQuant(pred)) {
-			throw new IllegalArgumentException(
-					"Predicate is not existentially quantified: " + pred);
+		if (pred.getTag() != EXISTS) {
+			throw new IllegalArgumentException("Predicate is not existentially quantified: " + pred);
 		}
 		final QuantifiedPredicate exQ = (QuantifiedPredicate) pred;
 		final ISealedTypeEnvironment typenv = sequent.typeEnvironment();
 		final FreshInstantiation inst = new FreshInstantiation(exQ, typenv, input.getNames());
 		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
-		final Set<Predicate> inferredHyps = breakPossibleConjunct(inst
-				.getResult());
+		final Set<Predicate> inferredHyps = breakPossibleConjunct(inst.getResult());
 		final Set<Predicate> neededHyp = singleton(pred);
-		return makeRewriteHypAction(neededHyp, freshIdents, inferredHyps,
-				neededHyp);
+		return makeRewriteHypAction(neededHyp, freshIdents, inferredHyps, neededHyp);
 	}
 
 	@Override
