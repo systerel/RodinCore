@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1547,6 +1547,60 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewriteExpr("bool(TRUE=B)", "B", "", level5AndHigher);
 		noRewriteExpr("bool(B=FALSE)");
 		noRewriteExpr("bool(A=B)", "A=BOOL");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_IN_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_IN_ID() {
+		rewritePred("E ↦ E ∈ id", "⊤", "E=S", level5AndHigher);
+		noRewritePred("E ↦ F ∈ id", "E=S");
+		noRewritePred("E ↦ E ∈ r", "E=S");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_IN_SETMINUS_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_IN_SETMINUS_ID() {
+		rewritePred("E ↦ E ∈ r ∖ id", "⊥", "E=S", level5AndHigher);
+		noRewritePred("E ↦ F ∈ r ∖ id", "E=S");
+		noRewritePred("E ↦ E ∈ r ∖ q", "E=S");
+		noRewritePred("E ↦ E ∈ id ∖ r", "E=S");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_IN_DOMRES_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_IN_DOMRES_ID() {
+		rewritePred("E ↦ E ∈ T ◁ id", "E ∈ T", "E=S", level5AndHigher);
+		noRewritePred("E ↦ F ∈ T ◁ id", "E=S");
+		noRewritePred("E ↦ E ∈ T ◁ q", "E=S");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_IN_SETMINUS_DOMRES_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_IN_SETMINUS_DOMRES_ID() {
+		rewritePred("E ↦ E ∈ r ∖ (T ◁ id)", "E ↦ E ∈ T ⩤ r", "E=S", level5AndHigher);
+		noRewritePred("E ↦ F ∈ r ∖ (T ◁ id)", "E=S");
+		noRewritePred("E ↦ E ∈ r ∖ (T ◁ q)", "E=S");
+	}
+
+	/**
+	 * Tests various rewritings related to id.
+	 */
+	@Test
+	public void testIdSimplifications() {
+		rewritePred("E ↦ E ∈ id ∖ id", "⊥", "E=S");
+		rewritePred("E ↦ F ∈ id ∖ id", "⊥", "E=S");
+		rewritePred("E ↦ E ∈ id ∖ (T ◁ id)", "E ↦ E ∈ T ⩤ id", "E=S", level5AndHigher);
+		rewritePred("E ↦ E ∈ (T ◁ id) ∖ id", "⊥", "E=S", level5AndHigher);
+		rewritePred("E ↦ E ∈ (T ◁ id) ∖ (T ◁ id)", "⊥", "E=S");
+		rewritePred("E ↦ E ∈ (T ◁ id) ∖ (U ◁ id)", "E ↦ E ∈ U ⩤ (T ◁ id)", "E=S", level5AndHigher);
 	}
 
 }

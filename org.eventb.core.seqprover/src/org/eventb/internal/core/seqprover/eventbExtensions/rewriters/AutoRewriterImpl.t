@@ -663,7 +663,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
 			"SIMP_SPECIAL_EQUAL_COMPSET", "DEF_IN_MAPSTO", "DERIV_MULTI_IN_SETMINUS", 
 			"DERIV_MULTI_IN_BUNION", "DERIV_PRJ1_SURJ", "DERIV_PRJ2_SURJ",
-			"DERIV_ID_BIJ", "SIMP_MIN_IN", "SIMP_MAX_IN" })
+			"DERIV_ID_BIJ", "SIMP_MIN_IN", "SIMP_MAX_IN", "SIMP_SPECIAL_IN_ID",
+			"SIMP_SPECIAL_IN_SETMINUS_ID", "SIMP_SPECIAL_IN_DOMRES_ID",
+			"SIMP_SPECIAL_IN_SETMINUS_DOMRES_ID" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final FormulaFactory ff = predicate.getFactory();
@@ -1572,6 +1574,54 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level5) {
 					result = DLib.True(ff);
 					trace(predicate, result, "SIMP_MAX_IN");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_SPECIAL_IN_ID
+			 *    E ↦ E ∈ id == ⊤
+			 */
+			In(Mapsto(E, E), IdGen()) -> {
+				if (level5) {
+					result = DLib.True(ff);
+					trace(predicate, result, "SIMP_SPECIAL_IN_ID");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_SPECIAL_IN_SETMINUS_ID
+			 *    E ↦ E ∈ r ∖ id == ⊥
+			 */
+			In(Mapsto(E, E), SetMinus(_, IdGen())) -> {
+				if (level5) {
+					result = DLib.False(ff);
+					trace(predicate, result, "SIMP_SPECIAL_IN_SETMINUS_ID");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_SPECIAL_IN_DOMRES_ID
+			 *    E ↦ E ∈ S ◁ id == E ∈ S
+			 */
+			In(Mapsto(E, E), DomRes(S, IdGen())) -> {
+				if (level5) {
+					result = makeRelationalPredicate(IN, `E, `S);
+					trace(predicate, result, "SIMP_SPECIAL_IN_DOMRES_ID");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_SPECIAL_IN_SETMINUS_DOMRES_ID
+			 *    E ↦ E ∈ r ∖ (S ◁ id) == E ↦ E ∈ S ⩤ r
+			 */
+			In(M@Mapsto(E, E), SetMinus(r, DomRes(S, IdGen()))) -> {
+				if (level5) {
+					result = makeRelationalPredicate(IN, `M, makeBinaryExpression(DOMSUB, `S, `r));
+					trace(predicate, result, "SIMP_SPECIAL_IN_SETMINUS_DOMRES_ID");
 					return result;
 				}
 			}
