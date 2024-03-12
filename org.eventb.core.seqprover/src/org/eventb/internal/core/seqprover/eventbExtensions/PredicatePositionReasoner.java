@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,8 +107,20 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 
 	}
 
+	/**
+	 * Serializes the given input using the given writer.
+	 *
+	 * If a sub-class overrides this method, it should either call this super method
+	 * to ensure that the position is serialized adequately, or override both this
+	 * and {@link IReasoner#deserializeInput(IReasonerInputReader)} to keep the
+	 * serialization and deserialization consistent.
+	 *
+	 * @param input  the input to serialize
+	 * @param writer the writer to use
+	 * @throws SerializeException In case of error when serializing.
+	 */
 	@Override
-	public final void serializeInput(IReasonerInput input,
+	public void serializeInput(IReasonerInput input,
 			IReasonerInputWriter writer) throws SerializeException {
 
 		// Serialise the position only, the predicate is contained inside the
@@ -116,8 +128,21 @@ public abstract class PredicatePositionReasoner implements IReasoner {
 		writer.putString(POSITION_KEY, ((Input) input).position.toString());
 	}
 
+	/**
+	 * Deserializes the given input using the given writer.
+	 *
+	 * If a sub-class overrides this method, it should either call this super method
+	 * to ensure that the predicate and position are deserialized adequately, or
+	 * override both this and
+	 * {@link IReasoner#serializeInput(IReasonerInput, IReasonerInputWriter)} to
+	 * keep the serialization and deserialization consistent.
+	 *
+	 * @param reader the reader to use
+	 * @return a new instance of the input that was previously serialized
+	 * @throws SerializeException In case of error when serializing.
+	 */
 	@Override
-	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
+	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
 		Set<Predicate> neededHyps = reader.getNeededHyps();
