@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,9 @@ import org.eventb.core.seqprover.IReasonerInput;
  * @author Farhad Mehta
  * @since 1.0
  */
-public class ReplayHints {
-//	 TODO : Rename to freeIdentRename
-//	 TODO : Make interface & cleanup
+public class ReplayHints implements Cloneable {
 	
-	private HashMap<FreeIdentifier, Expression> freeVarRename;
+	private HashMap<FreeIdentifier, Expression> freeIdentRename;
 	private final FormulaFactory factory;
 
 	/**
@@ -40,7 +38,7 @@ public class ReplayHints {
 	 */
 	public ReplayHints(FormulaFactory factory) {
 		this.factory = factory;
-		this.freeVarRename = new HashMap<FreeIdentifier, Expression>();
+		this.freeIdentRename = new HashMap<FreeIdentifier, Expression>();
 	}
 
 	/**
@@ -48,8 +46,7 @@ public class ReplayHints {
 	 */
 	public ReplayHints(ReplayHints replayHints, FormulaFactory factory) {
 		this.factory = factory;
-		this.freeVarRename = new HashMap<FreeIdentifier, Expression>(
-				replayHints.freeVarRename);
+		this.freeIdentRename = new HashMap<FreeIdentifier, Expression>(replayHints.freeIdentRename);
 	}
 	
 	@Override
@@ -58,7 +55,7 @@ public class ReplayHints {
 	}
 
 	public boolean isEmpty() {
-		return this.freeVarRename.isEmpty();
+		return freeIdentRename.isEmpty();
 	}
 
 	public void addHints(IAntecedent old, IAntecedent current) {
@@ -70,7 +67,7 @@ public class ReplayHints {
 				final FreeIdentifier curFreeIdent = current.getAddedFreeIdents()[i];
 				if ((!oldFreeIdent.equals(curFreeIdent))
 						&& (oldFreeIdent.getType().equals(curFreeIdent.getType()))) {
-					this.freeVarRename.put(oldFreeIdent, curFreeIdent);
+					freeIdentRename.put(oldFreeIdent, curFreeIdent);
 				}
 			}
 		}
@@ -83,13 +80,13 @@ public class ReplayHints {
 	public Predicate applyHints(Predicate predicate) {
 		if (predicate == null)
 			return null;
-		return predicate.substituteFreeIdents(freeVarRename);
+		return predicate.substituteFreeIdents(freeIdentRename);
 	}
 
 	public Expression applyHints(Expression expression) {
 		if (expression == null)
 			return null;
-		return expression.substituteFreeIdents(freeVarRename);
+		return expression.substituteFreeIdents(freeIdentRename);
 	}
 
 }
