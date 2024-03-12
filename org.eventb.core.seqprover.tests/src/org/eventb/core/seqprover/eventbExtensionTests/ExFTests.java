@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,11 @@
 package org.eventb.core.seqprover.eventbExtensionTests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
+import org.junit.Test;
 
 /**
  * Acceptance tests for reasoner ExF.
@@ -24,67 +24,53 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
  */
 public class ExFTests extends AbstractReasonerTests {
 	
-	private static Predicate HYP = genPred("∃x·x=1");
-	private static Predicate HYP2PREDS = genPred("∃x·x=1∧x=2");
-	private static Predicate HYP2VARS = genPred("∃x,y·x↦y=1↦2");
-
 	@Override
 	public String getReasonerID() {
 		return ExF.REASONER_ID;
 	}
 
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[]{
-				// hyp not present: success but no effect
-				new SuccessfullReasonerApplication(genSeq(" |- ⊥ "),
-						new ExF.Input(HYP),
-						"{}[][][] |- ⊥"
-				),
-				// one bound variable
-				new SuccessfullReasonerApplication(genSeq(HYP + " |- ⊥ "), 
-						new ExF.Input(HYP),
-						"{}[" + HYP + "][][x=1] |- ⊥"
-				),
-				// two predicates generated
-				new SuccessfullReasonerApplication(genSeq(HYP2PREDS + " |- ⊥ "), 
-						new ExF.Input(HYP2PREDS),
-						"{}[" + HYP2PREDS + "][][x=1;; x=2] |- ⊥"
-				),
-				// two bound variables
-				new SuccessfullReasonerApplication(genSeq(HYP2VARS + " |- ⊥ "), 
-						new ExF.Input(HYP2VARS),
-						"{}[" + HYP2VARS + "][][x↦y=1↦2] |- ⊥"
-				),
-				// name collision
-				new SuccessfullReasonerApplication(genSeq(HYP + ";; x=3 |- ⊥ "), 
-						new ExF.Input(HYP),
-						"{}[" + HYP + "][][x0=1;; x=3] |- ⊥"
-				),
-				// name collision, different type
-				new SuccessfullReasonerApplication(genSeq(HYP + ";; x=TRUE |- ⊥ "), 
-						new ExF.Input(HYP),
-						"{}[" + HYP + "][][x0=1;; x=TRUE] |- ⊥"
-				),
-		};
+	@Test
+	public void success() throws Exception {
+		// hyp not present: success but no effect
+		assertReasonerSuccess(" |- ⊥ ", input("∃x·x=1"), "{}[][][] |- ⊥");
+		// one bound variable
+		assertReasonerSuccess("∃x·x=1 |- ⊥ ", input("∃x·x=1"), "{}[∃x·x=1][][x=1] |- ⊥");
+		assertReasonerSuccess("∃x·x=1 |- ⊥ ", input("∃x·x=1", "n"), "{}[∃x·x=1][][n=1] |- ⊥");
+		// two predicates generated
+		assertReasonerSuccess("∃x·x=1∧x=2 |- ⊥ ", input("∃x·x=1∧x=2"), "{}[∃x·x=1∧x=2][][x=1;; x=2] |- ⊥");
+		assertReasonerSuccess("∃x·x=1∧x=2 |- ⊥ ", input("∃x·x=1∧x=2", "n"), "{}[∃x·x=1∧x=2][][n=1;; n=2] |- ⊥");
+		// two bound variables
+		assertReasonerSuccess("∃x,y·x↦y=1↦2 |- ⊥ ", input("∃x,y·x↦y=1↦2"), "{}[∃x,y·x↦y=1↦2][][x↦y=1↦2] |- ⊥");
+		assertReasonerSuccess("∃x,y·x↦y=1↦2 |- ⊥ ", input("∃x,y·x↦y=1↦2", "n"), "{}[∃x,y·x↦y=1↦2][][n↦y=1↦2] |- ⊥");
+		assertReasonerSuccess("∃x,y·x↦y=1↦2 |- ⊥ ", input("∃x,y·x↦y=1↦2", "n, m"), "{}[∃x,y·x↦y=1↦2][][n↦m=1↦2] |- ⊥");
+		// name collision
+		assertReasonerSuccess("∃x·x=1;; x=3 |- ⊥ ", input("∃x·x=1"), "{}[∃x·x=1][][x0=1;; x=3] |- ⊥");
+		assertReasonerSuccess("∃x·x=1;; n=3 |- ⊥ ", input("∃x·x=1", "n"), "{}[∃x·x=1][][n0=1;; n=3] |- ⊥");
+		// name collision, different type
+		assertReasonerSuccess("∃x·x=1;; x=TRUE |- ⊥ ", input("∃x·x=1"), "{}[∃x·x=1][][x0=1;; x=TRUE] |- ⊥");
+		assertReasonerSuccess("∃x·x=1;; n=TRUE |- ⊥ ", input("∃x·x=1", "n"), "{}[∃x·x=1][][n0=1;; n=TRUE] |- ⊥");
+		// extra names provided
+		assertReasonerSuccess("∃x·x=1 |- ⊥ ", input("∃x·x=1", "n, m"), "{}[∃x·x=1][][n=1] |- ⊥");
 	}
 
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {
-				// hyp null
-				new UnsuccessfullReasonerApplication(
-						genSeq(" ⊤ |- ⊥ "),
-						new ExF.Input(null),
-						"Null hypothesis"
-				),
-				// hyp not existentially quantified
-				new UnsuccessfullReasonerApplication(
-						genSeq(" ∀x·x = 1 |- ⊥ "),
-						new ExF.Input(genPred("∀x·x=1")),
-						"Predicate is not existentially quantified: ∀x·x=1"
-				),	
-		};
+	@Test
+	public void failure() throws Exception {
+		// hyp null
+		assertReasonerFailure(" ⊤ |- ⊥ ", new ExF.Input(null), "Null hypothesis");
+		// hyp not existentially quantified
+		assertReasonerFailure(" ∀x·x = 1 |- ⊥ ", input("∀x·x=1"), "Predicate is not existentially quantified: ∀x·x=1");
+		// invalid names provided
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1"), "Provided name '1' is not a valid identifier");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1,x,+"), "Some provided names are not valid identifiers: 1, +");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "x'"), "Provided name 'x'' is not a valid identifier");
+	}
+
+	private IReasonerInput input(String pred) {
+		return new ExF.Input(genPred(pred));
+	}
+
+	private IReasonerInput input(String pred, String input) {
+		return new ExF.Input(genPred(pred), input, ff);
 	}
 
 }
