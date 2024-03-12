@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 ETH Zurich and others.
+ * Copyright (c) 2007, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  */
 public abstract class ForwardInfReasoner implements IReasoner {
 	
-	public static final class Input implements IReasonerInput, ITranslatableReasonerInput {
+	public static class Input implements IReasonerInput, ITranslatableReasonerInput {
 
 		private Predicate pred;
 
@@ -110,15 +110,39 @@ public abstract class ForwardInfReasoner implements IReasoner {
 		}
 	}
 	
+	/**
+	 * Serializes the given input using the given writer.
+	 *
+	 * If a sub-class overrides this method, it should either call this super method
+	 * to ensure that the position is serialized adequately, or override both this
+	 * and {@link IReasoner#deserializeInput(IReasonerInputReader)} to keep the
+	 * serialization and deserialization consistent.
+	 *
+	 * @param rInput  the input to serialize
+	 * @param writer the writer to use
+	 * @throws SerializeException In case of error when serializing.
+	 */
 	@Override
-	public final void serializeInput(IReasonerInput rInput,
+	public void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
-		
 		// Nothing to do
 	}
 
+	/**
+	 * Deserializes the given input using the given writer.
+	 *
+	 * If a sub-class overrides this method, it should either call this super method
+	 * to ensure that the predicate and position are deserialized adequately, or
+	 * override both this and
+	 * {@link IReasoner#serializeInput(IReasonerInput, IReasonerInputWriter)} to
+	 * keep the serialization and deserialization consistent.
+	 *
+	 * @param reader the reader to use
+	 * @return a new instance of the input that was previously serialized
+	 * @throws SerializeException In case of error when serializing.
+	 */
 	@Override
-	public final Input deserializeInput(IReasonerInputReader reader)
+	public Input deserializeInput(IReasonerInputReader reader)
 	throws SerializeException {
 
 		IAntecedent[] antecedents = reader.getAntecedents();
@@ -152,7 +176,7 @@ public abstract class ForwardInfReasoner implements IReasoner {
 	}
 
 	@Override
-	public final IReasonerOutput apply(IProverSequent seq, IReasonerInput rInput,
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput rInput,
 			IProofMonitor pm) {
 		
 		final Input input = (Input) rInput;
