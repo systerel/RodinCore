@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.utils;
+
+import static java.lang.Math.min;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
@@ -27,6 +29,8 @@ import org.eventb.core.ast.Type;
  */
 public class FreshInstantiation {
 
+	private static final String[] NO_NAMES = new String[0];
+
 	private final FreeIdentifier[] freeIdents;
 	private final Predicate result;
 
@@ -41,10 +45,30 @@ public class FreshInstantiation {
 	 */
 	public FreshInstantiation(QuantifiedPredicate predicate,
 			ITypeEnvironment initialTypenv) {
+		this(predicate, initialTypenv, NO_NAMES);
+	}
+
+	/**
+	 * Instantiates the given predicate with free identifiers that are fresh in the
+	 * given type environment and based on the provided names.
+	 *
+	 * If not enough names are provided for all bound identifiers, the remaining
+	 * fresh names will be based on the corresponding bound identifiers
+	 * declarations. If too many names are provided, the extra ones will be ignored.
+	 *
+	 * @param predicate     the predicate to instantiate
+	 * @param initialTypenv the type environment to consider for freshness
+	 * @param names         the base names to use to make fresh names
+	 */
+	public FreshInstantiation(QuantifiedPredicate predicate, ITypeEnvironment initialTypenv, String[] names) {
 		final ITypeEnvironmentBuilder typenv = initialTypenv.makeBuilder();
-		final BoundIdentDecl[] boundIdentDecls = predicate.getBoundIdentDecls();
-		this.freeIdents = typenv.makeFreshIdentifiers(boundIdentDecls);
 		final FormulaFactory ff = typenv.getFormulaFactory();
+		final BoundIdentDecl[] boundIdentDecls = predicate.getBoundIdentDecls();
+		for (int i = 0; i < min(boundIdentDecls.length, names.length); i++) {
+			boundIdentDecls[i] = ff.makeBoundIdentDecl(names[i], boundIdentDecls[i].getSourceLocation(),
+					boundIdentDecls[i].getType());
+		}
+		this.freeIdents = typenv.makeFreshIdentifiers(boundIdentDecls);
 		this.result = predicate.instantiate(freeIdents, ff);
 	}
 

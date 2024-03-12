@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,11 @@ public class ForallInstantiationGoal implements ITacticProvider {
 
 		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
-			return Tactics.allI();
+			if (globalInput.isBlank()) {
+				return Tactics.allI();
+			} else {
+				return Tactics.allI(globalInput);
+			}
 		}
 
 		@Override

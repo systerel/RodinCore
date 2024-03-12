@@ -57,6 +57,7 @@ import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.IPosition.ROOT;
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import static org.eventb.internal.core.seqprover.eventbExtensions.DTReasonerHelper.isDatatypeType;
 
 import java.util.ArrayList;
@@ -576,7 +577,21 @@ public class Tactics {
 	}
 
 	public static ITactic allI() {
-		return BasicTactics.reasonerTac(new AllI(), EMPTY_INPUT);
+		return reasonerTac(new AllI(), new AllI.Input());
+	}
+
+	/**
+	 * Returns the tactic for {@link AllI} with an input.
+	 *
+	 * The input should be the user-provided, comma-separated list of identifiers to
+	 * use to generate fresh names for the bound identifiers.
+	 *
+	 * @param input user input
+	 * @return the tactic for the introduction of universal quantification
+	 * @since 3.7
+	 */
+	public static ITactic allI(String input) {
+		return (pt, pm) -> reasonerTac(new AllI(), new AllI.Input(input, pt.getFormulaFactory())).apply(pt, pm);
 	}
 
 	public static boolean allI_applicable(Predicate goal) {
