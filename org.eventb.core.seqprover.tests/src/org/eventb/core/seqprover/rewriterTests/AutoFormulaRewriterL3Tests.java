@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,28 +91,28 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	}
 
 	/**
-	 * Ensures that rule  is implemented correctly.
+	 * Ensures that rule DERIV_MULTI_IN_SETMINUS is implemented correctly.
 	 */
 	@Test
-	public void test5() {
+	public void testDERIV_MULTI_IN_SETMINUS() {
 		rewritePred("x∈A∖{x}", "⊥", "A=ℙ(S); x=S");
 		rewritePred("x∈A∖{w, x, y}", "⊥", "A=ℙ(S); w=S; x=S; y=S");
 	}
 
 	/**
-	 * Ensures that rule  is implemented correctly.
+	 * Ensures that rule DERIV_MULTI_IN_BUNION is implemented correctly.
 	 */
 	@Test
-	public void test6() {
+	public void testDERIV_MULTI_IN_BUNION() {
 		rewritePred("x∈A∪B∪{x}∪C∪D", "⊤", "A=ℙ(S)");
 		rewritePred("x∈A∪B∪{w, x, y}∪C∪D", "⊤", "A=ℙ(S)");
 	}
 
 	/**
-	 * Ensures that rule  is implemented correctly.
+	 * Ensures that rule DEF_PRED is implemented correctly.
 	 */
 	@Test
-	public void test7() {
+	public void testDEF_PRED() {
 		rewritePred("pred(int) = int−1", "succ∼(int) = int−1");
 	}
 
