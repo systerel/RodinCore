@@ -187,6 +187,9 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("List = List", "⊤");
 		rewritePred("GenPair(ℤ, BOOL) = GenPair(ℤ, BOOL)", "⊤");
 		rewritePred("GenPair(ℕ, ℕ) = GenPair(ℕ, ℕ)", "⊤");
+
+		// datatype(T1, U1, ...) = datatype(T2, U2, ...)  ==  T1 = T2 & U1 = U2 & ...
+		rewritePred("GenPair(ℕ, ℕ) = GenPair({x∣x≥0}, ℕ1∪{0})", "ℕ = {x∣x≥0} ∧ ℕ = ℕ1∪{0}", "", level5AndHigher);
 	}
 	
 	/**

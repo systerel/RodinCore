@@ -103,6 +103,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.datatype.IConstructorExtension;
 import org.eventb.core.ast.datatype.IDestructorExtension;
+import org.eventb.core.ast.datatype.ITypeConstructorExtension;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
@@ -1116,6 +1117,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * cons(a1, b1) = cons(a2, b2)  ==  a1 = a2 & b1 = b2
              * SIMP_EQUAL_CONSTR_DIFF
              * cons1(...) = cons2(...)  ==  false  [where cons1 /= cons2]
+             * SIMP_EQUAL_DT
+             * datatype(T1, U1, ...) = datatype(T2, U2, ...)  ==  T1 = T2 & U1 = U2 & ...
              */
             Equal(ext1@ExtendedExpression(args1, _), ext2@ExtendedExpression(args2, _)) -> {
                 if (isDTConstructor((ExtendedExpression)`ext1)
@@ -1125,24 +1128,15 @@ public class AutoRewriterImpl extends PredicateSimplifier {
                 		trace(predicate, result, "SIMP_EQUAL_CONSTR_DIFF");
                 		return result;
                 	}
-                	assert `args1.length == `args2.length;
-                	final List<Predicate> equalPreds = new ArrayList<Predicate>();
-                	for (int i=0; i<`args1.length; i++) {
-                		equalPreds.add(ff.makeRelationalPredicate(EQUAL, `args1[i], `args2[i], null));
-                	}
-                	switch(equalPreds.size()) {
-                	case 0:
-                		result = ff.makeLiteralPredicate(BTRUE, null);
-                		break;
-                	case 1:
-                		result = equalPreds.get(0);
-                		break;
-                	default:
-                		result = ff.makeAssociativePredicate(LAND, equalPreds, null);
-                		break;
-                	}
+               		result = makeConjunctionEqualities(`args1, `args2, ff);
                		trace(predicate, result, "SIMP_EQUAL_CONSTR");
                		return result;
+                } else if (level5 && isTypeConstructor((ExtendedExpression)`ext1)
+                        && isTypeConstructor((ExtendedExpression)`ext2)) {
+                    assert `ext1.getTag() == `ext2.getTag(); // Type-checking should prevent comparing different types
+                    result = makeConjunctionEqualities(`args1, `args2, ff);
+                    trace(predicate, result, "SIMP_EQUAL_DT");
+                    return result;
                 }
             }
 
@@ -2171,6 +2165,26 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
     private static boolean isDTConstructor(ExtendedExpression expr) {
 		return expr.getExtension() instanceof IConstructorExtension;
+	}
+
+	private static boolean isTypeConstructor(ExtendedExpression expr) {
+		return expr.getExtension() instanceof ITypeConstructorExtension;
+	}
+
+	private static Predicate makeConjunctionEqualities(Expression[] args1, Expression[] args2, FormulaFactory ff) {
+		assert args1.length == args2.length;
+		switch (args1.length) {
+		case 0:
+			return ff.makeLiteralPredicate(BTRUE, null);
+		case 1:
+			return ff.makeRelationalPredicate(EQUAL, args1[0], args2[0], null);
+		default:
+			Predicate[] equalPreds = new Predicate[args1.length];
+			for (int i = 0; i < args1.length; i++) {
+				equalPreds[i] = ff.makeRelationalPredicate(EQUAL, args1[i], args2[i], null);
+			}
+			return ff.makeAssociativePredicate(LAND, equalPreds, null);
+		}
 	}
 
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
