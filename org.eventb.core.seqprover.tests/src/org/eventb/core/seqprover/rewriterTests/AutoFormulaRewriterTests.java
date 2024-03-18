@@ -18,13 +18,17 @@ import static org.eventb.core.ast.FormulaFactory.getCond;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorBuilder;
-import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -38,22 +42,30 @@ import org.junit.Test;
  */
 public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests {
 
-	public static final IDatatype DT;
+	private static final Set<IFormulaExtension> extensions = new HashSet<>();
 	static {
 		final FormulaFactory ff = FormulaFactory.getDefault();
 		final Type integerType = ff.makeIntegerType();
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List");
+		IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List");
 		dtBuilder.addConstructor("void");
 		final IConstructorBuilder cons1 = dtBuilder.addConstructor("cons1");
 		cons1.addArgument("destr1", integerType);
 		final IConstructorBuilder cons2 = dtBuilder.addConstructor("cons2");
 		cons2.addArgument("destr2_0", integerType);
 		cons2.addArgument("destr2_1", integerType);
-		DT = dtBuilder.finalizeDatatype();
+		extensions.addAll(dtBuilder.finalizeDatatype().getExtensions());
+
+		GivenType genericT = ff.makeGivenType("T");
+		GivenType genericU = ff.makeGivenType("U");
+		dtBuilder = ff.makeDatatypeBuilder("GenPair", genericT, genericU);
+		IConstructorBuilder mkPair = dtBuilder.addConstructor("mkPair");
+		mkPair.addArgument("fst", genericT);
+		mkPair.addArgument("snd", genericU);
+		extensions.addAll(dtBuilder.finalizeDatatype().getExtensions());
 	}
 
 	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(
-			getCond()).withExtensions(DT.getExtensions());
+			getCond()).withExtensions(extensions);
 	
 	protected final boolean level2AndHigher;
 	protected final boolean level3AndHigher;
@@ -165,11 +177,19 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("void = void", "⊤");
 		rewritePred("cons1(a1) = cons1(a2)", "a1 = a2");
 		rewritePred("cons2(a1, b1) = cons2(a2, b2)", "a1 = a2 ∧ b1 = b2");
+		rewritePred("mkPair(x, y) = mkPair(0, TRUE)", "x = 0 ∧ y = TRUE");
 		
 		// cons1(...) = cons2(...)  ==  false
 		rewritePred("void = cons1(a1)", "⊥");
 		rewritePred("cons1(a1) = cons2(a2, b2)", "⊥");
 
+		// datatype(T, ...) = datatype(T, ...)  ==  true
+		rewritePred("List = List", "⊤");
+		rewritePred("GenPair(ℤ, BOOL) = GenPair(ℤ, BOOL)", "⊤");
+		rewritePred("GenPair(ℕ, ℕ) = GenPair(ℕ, ℕ)", "⊤");
+
+		// datatype(T1, U1, ...) = datatype(T2, U2, ...)  ==  T1 = T2 & U1 = U2 & ...
+		rewritePred("GenPair(ℕ, ℕ) = GenPair({x∣x≥0}, ℕ1∪{0})", "ℕ = {x∣x≥0} ∧ ℕ = ℕ1∪{0}", "", level5AndHigher);
 	}
 	
 	/**
@@ -1601,6 +1621,17 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("E ↦ E ∈ (T ◁ id) ∖ id", "⊥", "E=S", level5AndHigher);
 		rewritePred("E ↦ E ∈ (T ◁ id) ∖ (T ◁ id)", "⊥", "E=S");
 		rewritePred("E ↦ E ∈ (T ◁ id) ∖ (U ◁ id)", "E ↦ E ∈ U ⩤ (T ◁ id)", "E=S", level5AndHigher);
+	}
+
+	/**
+	 * Ensures that rule SIMP_CONSTR_IN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_CONSTR_IN() {
+		rewritePred("void ∈ List", "⊤", "", level5AndHigher);
+		rewritePred("cons1(0) ∈ List", "0 ∈ ℤ", "", level5AndHigher);
+		rewritePred("mkPair(1, TRUE) ∈ GenPair(ℤ, BOOL)", "1 ∈ ℤ ∧ TRUE ∈ BOOL", "", level5AndHigher);
+		rewritePred("mkPair(1, 2) ∈ GenPair(ℕ, {x∣x≥0})", "1 ∈ ℕ ∧ 2 ∈ {x∣x≥0}", "", level5AndHigher);
 	}
 
 }
