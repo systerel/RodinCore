@@ -1623,4 +1623,15 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("E ↦ E ∈ (T ◁ id) ∖ (U ◁ id)", "E ↦ E ∈ U ⩤ (T ◁ id)", "E=S", level5AndHigher);
 	}
 
+	/**
+	 * Ensures that rule SIMP_CONSTR_IN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_CONSTR_IN() {
+		rewritePred("void ∈ List", "⊤", "", level5AndHigher);
+		rewritePred("cons1(0) ∈ List", "0 ∈ ℤ", "", level5AndHigher);
+		rewritePred("mkPair(1, TRUE) ∈ GenPair(ℤ, BOOL)", "1 ∈ ℤ ∧ TRUE ∈ BOOL", "", level5AndHigher);
+		rewritePred("mkPair(1, 2) ∈ GenPair(ℕ, {x∣x≥0})", "1 ∈ ℕ ∧ 2 ∈ {x∣x≥0}", "", level5AndHigher);
+	}
+
 }
