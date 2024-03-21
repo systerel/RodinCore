@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,10 @@ public interface IRodinFile extends IOpenable, IParent,
 	 *            the given element
 	 * @return the found elements in this file that correspond to the given
 	 *         element
+	 * @deprecated This method has never been implemented and always returns an
+	 *             empty array.
 	 */
+	@Deprecated(since="1.10")
 	IRodinElement[] findElements(IRodinElement element);
 
 	/**
