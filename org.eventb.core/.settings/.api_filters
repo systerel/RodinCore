@@ -32,14 +32,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eventb/core/basis/ContextRoot.java" type="org.eventb.core.basis.ContextRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IContextRoot"/>
-                <message_argument value="ContextRoot"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/basis/Event.java" type="org.eventb.core.basis.Event">
         <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
@@ -59,20 +51,6 @@
             <message_arguments>
                 <message_argument value="IPRProofInfoElement"/>
                 <message_argument value="EventBProofElement"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/basis/EventBRoot.java" type="org.eventb.core.basis.EventBRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IEventBRoot"/>
-                <message_argument value="EventBRoot"/>
-            </message_arguments>
-        </filter>
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IPOStampedElement"/>
-                <message_argument value="EventBRoot"/>
             </message_arguments>
         </filter>
     </resource>
@@ -108,14 +86,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eventb/core/basis/MachineRoot.java" type="org.eventb.core.basis.MachineRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IMachineRoot"/>
-                <message_argument value="MachineRoot"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/basis/POIdentifier.java" type="org.eventb.core.basis.POIdentifier">
         <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
@@ -137,14 +107,6 @@
             <message_arguments>
                 <message_argument value="IPOPredicateSet"/>
                 <message_argument value="POPredicateSet"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/basis/PORoot.java" type="org.eventb.core.basis.PORoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IPORoot"/>
-                <message_argument value="PORoot"/>
             </message_arguments>
         </filter>
     </resource>
@@ -228,14 +190,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eventb/core/basis/PRRoot.java" type="org.eventb.core.basis.PRRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IPRRoot"/>
-                <message_argument value="PRRoot"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/basis/PRRuleAntecedent.java" type="org.eventb.core.basis.PRRuleAntecedent">
         <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
@@ -265,14 +219,6 @@
             <message_arguments>
                 <message_argument value="IPRStringInput"/>
                 <message_argument value="PRStringInput"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/basis/PSRoot.java" type="org.eventb.core.basis.PSRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="IPSRoot"/>
-                <message_argument value="PSRoot"/>
             </message_arguments>
         </filter>
     </resource>
@@ -348,14 +294,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eventb/core/basis/SCContextRoot.java" type="org.eventb.core.basis.SCContextRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="ISCContextRoot"/>
-                <message_argument value="SCContextRoot"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eventb/core/basis/SCEvent.java" type="org.eventb.core.basis.SCEvent">
         <filter comment="See Eclipse bug #539517" id="576725006">
             <message_arguments>
@@ -409,14 +347,6 @@
             <message_arguments>
                 <message_argument value="ISCInvariant"/>
                 <message_argument value="SCInvariant"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eventb/core/basis/SCMachineRoot.java" type="org.eventb.core.basis.SCMachineRoot">
-        <filter comment="See Eclipse bug #539517" id="576725006">
-            <message_arguments>
-                <message_argument value="ISCMachineRoot"/>
-                <message_argument value="SCMachineRoot"/>
             </message_arguments>
         </filter>
     </resource>
