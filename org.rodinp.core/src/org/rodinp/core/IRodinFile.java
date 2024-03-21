@@ -30,8 +30,11 @@ import org.rodinp.internal.core.ElementTypeManager;
  * As a consequence, there are two kinds of handles for these elements, stable
  * snapshot handles and mutable handles.
  * </p>
- *
- * TODO write doc for IRodinFile.
+ * <p>
+ * Each file has a root element, which type is determined from the extension of
+ * the Rodin file. The associations between file extensions and root element
+ * types are declared with plugin.xml extensions.
+ * </p>
  *
  * @author Laurent Voisin
  * @since 1.0
