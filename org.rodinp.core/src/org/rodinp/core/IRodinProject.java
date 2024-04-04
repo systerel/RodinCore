@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,46 +66,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 */
 	IResource[] getNonRodinResources() throws RodinDBException;
 
-//	/**
-//	 * Helper method for returning one option value only. Equivalent to
-//	 * <code>(String)this.getOptions(inheritRodinCoreOptions).get(optionName)</code>
-//	 * Note that it may answer <code>null</code> if this option does not
-//	 * exist, or if there is no custom value for it.
-//	 * <p>
-//	 * For a complete description of the configurable options, see
-//	 * <code>RodinCore#getDefaultOptions</code>.
-//	 * </p>
-//	 * 
-//	 * @param optionName
-//	 *            the name of an option
-//	 * @param inheritRodinCoreOptions -
-//	 *            boolean indicating whether RodinCore options should be
-//	 *            inherited as well
-//	 * @return the String value of a given option
-//	 * @see RodinCore#getDefaultOptions()
-//	 */
-//	String getOption(String optionName, boolean inheritRodinCoreOptions);
-//
-//	/**
-//	 * Returns the table of the current custom options for this project.
-//	 * Projects remember their custom options, in other words, only the options
-//	 * different from the the RodinCore global options for the workspace. A
-//	 * boolean argument allows to directly merge the project options with global
-//	 * ones from <code>RodinCore</code>.
-//	 * <p>
-//	 * For a complete description of the configurable options, see
-//	 * <code>RodinCore#getDefaultOptions</code>.
-//	 * </p>
-//	 * 
-//	 * @param inheritRodinCoreOptions -
-//	 *            boolean indicating whether RodinCore options should be
-//	 *            inherited as well
-//	 * @return table of current settings of all options (key type:
-//	 *         <code>String</code>; value type: <code>String</code>)
-//	 * @see RodinCore#getDefaultOptions()
-//	 */
-//	Map getOptions(boolean inheritRodinCoreOptions);
-
 	/**
 	 * Returns the <code>IProject</code> on which this
 	 * <code>IRodinProject</code> was created. This is a handle-only method.
@@ -139,41 +99,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 *         <code>false</code> otherwise
 	 */
 	boolean hasBuildState();
-
-//	/**
-//	 * Helper method for setting one option value only. Equivalent to
-//	 * <code>Map options = this.getOptions(false); map.put(optionName, optionValue); this.setOptions(map)</code>
-//	 * <p>
-//	 * For a complete description of the configurable options, see
-//	 * <code>RodinCore#getDefaultOptions</code>.
-//	 * </p>
-//	 * 
-//	 * @param optionName
-//	 *            the name of an option
-//	 * @param optionValue
-//	 *            the value of the option to set
-//	 * @see RodinCore#getDefaultOptions()
-//	 */
-//	void setOption(String optionName, String optionValue);
-//
-//	/**
-//	 * Sets the project custom options. All and only the options explicitly
-//	 * included in the given table are remembered; all previous option settings
-//	 * are forgotten, including ones not explicitly mentioned.
-//	 * <p>
-//	 * For a complete description of the configurable options, see
-//	 * <code>RodinCore#getDefaultOptions</code>.
-//	 * </p>
-//	 * 
-//	 * @param newOptions
-//	 *            the new options (key type: <code>String</code>; value type:
-//	 *            <code>String</code>), or <code>null</code> to flush all
-//	 *            custom options (clients will automatically get the global
-//	 *            RodinCore options).
-//	 * @see RodinCore#getDefaultOptions()
-//	 */
-//	void setOptions(Map newOptions);
-
 	
 	/**
 	 * Returns all the Rodin files in this project.
