@@ -2,7 +2,7 @@
 <feature
       id="org.rodinp.platform"
       label="%featureName"
-      version="3.8.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="%providerName"
       os="linux,win32,macosx"
       ws="gtk,win32,cocoa"
@@ -36,37 +36,22 @@
 
    <plugin
          id="org.rodinp.platform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ui.views.log"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.simpleconfigurator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.core.runtime"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.equinox.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>
