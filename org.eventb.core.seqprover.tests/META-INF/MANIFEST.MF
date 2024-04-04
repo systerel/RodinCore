@@ -10,7 +10,7 @@ Require-Bundle: org.eventb.core.ast.tests,
  org.junit,
  org.eventb.core.ast,
  org.eclipse.core.filesystem
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eventb.core.seqprover.reasonerExtensionTests,
  org.eventb.core.seqprover.rewriterTests,
  org.eventb.core.seqprover.tests

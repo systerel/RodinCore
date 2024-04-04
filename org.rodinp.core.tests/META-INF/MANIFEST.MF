@@ -11,6 +11,6 @@ Require-Bundle: org.junit,
 Export-Package: org.rodinp.core.tests,
  org.rodinp.core.tests.basis,
  org.rodinp.core.tests.util
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Automatic-Module-Name: org.rodinp.core.tests

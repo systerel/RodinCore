@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,8 +68,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
 		assertFalse(rodinProject.hasChildren());
-		// 1 because of the ".project" file
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		// 1 because of the ".project" and ".settings" files
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one Rodin file handle
@@ -93,7 +93,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -127,7 +127,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -137,8 +137,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
 		assertFalse(rodinProject.hasChildren());
-		// 1 because of the ".project" file
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		// 2 because of the ".project .settings" files
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one Rodin file handle
@@ -155,7 +155,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Then delete the file
 		file.delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -164,8 +164,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 	public void testCreateRodinFile3() throws CoreException, RodinDBException{
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
-		// 1 because of the ".project" file
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		// 1 because of the ".project" and ".settings" files
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one Rodin file handle
@@ -182,7 +182,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -206,7 +206,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
 		assertNotExists("File should not exist", rodinFile);
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -238,8 +238,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
 		assertFalse(rodinProject.hasChildren());
-		// 1 because of the ".project" file
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		// 1 because of the ".project" and ".settings" files
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one Non Rodin file handle
@@ -249,13 +249,13 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Actually create the file
 		file.create(new ByteArrayInputStream(new byte[] {}), true, null);
 		assertTrue(file.exists());
-		assertEquals("Project with one non-Rodin file", 2, rodinProject.getNonRodinResources().length);
+		assertEquals("Project with one non-Rodin file", 3, rodinProject.getNonRodinResources().length);
 		assertEquals("Project with one non-Rodin file", 0, rodinProject.getRodinFiles().length);
 		
 		// Then delete it
 		file.delete(true, null);
 		assertFalse(file.exists());
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Remove project
@@ -268,8 +268,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Check project is empty
 		assertEquals("Empty project", 0, rodinProject.getChildren().length);
 		assertFalse(rodinProject.hasChildren());
-		// 1 because of the ".project" file
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		// 1 because of the ".project" and ".settings" files
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 		
 		// Create one folder handle
@@ -279,13 +279,13 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Actually create the file
 		folder.create(true, true, null);
 		assertTrue(folder.exists());
-		assertEquals("Project with one non-Rodin file", 2, rodinProject.getNonRodinResources().length);
+		assertEquals("Project with one non-Rodin file", 3, rodinProject.getNonRodinResources().length);
 		assertEquals("Project with one non-Rodin file", 0, rodinProject.getRodinFiles().length);
 		
 		// Then delete it
 		folder.delete(true, null);
 		assertFalse(folder.exists());
-		assertEquals("Empty project", 1, rodinProject.getNonRodinResources().length);
+		assertEquals("Empty project", 2, rodinProject.getNonRodinResources().length);
 		assertEquals("Empty project", 0, rodinProject.getRodinFiles().length);
 	}
 
@@ -329,8 +329,8 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Check project contains the file as a non-Rodin resource
 		assertEquals("Project with one non-Rodin file", 0, rodinProject.getChildren().length);
 		assertFalse(rodinProject.hasChildren());
-		// 2 because of the ".project" file
-		assertEquals("Project with one non-Rodin file", 2, rodinProject.getNonRodinResources().length);
+		// 3 because of the ".project" and ".settings" files
+		assertEquals("Project with one non-Rodin file", 3, rodinProject.getNonRodinResources().length);
 		assertEquals("Project with one non-Rodin file", 0, rodinProject.getRodinFiles().length);
 	}
 
