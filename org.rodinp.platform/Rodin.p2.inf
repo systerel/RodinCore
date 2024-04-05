@@ -6,6 +6,8 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
+  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
+  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
   addRepository(type:0,location:http${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
