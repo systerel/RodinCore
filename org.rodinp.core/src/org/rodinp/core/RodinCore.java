@@ -17,6 +17,10 @@
  *******************************************************************************/
 package org.rodinp.core;
 
+import static org.eclipse.core.resources.ResourcesPlugin.PI_RESOURCES;
+import static org.eclipse.core.resources.ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH;
+import static org.eclipse.core.runtime.preferences.InstanceScope.INSTANCE;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +31,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrenceKind;
@@ -402,8 +405,16 @@ public class RodinCore extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		/*
+		 * Deactivate auto refresh of resources. This mechanism will break the Delta
+		 * reporting mechanism of the Resources plug-in (e.g., deltas will be reported
+		 * to another thread than the one that performed the changes), and thus prevent
+		 * the Rodin Database from working correctly.
+		 */
+		INSTANCE.getNode(PI_RESOURCES).putBoolean(PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
+
 		RodinDBManager.getRodinDBManager().startup();
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 	}
 
 	@Override
