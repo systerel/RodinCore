@@ -1,21 +1,21 @@
 instructions.configure=\
   mkdir(path:${installFolder}/dropins);\
-  addRepository(type:0,location:http${#58}//download.eclipse.org/releases/2023-12,name:Eclipse 2023-12);\
-  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/2023-12,name:Eclipse 2023-12);\
-  addRepository(type:0,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
-  addRepository(type:1,location:http${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
-  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
-  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
-  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
-  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
-  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
-  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
-  addRepository(type:0,location:http${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
-  addRepository(type:1,location:http${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
-  addRepository(type:0,location:http${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
-  addRepository(type:1,location:http${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
-  addRepository(type:0,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
-  addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
-  addRepository(type:0,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
-  addRepository(type:1,location:http${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);
+  addRepository(type:0,location:https${#58}//download.eclipse.org/releases/2023-12,name:Eclipse 2023-12);\
+  addRepository(type:1,location:https${#58}//download.eclipse.org/releases/2023-12,name:Eclipse 2023-12);\
+  addRepository(type:0,location:https${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:1,location:https${#58}//www.atelierb.eu/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:0,location:https${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
+  addRepository(type:1,location:https${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin Plug-ins);\
+  addRepository(type:0,location:https${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
+  addRepository(type:1,location:https${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
+  addRepository(type:0,location:https${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
+  addRepository(type:1,location:https${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
+  addRepository(type:0,location:https${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
+  addRepository(type:1,location:https${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
+  addRepository(type:0,location:https${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
+  addRepository(type:1,location:https${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
+  addRepository(type:0,location:https${#58}//www.animb.org/updatesite,name:AnimB);\
+  addRepository(type:1,location:https${#58}//www.animb.org/updatesite,name:AnimB);\
+  addRepository(type:0,location:https${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
+  addRepository(type:1,location:https${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);
 # BEWARE ! THE PREVIOUS LINE MUST NOT END WITH A BACKSLASH

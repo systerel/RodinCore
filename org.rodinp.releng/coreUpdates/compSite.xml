@@ -25,11 +25,11 @@ directory ${dest} to the Core_Update_Site directory of SourceForge.
 			<repository location="file://${dest}" name="Rodin Core Updates" />
 			<add>
 				<!-- For old releases prior to 3.8 -->
-				<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/old/" />
+				<repository location="https://rodin-b-sharp.sourceforge.net/core-updates/old/" />
 
 				<!-- For Rodin 3.8 -->
-				<repository location="http://rodin-b-sharp.sourceforge.net/core-updates/3.8/" />
-				<repository location="http://download.eclipse.org/eclipse/updates/4.23/" />
+				<repository location="https://rodin-b-sharp.sourceforge.net/core-updates/3.8/" />
+				<repository location="https://download.eclipse.org/eclipse/updates/4.23/" />
 			</add>
 		</p2.composite.repository>
 		<copy file="p2.index" todir="${dest}" />
