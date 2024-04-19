@@ -10,10 +10,10 @@ instructions.configure=\
   addRepository(type:1,location:https${#58}//rodin-b-sharp.sourceforge.net/updates-archive,name:Rodin Plug-ins (archive));\
   addRepository(type:0,location:https${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
   addRepository(type:1,location:https${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
-  addRepository(type:0,location:https${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
-  addRepository(type:1,location:https${#58}//www.stups.hhu.de/prob_updates_rodin3,name:ProB);\
-  addRepository(type:0,location:https${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
-  addRepository(type:1,location:https${#58}//www.stups.hhu.de/camille_updates,name:Camille);\
+  addRepository(type:0,location:https${#58}//stups.hhu-hosting.de/rodin/prob1/release/,name:ProB);\
+  addRepository(type:1,location:https${#58}//stups.hhu-hosting.de/rodin/prob1/release/,name:ProB);\
+  addRepository(type:0,location:https${#58}//stups.hhu-hosting.de/rodin/camille/release/,name:Camille);\
+  addRepository(type:1,location:https${#58}//stups.hhu-hosting.de/rodin/camille/release/,name:Camille);\
   addRepository(type:0,location:https${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:1,location:https${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:0,location:https${#58}//download.scala-ide.org/sdk/lithium/e44/scala211/stable/site,name:Scala);\
