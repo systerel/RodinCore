@@ -14,8 +14,9 @@
 #  This script must be run from a working copy of the Rodin platform sources.
 #  Since Rodin 3.3, Java 8 is required for building.
 #  Since Rodin 3.5, Java 11 is required for building.
+#  Since Rodin 3.9, Java 17 is required for building.
 #
-minJavaVersion=11
+minJavaVersion=17
 
 # Use the template script from https://gist.github.com/neatshell/5283811
 # Declare the number of mandatory args
