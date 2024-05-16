@@ -82,30 +82,17 @@ public class ExtnUnicityChecker {
 		final Set<String> ids = new HashSet<String>();
 		for (IFormulaExtension extn : extns) {
 			final String id = extn.getId();
-			if (ids.contains(id) || !hasGloballyUnicId(extn)) {
+			if (ids.contains(id) || standardGrammar.isDeclared(id)) {
 				processInvalid(extn, "overrides existing id: " + id);
 			}
 			ids.add(id);
 		}
 	}
 
-	private boolean hasGloballyUnicId(IFormulaExtension newExtn) {
-		final String newId = newExtn.getId();
-		if (standardGrammar.isDeclared(newId)) {
-			return false;
-		}
-		return true;
-	}
-
 	private static void processInvalid(IFormulaExtension newExtn, String reason) {
-		final String message = makeInvalidMessage(newExtn, reason);
+		final String message = "invalid extension " + newExtn.getId() + ": " + reason;
 		ASTPlugin.log(null, message);
 		throw new IllegalArgumentException(message);
-	}
-
-	private static String makeInvalidMessage(IFormulaExtension newExtn,
-			String reason) {
-		return "invalid extension " + newExtn.getId() + ": " + reason;
 	}
 
 }
