@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -69,7 +68,7 @@ public class ExtnUnicityChecker {
 
 	private void checkSymbolUnicity(Set<IFormulaExtension> extns) {
 		final TokenSet standardSymbols = standardGrammar.getTokens();
-		final List<String> symbols = new ArrayList<String>();
+		final Set<String> symbols = new HashSet<String>();
 		for (IFormulaExtension extn : extns) {
 			final String symbol = extn.getSyntaxSymbol();
 			if (standardSymbols.contains(symbol) || symbols.contains(symbol)) {
@@ -80,7 +79,7 @@ public class ExtnUnicityChecker {
 	}
 
 	private void checkIdUnicity(Set<IFormulaExtension> extns) {
-		final List<String> ids = new ArrayList<String>();
+		final Set<String> ids = new HashSet<String>();
 		for (IFormulaExtension extn : extns) {
 			final String id = extn.getId();
 			if (ids.contains(id) || !hasGloballyUnicId(extn)) {
