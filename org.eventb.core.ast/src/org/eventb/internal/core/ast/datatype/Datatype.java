@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,12 +55,14 @@ public class Datatype implements IDatatype {
 	}
 
 	private static Datatype registerDatatype(Datatype candidate) {
-		final Datatype representative = REGISTRY.get(candidate);
-		if (representative != null) {
-			return representative;
+		synchronized (REGISTRY) {
+			final Datatype representative = REGISTRY.get(candidate);
+			if (representative != null) {
+				return representative;
+			}
+			REGISTRY.put(candidate, candidate);
+			return candidate;
 		}
-		REGISTRY.put(candidate, candidate);
-		return candidate;
 	}
 
 	// The minimal factory containing all extensions that are needed to define
