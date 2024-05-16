@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -69,7 +68,7 @@ public class ExtnUnicityChecker {
 
 	private void checkSymbolUnicity(Set<IFormulaExtension> extns) {
 		final TokenSet standardSymbols = standardGrammar.getTokens();
-		final List<String> symbols = new ArrayList<String>();
+		final Set<String> symbols = new HashSet<String>();
 		for (IFormulaExtension extn : extns) {
 			final String symbol = extn.getSyntaxSymbol();
 			if (standardSymbols.contains(symbol) || symbols.contains(symbol)) {
@@ -80,33 +79,20 @@ public class ExtnUnicityChecker {
 	}
 
 	private void checkIdUnicity(Set<IFormulaExtension> extns) {
-		final List<String> ids = new ArrayList<String>();
+		final Set<String> ids = new HashSet<String>();
 		for (IFormulaExtension extn : extns) {
 			final String id = extn.getId();
-			if (ids.contains(id) || !hasGloballyUnicId(extn)) {
+			if (ids.contains(id) || standardGrammar.isDeclared(id)) {
 				processInvalid(extn, "overrides existing id: " + id);
 			}
 			ids.add(id);
 		}
 	}
 
-	private boolean hasGloballyUnicId(IFormulaExtension newExtn) {
-		final String newId = newExtn.getId();
-		if (standardGrammar.isDeclared(newId)) {
-			return false;
-		}
-		return true;
-	}
-
 	private static void processInvalid(IFormulaExtension newExtn, String reason) {
-		final String message = makeInvalidMessage(newExtn, reason);
+		final String message = "invalid extension " + newExtn.getId() + ": " + reason;
 		ASTPlugin.log(null, message);
 		throw new IllegalArgumentException(message);
-	}
-
-	private static String makeInvalidMessage(IFormulaExtension newExtn,
-			String reason) {
-		return "invalid extension " + newExtn.getId() + ": " + reason;
 	}
 
 }
