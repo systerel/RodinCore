@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 ETH Zurich and others.
+ * Copyright (c) 2005, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -779,12 +779,12 @@ public class TestWD extends AbstractTests {
 		final ITypeEnvironment env = EFF.makeTypeEnvironment();
 		// WD strict predicate
 		assertWDLemma(env, "fooS(1=1÷x, 1÷y, 1=1÷z, 1÷t)",
-				"finite({1}) ∧ y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0");
+				"y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0 ∧ finite({1})");
 		// non WD strict predicate
 		assertWDLemma(env, "fooL(1=1÷x, 1÷y, 1=1÷z, 1÷t)", "finite({0})");
 		// WD strict expression
 		assertWDLemma(env, "1=barS(1=1÷x, 1÷y, 1=1÷z, 1÷t)",
-				"finite({1}) ∧ y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0");
+				"y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0 ∧ finite({1})");
 		// non WD strict expression
 		assertWDLemma(env, "1=barL(1=1÷x, 1÷y, 1=1÷z, 1÷t)", "finite({0})");
 	}
@@ -826,9 +826,9 @@ public class TestWD extends AbstractTests {
 
 		// Mixed cases
 		assertWDLemma(env, "x = head(cons(1÷x, l))",
-				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
+				"x≠0 ∧ (∃h,t· cons(1÷x, l) = cons(h, t))");
 		assertWDLemma(env, "l = tail(cons(1÷x, l))",
-				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
+				"x≠0 ∧ (∃h,t· cons(1÷x, l) = cons(h, t))");
 	}
 
 	/**
