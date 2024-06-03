@@ -22,6 +22,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.eventbExtensions.utils.FormulaBuilder;
 
@@ -51,6 +52,7 @@ public class ExponentiationStep extends AbstractManualInference {
 		return expression.getTag() == EXPN;
 	}
 
+	@ProverRule("DEF_EXPN_STEP")
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred, IPosition position) {
 		Predicate predicate = pred;
