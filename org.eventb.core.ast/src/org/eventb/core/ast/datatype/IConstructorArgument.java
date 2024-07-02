@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,5 +84,15 @@ public interface IConstructorArgument {
 	 *             if the instantiation comes from a different origin
 	 */
 	Expression getSet(ISetInstantiation instantiation);
+
+	/**
+	 * Tells whether this constructor argument is basic. A basic constructor
+	 * argument does not reference the datatype type itself (no recursive use of the
+	 * datatype).
+	 *
+	 * @return <code>true</code> iff this is a basic argument
+	 * @since 3.9
+	 */
+	boolean isBasic();
 
 }

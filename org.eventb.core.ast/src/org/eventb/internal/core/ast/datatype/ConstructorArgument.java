@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,12 @@ public class ConstructorArgument implements IConstructorArgument {
 
 	protected final ConstructorExtension constructor;
 	protected final Type formalType;
+	protected final boolean isBasic;
 
-	public ConstructorArgument(ConstructorExtension constructor, Type formalType) {
+	public ConstructorArgument(ConstructorExtension constructor, Type formalType, boolean isBasic) {
 		this.constructor = constructor;
 		this.formalType = formalType;
+		this.isBasic = isBasic;
 	}
 
 	@Override
@@ -99,6 +101,11 @@ public class ConstructorArgument implements IConstructorArgument {
 					+ this.getOrigin());
 		}
 		return ((SetSubstitution) instantiation).substitute(formalType);
+	}
+
+	@Override
+	public boolean isBasic() {
+		return isBasic;
 	}
 
 	@Override

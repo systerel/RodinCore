@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,16 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * @return the index of the given argument, or <code>-1</code> if unknown
 	 */
 	int getArgumentIndex(IConstructorArgument argument);
+
+	/**
+	 * Tells whether this constructor is a basic constructor. A basic
+	 * constructor is such that none of its argument types reference the
+	 * datatype type itself (no recursive use of the datatype).
+	 *
+	 * @return <code>true</code> iff this is a basic constructor
+	 * @since 3.9
+	 */
+	boolean isBasic();
 
 	/**
 	 * Returns the datatype to which this constructor extension belongs.

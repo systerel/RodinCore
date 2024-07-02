@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,6 +129,17 @@ public class TestConstructor extends AbstractTests {
 		for (int i = 0; i < args.length; i++) {
 			assertEquals(i, c3.getArgumentIndex(args[i]));
 		}
+	}
+
+	@Test
+	public void isBasic() {
+		IDatatype testDT = parse(LIST_FAC, "DT[S] ::= c1 || c2[S] || c3[DT] || c4[S×DT] || c5[List(S)] || c6[List(DT)]");
+		assertTrue(testDT.getConstructor("c1").isBasic());
+		assertTrue(testDT.getConstructor("c2").isBasic());
+		assertFalse(testDT.getConstructor("c3").isBasic());
+		assertFalse(testDT.getConstructor("c4").isBasic());
+		assertTrue(testDT.getConstructor("c5").isBasic());
+		assertFalse(testDT.getConstructor("c6").isBasic());
 	}
 
 }
