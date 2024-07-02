@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,7 @@ public interface ITraceableElement extends IInternalElement {
 	void setSource(IRodinElement source, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
-	 * Returns the source element of this traceable element, or <code>null</code> 
-	 * if there is no source element associated with this traceable element.
+	 * Returns the source element of this traceable element.
 	 * 
 	 * @return the source element
 	 * @throws RodinDBException if there was a problem accessing the database
