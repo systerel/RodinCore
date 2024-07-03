@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,6 +193,10 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 		return formalNames.length;
 	}
 
+	/*
+	 * Even though equals() is not implemented, we provide a hash code that will be
+	 * used with isSimilarTo() to implement Datatype's hashCode and equals.
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

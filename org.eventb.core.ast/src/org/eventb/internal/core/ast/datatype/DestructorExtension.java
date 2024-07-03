@@ -158,6 +158,10 @@ public class DestructorExtension extends ConstructorArgument implements
 		return false;
 	}
 
+	/*
+	 * Even though equals() is not implemented, we provide a hash code that will be
+	 * used with isSimilarTo() to implement Datatype's hashCode and equals.
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
