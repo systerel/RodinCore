@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2023 Systerel and others.
+ * Copyright (c) 2014, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,11 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 	private static final IDatatype LIST_DT = parse(ff, LIST_SPEC);
 
 	private static final String LIST_AXIOMS = //
-			"List∈ℤ  List_Type ;;" //
-					+ "cons∈ℤ × List_Type ↣ List_Type ;;"
+					  "cons∈ℤ × List_Type ↣ List_Type ;;"
 					+ "head∈ran(cons) ↠ ℤ ;;" //
 					+ "tail∈ran(cons) ↠ List_Type ;;" + "head ⊗ tail=cons∼ ;;"
 					+ "partition(List_Type,{nil},ran(cons)) ;;"
-					+ "∀S·partition(List[S],{nil},cons[S × List[S]])";
+					+ "List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))";
 
 	@Test
 	public void simpleSequent() {

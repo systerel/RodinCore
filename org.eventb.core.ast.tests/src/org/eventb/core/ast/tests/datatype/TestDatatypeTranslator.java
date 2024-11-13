@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,24 +48,22 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.addToSourceEnvironment(setsTypenv);
 		s.setExpectedTypeEnvironment(MESSAGE_TYPE_ENV + ";" + setsTypenv);
 		s.assertExprTranslation("Message(Agent, Identifier)", "Message_Type");
-		s.assertExprTranslation("Message(A, I)", "Message[A × I]");
+		s.assertExprTranslation("Message(A, I)", "Message(A ↦ I)");
 		s.assertExprTranslation("Message(Person, Stamp)", "Message_Type0");
-		s.assertExprTranslation("Message(P, S)", "Message0[P × S]");
+		s.assertExprTranslation("Message(P, S)", "Message0(P ↦ S)");
 		s.assertAxioms(
-				"Message∈Agent × Identifier  Message_Type", //
 				"message ∈ Agent × Agent × Identifier ⤖ Message_Type", //
 				"sender ∈ ran(message) ↠ Agent", //
 				"receiver ∈ ran(message) ↠ Agent", //
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼",
-				"∀U,V·partition(Message[U × V], message[U × U × V])", //
-				"Message0∈Person × Stamp  Message_Type0", //
+				"Message = (λU↦V· ⊤ ∣ (⋂ Message ∣ message[U × U × V] ⊆ Message))", //
 				"message0 ∈ Person × Person × Stamp ⤖ Message_Type0", //
 				"sender0 ∈ ran(message0) ↠ Person", //
 				"receiver0 ∈ ran(message0) ↠ Person", //
 				"identifier0 ∈ ran(message0) ↠ Stamp", //
 				"((sender0 ⊗ receiver0) ⊗ identifier0) = message0∼", //
-				"∀U,V·partition(Message0[U × V],message0[U × U × V])");
+				"Message0 = (λU↦V· ⊤ ∣ (⋂ Message0 ∣ message0[U × U × V] ⊆ Message0))");
 	}
 
 	@Test 
@@ -76,24 +74,22 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.addToSourceEnvironment(setsTypenv);
 		s.setExpectedTypeEnvironment(LIST_TYPE_ENV + ";" + setsTypenv);
 		s.assertExprTranslation("List(Object)", "List_Type");
-		s.assertExprTranslation("List(O)", "List[O]");
+		s.assertExprTranslation("List(O)", "List(O)");
 		s.assertExprTranslation("List(Thing)", "List_Type0");
-		s.assertExprTranslation("List(T)", "List0[T]");
+		s.assertExprTranslation("List(T)", "List0(T)");
 		s.assertAxioms(
-				"List ∈ Object  List_Type", //
 				"cons ∈ Object × List_Type ↣ List_Type", //
 				"head∈ran(cons) ↠ Object", //
 				"tail∈ran(cons) ↠ List_Type", //
 				"(head ⊗ tail) = cons∼", //
 				"partition(List_Type, {nil}, ran(cons))",
-				"∀t0·partition(List[t0], {nil}, cons[t0 × List[t0]])", //
-				"List0 ∈ Thing  List_Type0", //
+				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
 				"cons0 ∈ Thing × List_Type0 ↣ List_Type0", //
 				"head0∈ran(cons0) ↠ Thing", //
 				"tail0∈ran(cons0) ↠ List_Type0", //
 				"(head0 ⊗ tail0) = cons0∼", //
 				"partition(List_Type0, {nil0}, ran(cons0))",
-				"∀t0·partition(List0[t0], {nil0}, cons0[t0 × List0[t0]])");
+				"List0 = (λS· ⊤ ∣ (⋂ List ∣ nil0 ∈ List ∧ cons0[S × List] ⊆ List))");
 	}
 
 	@Test 
@@ -160,38 +156,35 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.addToSourceEnvironment("x=A(B(ℤ))");
 		s.setExpectedTypeEnvironment(""
 				+ "A_Type=ℙ(A_Type); B_Type=ℙ(B_Type); A_Type0=ℙ(A_Type0); "
-				+ "A=ℙ(ℤ×A_Type); B=ℙ(ℤ×B_Type); A0=ℙ(B_Type×A_Type0); "
+				+ "A=ℙ(ℙ(ℤ)×ℙ(A_Type)); B=ℙ(ℙ(ℤ)×ℙ(B_Type)); A0=ℙ(ℙ(B_Type)×ℙ(A_Type0)); "
 				+ "a=ℙ(ℤ×A_Type); b=ℙ(A_Type×B_Type); a0=ℙ(B_Type×A_Type0); "
 				+ "d=ℙ(A_Type×ℤ); e=ℙ(B_Type×A_Type); d0=ℙ(A_Type0×B_Type); "
 				+ "x=A_Type0");
 		s.assertPredTranslation("x ∈ A(B(ℤ))", "x ∈ A_Type0");
-		s.assertPredTranslation("x ∈ A(B(1‥2))", "x ∈ A0[B[1‥2]]");
+		s.assertPredTranslation("x ∈ A(B(1‥2))", "x ∈ A0(B(1‥2))");
 		s.assertPredTranslation("a(1) ∈ A(ℤ)", "a(1) ∈ A_Type");
-		s.assertPredTranslation("a(1) ∈ A(1‥2)", "a(1) ∈ A[1‥2]");
+		s.assertPredTranslation("a(1) ∈ A(1‥2)", "a(1) ∈ A(1‥2)");
 		s.assertPredTranslation("b(a(1)) ∈ B(ℤ)", "b(a(1)) ∈ B_Type");
-		s.assertPredTranslation("b(a(1)) ∈ B(1‥2)", "b(a(1)) ∈ B[1‥2]");
+		s.assertPredTranslation("b(a(1)) ∈ B(1‥2)", "b(a(1)) ∈ B(1‥2)");
 		s.assertPredTranslation("d(x) ∈ B(ℤ)", "d0(x) ∈ B_Type");
-		s.assertPredTranslation("d(x) ∈ B(1‥2)", "d0(x) ∈ B[1‥2]");
+		s.assertPredTranslation("d(x) ∈ B(1‥2)", "d0(x) ∈ B(1‥2)");
 		s.assertPredTranslation("e(d(x)) ∈ A(ℤ)", "e(d0(x)) ∈ A_Type");
-		s.assertPredTranslation("e(d(x)) ∈ A(1‥2)", "e(d0(x)) ∈ A[1‥2]");
+		s.assertPredTranslation("e(d(x)) ∈ A(1‥2)", "e(d0(x)) ∈ A(1‥2)");
 		s.assertPredTranslation("d(e(d(x))) ∈ ℤ", "d(e(d0(x))) ∈ ℤ");
 		s.assertPredTranslation("d(e(d(x))) ∈ 1‥2", "d(e(d0(x))) ∈ 1‥2");
 		s.assertAxioms(//
-				"A ∈ ℤ  A_Type", //
 				"a ∈ ℤ ⤖ A_Type", //
 				"d ∈ ran(a) ↠ ℤ", //
 				"d = a∼", //
-				"∀T⦂ℙ(ℤ)·partition(A[T], a[T])", //
-				"B ∈ ℤ  B_Type", //
+				"A = (λT⦂ℙ(ℤ)· ⊤ ∣ (⋂ A ∣ a[T] ⊆ A))", //
 				"b ∈ A_Type ⤖ B_Type", //
 				"e ∈ ran(b) ↠ A_Type", //
 				"e = b∼", //
-				"∀U⦂ℙ(ℤ)·partition(B[U], b[A[U]])", //
-				"A0 ∈ B_Type  A_Type0", //
+				"B = (λU⦂ℙ(ℤ)· ⊤ ∣ (⋂ B ∣ b[A(U)] ⊆ B))", //
 				"a0 ∈ B_Type ⤖ A_Type0", //
 				"d0 ∈ ran(a0) ↠ B_Type", //
 				"d0 = a0∼", //
-				"∀T⦂ℙ(B_Type)·partition(A0[T], a0[T])");
+				"A0 = (λT⦂ℙ(B_Type)· ⊤ ∣ (⋂ A0 ∣ a0[T] ⊆ A0))");
 	}
 
 	/**
@@ -208,13 +201,15 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				+ "cons=ℙ(Object×Object×Unnamed_Type); " //
 				+ "d0=ℙ(Unnamed_Type×Object); " //
 				+ "d2=ℙ(Unnamed_Type×Object); " //
-				+ "Unnamed=ℙ(Object×Unnamed_Type);" + setsTypenv);
-		s.assertAxioms("Unnamed ∈ Object  Unnamed_Type", //
+				+ "Unnamed=ℙ(ℙ(Object)×ℙ(Unnamed_Type));" + setsTypenv);
+		s.assertExprTranslation("Unnamed(Object)", "Unnamed_Type");
+		s.assertExprTranslation("Unnamed(O)", "Unnamed(O)");
+		s.assertAxioms(//
 				"cons ∈ Object×Object ⤖ Unnamed_Type", //
 				"d0 ∈ ran(cons) ↠ Object", //
 				"d2 ∈ ran(cons) ↠ Object", //
 				"(d0 ⊗ d2) = cons∼", //
-				"∀S·partition(Unnamed[S], cons[S×S])");
+				"Unnamed = (λS· ⊤ ∣ (⋂ Unnamed ∣ cons[S×S] ⊆ Unnamed))");
 	}
 
 }
