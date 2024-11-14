@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,34 +10,46 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
 
+import static java.util.Arrays.stream;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.CPROD;
+import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DPROD;
 import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.KRAN;
+import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.RELIMAGE;
-import static org.eventb.core.ast.Formula.STREL;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.Formula.TBIJ;
 import static org.eventb.core.ast.Formula.TINJ;
 import static org.eventb.core.ast.Formula.TSUR;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -146,6 +158,9 @@ public class DatatypeTranslator {
 		return trgResult;
 	}
 
+	/*
+	 * Returns the fresh type τ.
+	 */
 	private GivenType getTrgDatatype(String srcSymbol) {
 		final String symbol;
 		if (hasNoSetConstructor) {
@@ -156,17 +171,20 @@ public class DatatypeTranslator {
 		return this.translation.solveGivenType(symbol);
 	}
 
+	/*
+	 * Returns the translated set constructor, that is Γ, or null if not used.
+	 */
 	private FreeIdentifier getTrgSetConstructor(String srcSymbol) {
 		if (hasNoSetConstructor) {
 			return null;
 		}
-		final Type trgType = makeTrgConsType(trgTypeParameters);
+		final Type trgType = makeTrgPowConsType(trgTypeParameters);
 		return translation.solveIdentifier(srcSymbol, trgType);
 	}
 
-	/**
-	 * Compute all fresh identifiers that may appear in the translation of this
-	 * datatype instance.
+	/*
+	 * Compute all fresh identifiers ɣi and δij that may appear in the translation
+	 * of this datatype instance.
 	 */
 	private void computeReplacements() {
 		for (final IConstructorExtension srcCons : srcConstructors) {
@@ -206,6 +224,33 @@ public class DatatypeTranslator {
 		replacements.put(ext, ident);
 	}
 
+	/*
+	 * Returns the type of Γ, that is "ℙ(T1) × ... × ℙ(Tn) ↔ ℙ(τ)", given T1, ...,
+	 * Tn, or just "τ" if there is no type parameter.
+	 */
+	private Type makeTrgPowConsType(Type[] trgArgTypes) {
+		if (trgArgTypes.length == 0) {
+			return trgDatatype;
+		}
+		final Type trgProdType = makeTrgPowProdType(trgArgTypes);
+		return mTrgRelType(trgProdType, mTrgPowerSetType(trgDatatype));
+	}
+
+	/*
+	 * Returns the type "ℙ(T1) × ... × ℙ(Tn)", given T1, ..., Tn.
+	 */
+	private Type makeTrgPowProdType(Type[] trgTypes) {
+		Type trgProdType = mTrgPowerSetType(trgTypes[0]);
+		for (int i = 1; i < trgTypes.length; i++) {
+			trgProdType = mTrgProdType(trgProdType, mTrgPowerSetType(trgTypes[i]));
+		}
+		return trgProdType;
+	}
+
+	/*
+	 * Returns the type of ɣi, that is "αi1 × ... × αiki ↔ τ", given αi1, ..., αiki,
+	 * or just "τ" if ki is 0.
+	 */
 	private Type makeTrgConsType(Type[] trgArgTypes) {
 		if (trgArgTypes.length == 0) {
 			return trgDatatype;
@@ -214,6 +259,9 @@ public class DatatypeTranslator {
 		return mTrgRelType(trgProdType, trgDatatype);
 	}
 
+	/*
+	 * Returns the type "T1 × ... × Tn", given T1, ..., Tn.
+	 */
 	private Type makeTrgProdType(Type[] trgTypes) {
 		Type trgProdType = trgTypes[0];
 		for (int i = 1; i < trgTypes.length; i++) {
@@ -222,6 +270,10 @@ public class DatatypeTranslator {
 		return trgProdType;
 	}
 
+	/*
+	 * Returns "E1 op ... op En", given the expressions E1, ..., En and the binary
+	 * operator tag.
+	 */
 	private Expression combineTrgExpr(int tag, Expression[] trgExprs) {
 		final int length = trgExprs.length;
 		assert length != 0;
@@ -263,7 +315,8 @@ public class DatatypeTranslator {
 			if (hasNoSetConstructor || src.isATypeExpression()) {
 				return trgDatatypeExpr;
 			} else {
-				return mTrgRelImage(trgSetCons, trgChildExprs);
+				final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
+				return mTrgBinExpr(FUNIMAGE, trgSetCons, trgMaplets);
 			}
 		}
 		final Expression trgExpr = replacements.get(ext);
@@ -285,44 +338,112 @@ public class DatatypeTranslator {
 	 */
 	public List<Predicate> getAxioms() {
 		final List<Predicate> axioms = new ArrayList<Predicate>();
-		addSetConstructorDefinitionAxiom(axioms);
 		for (final IConstructorExtension cons : srcConstructors) {
 			addAxioms(axioms, cons);
 		}
 		addPartitionAxiom(axioms);
-		addSetConstructorAxiom(axioms);
+		addSetConstructorAxioms(axioms);
 		return axioms;
 	}
 
 	/**
-	 * Computes and adds the axiom (E)
+	 * Computes and adds the axioms (E) and (F)
 	 */
-	private void addSetConstructorDefinitionAxiom(List<Predicate> axioms) {
+	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)
 			return;
-		final Type trgSetConsType = trgSetCons.getType();
-		final Expression trgProd = toTrgExpr(trgSetConsType.getSource());
-		final Expression trgRange = toTrgExpr(trgSetConsType.getTarget());
-		axioms.add(mTrgInRelationalSet(trgSetCons, STREL, trgProd, trgRange));
+		if (stream(srcConstructors).allMatch(IConstructorExtension::isBasic)) {
+			axioms.add(makeSetConstructorUnionAxiom());
+		} else {
+			axioms.add(makeSetConstructorFixpointAxiom());
+		}
+		axioms.add(makeSetConstructorCompletenessAxiom());
 	}
 
 	/**
-	 * Computes and adds the axiom (F)
+	 * Makes the definition of the set constructor as a union of basic sets.
 	 */
-	private void addSetConstructorAxiom(List<Predicate> axioms) {
-		if (hasNoSetConstructor)
-			return;
-		final List<Expression> trgParts = new ArrayList<Expression>();
+	private Predicate makeSetConstructorUnionAxiom() {
+		final List<Expression> trgParts = new ArrayList<>();
 		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
-		trgParts.add(mTrgRelImage(trgSetCons, translate(srcBoundIdents)));
+		final ISetInstantiation setInst = datatype.getSetInstantiation(makeSrcSet(srcBoundIdents));
+		for (final IConstructorExtension cons : srcConstructors) {
+			Expression part = makeTrgSetConstructorPart(cons, setInst);
+			if (part.getTag() == FREE_IDENT) {
+				part = mTrgSingleton(part);
+			}
+			trgParts.add(part);
+		}
+		Expression values;
+		if (trgParts.size() == 1) {
+			values = trgParts.get(0);
+		} else {
+			values = trgFactory.makeAssociativeExpression(BUNION, trgParts, null);
+		}
+		var lambda = makeSetConstructorLambda(srcBoundIdents, values);
+		return mTrgEquals(trgSetCons, lambda);
+	}
+
+	/**
+	 * Makes the definition of the set constructor as a fixpoint.
+	 */
+	private Predicate makeSetConstructorFixpointAxiom() {
+		final List<Predicate> trgParts = new ArrayList<>();
+		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
+		final Type trgDatatypePowerSet = mTrgPowerSetType(trgDatatype);
+		final BoundIdentifier trgFPIdent = trgFactory.makeBoundIdentifier(0, null, trgDatatypePowerSet);
 		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
+		final var trgSet = (BinaryExpression) srcSet.translateDatatype(translation).shiftBoundIdentifiers(1);
 		final ISetInstantiation setInst = datatype.getSetInstantiation(srcSet);
 		for (final IConstructorExtension cons : srcConstructors) {
-			trgParts.add(makeTrgSetPartitionPart(cons, setInst));
+			trgParts.add(makeConstructorFixpointPart(cons, setInst, trgSet, trgFPIdent));
 		}
-		final Predicate trgPartition = mTrgPartition(trgParts);
-		final BoundIdentDecl[] trgDecls = makeTrgBoundIdentDecls();
-		axioms.add(mTrgForall(trgDecls, trgPartition));
+		final Predicate trgFPPred = mTrgAnd(trgParts);
+		final var trgFPDecl = new BoundIdentDecl[] { mTrgBoundIdentDecl(trgSetCons.getName(), trgDatatypePowerSet) };
+		var fixPoint = trgFactory.makeQuantifiedExpression(QINTER, trgFPDecl, trgFPPred, trgFPIdent, null, Implicit);
+		var lambda = makeSetConstructorLambda(srcBoundIdents, fixPoint);
+		return mTrgEquals(trgSetCons, lambda);
+	}
+
+	private Predicate makeConstructorFixpointPart(IConstructorExtension cons, ISetInstantiation setInst,
+			BinaryExpression trgSet, BoundIdentifier trgFPIdent) {
+		Expression part = makeTrgSetConstructorPart(cons, setInst);
+		// Part will go in a quantified intersection with one quantified variable
+		part = part.shiftBoundIdentifiers(1);
+		// Replace the datatype set translation with the fix point's bound identifier
+		part = part.rewrite(makeBinExpRewriter(trgSet, trgFPIdent));
+		// Two possibilities:
+		// - the constructor is a constant, the predicate is "cons : Set"
+		// - the constructor has arguments, the predicate is "cons(...) <: Set"
+		int relOp = part.getTag() == FREE_IDENT ? IN : SUBSETEQ;
+		return trgFactory.makeRelationalPredicate(relOp, part, trgFPIdent, null);
+	}
+
+	private Expression makeSetConstructorLambda(Expression[] srcBoundIdents, Expression fixPoint) {
+		var arguments = combineTrgExpr(MAPSTO, translate(srcBoundIdents));
+		return trgFactory.makeQuantifiedExpression(CSET, makeTrgBoundIdentDecls(), mTrgTrue(),
+				mTrgBinExpr(MAPSTO, arguments, fixPoint), null, Lambda);
+	}
+
+	// Makes a rewriter replacing binary expression "from" with expression "to"
+	private IFormulaRewriter makeBinExpRewriter(BinaryExpression from, Expression to) {
+		return new DefaultRewriter(false) {
+			@Override
+			public Expression rewrite(BinaryExpression expression) {
+				if (expression.equals(from)) {
+					return to;
+				}
+				return super.rewrite(expression);
+			}
+		};
+	}
+
+	/**
+	 * Makes the set constructor completeness axiom, e.g., "Set(Params...) = Type"
+	 */
+	private Predicate makeSetConstructorCompletenessAxiom() {
+		var typeParamsAsExpr = stream(trgTypeParameters).map(Type::toExpression).toArray(Expression[]::new);
+		return mTrgEquals(mTrgBinExpr(FUNIMAGE, trgSetCons, combineTrgExpr(MAPSTO, typeParamsAsExpr)), trgDatatypeExpr);
 	}
 
 	private Expression[] makeSrcBoundIdentifiers() {
@@ -348,14 +469,14 @@ public class DatatypeTranslator {
 		return trgResult;
 	}
 
-	private Expression makeTrgSetPartitionPart(IConstructorExtension cons,
+	private Expression makeTrgSetConstructorPart(IConstructorExtension cons,
 			ISetInstantiation setInst) {
 		final Expression trgCons = replacements.get(cons);
-		if (hasArguments(cons)) {
+		if (cons.hasArguments()) {
 			final Expression[] trgArgSets = mTrgArgSets(cons, setInst);
 			return mTrgRelImage(trgCons, trgArgSets);
 		} else {
-			return mTrgSingleton(trgCons);
+			return trgCons;
 		}
 	}
 
@@ -389,7 +510,7 @@ public class DatatypeTranslator {
 	}
 
 	private void addAxioms(List<Predicate> axioms, IConstructorExtension cons) {
-		if (!hasArguments(cons)) {
+		if (!cons.hasArguments()) {
 			return;
 		}
 		final Expression trgCons = replacements.get(cons);
@@ -425,7 +546,7 @@ public class DatatypeTranslator {
 
 	private Expression makeTrgPartitionPart(IConstructorExtension cons) {
 		final Expression trgGamma = replacements.get(cons);
-		if (hasArguments(cons)) {
+		if (cons.hasArguments()) {
 			return mTrgUnaryExpr(KRAN, trgGamma);
 		} else {
 			return mTrgSingleton(trgGamma);
@@ -454,11 +575,7 @@ public class DatatypeTranslator {
 	}
 
 	private boolean hasSingleConstructorWithArguments() {
-		return hasSingleConstructor && hasArguments(srcConstructors[0]);
-	}
-
-	private boolean hasArguments(IConstructorExtension constructor) {
-		return constructor.getArguments().length != 0;
+		return hasSingleConstructor && srcConstructors[0].hasArguments();
 	}
 
 	private Expression mSrcBoundIdent(int i, Type srcType) {
@@ -494,11 +611,6 @@ public class DatatypeTranslator {
 		return trgFactory.makeRelationalType(t1, t2);
 	}
 
-	private Predicate mTrgForall(BoundIdentDecl[] trgDecls, Predicate trgPred) {
-		return trgFactory.makeQuantifiedPredicate(FORALL, trgDecls, trgPred,
-				null);
-	}
-
 	private Predicate mTrgEquals(Expression trgLeft, Expression trgRight) {
 		return trgFactory.makeRelationalPredicate(EQUAL, trgLeft, trgRight,
 				null);
@@ -516,6 +628,21 @@ public class DatatypeTranslator {
 
 	private Expression mTrgUnaryExpr(int tag, Expression constructor) {
 		return trgFactory.makeUnaryExpression(tag, constructor, null);
+	}
+
+	private Predicate mTrgAnd(List<Predicate> preds) {
+		switch (preds.size()) {
+		case 0:
+			return mTrgTrue();
+		case 1:
+			return preds.get(0);
+		default:
+			return trgFactory.makeAssociativePredicate(LAND, preds, null);
+		}
+	}
+
+	private Predicate mTrgTrue() {
+		return trgFactory.makeLiteralPredicate(BTRUE, null);
 	}
 
 }

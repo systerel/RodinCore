@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,13 +48,13 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			+ "sender=ℙ(Message_Type × Agent); " //
 			+ "receiver=ℙ(Message_Type × Agent); " //
 			+ "identifier=ℙ(Message_Type × Identifier); " //
-			+ "Message=ℙ(Agent × Identifier × Message_Type);" //
+			+ "Message=ℙ(ℙ(Agent) × ℙ(Identifier) × ℙ(Message_Type));" //
 			+ "Message_Type0=ℙ(Message_Type0); " //
 			+ "message0=ℙ(Person × Person × Stamp × Message_Type0); " //
 			+ "sender0=ℙ(Message_Type0 × Person); " //
 			+ "receiver0=ℙ(Message_Type0 × Person); " //
 			+ "identifier0=ℙ(Message_Type0 × Stamp); " //
-			+ "Message0=ℙ(Person × Stamp × Message_Type0)";
+			+ "Message0=ℙ(ℙ(Person) × ℙ(Stamp) × ℙ(Message_Type0))";
 
 	/*------------------------------------------------------------------------*/
 	/*- Recursive datatype definition, type parameters, and type environment -*/
@@ -68,13 +68,13 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			+ "nil=List_Type; " //
 			+ "head=ℙ(List_Type × Object); " //
 			+ "tail=ℙ(List_Type × List_Type); " //
-			+ "List=ℙ(Object×List_Type); " //
+			+ "List=ℙ(ℙ(Object)×ℙ(List_Type)); " //
 			+ "List_Type0=ℙ(List_Type0); " //
 			+ "cons0=ℙ(Thing × List_Type0 × List_Type0); " //
 			+ "nil0=List_Type0; " //
 			+ "head0=ℙ(List_Type0 × Thing); " //
 			+ "tail0=ℙ(List_Type0 × List_Type0); " //
-			+ "List0=ℙ(Thing×List_Type0)";
+			+ "List0=ℙ(ℙ(Thing)×ℙ(List_Type0))";
 
 	/*------------------------------------------------------------------------*/
 	protected static class TestTranslationSupport {
@@ -165,13 +165,13 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 		public void assertAxioms(String... expectedPredStrs) {
 			final List<Predicate> predicates = getTranslation().getAxioms();
+			assertEquals(expectedPredStrs.length, predicates.size());
 			int i = 0;
 			for (final Predicate pred : predicates) {
 				assertTrue(pred.isTypeChecked());
 				checkPredicate(expectedPredStrs[i], pred);
 				i++;
 			}
-			assertEquals(i, predicates.size());
 		}
 
 		private void checkPredicate(String expectedStr, Predicate actual) {

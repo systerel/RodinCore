@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,11 +89,11 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	public void testRecursiveDatatypeTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); "
-				+ "List=ℙ(ℤ×List_Type); "
+				+ "List=ℙ(ℙ(ℤ)×ℙ(List_Type)); "
 				+ "List_Type0=ℙ(List_Type0); "
-				+ "List0=ℙ(List_Type×List_Type0)");
+				+ "List0=ℙ(ℙ(List_Type)×ℙ(List_Type0))");
 		s.assertExprTranslation("List(List(ℤ))", "List_Type0");
-		s.assertExprTranslation("List(List({1}))", "List0[List[{1}]]");
+		s.assertExprTranslation("List(List({1}))", "List0(List({1}))");
 	}
 
 	/**
@@ -106,11 +106,11 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 		s.addGivenTypes("Agent", "Identifier");
 		s.addToSourceEnvironment(setsTypenv);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); "
-				+ "List=ℙ(Message_Type×List_Type); "
+				+ "List=ℙ(ℙ(Message_Type)×ℙ(List_Type)); "
 				+ "Message_type=ℙ(Message_Type); "
-				+ "Message=ℙ(Agent × Identifier × Message_Type); " + setsTypenv);
+				+ "Message=ℙ(ℙ(Agent) × ℙ(Identifier) × ℙ(Message_Type)); " + setsTypenv);
 		s.assertExprTranslation("List(Message(Agent, Identifier))", "List_Type");
-		s.assertExprTranslation("List(Message(A, I))", "List[Message[A×I]]");
+		s.assertExprTranslation("List(Message(A, I))", "List(Message(A↦I))");
 	}
 
 	/**
@@ -122,12 +122,12 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 		s.addGivenTypes("Agent", "Identifier");
 		s.addToSourceEnvironment("a=Agent; b=Agent; c=Identifier");
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); "
-				+ "List=ℙ(Message_Type×List_Type); " + "nil=List_Type; "
+				+ "List=ℙ(ℙ(Message_Type)×ℙ(List_Type)); " + "nil=List_Type; "
 				+ "cons=ℙ(Message_Type×List_Type×List_Type); "
 				+ "head=ℙ(List_Type×Message_Type); "
 				+ "tail=ℙ(List_Type×List_Type); "
 				+ "Message_Type=ℙ(Message_Type); "
-				+ "Message=ℙ(Agent × Identifier × Message_Type); "
+				+ "Message=ℙ(ℙ(Agent) × ℙ(Identifier) × ℙ(Message_Type)); "
 				+ "message=ℙ(Agent×Agent×Identifier×Message_Type); "
 				+ "sender=ℙ(Message_Type×Agent); "
 				+ "receiver=ℙ(Message_Type×Agent); "
@@ -136,20 +136,20 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 		s.assertExprTranslation("cons(message(a, b, c), nil)",
 				"cons(message(a ↦ b ↦ c) ↦ nil)");
 		s.assertAxioms(
-				"Message ∈ Agent × Identifier  Message_Type", //
 				"message ∈ Agent × Agent × Identifier ⤖ Message_Type", //
 				"sender ∈ ran(message) ↠ Agent", //
 				"receiver ∈ ran(message) ↠ Agent", //
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼", //
-				"∀U,V·partition(Message[U × V], message[U × U × V])", //
-				"List ∈ Message_Type  List_Type",
+				"Message = (λU↦V· ⊤ ∣ message[U × U × V])", //
+				"Message(Agent ↦ Identifier) = Message_Type", //
 				"cons ∈ Message_Type × List_Type ↣ List_Type", //
 				"head∈ran(cons) ↠ Message_Type", //
 				"tail∈ran(cons) ↠ List_Type",//
 				"(head ⊗ tail) = cons∼",//
 				"partition(List_Type, {nil}, ran(cons))", //
-				"∀T·partition(List[T], {nil}, cons[T × List[T]])"); //
+				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
+				"List(Message_Type) = List_Type"); //
 	}
 
 	/**
@@ -160,20 +160,53 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 		final TestTranslationSupport s = mSupport(LIST__DT,
 				"Directions ::= North || East || South || West");
 		s.setExpectedTypeEnvironment("Directions=ℙ(Directions); "
-				+ "List_Type=ℙ(List_Type); List=ℙ(ℤ × Directions × List_Type); "
+				+ "List_Type=ℙ(List_Type); List=ℙ(ℙ(ℤ × Directions) × ℙ(List_Type)); "
 				+ "cons=ℙ((ℤ×Directions)×List_Type×List_Type); "
 				+ "nil=List_Type; head=ℙ(List_Type×(ℤ×Directions)) ;"
 				+ " tail=ℙ(List_Type×List_Type)");
 		s.assertExprTranslation("cons(1 ↦ West, nil)", "cons(1 ↦ West ↦ nil)");
 		s.assertAxioms(
 				"partition(Directions, {North}, {East}, {South}, {West})",
-				"List ∈ ℤ × Directions  List_Type", //
 				"cons ∈ ℤ × Directions × List_Type ↣ List_Type", //
 				"head∈ran(cons) ↠ ℤ × Directions", //
 				"tail∈ran(cons) ↠ List_Type",//
 				"(head ⊗ tail) = cons∼", //
 				"partition(List_Type, {nil}, ran(cons))", //
-				"∀S·partition(List[S], {nil}, cons[S × List[S]])");
+				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
+				"List(ℤ × Directions) = List_Type");
+	}
+
+	/**
+	 * Non inductive datatype with set constructor translation
+	 */
+	@Test 
+	public void testNonInductiveDatatypeTranslation() {
+		final TestTranslationSupport s = mSupport("Values[S] ::= None || One[one : S] || Many[many : ℙ(S)]");
+		s.setExpectedTypeEnvironment("Values_Type=ℙ(Values_Type); Values=ℙ(ℙ(ℤ) × ℙ(Values_Type));"
+				+ "None=Values_Type; One=ℙ(ℤ×Values_Type); Many=ℙ(ℙ(ℤ)×Values_Type);"
+				+ "one=ℙ(Values_Type×ℤ); many=ℙ(Values_Type×ℙ(ℤ))");
+		s.assertExprTranslation("Many({0, 1, 2})", "Many({0, 1, 2})");
+		s.assertAxioms(
+				"One ∈ ℤ ↣ Values_Type", //
+				"one ∈ ran(One) ↠ ℤ", //
+				"one = One∼", //
+				"Many ∈ ℙ(ℤ) ↣ Values_Type", //
+				"many ∈ ran(Many) ↠ ℙ(ℤ)", //
+				"many = Many∼", //
+				"partition(Values_Type, {None}, ran(One), ran(Many))", //
+				"Values = (λS· ⊤ ∣ {None} ∪ One[S] ∪ Many[ℙ(S)])", //
+				"Values(ℤ) = Values_Type");
+	}
+
+	/**
+	 * Non inductive datatype with single constructor and no argument.
+	 */
+	@Test
+	public void testSingleDatatype() {
+		final TestTranslationSupport s = mSupport("Unit ::= Null");
+		s.setExpectedTypeEnvironment("Unit=ℙ(Unit); Null=Unit");
+		s.assertExprTranslation("Null", "Null");
+		s.assertAxioms("partition(Unit, {Null})");
 	}
 
 	public static class DatatypeTranslationErrors {

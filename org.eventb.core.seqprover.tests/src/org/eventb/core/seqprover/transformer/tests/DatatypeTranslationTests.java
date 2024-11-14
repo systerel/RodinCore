@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,14 +43,14 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 	private static final String msgDatatypeSpec //
 	= "MESSAGES[U,V] ::=  message[sender: U; receiver: U; identifier: V]";
 
-	private static final String msgAxioms //
-	= "MESSAGES∈Agent × Identifier  MESSAGES_Type;;"
-			+ " message ∈ Agent × Agent × Identifier ⤖ MESSAGES_Type ;;"
+	private static final String msgAxioms = //
+			  " message ∈ Agent × Agent × Identifier ⤖ MESSAGES_Type ;;"
 			+ " sender∈ran(message) ↠ Agent ;;"
 			+ " receiver∈ran(message) ↠ Agent ;;"
 			+ " identifier∈ran(message) ↠ Identifier;;"
 			+ " (sender ⊗ receiver) ⊗ identifier=message∼;;"
-			+ " ∀U,V·partition(MESSAGES[U × V],message[U × U × V])";
+			+ " MESSAGES = (λU↦V· ⊤ ∣ message[U × U × V]);;"
+			+ " MESSAGES(Agent ↦ Identifier) = MESSAGES_Type";
 
 	@Test
 	public void testTypeConstructorInHyp() {

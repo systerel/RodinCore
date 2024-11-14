@@ -121,11 +121,18 @@ public class DatatypeTranslation extends AbstractTranslation implements
 		return typeRewriter;
 	}
 
+	/*
+	 * Returns a fresh given type whose name is based on the given symbol.
+	 */
 	public final GivenType solveGivenType(String typeSymbol) {
 		final String solvedTypeName = nameSolver.solveAndAdd(typeSymbol);
 		return targetFactory.makeGivenType(solvedTypeName);
 	}
 
+	/*
+	 * Returns a fresh identifier of the given type whose name is based on the given
+	 * symbol.
+	 */
 	public final FreeIdentifier solveIdentifier(String symbol, Type type) {
 		final String solvedIdentName = nameSolver.solveAndAdd(symbol);
 		return targetFactory.makeFreeIdentifier(solvedIdentName, null, type);
