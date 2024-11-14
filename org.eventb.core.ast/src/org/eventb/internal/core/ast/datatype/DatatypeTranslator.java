@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
 
+import static java.util.Arrays.stream;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.CPROD;
@@ -316,16 +317,24 @@ public class DatatypeTranslator {
 			addAxioms(axioms, cons);
 		}
 		addPartitionAxiom(axioms);
-		addSetConstructorAxiom(axioms);
+		addSetConstructorAxioms(axioms);
 		return axioms;
 	}
 
 	/**
 	 * Computes and adds the axiom (F)
 	 */
-	private void addSetConstructorAxiom(List<Predicate> axioms) {
+	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)
 			return;
+		axioms.add(makeSetConstructorFixpointAxiom());
+		axioms.add(makeSetConstructorCompletenessAxiom());
+	}
+
+	/**
+	 * Makes the definition of the set constructor as a fixpoint.
+	 */
+	private Predicate makeSetConstructorFixpointAxiom() {
 		final List<Predicate> trgParts = new ArrayList<>();
 		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
 		final Type trgDatatypePowerSet = mTrgPowerSetType(trgDatatype);
@@ -340,7 +349,7 @@ public class DatatypeTranslator {
 		final var trgFPDecl = new BoundIdentDecl[] { mTrgBoundIdentDecl(trgSetCons.getName(), trgDatatypePowerSet) };
 		var fixPoint = trgFactory.makeQuantifiedExpression(QINTER, trgFPDecl, trgFPPred, trgFPIdent, null, Implicit);
 		var lambda = makeSetConstructorLambda(srcBoundIdents, fixPoint);
-		axioms.add(mTrgEquals(trgSetCons, lambda));
+		return mTrgEquals(trgSetCons, lambda);
 	}
 
 	private Predicate makeConstructorFixpointPart(IConstructorExtension cons, ISetInstantiation setInst,
@@ -374,6 +383,14 @@ public class DatatypeTranslator {
 				return super.rewrite(expression);
 			}
 		};
+	}
+
+	/**
+	 * Makes the set constructor completeness axiom, e.g., "Set(Params...) = Type"
+	 */
+	private Predicate makeSetConstructorCompletenessAxiom() {
+		var typeParamsAsExpr = stream(trgTypeParameters).map(Type::toExpression).toArray(Expression[]::new);
+		return mTrgEquals(mTrgBinExpr(FUNIMAGE, trgSetCons, combineTrgExpr(MAPSTO, typeParamsAsExpr)), trgDatatypeExpr);
 	}
 
 	private Expression[] makeSrcBoundIdentifiers() {

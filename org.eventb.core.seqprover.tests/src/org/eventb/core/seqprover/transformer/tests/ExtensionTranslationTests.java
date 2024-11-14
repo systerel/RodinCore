@@ -65,7 +65,8 @@ public class ExtensionTranslationTests extends AbstractTransformerTests {
 					+ "head∈ran(cons) ↠ ℤ ;;" //
 					+ "tail∈ran(cons) ↠ List_Type ;;" + "head ⊗ tail=cons∼ ;;"
 					+ "partition(List_Type,{nil},ran(cons)) ;;"
-					+ "List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))";
+					+ "List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List)) ;;"
+					+ "List(ℤ) = List_Type";
 
 	@Test
 	public void simpleSequent() {

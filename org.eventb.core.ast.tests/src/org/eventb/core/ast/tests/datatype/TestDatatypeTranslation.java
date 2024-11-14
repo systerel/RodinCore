@@ -142,12 +142,14 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼", //
 				"Message = (λU↦V· ⊤ ∣ (⋂ Message ∣ message[U × U × V] ⊆ Message))", //
+				"Message(Agent ↦ Identifier) = Message_Type", //
 				"cons ∈ Message_Type × List_Type ↣ List_Type", //
 				"head∈ran(cons) ↠ Message_Type", //
 				"tail∈ran(cons) ↠ List_Type",//
 				"(head ⊗ tail) = cons∼",//
 				"partition(List_Type, {nil}, ran(cons))", //
-				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))"); //
+				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
+				"List(Message_Type) = List_Type"); //
 	}
 
 	/**
@@ -170,7 +172,8 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"tail∈ran(cons) ↠ List_Type",//
 				"(head ⊗ tail) = cons∼", //
 				"partition(List_Type, {nil}, ran(cons))", //
-				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))");
+				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
+				"List(ℤ × Directions) = List_Type");
 	}
 
 	public static class DatatypeTranslationErrors {

@@ -58,12 +58,14 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼",
 				"Message = (λU↦V· ⊤ ∣ (⋂ Message ∣ message[U × U × V] ⊆ Message))", //
+				"Message(Agent ↦ Identifier) = Message_Type", //
 				"message0 ∈ Person × Person × Stamp ⤖ Message_Type0", //
 				"sender0 ∈ ran(message0) ↠ Person", //
 				"receiver0 ∈ ran(message0) ↠ Person", //
 				"identifier0 ∈ ran(message0) ↠ Stamp", //
 				"((sender0 ⊗ receiver0) ⊗ identifier0) = message0∼", //
-				"Message0 = (λU↦V· ⊤ ∣ (⋂ Message0 ∣ message0[U × U × V] ⊆ Message0))");
+				"Message0 = (λU↦V· ⊤ ∣ (⋂ Message0 ∣ message0[U × U × V] ⊆ Message0))", //
+				"Message0(Person ↦ Stamp) = Message_Type0");
 	}
 
 	@Test 
@@ -84,12 +86,14 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"(head ⊗ tail) = cons∼", //
 				"partition(List_Type, {nil}, ran(cons))",
 				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
+				"List(Object) = List_Type", //
 				"cons0 ∈ Thing × List_Type0 ↣ List_Type0", //
 				"head0∈ran(cons0) ↠ Thing", //
 				"tail0∈ran(cons0) ↠ List_Type0", //
 				"(head0 ⊗ tail0) = cons0∼", //
 				"partition(List_Type0, {nil0}, ran(cons0))",
-				"List0 = (λS· ⊤ ∣ (⋂ List ∣ nil0 ∈ List ∧ cons0[S × List] ⊆ List))");
+				"List0 = (λS· ⊤ ∣ (⋂ List ∣ nil0 ∈ List ∧ cons0[S × List] ⊆ List))", //
+				"List0(Thing) = List_Type0");
 	}
 
 	@Test 
@@ -177,14 +181,17 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"d ∈ ran(a) ↠ ℤ", //
 				"d = a∼", //
 				"A = (λT⦂ℙ(ℤ)· ⊤ ∣ (⋂ A ∣ a[T] ⊆ A))", //
+				"A(ℤ) = A_Type", //
 				"b ∈ A_Type ⤖ B_Type", //
 				"e ∈ ran(b) ↠ A_Type", //
 				"e = b∼", //
 				"B = (λU⦂ℙ(ℤ)· ⊤ ∣ (⋂ B ∣ b[A(U)] ⊆ B))", //
+				"B(ℤ) = B_Type", //
 				"a0 ∈ B_Type ⤖ A_Type0", //
 				"d0 ∈ ran(a0) ↠ B_Type", //
 				"d0 = a0∼", //
-				"A0 = (λT⦂ℙ(B_Type)· ⊤ ∣ (⋂ A0 ∣ a0[T] ⊆ A0))");
+				"A0 = (λT⦂ℙ(B_Type)· ⊤ ∣ (⋂ A0 ∣ a0[T] ⊆ A0))", //
+				"A0(B_Type) = A_Type0");
 	}
 
 	/**
@@ -209,7 +216,8 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"d0 ∈ ran(cons) ↠ Object", //
 				"d2 ∈ ran(cons) ↠ Object", //
 				"(d0 ⊗ d2) = cons∼", //
-				"Unnamed = (λS· ⊤ ∣ (⋂ Unnamed ∣ cons[S×S] ⊆ Unnamed))");
+				"Unnamed = (λS· ⊤ ∣ (⋂ Unnamed ∣ cons[S×S] ⊆ Unnamed))", //
+				"Unnamed(Object) = Unnamed_Type");
 	}
 
 }
