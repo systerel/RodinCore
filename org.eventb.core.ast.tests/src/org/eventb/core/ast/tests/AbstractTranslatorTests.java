@@ -165,13 +165,13 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 		public void assertAxioms(String... expectedPredStrs) {
 			final List<Predicate> predicates = getTranslation().getAxioms();
+			assertEquals(expectedPredStrs.length, predicates.size());
 			int i = 0;
 			for (final Predicate pred : predicates) {
 				assertTrue(pred.isTypeChecked());
 				checkPredicate(expectedPredStrs[i], pred);
 				i++;
 			}
-			assertEquals(i, predicates.size());
 		}
 
 		private void checkPredicate(String expectedStr, Predicate actual) {
