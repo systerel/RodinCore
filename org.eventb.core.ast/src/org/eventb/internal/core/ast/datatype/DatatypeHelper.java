@@ -33,11 +33,14 @@ public class DatatypeHelper {
 
 	private static long uniqueId = 0;
 
+	// Used to avoid potential ID clashes if the datatype name ends with some digits
+	private static String SEPARATOR = ".";
+
 	public static synchronized String computeId(String name) {
 		if (name == null) {
 			name = "Id";
 		}
-		return name + uniqueId++;
+		return name + SEPARATOR + uniqueId++;
 	}
 
 	public static String computeGroup(int nbArgs) {
