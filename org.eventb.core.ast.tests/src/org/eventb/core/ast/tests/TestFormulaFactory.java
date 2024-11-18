@@ -286,19 +286,19 @@ public class TestFormulaFactory extends AbstractTests {
 		assertFalse(DIR_PROD_FAC.isValidExtensionId(operatorId));
 
 		// ID used by a datatype
-		final String typeConstructorId = "List0";
+		final String typeConstructorId = "List.0";
 		assertTrue(ff.isValidExtensionId(typeConstructorId));
 		assertFalse(LIST_FAC.isValidExtensionId(typeConstructorId));
 		assertTrue(DIR_PROD_FAC.isValidExtensionId(typeConstructorId));
 
 		// ID used by a datatype constructor
-		final String valueConstructorId = "cons2";
+		final String valueConstructorId = "cons.2";
 		assertTrue(ff.isValidExtensionId(valueConstructorId));
 		assertFalse(LIST_FAC.isValidExtensionId(valueConstructorId));
 		assertTrue(DIR_PROD_FAC.isValidExtensionId(valueConstructorId));
 
 		// ID used by a datatype destructor
-		final String destructorId = "head3";
+		final String destructorId = "head.3";
 		assertTrue(ff.isValidExtensionId(destructorId));
 		assertFalse(LIST_FAC.isValidExtensionId(destructorId));
 		assertTrue(DIR_PROD_FAC.isValidExtensionId(destructorId));
