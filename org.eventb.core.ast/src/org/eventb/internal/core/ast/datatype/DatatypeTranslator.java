@@ -323,7 +323,7 @@ public class DatatypeTranslator {
 	}
 
 	/**
-	 * Computes and adds the axiom (F)
+	 * Computes and adds the axioms (E) and (F)
 	 */
 	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)

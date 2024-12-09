@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,19 +64,11 @@ public interface IDatatypeTranslation {
 	 * fresh given set τ, the following axioms are created to characterize it:
 	 * 
 	 * <ul>
-	 * <li>The set constructor <code>DT</code> is translated to a fresh constant
-	 * <code>Γ</code> and the following axiom is added:
-	 * 
-	 * <pre>
-	 * (A) Γ ∈ T1 × T2 × … × Tn  τ
-	 * </pre>
-	 * 
-	 * </li>
 	 * <li>each value constructor <code>ci</code> is translated to a fresh
 	 * identifier <code>ɣi</code> and the following axiom is added:
 	 * 
 	 * <pre>
-	 * (B) ɣi ∈ αi1 × ... × αiki ↣ τ
+	 * (A) ɣi ∈ αi1 × ... × αiki ↣ τ
 	 * </pre>
 	 * 
 	 * </li>
@@ -84,7 +76,7 @@ public interface IDatatypeTranslation {
 	 * constructors:
 	 * 
 	 * <pre>
-	 * (C) partition(τ, ran(ɣ1), ..., ran(ɣm))
+	 * (B) partition(τ, ran(ɣ1), ..., ran(ɣm))
 	 * </pre>
 	 * 
 	 * </li>
@@ -92,7 +84,7 @@ public interface IDatatypeTranslation {
 	 * typing axiom is created:
 	 * 
 	 * <pre>
-	 * (D) δij ∈ ran(ɣi) ↠ αij
+	 * (C) δij ∈ ran(ɣi) ↠ αij
 	 * </pre>
 	 * 
 	 * </li>
@@ -100,34 +92,48 @@ public interface IDatatypeTranslation {
 	 * added axiom:
 	 * 
 	 * <pre>
-	 * (E) δi1 ⊗ ... ⊗ δiki = ɣi∼
+	 * (D) δi1 ⊗ ... ⊗ δiki = ɣi∼
 	 * </pre>
 	 * 
 	 * </li>
-	 * <li>the axiom telling that subsets of the datatype are partitioned by the
-	 * constructors restricted to the set parameters:
-	 * 
+	 * <li>
+	 * the set constructor <code>DT</code> is translated to a fresh constant
+	 * <code>Γ</code> and an axiom defines it:
+	 * <ul>
+	 * <li>
+	 * if the datatype only has basic constructors:
 	 * <pre>
-	 * (F) ∀ t1, t2, …, tn · partition(Γ[t1 × … × tn],
-	 *                                 ɣ1[ϕ11 × … × ϕ1k1],
-	 *                                 …,
-	 *                                 ɣn[ϕn1 × … × ϕnkm])
+	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ ɣ1[ϕ11 × … × ϕ1k1] ∪ … ∪ ɣn[ϕn1 × … × ϕnkm])
 	 * </pre>
-	 * 
+	 * </li>
+	 * <li>
+	 * otherwise:
+	 * <pre>
+	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ (⋂ Γ ∣ ɣ1[ϕ11 × … × ϕ1k1] ⊆ Γ ∧ … ∧ ɣn[ϕn1 × … × ϕnkm] ⊆ Γ)
+	 * </pre>
 	 * where ϕiki is obtained by substituting t1, t2, …, tn for the formal type
-	 * parameters T1, T2, ..., Tn in expressions αiki.</li>
+	 * parameters T1, T2, ..., Tn and Γ for DT in expressions αiki.
+	 * </li>
+	 * <li>
+	 * the completeness axiom for the set datatype constructor:
+	 * <pre>
+	 * (F) Γ(T1 ↦ T2 ↦ … ↦ Tn) = τ
+	 * </pre>
+	 * </li>
+	 * </ul>
+	 * </li>
 	 * </ul>
 	 * 
 	 * Moreover, there are three special cases where these predicates are
 	 * slightly modified:
 	 * <ul>
-	 * <li>when there is no type parameter or no destructor, predicates (A) and
+	 * <li>when there is no type parameter or no destructor, predicates (E) and
 	 * (F) are not generated</li>
-	 * <li>when a constructor ɣi has no destructor, predicates (B), (D), and (E)
-	 * are not generated and the singleton "{ɣi}" replaces "ran(ɣi)" in (C) and
-	 * (F)</li>
-	 * <li>when there is only one constructor, (B) becomes ɣi ∈ αi1 × ... × αiki
-	 * ⤖ τ and the predicate (D) becomes superfluous</li>
+	 * <li>when a constructor ɣi has no destructor, predicates (A), (C), and (D)
+	 * are not generated and the singleton "{ɣi}" replaces "ran(ɣi)" in (B) and
+	 * ɣi[ϕi1 × … × ϕikm] in (E)</li>
+	 * <li>when there is only one constructor, (A) becomes ɣi ∈ αi1 × ... × αiki
+	 * ⤖ τ and the predicate (C) becomes superfluous</li>
 	 * </ul>
 	 */
 	List<Predicate> getAxioms();
