@@ -12,6 +12,7 @@ package org.eventb.internal.core.ast.datatype;
 
 import static java.util.Arrays.stream;
 import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
@@ -327,8 +328,36 @@ public class DatatypeTranslator {
 	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)
 			return;
-		axioms.add(makeSetConstructorFixpointAxiom());
+		if (stream(srcConstructors).allMatch(IConstructorExtension::isBasic)) {
+			axioms.add(makeSetConstructorUnionAxiom());
+		} else {
+			axioms.add(makeSetConstructorFixpointAxiom());
+		}
 		axioms.add(makeSetConstructorCompletenessAxiom());
+	}
+
+	/**
+	 * Makes the definition of the set constructor as a union of basic sets.
+	 */
+	private Predicate makeSetConstructorUnionAxiom() {
+		final List<Expression> trgParts = new ArrayList<>();
+		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
+		final ISetInstantiation setInst = datatype.getSetInstantiation(makeSrcSet(srcBoundIdents));
+		for (final IConstructorExtension cons : srcConstructors) {
+			Expression part = makeTrgSetConstructorPart(cons, setInst);
+			if (part.getTag() == FREE_IDENT) {
+				part = mTrgSingleton(part);
+			}
+			trgParts.add(part);
+		}
+		Expression values;
+		if (trgParts.size() == 1) {
+			values = trgParts.get(0);
+		} else {
+			values = trgFactory.makeAssociativeExpression(BUNION, trgParts, null);
+		}
+		var lambda = makeSetConstructorLambda(srcBoundIdents, values);
+		return mTrgEquals(trgSetCons, lambda);
 	}
 
 	/**

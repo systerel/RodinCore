@@ -57,14 +57,14 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"receiver ∈ ran(message) ↠ Agent", //
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼",
-				"Message = (λU↦V· ⊤ ∣ (⋂ Message ∣ message[U × U × V] ⊆ Message))", //
+				"Message = (λU↦V· ⊤ ∣ message[U × U × V])", //
 				"Message(Agent ↦ Identifier) = Message_Type", //
 				"message0 ∈ Person × Person × Stamp ⤖ Message_Type0", //
 				"sender0 ∈ ran(message0) ↠ Person", //
 				"receiver0 ∈ ran(message0) ↠ Person", //
 				"identifier0 ∈ ran(message0) ↠ Stamp", //
 				"((sender0 ⊗ receiver0) ⊗ identifier0) = message0∼", //
-				"Message0 = (λU↦V· ⊤ ∣ (⋂ Message0 ∣ message0[U × U × V] ⊆ Message0))", //
+				"Message0 = (λU↦V· ⊤ ∣ message0[U × U × V])", //
 				"Message0(Person ↦ Stamp) = Message_Type0");
 	}
 
@@ -180,17 +180,17 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"a ∈ ℤ ⤖ A_Type", //
 				"d ∈ ran(a) ↠ ℤ", //
 				"d = a∼", //
-				"A = (λT⦂ℙ(ℤ)· ⊤ ∣ (⋂ A ∣ a[T] ⊆ A))", //
+				"A = (λT⦂ℙ(ℤ)· ⊤ ∣ a[T])", //
 				"A(ℤ) = A_Type", //
 				"b ∈ A_Type ⤖ B_Type", //
 				"e ∈ ran(b) ↠ A_Type", //
 				"e = b∼", //
-				"B = (λU⦂ℙ(ℤ)· ⊤ ∣ (⋂ B ∣ b[A(U)] ⊆ B))", //
+				"B = (λU⦂ℙ(ℤ)· ⊤ ∣ b[A(U)])", //
 				"B(ℤ) = B_Type", //
 				"a0 ∈ B_Type ⤖ A_Type0", //
 				"d0 ∈ ran(a0) ↠ B_Type", //
 				"d0 = a0∼", //
-				"A0 = (λT⦂ℙ(B_Type)· ⊤ ∣ (⋂ A0 ∣ a0[T] ⊆ A0))", //
+				"A0 = (λT⦂ℙ(B_Type)· ⊤ ∣ a0[T])", //
 				"A0(B_Type) = A_Type0");
 	}
 
@@ -216,7 +216,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"d0 ∈ ran(cons) ↠ Object", //
 				"d2 ∈ ran(cons) ↠ Object", //
 				"(d0 ⊗ d2) = cons∼", //
-				"Unnamed = (λS· ⊤ ∣ (⋂ Unnamed ∣ cons[S×S] ⊆ Unnamed))", //
+				"Unnamed = (λS· ⊤ ∣ cons[S×S])", //
 				"Unnamed(Object) = Unnamed_Type");
 	}
 

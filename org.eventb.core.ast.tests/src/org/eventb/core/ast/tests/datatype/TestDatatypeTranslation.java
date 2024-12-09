@@ -141,7 +141,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"receiver ∈ ran(message) ↠ Agent", //
 				"identifier ∈ ran(message) ↠ Identifier", //
 				"((sender ⊗ receiver) ⊗ identifier) = message∼", //
-				"Message = (λU↦V· ⊤ ∣ (⋂ Message ∣ message[U × U × V] ⊆ Message))", //
+				"Message = (λU↦V· ⊤ ∣ message[U × U × V])", //
 				"Message(Agent ↦ Identifier) = Message_Type", //
 				"cons ∈ Message_Type × List_Type ↣ List_Type", //
 				"head∈ran(cons) ↠ Message_Type", //
@@ -174,6 +174,28 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"partition(List_Type, {nil}, ran(cons))", //
 				"List = (λS· ⊤ ∣ (⋂ List ∣ nil ∈ List ∧ cons[S × List] ⊆ List))", //
 				"List(ℤ × Directions) = List_Type");
+	}
+
+	/**
+	 * Non inductive datatype with set constructor translation
+	 */
+	@Test 
+	public void testNonInductiveDatatypeTranslation() {
+		final TestTranslationSupport s = mSupport("Values[S] ::= None || One[one : S] || Many[many : ℙ(S)]");
+		s.setExpectedTypeEnvironment("Values_Type=ℙ(Values_Type); Values=ℙ(ℙ(ℤ) × ℙ(Values_Type));"
+				+ "None=Values_Type; One=ℙ(ℤ×Values_Type); Many=ℙ(ℙ(ℤ)×Values_Type);"
+				+ "one=ℙ(Values_Type×ℤ); many=ℙ(Values_Type×ℙ(ℤ))");
+		s.assertExprTranslation("Many({0, 1, 2})", "Many({0, 1, 2})");
+		s.assertAxioms(
+				"One ∈ ℤ ↣ Values_Type", //
+				"one ∈ ran(One) ↠ ℤ", //
+				"one = One∼", //
+				"Many ∈ ℙ(ℤ) ↣ Values_Type", //
+				"many ∈ ran(Many) ↠ ℙ(ℤ)", //
+				"many = Many∼", //
+				"partition(Values_Type, {None}, ran(One), ran(Many))", //
+				"Values = (λS· ⊤ ∣ {None} ∪ One[S] ∪ Many[ℙ(S)])", //
+				"Values(ℤ) = Values_Type");
 	}
 
 	public static class DatatypeTranslationErrors {

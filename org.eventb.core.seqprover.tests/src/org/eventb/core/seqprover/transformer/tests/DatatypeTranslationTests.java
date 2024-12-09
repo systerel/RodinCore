@@ -49,7 +49,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 			+ " receiver∈ran(message) ↠ Agent ;;"
 			+ " identifier∈ran(message) ↠ Identifier;;"
 			+ " (sender ⊗ receiver) ⊗ identifier=message∼;;"
-			+ " MESSAGES = (λU↦V· ⊤ ∣ (⋂ MESSAGES ∣ message[U × U × V] ⊆ MESSAGES));;"
+			+ " MESSAGES = (λU↦V· ⊤ ∣ message[U × U × V]);;"
 			+ " MESSAGES(Agent ↦ Identifier) = MESSAGES_Type";
 
 	@Test
