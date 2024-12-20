@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Systerel and others.
+ * Copyright (c) 2016, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class UncertainReasoner extends EmptyInputReasoner {
 	// that is cached in the registry
 	public static boolean certain = false;
 	public static boolean fail = false;
+	public static boolean exception = false;
 
 	/**
 	 * Reset the parameters to their default value.
@@ -54,6 +55,7 @@ public class UncertainReasoner extends EmptyInputReasoner {
 	public static void reset() {
 		certain = false;
 		fail = false;
+		exception = false;
 	}
 
 	@Override
@@ -65,6 +67,9 @@ public class UncertainReasoner extends EmptyInputReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
 		if (fail) {
 			return ProverFactory.reasonerFailure(this, input, "desired failure");
+		}
+		if (exception) {
+			throw new RuntimeException("desired exception");
 		}
 		final FreeIdentifier[] identsQ = Q.getFreeIdentifiers();
 		// add only if fresh ident (else rule application fails)

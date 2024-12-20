@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Systerel and others.
+ * Copyright (c) 2010, 2024 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,6 +278,22 @@ public class ProofRebuildTests {
 		final ProofTreeShape uncertain = uncertain();
 		uncertain.create(proof);
 		UncertainReasoner.fail = true;
+		assertRebuild(node, proof, true);
+		uncertain.check(node);
+	}
+
+	/**
+	 * Ensures that, if replaying a reasoner throws an exception, it's caught and
+	 * handled gracefully.
+	 */
+	@Test
+	public void rebuildTryReplayUncertainException() throws Exception {
+		IProofTreeNode node = makeProofTreeNode(P);
+		IProofTreeNode proof = makeProofTreeNode(P);
+
+		final ProofTreeShape uncertain = uncertain();
+		uncertain.create(proof);
+		UncertainReasoner.exception = true;
 		assertRebuild(node, proof, true);
 		uncertain.check(node);
 	}
