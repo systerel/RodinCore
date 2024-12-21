@@ -52,7 +52,7 @@ public interface IDatatypeTranslation {
 	 * 
 	 * <pre>
 	 *  DT(T1,...,Tn) ::=
-	 *  		c1(d11: α11,..., d1k1: α1k1)
+	 *          c1(d11: α11,..., d1k1: α1k1)
 	 *          c2(d21: α21,..., d2k2: α2k2)
 	 *          .
 	 *          .
@@ -60,8 +60,9 @@ public interface IDatatypeTranslation {
 	 *          cm(dm1: αm1,..., dmkm: αmkm)
 	 * </pre>
 	 * 
-	 * For each instance of parameterized datatype DT that is translated to a
-	 * fresh given set τ, the following axioms are created to characterize it:
+	 * Each instance of a parameterized datatype DT is translated to a
+	 * fresh given set τ. The following constants and axioms are created
+	 * to characterize it:
 	 * 
 	 * <ul>
 	 * <li>each value constructor <code>ci</code> is translated to a fresh
@@ -72,7 +73,7 @@ public interface IDatatypeTranslation {
 	 * </pre>
 	 * 
 	 * </li>
-	 * <li>the axiom telling that the datatype is partitioned by the
+	 * <li>an axiom tells that the datatype is partitioned by the
 	 * constructors:
 	 * 
 	 * <pre>
@@ -80,7 +81,7 @@ public interface IDatatypeTranslation {
 	 * </pre>
 	 * 
 	 * </li>
-	 * <li>each destructor dij is translated to a fresh δij and the following
+	 * <li>each destructor dij is translated to a fresh identifier δij and the following
 	 * typing axiom is created:
 	 * 
 	 * <pre>
@@ -88,8 +89,8 @@ public interface IDatatypeTranslation {
 	 * </pre>
 	 * 
 	 * </li>
-	 * <li>the typing of each value constructor is defined by the following
-	 * added axiom:
+	 * <li>the connection between destructors and the corresponding value constructor
+	 * is defined by the following axiom:
 	 * 
 	 * <pre>
 	 * (D) δi1 ⊗ ... ⊗ δiki = ɣi∼
@@ -98,21 +99,15 @@ public interface IDatatypeTranslation {
 	 * </li>
 	 * <li>
 	 * the set constructor <code>DT</code> is translated to a fresh constant
-	 * <code>Γ</code> and an axiom defines it:
-	 * <ul>
-	 * <li>
-	 * if the datatype only has basic constructors:
-	 * <pre>
-	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ ɣ1[ϕ11 × … × ϕ1k1] ∪ … ∪ ɣn[ϕn1 × … × ϕnkm])
-	 * </pre>
-	 * </li>
-	 * <li>
-	 * otherwise:
+	 * <code>Γ</code> and an axiom defines it as a fixed-point other the constructed values:
+	 * 
 	 * <pre>
 	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ (⋂ Γ ∣ ɣ1[ϕ11 × … × ϕ1k1] ⊆ Γ ∧ … ∧ ɣn[ϕn1 × … × ϕnkm] ⊆ Γ)
 	 * </pre>
+	 * 
 	 * where ϕiki is obtained by substituting t1, t2, …, tn for the formal type
-	 * parameters T1, T2, ..., Tn and Γ for DT in expressions αiki.
+	 * parameters T1, T2, ..., Tn and Γ for DT in the set expression corresponding
+	 * to the type αiki.
 	 * </li>
 	 * <li>
 	 * the completeness axiom for the set datatype constructor:
@@ -121,19 +116,21 @@ public interface IDatatypeTranslation {
 	 * </pre>
 	 * </li>
 	 * </ul>
-	 * </li>
-	 * </ul>
 	 * 
-	 * Moreover, there are three special cases where these predicates are
+	 * Moreover, there are four special cases where these predicates are
 	 * slightly modified:
 	 * <ul>
 	 * <li>when there is no type parameter or no destructor, predicates (E) and
 	 * (F) are not generated</li>
+	 * <li>when all value constructors are basic, axiom (E) gets simplified to
+	 * <pre>
+	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ ɣ1[ϕ11 × … × ϕ1k1] ∪ … ∪ ɣn[ϕn1 × … × ϕnkm])
+	 * </pre></li>
 	 * <li>when a constructor ɣi has no destructor, predicates (A), (C), and (D)
 	 * are not generated and the singleton "{ɣi}" replaces "ran(ɣi)" in (B) and
 	 * ɣi[ϕi1 × … × ϕikm] in (E)</li>
-	 * <li>when there is only one constructor, (A) becomes ɣi ∈ αi1 × ... × αiki
-	 * ⤖ τ and the predicate (C) becomes superfluous</li>
+	 * <li>when there is only one constructor with arguments, (A) becomes
+	 * ɣi ∈ αi1 × ... × αiki ⤖ τ and the predicate (B) becomes superfluous</li>
 	 * </ul>
 	 */
 	List<Predicate> getAxioms();
