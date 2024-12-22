@@ -448,7 +448,7 @@ public class DatatypeTranslator {
 	private Expression makeTrgSetConstructorPart(IConstructorExtension cons,
 			ISetInstantiation setInst) {
 		final Expression trgCons = replacements.get(cons);
-		if (hasArguments(cons)) {
+		if (cons.hasArguments()) {
 			final Expression[] trgArgSets = mTrgArgSets(cons, setInst);
 			return mTrgRelImage(trgCons, trgArgSets);
 		} else {
@@ -486,7 +486,7 @@ public class DatatypeTranslator {
 	}
 
 	private void addAxioms(List<Predicate> axioms, IConstructorExtension cons) {
-		if (!hasArguments(cons)) {
+		if (!cons.hasArguments()) {
 			return;
 		}
 		final Expression trgCons = replacements.get(cons);
@@ -522,7 +522,7 @@ public class DatatypeTranslator {
 
 	private Expression makeTrgPartitionPart(IConstructorExtension cons) {
 		final Expression trgGamma = replacements.get(cons);
-		if (hasArguments(cons)) {
+		if (cons.hasArguments()) {
 			return mTrgUnaryExpr(KRAN, trgGamma);
 		} else {
 			return mTrgSingleton(trgGamma);
@@ -551,11 +551,7 @@ public class DatatypeTranslator {
 	}
 
 	private boolean hasSingleConstructorWithArguments() {
-		return hasSingleConstructor && hasArguments(srcConstructors[0]);
-	}
-
-	private boolean hasArguments(IConstructorExtension constructor) {
-		return constructor.getArguments().length != 0;
+		return hasSingleConstructor && srcConstructors[0].hasArguments();
 	}
 
 	private Expression mSrcBoundIdent(int i, Type srcType) {
