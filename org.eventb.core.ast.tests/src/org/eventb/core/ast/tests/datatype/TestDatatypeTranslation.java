@@ -198,6 +198,17 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"Values(ℤ) = Values_Type");
 	}
 
+	/**
+	 * Non inductive datatype with single constructor and no argument.
+	 */
+	@Test
+	public void testSingleDatatype() {
+		final TestTranslationSupport s = mSupport("Unit ::= Null");
+		s.setExpectedTypeEnvironment("Unit=ℙ(Unit); Null=Unit");
+		s.assertExprTranslation("Null", "Null");
+		s.assertAxioms("partition(Unit, {Null})");
+	}
+
 	public static class DatatypeTranslationErrors {
 
 		final TestTranslationSupport s = mSupport(ff, MESSAGE__DT);
