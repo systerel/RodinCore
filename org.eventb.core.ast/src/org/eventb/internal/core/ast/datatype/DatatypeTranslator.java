@@ -158,6 +158,9 @@ public class DatatypeTranslator {
 		return trgResult;
 	}
 
+	/*
+	 * Returns the fresh type τ.
+	 */
 	private GivenType getTrgDatatype(String srcSymbol) {
 		final String symbol;
 		if (hasNoSetConstructor) {
@@ -168,6 +171,9 @@ public class DatatypeTranslator {
 		return this.translation.solveGivenType(symbol);
 	}
 
+	/*
+	 * Returns the translated set constructor, that is Γ, or null if not used.
+	 */
 	private FreeIdentifier getTrgSetConstructor(String srcSymbol) {
 		if (hasNoSetConstructor) {
 			return null;
@@ -176,9 +182,9 @@ public class DatatypeTranslator {
 		return translation.solveIdentifier(srcSymbol, trgType);
 	}
 
-	/**
-	 * Compute all fresh identifiers that may appear in the translation of this
-	 * datatype instance.
+	/*
+	 * Compute all fresh identifiers ɣi and δij that may appear in the translation
+	 * of this datatype instance.
 	 */
 	private void computeReplacements() {
 		for (final IConstructorExtension srcCons : srcConstructors) {
@@ -218,6 +224,10 @@ public class DatatypeTranslator {
 		replacements.put(ext, ident);
 	}
 
+	/*
+	 * Returns the type of Γ, that is "ℙ(T1) × ... × ℙ(Tn) ↔ ℙ(τ)", given T1, ...,
+	 * Tn, or just "τ" if there is no type parameter.
+	 */
 	private Type makeTrgPowConsType(Type[] trgArgTypes) {
 		if (trgArgTypes.length == 0) {
 			return trgDatatype;
@@ -226,6 +236,9 @@ public class DatatypeTranslator {
 		return mTrgRelType(trgProdType, mTrgPowerSetType(trgDatatype));
 	}
 
+	/*
+	 * Returns the type "ℙ(T1) × ... × ℙ(Tn)", given T1, ..., Tn.
+	 */
 	private Type makeTrgPowProdType(Type[] trgTypes) {
 		Type trgProdType = mTrgPowerSetType(trgTypes[0]);
 		for (int i = 1; i < trgTypes.length; i++) {
@@ -234,6 +247,10 @@ public class DatatypeTranslator {
 		return trgProdType;
 	}
 
+	/*
+	 * Returns the type of ɣi, that is "αi1 × ... × αiki ↔ τ", given αi1, ..., αiki,
+	 * or just "τ" if ki is 0.
+	 */
 	private Type makeTrgConsType(Type[] trgArgTypes) {
 		if (trgArgTypes.length == 0) {
 			return trgDatatype;
@@ -242,6 +259,9 @@ public class DatatypeTranslator {
 		return mTrgRelType(trgProdType, trgDatatype);
 	}
 
+	/*
+	 * Returns the type "T1 × ... × Tn", given T1, ..., Tn.
+	 */
 	private Type makeTrgProdType(Type[] trgTypes) {
 		Type trgProdType = trgTypes[0];
 		for (int i = 1; i < trgTypes.length; i++) {
@@ -250,6 +270,10 @@ public class DatatypeTranslator {
 		return trgProdType;
 	}
 
+	/*
+	 * Returns "E1 op ... op En", given the expressions E1, ..., En and the binary
+	 * operator tag.
+	 */
 	private Expression combineTrgExpr(int tag, Expression[] trgExprs) {
 		final int length = trgExprs.length;
 		assert length != 0;
