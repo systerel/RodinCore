@@ -287,6 +287,12 @@ public class LocalEqRewrite implements IReasoner {
 		// 2. Position of the rewriting
 		final IPosition position = myInput.getPosition();
 		final Formula<?> formula = target.getSubFormula(position);
+		if (formula == null) {
+			return reasonerFailure(this, input, "Input position out of range");
+		}
+		if (formula.getTag() != FREE_IDENT) {
+			return reasonerFailure(this, input, "Input position should point at an identifier");
+		}
 		// 3. Equality to rewrite in the target
 		final Predicate eqPred = myInput.getEquality();
 		if (!seq.containsHypothesis(eqPred)) {

@@ -71,17 +71,25 @@ public class LocalEqRewriteTests extends AbstractReasonerTests {
 		// Bad input
 		assertReasonerFailure("⊤ |- ⊤", new EmptyInput(), "Wrong input's class.");
 		// Should denote an equality
-		assertReasonerFailure("A∈ℙ(ℤ) ;; x⊆A∪B ;; D⊆x∩C |- ⊤", input("D⊆x∩C", "0.0", "x⊆A∪B"),
+		assertReasonerFailure("A∈ℙ(ℤ) ;; x⊆A∪B ;; D⊆x∩C |- ⊤", input("D⊆x∩C", "1.0", "x⊆A∪B"),
 				"x⊆A∪B does not denote an equality");
 		// Should be a hypothesis of the sequent 1/2
-		assertReasonerFailure("C∈ℙ(ℤ) ;; D⊆x∩C |- ⊤", input("D⊆x∩C", "0.0", "x=A∪B"),
+		assertReasonerFailure("C∈ℙ(ℤ) ;; D⊆x∩C |- ⊤", input("D⊆x∩C", "1.0", "x=A∪B"),
 				"x=A∪B is not a hypothesis of the given sequent");
 		// Should be a hypothesis of the sequent 2/2
-		assertReasonerFailure("A∈ℙ(ℤ) ;; x=A∪B |- ⊤", input("D⊆x∩C", "0.0", "x=A∪B"),
+		assertReasonerFailure("A∈ℙ(ℤ) ;; x=A∪B |- ⊤", input("D⊆x∩C", "1.0", "x=A∪B"),
 				"D⊆x∩C is not a hypothesis of the given sequent");
 		// Equality predicate is not related to a free identifier
 		assertReasonerFailure("A∈ℙ(ℤ) ;; A∩B=A∪B ;; (A∩B)∩C⊆D |- ⊤", input("(A∩B)∩C⊆D", "0.0", "A∩B=A∪B"),
-				"The hypothesis cannot be re-written with the given input.");
+				"Input position should point at an identifier");
+		// Position does not point on an expression
+		assertReasonerFailure("A∈ℙ(ℤ) ;; x=A∪B |- ⊤", input(null, "", "x=A∪B"),
+				"Input position should point at an identifier");
+		// Position is invalid
+		assertReasonerFailure("A∈ℙ(ℤ) ;; x=A∪B |- x=y", input(null, "3", "x=A∪B"), "Input position out of range");
+		// Position points at wrong identifier
+		assertReasonerFailure("A∈ℙ(ℤ) ;; x=A∪B |- x=y", input(null, "1", "x=A∪B"),
+				"The goal cannot be re-written with the given input.");
 	}
 
 	private IReasonerInput input(String pred, String position, String equality) {
