@@ -87,6 +87,7 @@ public class RemoveInclusionTests extends AbstractManualRewriterTests {
 		assertReasonerFailure("∀x·x = TRUE ⇒ {FALSE ↦ (2 ↦ 2) ↦ x} ⊆ {x ↦ (2 ↦ 2) ↦ TRUE}", "1.0");
 		assertReasonerFailure("(0 = 1) ⇒ {1 ↦ {2}} ⊆ {1 ↦ {2}, 2 ↦ {3}}", "0");
 		assertReasonerFailure("∀x·x = TRUE ⇒ {{x} ↦ 1} ⊆ {{x} ↦ 2, {x} ↦ 3}", "1.0");
+		assertReasonerFailure("∀x·x = TRUE ⇒ {{x} ↦ 1} ⊆ {{x} ↦ 2, {x} ↦ 3}", "3");
 	}
 
 	// Commented out, but makes the tests succeed

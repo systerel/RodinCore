@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
+
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
@@ -34,7 +36,7 @@ public class RemoveInclusion extends AbstractManualRewrites {
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;
-		if (predicate.getTag() == Predicate.SUBSETEQ)
+		if (predicate != null && predicate.getTag() == SUBSETEQ)
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);
 		if (newSubPredicate == null)
 			return null;
