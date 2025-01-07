@@ -50,6 +50,7 @@ public class StrictInclusionTests extends AbstractManualRewriterTests {
 	public void failure() {
 		assertReasonerFailure("{FALSE} ⊆ {TRUE}", "");
 		assertReasonerFailure("{FALSE} ⊂ {TRUE}", "0");
+		assertReasonerFailure("{FALSE} ⊂ {TRUE}", "3");
 	}
 
 }
