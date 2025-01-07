@@ -69,6 +69,8 @@ public class ContImplHypTests extends AbstractManualReasonerTests {
 				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis x=1⇒x=2 at position 0");
 		assertReasonerFailure("∀x·x=0 ⇒ (x = 1 ⇒ x = 2) |- ⊤", makeInput("∀x·x=0 ⇒ (x = 1 ⇒ x = 2)", "1.0"),
 				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis ∀x·x=0⇒(x=1⇒x=2) at position 1.0");
+		assertReasonerFailure("x = 1 ⇒ x = 2 |- ⊤", makeInput("x = 1 ⇒ x = 2", "3"),
+				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis x=1⇒x=2 at position 3");
 	}
 
 }
