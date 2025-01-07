@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public abstract class RemoveMembership extends AbstractManualRewrites {
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(level);
 		Formula<?> subFormula = pred.getSubFormula(position);
-		if (subFormula.getTag() != IN) {
+		if (subFormula == null || subFormula.getTag() != IN) {
 			return null;
 		}
 
