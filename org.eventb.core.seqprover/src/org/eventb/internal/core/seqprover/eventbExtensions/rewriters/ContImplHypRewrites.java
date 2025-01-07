@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
-		if (subFormula.getTag() != Formula.LIMP) {
+		if (subFormula == null || subFormula.getTag() != Formula.LIMP) {
 			return null;
 		}
 		final BinaryPredicate predicate = (BinaryPredicate) subFormula;

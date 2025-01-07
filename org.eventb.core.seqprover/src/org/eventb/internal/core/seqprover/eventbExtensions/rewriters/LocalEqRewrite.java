@@ -277,8 +277,23 @@ public class LocalEqRewrite implements IReasoner {
 			return reasonerFailure(this, input, "Wrong input's class.");
 		}
 		final Input myInput = (Input) input;
+		// Input has three parts that have to be validated:
+		// 1. Target of the rewriting: a hypothesis or the goal
 		final Predicate hyp = myInput.getPred();
+		if (hyp != null && !(seq.containsHypothesis(hyp))) {
+			return reasonerFailure(this, input, hyp + " is not a hypothesis of the given sequent");
+		}
+		final Predicate target = hyp == null ? seq.goal() : hyp;
+		// 2. Position of the rewriting
 		final IPosition position = myInput.getPosition();
+		final Formula<?> formula = target.getSubFormula(position);
+		if (formula == null) {
+			return reasonerFailure(this, input, "Input position out of range");
+		}
+		if (formula.getTag() != FREE_IDENT) {
+			return reasonerFailure(this, input, "Input position should point at an identifier");
+		}
+		// 3. Equality to rewrite in the target
 		final Predicate eqPred = myInput.getEquality();
 		if (!seq.containsHypothesis(eqPred)) {
 			return reasonerFailure(this, input, eqPred
@@ -288,22 +303,21 @@ public class LocalEqRewrite implements IReasoner {
 			return reasonerFailure(this, input, eqPred
 					+ " does not denote an equality");
 		}
+
+		Predicate result = null;
+		final Expression exp = testIdent((RelationalPredicate) eqPred, (Expression) formula);
+		if (exp != null) {
+			result = target.rewriteSubFormula(position, exp);
+		}
 		if (hyp == null) {
-			final Predicate goal = seq.goal();
-			final Predicate newGoal = rewrite(goal, position, eqPred);
-			if (newGoal == null) {
+			if (result == null) {
 				return reasonerFailure(this, input,
 						"The goal cannot be re-written with the given input.");
 			}
-			return makeProofRule(this, input, goal, eqPred, "lae in goal",
-					makeAntecedent(newGoal));
+			return makeProofRule(this, input, target, eqPred, "lae in goal",
+					makeAntecedent(result));
 		} else {
-			if (!(seq.containsHypothesis(hyp))) {
-				return reasonerFailure(this, input, hyp
-						+ " is not a hypothesis of the given sequent");
-			}
-			final Predicate newHyp = rewrite(hyp, position, eqPred);
-			if (newHyp == null) {
+			if (result == null) {
 				return reasonerFailure(this, input,
 						"The hypothesis cannot be re-written with the given input.");
 			}
@@ -311,24 +325,10 @@ public class LocalEqRewrite implements IReasoner {
 			neededHyps.add(hyp);
 			neededHyps.add(eqPred);
 			final IRewriteHypAction rewrite = makeRewriteHypAction(neededHyps,
-					singleton(newHyp), singleton(hyp));
+					singleton(result), singleton(hyp));
 			return makeProofRule(this, input, null, "lae in " + hyp.toString(),
 					Collections.<IHypAction> singletonList(rewrite));
 		}
-	}
-
-	/**
-	 * Try to re-write the predicate <code>pred</code> using the given position,
-	 * and the predicate denoting an equality. Returns the predicte re-written.
-	 */
-	private Predicate rewrite(final Predicate pred, final IPosition position,
-			final Predicate equality) {
-		final Expression ident = (Expression) pred.getSubFormula(position);
-		final Expression exp = testIdent((RelationalPredicate) equality, ident);
-		if (exp == null) {
-			return null;
-		}
-		return pred.rewriteSubFormula(position, exp);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2024 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eventb.core.seqprover.proofBuilder;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
+import static org.eventb.internal.core.seqprover.Util.log;
 import static org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependencies.withDependencies;
 
 import org.eventb.core.seqprover.IConfidence;
@@ -443,13 +444,23 @@ public class ProofBuilder {
 			return false;
 		IProofRule replayProofRule = null;
 		replayHints.applyHints(reasonerInput);
-		final IReasonerOutput replayReasonerOutput = reasoner.apply(node.getSequent(), reasonerInput, proofMonitor);
-
+		IReasonerOutput replayReasonerOutput;
+		try {
+			replayReasonerOutput = reasoner.apply(node.getSequent(), reasonerInput, proofMonitor);
+		} catch (Exception e) {
+			log(e, "Exception during replay");
+			return false;
+		}
 		// Check if the reasoner successfully generated a proof rule.
 		if (replayReasonerOutput instanceof IProofRule) {
 			// Try to apply the generated proof rule.
 			replayProofRule = (IProofRule) replayReasonerOutput;
-			return node.applyRule(replayProofRule);
+			try {
+				return node.applyRule(replayProofRule);
+			} catch (Exception e) {
+				log(e, "Exception when applying replayed rule");
+				return false;
+			}
 		}
 		return false;
 	}

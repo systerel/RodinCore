@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,6 +138,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 
 		// Invalid position
 		assertReasonerFailure("1 ↦ 2 ∈ ℕ × ℕ", "1");
+		assertReasonerFailure("1 ↦ 2 ∈ ℕ × ℕ", "3");
 
 		// Proper management of bound identifiers
 		assertReasonerSuccess("∃x· x ∈ (⋃x· x ∈ ℕ ∣ {x+1})", "1", "∃x· ∃x0· x0 ∈ ℕ ∧ x ∈ {x0+1}");
