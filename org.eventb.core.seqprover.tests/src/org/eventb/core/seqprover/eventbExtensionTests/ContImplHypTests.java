@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2022 Systerel and others.
+ * Copyright (c) 2011, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,10 @@ import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
+import org.junit.Test;
 
 /**
  * Unit tests for the Contraposition of Implication in Hypotheses reasoner
@@ -32,44 +31,30 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHyp
  */
 public class ContImplHypTests extends AbstractManualReasonerTests {
 
-	private static final String P1 = "x = 1 ⇒ x = 2";
-
-	private static final String resultP1 = "¬ x = 2 ⇒ ¬ x = 1";
-
-	private static final String P2 = "∀x·x=0 ⇒ (x = 1 ⇒ x = 2)";
-
-	private static final String resultP21 = "∀x· ¬(x = 1 ⇒ x = 2) ⇒ ¬x=0";
-
-	private static final String resultP22 = "∀x· x=0 ⇒ (¬ x = 2 ⇒ ¬ x = 1)";
-
 	@Override
 	public String getReasonerID() {
 		return new ContImplHypRewrites().getReasonerID();
 	}
 
+	@Override
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return contImpHypGetPositions(predicate);
 	}
 
-	@Override
-	protected String[] getTestGetPositions() {
-		return new String[] { P1, "ROOT", P2, "1\n" + "1.1", };
+	@Test
+	public void testPositions() {
+		assertGetPositions("x = 1 ⇒ x = 2", "ROOT");
+		assertGetPositions("∀x·x=0 ⇒ (x = 1 ⇒ x = 2)", "1", "1.1");
 	}
 
-	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[] {
-				makeSuccess(P1, "", resultP1),
-				makeSuccess(P2, "1", resultP21),
-				makeSuccess(P2, "1.1", resultP22),
-		};
-	}
-
-	private static SuccessfullReasonerApplication makeSuccess(String hyp,
-			String position, String result) {
-		return new SuccessfullReasonerApplication(
-				makeHypSeq(hyp), makeInput(hyp, position),
-				makeResultSeq(hyp, result));
+	@Test
+	public void success() throws Exception {
+		assertReasonerSuccess("x = 1 ⇒ x = 2 |- ⊤", makeInput("x = 1 ⇒ x = 2", ""),
+				"{}[x = 1 ⇒ x = 2][][¬ x = 2 ⇒ ¬ x = 1] |- ⊤");
+		assertReasonerSuccess("∀x·x=0 ⇒ (x = 1 ⇒ x = 2) |- ⊤", makeInput("∀x·x=0 ⇒ (x = 1 ⇒ x = 2)", "1"),
+				"{}[∀x·x=0 ⇒ (x = 1 ⇒ x = 2)][][∀x· ¬(x = 1 ⇒ x = 2) ⇒ ¬x=0] |- ⊤");
+		assertReasonerSuccess("∀x·x=0 ⇒ (x = 1 ⇒ x = 2) |- ⊤", makeInput("∀x·x=0 ⇒ (x = 1 ⇒ x = 2)", "1.1"),
+				"{}[∀x·x=0 ⇒ (x = 1 ⇒ x = 2)][][∀x· x=0 ⇒ (¬ x = 2 ⇒ ¬ x = 1)] |- ⊤");
 	}
 
 	private static IReasonerInput makeInput(String hyp, String position) {
@@ -78,28 +63,12 @@ public class ContImplHypTests extends AbstractManualReasonerTests {
 		return new AbstractManualRewrites.Input(pHyp, pPosition);
 	}
 
-	private static IProverSequent makeHypSeq(String hyp) {
-		return TestLib.genSeq(hyp + " |- ⊤");
-	}
-
-	private static IProverSequent makeResultSeq(String hyp, String result) {
-		return TestLib.genFullSeq(hyp + ";;" + result + ";H;" + hyp + ";S;"
-				+ result + " |- ⊤");
-	}
-
-	@Override
-	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		return new UnsuccessfullReasonerApplication[] {
-				makeFailure(P1, "0"),
-				makeFailure(P2, "1.0"),
-		};
-	}
-
-	private static UnsuccessfullReasonerApplication makeFailure(String hyp,
-			String position) {
-		return new UnsuccessfullReasonerApplication(
-				makeHypSeq(hyp),
-				makeInput(hyp, position));
+	@Test
+	public void failure() throws Exception {
+		assertReasonerFailure("x = 1 ⇒ x = 2 |- ⊤", makeInput("x = 1 ⇒ x = 2", "0"),
+				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis x=1⇒x=2 at position 0");
+		assertReasonerFailure("∀x·x=0 ⇒ (x = 1 ⇒ x = 2) |- ⊤", makeInput("∀x·x=0 ⇒ (x = 1 ⇒ x = 2)", "1.0"),
+				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis ∀x·x=0⇒(x=1⇒x=2) at position 1.0");
 	}
 
 }
