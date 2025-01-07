@@ -55,7 +55,14 @@ public class DoubleImplHypTests extends AbstractManualReasonerTests {
 
 	@Test
 	public void failure() throws Exception {
+		// Input predicate not in hypotheses
 		assertReasonerFailure("|- ⊤", input("x = 1 ⇒ (y = 2 ⇒ z = 3)", ""), "Nonexistent hypothesis: x=1⇒(y=2⇒z=3)");
+		// Position on element of wrong type
+		assertReasonerFailure("x = 1 ⇒ (y = 2 ⇒ z = 3) |- ⊤", input("x = 1 ⇒ (y = 2 ⇒ z = 3)", "0"),
+				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis x=1⇒(y=2⇒z=3) at position 0");
+		// Position out of range
+		assertReasonerFailure("x = 1 ⇒ (y = 2 ⇒ z = 3) |- ⊤", input("x = 1 ⇒ (y = 2 ⇒ z = 3)", "3"),
+				"Rewriter " + getReasonerID() + " is inapplicable for hypothesis x=1⇒(y=2⇒z=3) at position 3");
 	}
 
 	private static IReasonerInput input(String predicate, String position) {

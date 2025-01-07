@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.ast.Formula.LIMP;
+
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -34,10 +37,12 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position) {
-		BinaryPredicate predicate = (BinaryPredicate) pred
-				.getSubFormula(position);
+		Formula<?> predicate = pred.getSubFormula(position);
+		if (predicate == null || predicate.getTag() != LIMP) {
+			return null;
+		}
 		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true);
-		Predicate newSubPredicate = rewriter.rewrite(predicate);
+		Predicate newSubPredicate = rewriter.rewrite((BinaryPredicate) predicate);
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
