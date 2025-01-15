@@ -237,8 +237,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			filter = createFilterText(group);
 		}
 		final ListViewer viewer = new ListViewer(group);
-		viewer.getList().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		var viewerList = viewer.getList();
+		viewerList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		viewerList.pack();
 		
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(labelProvider);
