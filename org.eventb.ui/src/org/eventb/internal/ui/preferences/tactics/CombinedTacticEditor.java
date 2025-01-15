@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Systerel and others.
+ * Copyright (c) 2011, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,7 +238,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		}
 		final ListViewer viewer = new ListViewer(group);
 		viewer.getList().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, false, true));
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(labelProvider);
@@ -259,7 +259,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Group group = new Group(parent, SWT.NO_FOCUS);
 		group.setText(text);
 		group.setLayout(new GridLayout());
-		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, false, true);
+		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.minimumWidth = 200;
 		layoutData.minimumHeight = 200;
 		group.setLayoutData(layoutData);
@@ -270,6 +270,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		final GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = numColumns;
+		compLayout.makeColumnsEqualWidth = true;
 		composite.setLayout(compLayout);
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL,
 				true, true);
@@ -281,7 +282,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		final GridLayout compLayout = new GridLayout(1, false);
 		composite.setLayout(compLayout);
-		final GridData gridData = new GridData(SWT.END, SWT.FILL,
+		final GridData gridData = new GridData(SWT.FILL, SWT.FILL,
 				true, true);
 		composite.setLayoutData(gridData);
 		return composite;
