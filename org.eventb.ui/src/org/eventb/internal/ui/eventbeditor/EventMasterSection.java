@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IParameter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -173,10 +172,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 				IRodinElement element = (IRodinElement) ssel.getFirstElement();
 				if (element instanceof IEvent) {
 					event = (IEvent) element;
-				} else if (element instanceof IInternalElement) {
-					event = (IEvent) ((IInternalElement) element).getParent();
-				} else { // Should not happen
-					return;
+				} else {
+					event = (IEvent) element.getParent();
 				}
 				try {
 					initSelected = (event.getLabel().equals("INITIALISATION")) ? true

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -238,9 +236,8 @@ public class RodinDB extends Openable implements IRodinDB {
 	public RodinProject getRodinProject(IResource resource) {
 		switch (resource.getType()) {
 		case IResource.FOLDER:
-			return new RodinProject(((IFolder) resource).getProject(), this);
 		case IResource.FILE:
-			return new RodinProject(((IFile) resource).getProject(), this);
+			return new RodinProject(resource.getProject(), this);
 		case IResource.PROJECT:
 			return new RodinProject((IProject) resource, this);
 		default:
