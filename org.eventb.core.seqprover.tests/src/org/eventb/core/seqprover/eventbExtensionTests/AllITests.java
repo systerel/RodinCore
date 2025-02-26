@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2024 Systerel and others.
+ * Copyright (c) 2012, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,9 +59,14 @@ public class AllITests extends AbstractReasonerTests {
 		// goal not universally quantified
 		assertReasonerFailure(" ⊤ |- ∃x·x=1 ", NO_INPUT, "Goal is not universally quantified");
 		// invalid names provided
-		assertReasonerFailure("|- ∀x·x=1", makeInput("1"), "Provided name '1' is not a valid identifier");
-		assertReasonerFailure("|- ∀x·x=1", makeInput("1,x,+"), "Some provided names are not valid identifiers: 1, +");
-		assertReasonerFailure("|- ∀x·x=1", makeInput("x'"), "Provided name 'x'' is not a valid identifier");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("1"),
+				"Input \"1\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("1,x,+"),
+				"Input \"1\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("x'"),
+				"Input \"x'\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("|- ∀x·x=1", makeInput("∀ x · x + 0 = 0 + x"),
+				"Input \"∀ x · x + 0 = 0...\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
 	}
 
 	private AllI.Input makeInput(String input) {

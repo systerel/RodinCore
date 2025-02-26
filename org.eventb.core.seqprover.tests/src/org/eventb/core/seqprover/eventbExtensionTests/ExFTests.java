@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2024 Systerel and others.
+ * Copyright (c) 2012, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,14 @@ public class ExFTests extends AbstractReasonerTests {
 		// hyp not existentially quantified
 		assertReasonerFailure(" ∀x·x = 1 |- ⊥ ", input("∀x·x=1"), "Predicate is not existentially quantified: ∀x·x=1");
 		// invalid names provided
-		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1"), "Provided name '1' is not a valid identifier");
-		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1,x,+"), "Some provided names are not valid identifiers: 1, +");
-		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "x'"), "Provided name 'x'' is not a valid identifier");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1"),
+				"Input \"1\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "1,x,+"),
+				"Input \"1\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "x'"),
+				"Input \"x'\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
+		assertReasonerFailure("∃x·x=1 |- ⊥", input("∃x·x=1", "∀ x · x + 0 = 0 + x"),
+				"Input \"∀ x · x + 0 = 0...\" is not a valid identifier: global input should be empty or have a list of comma-separated identifiers");
 	}
 
 	private IReasonerInput input(String pred) {

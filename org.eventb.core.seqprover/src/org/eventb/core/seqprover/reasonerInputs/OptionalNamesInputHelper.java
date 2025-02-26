@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 UPEC and others.
+ * Copyright (c) 2024, 2025 UPEC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
-import static java.lang.String.join;
 import static java.util.Arrays.stream;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -50,13 +49,16 @@ public class OptionalNamesInputHelper {
 	 * @return an error message or {@code null} if they are all valid
 	 */
 	public static String checkNamesValidity(String[] inputs, FormulaFactory ff) {
-		String[] invalid = stream(inputs).filter(name -> !isValidName(name, ff)).toArray(String[]::new);
-		if (invalid.length == 0) {
+		String[] invalids = stream(inputs).filter(name -> !isValidName(name, ff)).toArray(String[]::new);
+		if (invalids.length == 0) {
 			return null;
-		} else if (invalid.length == 1) {
-			return "Provided name '" + invalid[0] + "' is not a valid identifier";
 		} else {
-			return "Some provided names are not valid identifiers: " + join(", ", invalid);
+			String invalid = invalids[0];
+			if (invalid.length() > 15) {
+				invalid = invalid.substring(0, 15) + "...";
+			}
+			return "Input \"" + invalid + "\" is not a valid identifier: "
+					+ "global input should be empty or have a list of comma-separated identifiers";
 		}
 	}
 
