@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2024 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class PredicateRow {
 			for (String input : inputs)
 				debug("Input: \"" + input + "\"");
 
-		final String globalInput = getProverUI().getProofControl().getInput();
+		final String globalInput = getProverUI().getProofControl().getAndClearInput();
 		final IUserSupport us = getUserSupport();
 		final boolean skipPostTactic = tacticAppli.isSkipPostTactic();
 		final Set<Predicate> hypSet = isGoal() ? null : singleton(getPredicate());
@@ -211,7 +211,7 @@ public class PredicateRow {
 	protected void instantiate() {
 		final IUserSupport us = getUserSupport();
 		final String[] inputs = getPredicateText().getResults();
-		final String globalInput = getProverUI().getProofControl().getInput();
+		final String globalInput = getProverUI().getProofControl().getAndClearInput();
 		ProverUIUtils.applyInstantiation(isGoal() ? null : pred, us, inputs, globalInput);
 	}
 

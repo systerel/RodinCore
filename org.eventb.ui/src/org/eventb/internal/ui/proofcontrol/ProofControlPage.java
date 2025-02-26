@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								.getUserSupport();
 						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
-								userSupport, currentInput);
+								userSupport, getAndClearInput());
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
@@ -218,13 +218,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						} else {
 							return;
 						}
-						if (!currentInput.equals("")) {
-							historyCombo.add(currentInput, 0);
-						}
-						if (!textWidget.getText().isEmpty()) {
-							textWidget.setText("");
-						}
-						currentInput = "";
 					}
 				};
 
@@ -268,7 +261,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					.getUserSupport();
 					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
-							userSupport, currentInput);
+							userSupport, getAndClearInput());
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
@@ -278,12 +271,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								interruptable);
 					} else {
 						return;
-					}
-					if (!currentInput.equals("")) {
-						historyCombo.add(currentInput, 0);
-					}
-					if (!textWidget.getText().isEmpty()) {
-						textWidget.setText("");
 					}
 				}
 			});
@@ -831,6 +818,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// items.
 						updateToolItems();
 						updateSmiley();
+						getAndClearInput();
 						openPreferences.updateText();
 						scrolledForm.reflow(true);
 					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
@@ -901,6 +889,20 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	@Override
 	public String getInput() {
-		return textWidget.getText();
+		return currentInput;
 	}
+
+	@Override
+	public String getAndClearInput() {
+		String result = getInput();
+		if (!currentInput.isEmpty()) {
+			historyCombo.add(currentInput, 0);
+			currentInput = "";
+		}
+		if (textWidget.getCharCount() != 0) {
+			textWidget.setText("");
+		}
+		return result;
+	}
+
 }
