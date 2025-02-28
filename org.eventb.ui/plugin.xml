@@ -2238,6 +2238,16 @@
             target="any"
             tooltip="%proofTactic.exponentiationStep.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funDprodImg"
+            interrupt="false"
+            name="%proofTactic.funDprodImg.name"
+            priority="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunDprodImg"
+            target="any"
+            tooltip="%proofTactic.funDprodImg.tooltip">
+      </tactic>
       <!--
         Note: the interrupt attribute should be false for most tactics.
         Only long-running tactics that users may want to interrupt and

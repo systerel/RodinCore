@@ -154,6 +154,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunDprodImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
@@ -3718,6 +3719,32 @@ public class Tactics {
 	 */
 	public static List<IPosition> exponentiationStepGetPositions(Predicate predicate) {
 		return new ExponentiationStep().getPositions(predicate, true);
+	}
+
+	/**
+	 * Returns the tactic for the {@link FunDprodImg} reasoner for a given position.
+	 *
+	 * @param hyp      a hypothesis or <code>null</code> if the application happens
+	 *                 in goal
+	 * @param position a position pointing on a functional image which function is a
+	 *                 direct product
+	 * @return The tactic "direct product fun. image"
+	 * @since 3.8
+	 */
+	public static ITactic funDprodImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunDprodImg(), new FunDprodImg.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner {@link FunDprodImg}
+	 * to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.8
+	 */
+	public static List<IPosition> funDprodImgGetPositions(Predicate predicate) {
+		return new FunDprodImg().getPositions(predicate, false);
 	}
 
 }

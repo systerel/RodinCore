@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022, 2024 Université de Lorraine and others.
+ * Copyright (c) 2022, 2025 Université de Lorraine and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
@@ -213,6 +214,17 @@ public class FormulaBuilder {
 	 */
 	public Expression bij(Expression left, Expression right) {
 		return ff.makeBinaryExpression(TBIJ, left, right, null);
+	}
+
+	/**
+	 * Builds a function application.
+	 *
+	 * @param fun the function
+	 * @param arg the argument
+	 * @return the expression fun(arg)
+	 */
+	public Expression funimg(Expression fun, Expression arg) {
+		return ff.makeBinaryExpression(FUNIMAGE, fun, arg, null);
 	}
 
 	/**
