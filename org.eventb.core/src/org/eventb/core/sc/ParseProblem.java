@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Extracted categories in separate class
  *     Systerel - added InvalidTypeExpressionError
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.core.sc;
 
