@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,24 +165,24 @@ public class AbstrExpr implements IReasoner, IRepairableInputReasoner {
 		// Generate the equality predicate
 		final Predicate aeEq = DLib.makeEq(freeIdent, expr);
 		
-		// Generate the anticidents
-		final IAntecedent[] anticidents = new IAntecedent[2];
+		// Generate the antecedents
+		final IAntecedent[] antecedents = new IAntecedent[2];
 		
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(exprWD);
+		antecedents[0] = ProverFactory.makeAntecedent(exprWD);
 		
 		// 
 		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 		addedHyps.addAll(exprWDs);
 		// aeEq is always the last addedHyp
 		addedHyps.add(aeEq);
-		anticidents[1] = ProverFactory.makeAntecedent(
+		antecedents[1] = ProverFactory.makeAntecedent(
 				null, addedHyps,
 				new FreeIdentifier[] {freeIdent}, null);
 		
 		// Generate the proof rule
 		return ProverFactory.makeProofRule(this, input, null,
-				"ae (" + expr.toString() + ")", anticidents);
+				"ae (" + expr.toString() + ")", antecedents);
 	}
 	
 	@Override
