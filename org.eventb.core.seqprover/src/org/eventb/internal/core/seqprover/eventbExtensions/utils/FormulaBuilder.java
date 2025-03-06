@@ -20,6 +20,8 @@ import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
@@ -42,6 +44,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.Type;
 
@@ -247,6 +250,26 @@ public class FormulaBuilder {
 	 */
 	public Expression mapsTo(Expression left, Expression right) {
 		return ff.makeBinaryExpression(MAPSTO, left, right, null);
+	}
+
+	/**
+	 * Builds a projection.
+	 *
+	 * @param prodType product type of the projection's input
+	 * @return prj1
+	 */
+	public Expression prj1(ProductType prodType) {
+		return ff.makeAtomicExpression(KPRJ1_GEN, null, relType(prodType, prodType.getLeft()));
+	}
+
+	/**
+	 * Builds a projection.
+	 *
+	 * @param prodType product type of the projection's input
+	 * @return prj2
+	 */
+	public Expression prj2(ProductType prodType) {
+		return ff.makeAtomicExpression(KPRJ2_GEN, null, relType(prodType, prodType.getRight()));
 	}
 
 	/**

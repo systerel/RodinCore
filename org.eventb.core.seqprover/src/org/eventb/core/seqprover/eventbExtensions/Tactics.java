@@ -48,6 +48,7 @@ import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.OVR;
+import static org.eventb.core.ast.Formula.PPROD;
 import static org.eventb.core.ast.Formula.QINTER;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.RANRES;
@@ -191,6 +192,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunPprodImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusLeftRewrites;
@@ -3745,6 +3747,37 @@ public class Tactics {
 	 */
 	public static List<IPosition> funDprodImgGetPositions(Predicate predicate) {
 		return new FunDprodImg().getPositions(predicate, false);
+	}
+
+	/**
+	 * Returns the tactic for the {@link FunPprodImg} reasoner for a given position.
+	 *
+	 * @param hyp      a hypothesis or <code>null</code> if the application happens
+	 *                 in goal
+	 * @param position a position pointing on a functional image which function is a
+	 *                 parallel product
+	 * @return The tactic "parallel product fun. image"
+	 * @since 3.8
+	 */
+	public static ITactic funPprodImg(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FunPprodImg(), new FunPprodImg.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the list of applicable positions of the reasoner {@link FunPprodImg}
+	 * to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return a list of applicable positions
+	 * @since 3.8
+	 */
+	public static List<IPosition> funPprodImgGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(BinaryExpression expression) {
+				return expression.getTag() == FUNIMAGE && expression.getLeft().getTag() == PPROD;
+			}
+		});
 	}
 
 }

@@ -559,6 +559,11 @@
             id="funDprodImg"
             name="%funDprodImgName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunPprodImg"
+            id="funPprodImg"
+            name="%funPprodImgName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
