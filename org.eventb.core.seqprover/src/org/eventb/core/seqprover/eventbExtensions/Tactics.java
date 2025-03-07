@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,6 +127,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ContrL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
+import org.eventb.internal.core.seqprover.eventbExtensions.DerivEqualInterv;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.EqHe;
@@ -3778,6 +3779,28 @@ public class Tactics {
 				return expression.getTag() == FUNIMAGE && expression.getLeft().getTag() == PPROD;
 			}
 		});
+	}
+
+	/**
+	 * Returns the tactic for the {@link DerivEqualInterv} reasoner.
+	 *
+	 * @param hyp a hypothesis (must not be {@code null})
+	 * @return The tactic "equality of intervals"
+	 * @since 3.8
+	 */
+	public static ITactic derivEqualInterv(Predicate hyp) {
+		return BasicTactics.reasonerTac(new DerivEqualInterv(), new DerivEqualInterv.Input(hyp));
+	}
+
+	/**
+	 * Checks if reasoner {@link DerivEqualInterv} is applicable to a predicate.
+	 *
+	 * @param predicate a predicate
+	 * @return whether the reasoner is applicable to the given predicate
+	 * @since 3.8
+	 */
+	public static boolean derivEqualIntervApplicable(Predicate predicate) {
+		return DerivEqualInterv.isApplicable(predicate);
 	}
 
 }

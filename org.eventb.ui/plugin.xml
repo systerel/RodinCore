@@ -2258,6 +2258,16 @@
             target="any"
             tooltip="%proofTactic.funPprodImg.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.derivEqualInterv"
+            interrupt="false"
+            name="%proofTactic.derivEqualInterv.name"
+            priority="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DerivEqualInterv"
+            target="hypothesis"
+            tooltip="%proofTactic.derivEqualInterv.tooltip">
+      </tactic>
       <!--
         Note: the interrupt attribute should be false for most tactics.
         Only long-running tactics that users may want to interrupt and

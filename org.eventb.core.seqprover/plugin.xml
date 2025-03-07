@@ -564,6 +564,11 @@
             id="funPprodImg"
             name="%funPprodImgName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.DerivEqualInterv"
+            id="derivEqualInterv"
+            name="%derivEqualIntervName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
