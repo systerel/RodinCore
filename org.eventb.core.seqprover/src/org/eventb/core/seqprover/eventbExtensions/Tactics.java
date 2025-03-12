@@ -2963,7 +2963,7 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static List<IPosition> cardComparisonGetPositions(Predicate goal) {
-		return new CardComparison().getRootPositions(goal);
+		return CardComparison.getRootPositions(goal);
 	}
 	
 	/**
@@ -2978,7 +2978,7 @@ public class Tactics {
 	 * @since 2.0
 	 */
 	public static boolean isCardComparisonApplicable(Predicate goal) {
-		return new CardComparison().isApplicable(goal);
+		return CardComparison.isApplicable(goal);
 	}
 
 	/**
@@ -2994,12 +2994,25 @@ public class Tactics {
 	 *            a position
 	 * @return The tactic "arithmetic comparison of cardinality rewrites"
 	 * @author htson
+	 * @deprecated this tactic is only applicable to the ROOT position on the goal:
+	 *             the values of {@code hyp} and {@code position} are ignored; use
+	 *             {@link #cardComparison()}
 	 */
+	@Deprecated
 	public static ITactic cardComparison(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new CardComparison(),
-				new CardComparison.Input(hyp, position));
+		return BasicTactics.reasonerTac(new CardComparison(), EMPTY_INPUT);
 	}
 
+	/**
+	 * Returns the tactic "arithmetic comparison of cardinality rewrites"
+	 * {@link CardComparison} which is applicable to the goal at the root position.
+	 *
+	 * @return The tactic "arithmetic comparison of cardinality rewrites"
+	 * @since 3.8
+	 */
+	public static ITactic cardComparison() {
+		return BasicTactics.reasonerTac(new CardComparison(), EMPTY_INPUT);
+	}
 
 	/**
 	 * Return the list of applicable positions of the tactic "cardinality of

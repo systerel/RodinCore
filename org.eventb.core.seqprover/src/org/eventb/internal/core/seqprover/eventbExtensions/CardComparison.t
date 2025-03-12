@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,48 +14,37 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.Identifier;
-import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 /**
  * Basic implementation for comparison of cardinalities
  */
 @SuppressWarnings({"unused", "cast"})
-public class CardComparison extends AbstractManualInference {
+public class CardComparison extends EmptyInputReasoner {
 
 	%include {FormulaV2.tom}
 	
@@ -69,15 +58,14 @@ public class CardComparison extends AbstractManualInference {
 
 	private static final List<IPosition> NO_POS = Collections.emptyList();
 
-	public List<IPosition> getRootPositions(Predicate goal) {
-		if (isPredicateApplicable(goal)) {
+	public static List<IPosition> getRootPositions(Predicate goal) {
+		if (isApplicable(goal)) {
 			return ROOT_POS;
 		}
 		return NO_POS;
 	}
 
-	@Override
-	protected boolean isPredicateApplicable(Predicate predicate) {
+	public static boolean isApplicable(Predicate predicate) {
 	    %match (Predicate predicate) {
 			
 			/**
@@ -95,26 +83,17 @@ public class CardComparison extends AbstractManualInference {
 	    return false;
 	}
 
-	private boolean haveSameType(Expression left, Expression right) {
+	private static boolean haveSameType(Expression left, Expression right) {
 		return left.getType().equals(right.getType());
-	}
-
-	@Override
-	protected String getDisplayName() {
-		return "card. comparison";
 	}
 
 	@ProverRule( { "DERIV_EQUAL_CARD", "DERIV_LE_CARD", "DERIV_LT_CARD",
 			"DERIV_GE_CARD", "DERIV_GT_CARD" })
-	@Override
-	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
-			IPosition pos) {
-		if (pred != null)
-			return null; // Only can apply in goal
+	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		final Predicate goal = seq.goal();
 		
 		// position must be an applicable position
-		if (!pos.isRoot() || ! isPredicateApplicable(goal))
+		if (! isApplicable(goal))
 			return null;
 		
 		final FormulaFactory ff = seq.getFormulaFactory();
@@ -164,10 +143,19 @@ public class CardComparison extends AbstractManualInference {
 	    }
 		return null;
 	}
+
+	@Override
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm) {
+		IAntecedent[] antecedents = getAntecedents(seq);
+		if (antecedents == null) {
+			return reasonerFailure(this, input, "Inference " + getReasonerID() + " is not applicable");
+		}
+		return makeProofRule(this, input, seq.goal(), (Predicate) null, "card. comparison", antecedents);
+	}
 	
 	private IAntecedent[] makeAntecedents(int tag, Expression l, Expression r, FormulaFactory ff) {
 		final Predicate newPred = ff.makeRelationalPredicate(tag, l, r, null);
-		return new IAntecedent[] { makeAntecedent(null, newPred) };
+		return new IAntecedent[] { makeAntecedent(newPred) };
 	}
 
 }
