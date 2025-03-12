@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Extracted categories in separate class
  *     Systerel - added InvalidTypeExpressionError
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -77,6 +78,14 @@ public enum ParseProblem implements IRodinProblem {
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_MulAppliedToSet, 
 			ParseProblemCategory.CATEGORY_TYPING),
+
+	/**
+	 * @since 3.8
+	 */
+	ImplicationInExistentialWarning(
+			IMarker.SEVERITY_WARNING,
+			Messages.scuser_ImplicationInExistentialWarning,
+			ParseProblemCategory.CATEGORY_LEGIBILITY),
 	;
 	
 	private final String errorCode;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2024 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,11 @@
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - got factory from repository
  *     Systerel - adapted to parser 2.0 problem kinds
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
+
+import static org.eventb.core.sc.ParseProblem.ImplicationInExistentialWarning;
 
 import java.util.Collection;
 
@@ -36,6 +39,7 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.IParsedFormula;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.sc.ExistentialChecker;
 import org.eventb.internal.core.sc.ParsedFormula;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -330,6 +334,8 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 			if (ok) {
 
+				checkExistentials(formulaElement,formula);
+
 				ok = symbolInfo != null;
 
 				setParsedState(formula);
@@ -397,5 +403,13 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 	}
 
 	protected abstract void makeProgress(IProgressMonitor monitor);
+
+	private void checkExistentials(IInternalElement element, F formula) throws RodinDBException {
+		for (var location : ExistentialChecker.check(formula)) {
+			createProblemMarker(element, getFormulaAttributeType(), location.getStart(), location.getEnd(),
+					ImplicationInExistentialWarning);
+
+		}
+	}
 
 }

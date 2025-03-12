@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - ensure that all AST problems are reported
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -19,6 +20,7 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.EmptyLabelError;
 import static org.eventb.core.sc.GraphProblem.FreeIdentifierFaultyDeclError;
 import static org.eventb.core.sc.GraphProblem.UndeclaredFreeIdentifierError;
+import static org.eventb.core.sc.ParseProblem.ImplicationInExistentialWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
@@ -293,6 +295,24 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		runBuilderCheck(marker(getGeneric().getPredicates(con)[0],
 				LABEL_ATTRIBUTE, EmptyLabelError));
+	}
+
+	/**
+	 * Warning about implication in existential quantifier.
+	 */
+	@Test
+	public void test_16() throws Exception {
+		E con = getGeneric().createElement("elt");
+
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("∃z·z=1 ⇒ 1=2"), false);
+
+		getGeneric().save(con);
+
+		runBuilderCheck(marker(getGeneric().getPredicates(con)[0], PREDICATE_ATTRIBUTE, 3, 12,
+				ImplicationInExistentialWarning));
+
+		SCE file = getGeneric().getSCElement(con);
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("T1"), makeSList("∃z·z=1 ⇒ 1=2"), false);
 	}
 
 }

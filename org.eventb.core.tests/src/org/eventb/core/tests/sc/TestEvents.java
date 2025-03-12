@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - added a test for extended initialization repairing
  *     Systerel - use marker matcher
  *     Systerel - added test for bug #720
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -42,11 +43,13 @@ import static org.eventb.core.sc.GraphProblem.VariableHasDisappearedError;
 import static org.eventb.core.sc.GraphProblem.VariableNameConflictWarning;
 import static org.eventb.core.sc.GraphProblem.WitnessLabelMissingWarning;
 import static org.eventb.core.sc.ParseProblem.FreeIdentifierHasBoundOccurencesWarning;
+import static org.eventb.core.sc.ParseProblem.ImplicationInExistentialWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.TypesDoNotMatchError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
@@ -1006,6 +1009,26 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 
 		runBuilderCheck(marker(evt.getActions()[0], ASSIGNMENT_ATTRIBUTE,
 				FreeIdentifierHasBoundOccurencesWarning, "p"));
+	}
+
+	/**
+	 * Ensures that a warning is raised for an action containing an implication just
+	 * below an existential quantifier.
+	 */
+	@Test
+	public void testEvents_34_existentialInAction() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		IEvent init = addInitialisation(mac, makeSList("INIT"), makeSList("x :∣ ∃y· y=1 ⇒ x'=2"));
+		IAction action = init.getActions()[0];
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(marker(action, ASSIGNMENT_ATTRIBUTE, 9, 19, ImplicationInExistentialWarning));
+
+		final ISCMachineRoot file = mac.getSCMachineRoot();
+		final ISCEvent scInit = getSCEvent(file, INITIALISATION);
+		containsActions(scInit, mTypeEnvironment(), makeSList("INIT"), makeSList("x :∣ ∃y· y=1 ⇒ x'=2"));
 	}
 
 }

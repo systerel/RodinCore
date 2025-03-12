@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - use marker matcher
  *     Systerel - lexicographic variants
+ *     Systerel - check implication in existential quantification
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -29,6 +30,7 @@ import static org.eventb.core.sc.GraphProblem.UndeclaredFreeIdentifierError;
 import static org.eventb.core.sc.GraphProblem.VariantFreeIdentifierError;
 import static org.eventb.core.sc.GraphProblem.VariantLabelConflictError;
 import static org.eventb.core.sc.GraphProblem.VariantLabelConflictWarning;
+import static org.eventb.core.sc.ParseProblem.ImplicationInExistentialWarning;
 import static org.eventb.core.sc.ParseProblem.LexerError;
 import static org.eventb.core.sc.ParseProblem.SyntaxError;
 import static org.eventb.core.tests.MarkerMatcher.marker;
@@ -573,6 +575,25 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		containsVariants(file, emptyEnv, makeSList("vrn1", "vrn2"), makeSList("1", "2"));
+	}
+
+	/**
+	 * Check that a variant containing a dubious existential is warned about, and
+	 * kept in the SC file.
+	 */
+	@Test
+	public void testVariant_23() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		setConvergent(addEvent(mac, "evt"));
+		addInitialisation(mac);
+		IVariant vrn = addVariant(mac, "{y ∣ ∃z· z=1 ⇒ y=2}");
+
+		saveRodinFileOf(mac);
+
+		runBuilderCheck(marker(vrn, EXPRESSION_ATTRIBUTE, 9, 18, ImplicationInExistentialWarning));
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		containsVariant(file, emptyEnv, DEFAULT_LABEL, "{y ∣ ∃z· z=1 ⇒ y=2}");
 	}
 
 }

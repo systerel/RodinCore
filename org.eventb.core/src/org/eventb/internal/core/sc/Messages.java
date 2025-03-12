@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2023 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,6 +164,8 @@ public final class Messages {
     public static String scuser_TypeUnknown;
     public static String scuser_MinusAppliedToSet;
 	public static String scuser_MulAppliedToSet;
+
+	public static String scuser_ImplicationInExistentialWarning;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
