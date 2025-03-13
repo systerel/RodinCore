@@ -197,28 +197,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						item, dropdown) {
 					@Override
 					public void apply(final TacticUIInfo tactic) {
-						if (ProofControlUtils.DEBUG)
-							ProofControlUtils.debug("File "
-									+ ProofControlPage.this.editor
-									.getRodinInputFile()
-											.getElementName());
-						final IUserSupport userSupport = editor
-								.getUserSupport();
-						final boolean interruptable = tactic.isInterruptable();
-						final Object application = tactic.getGlobalApplication(
-								userSupport, currentInput);
-
-						if (application instanceof TacticApplicationProxy<?>) {
-							applyTacticProvider(
-									(TacticApplicationProxy<?>) application,
-									userSupport, interruptable);
-						} else if (application instanceof ICommandApplication) {
-							applyGlobalExpertTactic((ICommandApplication) application,
-									userSupport, interruptable);
-						} else {
-							return;
-						}
-						clearInput();
+						executeGlobalTactic(tactic);
 					}
 				};
 
@@ -245,35 +224,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					item, tactic, tactic.isInterruptable());
 
 			item.addSelectionListener(new SelectionAdapter() {
-
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (ProofControlUtils.DEBUG)
-						ProofControlUtils.debug("File "
-								+ ProofControlPage.this.editor.getRodinInputFile()
-										.getElementName());
-
-					final IUserSupport userSupport = editor
-					.getUserSupport();
-					final boolean interruptable = tactic.isInterruptable();
-					final Object application = tactic.getGlobalApplication(
-							userSupport, currentInput);
-					if (application instanceof TacticApplicationProxy<?>) {
-						applyTacticProvider(
-								(TacticApplicationProxy<?>) application,
-								userSupport, interruptable);
-					} else if (application instanceof ICommandApplication) {
-						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
-								interruptable);
-					} else {
-						return;
-					}
-					clearInput();
+					executeGlobalTactic(tactic);
 				}
 			});
 			toolItems.add(globalTacticToolItem);
@@ -311,6 +264,22 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				textTransfer, fileTransfer));
 
 		return item;
+	}
+
+	private void executeGlobalTactic(TacticUIInfo tactic) {
+		if (ProofControlUtils.DEBUG)
+			ProofControlUtils.debug("File " + editor.getRodinInputFile().getElementName());
+		final IUserSupport userSupport = editor.getUserSupport();
+		final boolean interruptable = tactic.isInterruptable();
+		final Object application = tactic.getGlobalApplication(userSupport, currentInput);
+		if (application instanceof TacticApplicationProxy<?>) {
+			applyTacticProvider((TacticApplicationProxy<?>) application, userSupport, interruptable);
+		} else if (application instanceof ICommandApplication) {
+			applyGlobalExpertTactic((ICommandApplication) application, userSupport, interruptable);
+		} else {
+			return;
+		}
+		clearInput();
 	}
 
 	// Applies a global tactic to the current proof tree node.
