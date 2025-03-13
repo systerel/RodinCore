@@ -206,7 +206,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								.getUserSupport();
 						final boolean interruptable = tactic.isInterruptable();
 						final Object application = tactic.getGlobalApplication(
-								userSupport, getAndClearInput());
+								userSupport, currentInput);
 
 						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
@@ -218,6 +218,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						} else {
 							return;
 						}
+						clearInput();
 					}
 				};
 
@@ -261,7 +262,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					.getUserSupport();
 					final boolean interruptable = tactic.isInterruptable();
 					final Object application = tactic.getGlobalApplication(
-							userSupport, getAndClearInput());
+							userSupport, currentInput);
 					if (application instanceof TacticApplicationProxy<?>) {
 						applyTacticProvider(
 								(TacticApplicationProxy<?>) application,
@@ -272,6 +273,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					} else {
 						return;
 					}
+					clearInput();
 				}
 			});
 			toolItems.add(globalTacticToolItem);
@@ -818,7 +820,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// items.
 						updateToolItems();
 						updateSmiley();
-						getAndClearInput();
+						clearInput();
 						openPreferences.updateText();
 						scrolledForm.reflow(true);
 					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
@@ -895,6 +897,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	@Override
 	public String getAndClearInput() {
 		String result = getInput();
+		clearInput();
+		return result;
+	}
+
+	private void clearInput() {
 		if (!currentInput.isEmpty()) {
 			historyCombo.add(currentInput, 0);
 			currentInput = "";
@@ -902,7 +909,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		if (textWidget.getCharCount() != 0) {
 			textWidget.setText("");
 		}
-		return result;
 	}
 
 }
