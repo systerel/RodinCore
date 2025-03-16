@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2024 Systerel and others.
+ * Copyright (c) 2010, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.AssociativeExpression.BCOMP_ID;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -121,6 +122,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -2582,6 +2584,72 @@ public class TestGenParser extends AbstractTests {
 		final IParseResult result = parseExprRes("{x ∣ x > }");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(9, 9), UnknownOperator, Error, "}");
 		assertFailure(result, expected);
+	}
+
+	/**
+	 * Datatype defining an enumeration (no type annotation needed).
+	 */
+	@Test
+	public void enumeration() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "ENUM ::= c1 || c2");
+		final FormulaFactory eff = dt.getFactory();
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor());
+		final Expression c1 = eff.makeExtendedExpression(dt.getConstructor("c1"), NO_EXPRS, NO_PREDS, null, dtType);
+		final Expression dtSet = eff.makeExtendedExpression(dt.getTypeConstructor(), NO_EXPRS, NO_PREDS, null,
+				eff.makePowerSetType(dtType));
+		final Predicate in = eff.makeRelationalPredicate(IN, c1, dtSet, null);
+
+		doTypeTest("ENUM", dtType);
+
+		doExpressionTest("ENUM          ", dtSet);
+		doExpressionTest("ENUM ⦂ ℙ(ENUM)", dtSet);
+		doExpressionTest("c1 ⦂ ENUM", c1);
+		doExpressionTest("c1       ", c1);
+
+		doPredicateTest("c1 ⦂ ENUM ∈ ENUM ⦂ ℙ(ENUM)", in);
+		doPredicateTest("c1        ∈ ENUM ⦂ ℙ(ENUM)", in);
+		doPredicateTest("c1 ⦂ ENUM ∈ ENUM          ", in);
+		doPredicateTest("c1        ∈ ENUM          ", in);
+	}
+
+	/**
+	 * A non-generic datatype with constructor argument.
+	 */
+	@Test
+	public void non_generic_datatype() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "NG ::= c1[d1: ℤ]");
+		final FormulaFactory eff = dt.getFactory();
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor());
+		final Expression one = eff.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression c1_0 = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(one), emptyList(), null,
+				dtType);
+		final Expression d1_c1_0 = eff.makeExtendedExpression(dt.getDestructor("d1"), asList(c1_0), emptyList(), null,
+				one.getType());
+		final Expression dtSet = eff.makeExtendedExpression(dt.getTypeConstructor(), NO_EXPRS, NO_PREDS, null,
+				eff.makePowerSetType(dtType));
+		final Predicate in = eff.makeRelationalPredicate(IN, c1_0, dtSet, null);
+
+		doTypeTest("NG", dtType);
+
+		doExpressionTest("NG        ", dtSet);
+		doExpressionTest("NG ⦂ ℙ(NG)", dtSet);
+//		doExpressionTest("c1(0) ⦂ NG", c1_0);
+		doExpressionTest("c1(0)     ", c1_0);
+		doExpressionTest("d1(c1(0))         ", d1_c1_0);
+//		doExpressionTest("d1(c1(0) ⦂ NG)    ", d1_c1_0);
+//		doExpressionTest("d1(c1(0)) ⦂ ℤ     ", d1_c1_0);
+//		doExpressionTest("d1(c1(0) ⦂ NG) ⦂ ℤ", d1_c1_0);
+
+//		doPredicateTest("c1(0) ⦂ NG ∈ NG ⦂ ℙ(NG)", in);
+		doPredicateTest("c1(0)      ∈ NG ⦂ ℙ(NG)", in);
+//		doPredicateTest("c1(0) ⦂ NG ∈ NG        ", in);
+		doPredicateTest("c1(0)      ∈ NG        ", in);
+
+		// Ill-typed formula
+		final Expression trueExpr = eff.makeAtomicExpression(TRUE, null);
+		final Expression c1_true = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(trueExpr), emptyList(),
+				null, null);
+		doExpressionTest("c1(TRUE)", c1_true);
 	}
 
 }

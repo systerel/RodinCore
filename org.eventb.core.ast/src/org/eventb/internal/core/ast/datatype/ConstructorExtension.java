@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
 
+import static java.util.Collections.emptyList;
 import static org.eventb.internal.core.ast.datatype.DatatypeHelper.computeGroup;
 import static org.eventb.internal.core.ast.datatype.DatatypeHelper.computeId;
 import static org.eventb.internal.core.ast.datatype.DatatypeHelper.computeKind;
@@ -176,8 +177,15 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
-		// either a proposed type or typechecking is required
-		return null;
+		var typeConstr = origin.getTypeConstructor();
+		if (typeConstr.getNbParams() != 0) {
+			// either a proposed type or typechecking is required
+			return null;
+		}
+
+		// Not a generic datatype, it is easy to create the result type
+		final Type resultType = mediator.makeParametricType(typeConstr, emptyList());
+		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
 	}
 
 	@Override
