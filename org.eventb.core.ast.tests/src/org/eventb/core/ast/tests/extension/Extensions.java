@@ -21,18 +21,22 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IArity.MAX_ARITY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.StandardGroup.CLOSED;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IArity;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -44,6 +48,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.tests.DatatypeParser;
 
 /**
  * This class provides a formula factory to be used for testing extension
@@ -59,6 +64,10 @@ import org.eventb.core.ast.extension.IWDMediator;
  * <li>cond: not WD-strict</li>
  * </ul>
  * 
+ * In addition, this class defines the "either" datatype and some operators
+ * whose result type is not completely defined by their arguments, and thus that
+ * would need oftype annotations to get properly type-checked in all cases.
+ *
  * @author Laurent Voisin
  * @author Thomas Muller
  */
@@ -664,6 +673,152 @@ public class Extensions {
 			return true;
 		}
 
+	}
+
+	/**
+	 * A formula factory containing the "either" datatype, together with the
+	 * "return" and "++" operators.
+	 */
+	public static final FormulaFactory EITHER_FAC;
+
+	public static final IDatatype EITHER_DT = DatatypeParser.parse(FormulaFactory.getDefault(), //
+			"either[A,B] ::= Left[getLeft: A] || Right[getRight: B]");
+
+	static {
+		var extns = new LinkedHashSet<>(EITHER_DT.getExtensions());
+		extns.add(Return.EXT);
+		extns.add(LeftPlus.EXT);
+		EITHER_FAC = FormulaFactory.getInstance(extns);
+	}
+
+	/**
+	 * An alternative to the Right constructor which is typically used in the either
+	 * Monad of Haskell: "return :: a -> Either e a".
+	 */
+	public static class Return extends AbstractExtension implements IExpressionExtension {
+
+		public static Return EXT = new Return();
+
+		private Return() {
+			super("return");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return PARENTHESIZED_UNARY_EXPRESSION;
+		}
+
+		@Override
+		public String getGroupId() {
+			return CLOSED.getId();
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
+			assert (childExprs.length == 1 && childPreds.length == 0);
+			// Cannot invent the first type parameter.
+			return null;
+		}
+
+		/*
+		 * The proposed type must be of the form "either(A, B)" where "B" is the type of
+		 * the child.
+		 */
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {
+			assert (childExprs.length == 1 && childPreds.length == 0);
+			if (!(proposedType instanceof ParametricType pType)) {
+				return false;
+			}
+			if (pType.getExprExtension() != EITHER_DT.getTypeConstructor()) {
+				return false;
+			}
+			final Type[] params = pType.getTypeParameters();
+			final Type childType = childExprs[0].getType();
+			return params[1].equals(childType);
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator) {
+			final Type alpha = tcMediator.newTypeVariable();
+			final Type beta = tcMediator.newTypeVariable();
+
+			final Expression[] childExprs = expression.getChildExpressions();
+			tcMediator.sameType(beta, childExprs[0].getType());
+
+			return tcMediator.makeParametricType(EITHER_DT.getTypeConstructor(), //
+					asList(alpha, beta));
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+	}
+
+	/**
+	 * A strange binary operator that is equivalent to "Left(x + y)". The purpose is
+	 * to test oftype annotation on infix operators.
+	 */
+	public static class LeftPlus extends AbstractExtension implements IExpressionExtension {
+
+		public static LeftPlus EXT = new LeftPlus();
+
+		private LeftPlus() {
+			super("++");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return BINARY_INFIX_EXPRESSION;
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds, ITypeMediator mediator) {
+			assert (childExprs.length == 2 && childPreds.length == 0);
+			// Cannot invent the second type parameter.
+			return null;
+		}
+
+		/*
+		 * The proposed type must be of the form "either(ℤ, B)".
+		 */
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs, Predicate[] childPreds) {
+			assert (childExprs.length == 2 && childPreds.length == 0);
+			for (final Expression childExpr : childExprs) {
+				if (!(childExpr.getType() instanceof IntegerType)) {
+					return false;
+				}
+			}
+
+			if (!(proposedType instanceof ParametricType pType)) {
+				return false;
+			}
+			if (pType.getExprExtension() != EITHER_DT.getTypeConstructor()) {
+				return false;
+			}
+			final Type[] params = pType.getTypeParameters();
+			return params[0] instanceof IntegerType;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator) {
+			final Expression[] childExprs = expression.getChildExpressions();
+			final Type intType = tcMediator.makeIntegerType();
+			for (final Expression childExpr : childExprs) {
+				tcMediator.sameType(intType, childExpr.getType());
+			}
+
+			final Type alpha = tcMediator.newTypeVariable();
+			return tcMediator.makeParametricType(EITHER_DT.getTypeConstructor(), //
+					asList(intType, alpha));
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
 	}
 
 }
