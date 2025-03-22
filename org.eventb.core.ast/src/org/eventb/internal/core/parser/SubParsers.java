@@ -672,10 +672,7 @@ public class SubParsers {
 			case Formula.KPRJ2_GEN:
 				return true;
 			}
-			if (formula instanceof ExtendedExpression) {
-				return ((ExtendedExpression) formula).isAtomic();
-			}
-			return false;
+			return formula instanceof ExtendedExpression;
 		}
 
 		private ASTProblem newUnexpectedOftype(ParserContext pc) {
