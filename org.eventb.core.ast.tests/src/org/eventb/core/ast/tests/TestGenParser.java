@@ -2733,4 +2733,33 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(0 ++ 1) ⦂ either(ℤ, BOOL)", leftPlus);
 	}
 
+	/**
+	 * Checks that an oftype annotation does not produce an error if some child is
+	 * not typed. Indeed, the annotation can be valid in a further call to
+	 * typecheck.
+	 */
+	@Test
+	public void oftype_annotation_untyped_child() throws Exception {
+		var eff = EITHER_FAC;
+		var image = "Left(a) ⦂ either(ℤ, BOOL)";
+		var expr = parseExpression(image, eff);
+		typeCheck(expr);
+		assertTrue(expr.isTypeChecked());
+	}
+
+	/**
+	 * Checks that an oftype annotation does not produce an error at parse, even if
+	 * it cannot typecheck. The error will be raised in a further typecheck.
+	 */
+	@Test
+	public void oftype_annotation_bad_type() throws Exception {
+		var eff = EITHER_FAC;
+		var image = "Left(0) ⦂ either(BOOL, BOOL)";
+		var expr = parseExpression(image, eff);
+
+		var result = expr.typeCheck(eff.makeTypeEnvironment());
+		assertFalse(result.isSuccess());
+		assertFalse(expr.isTypeChecked());
+	}
+
 }

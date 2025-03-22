@@ -89,8 +89,10 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.ITypeAnnotation;
 import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.TypeAnnotation;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.MainParsers.BoundIdentDeclListParser;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;
@@ -651,11 +653,11 @@ public class SubParsers {
 			}
 			final SourceLocation sourceLoc = pc.getEnclosingSourceLocation();
 			final Expression result;
-			if (left instanceof ExtendedExpression) {
-				final ExtendedExpression extExpr = (ExtendedExpression) left;
+			if (left instanceof ExtendedExpression extExpr) {
+				final ITypeAnnotation annot = new TypeAnnotation(type);
 				result = pc.factory.makeExtendedExpression(
 						extExpr.getExtension(), extExpr.getChildExpressions(),
-						extExpr.getChildPredicates(), sourceLoc, type);
+						extExpr.getChildPredicates(), sourceLoc, annot);
 			} else {
 				result = pc.factory.makeAtomicExpression(left.getTag(),
 						sourceLoc, type);
@@ -710,9 +712,13 @@ public class SubParsers {
 				}
 				break;
 			}
-			if (formula instanceof ExtendedExpression) {
-				final ExtendedExpression extExpr = (ExtendedExpression) formula;
-				if (!extExpr.isValidType(type)) {
+			if (formula instanceof ExtendedExpression extExpr) {
+				/*
+				 * If the expression is atomic and the type is incorrect, then it is definitely
+				 * an error. If it is not atomic, then we cannot say. It may be that some child
+				 * is untyped, which will make the isValidType method to always return false.
+				 */
+				if (extExpr.isAtomic() && !extExpr.isValidType(type)) {
 					result.addProblem(newInvalidGenType(typeLoc, EXTENSION_TYPE));
 					return false;
 				}
