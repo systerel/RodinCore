@@ -74,7 +74,7 @@ import org.eventb.core.ast.tests.DatatypeParser;
 public class Extensions {
 
 	public static final FormulaFactory EXTS_FAC = FormulaFactory.getInstance(
-			new And(), new Belongs(), new Union2(), new Union3(), new Empty(),
+			And.EXT, Belongs.EXT, Union2.EXT, Union3.EXT, Empty.EXT,
 			getCond(), Real.EXT, RealZero.EXT, RealPlus.EXT, RealEmpty.EXT,
 			FSet.EXT, CProd.EXT);
 
@@ -135,10 +135,12 @@ public class Extensions {
 
 	}
 
-	private static class And extends AbstractExtension implements
+	public static class And extends AbstractExtension implements
 			IPredicateExtension2 {
 
-		public And() {
+		public static final And EXT = new And();
+
+		private And() {
 			super("∧∧");
 		}
 
@@ -161,10 +163,12 @@ public class Extensions {
 
 	}
 
-	private static class Belongs extends AbstractExtension implements
+	public static class Belongs extends AbstractExtension implements
 			IPredicateExtension2 {
 
-		public Belongs() {
+		public static final Belongs EXT = new Belongs();
+
+		private Belongs() {
 			super("belongs");
 		}
 
@@ -191,10 +195,12 @@ public class Extensions {
 
 	}
 
-	private static class Union2 extends AbstractExtension implements
+	public static class Union2 extends AbstractExtension implements
 			IExpressionExtension {
 
-		public Union2() {
+		public static Union2 EXT = new Union2();
+
+		private Union2() {
 			super("union2");
 		}
 
@@ -247,18 +253,23 @@ public class Extensions {
 
 	}
 
-	private static class Union3 extends Union2 {
+	public static class Union3 extends Union2 {
 
-		public Union3() {
+		@SuppressWarnings("hiding")
+		public static final Union3 EXT = new Union3();
+
+		private Union3() {
 			super("union3");
 		}
 
 	}
 
-	private static class Empty extends AbstractExtension implements
+	public static class Empty extends AbstractExtension implements
 			IExpressionExtension {
 
-		public Empty() {
+		public static final Empty EXT = new Empty();
+
+		private Empty() {
 			super("empty");
 		}
 
@@ -472,7 +483,7 @@ public class Extensions {
 	 * axiomatic operator defined by the Theory plug-in whose type is not
 	 * directly an axiomatic type.
 	 */
-	private static class RealEmpty extends AbstractRealExtension
+	public static class RealEmpty extends AbstractRealExtension
 			implements IExpressionExtension {
 
 		public static RealEmpty EXT = new RealEmpty();
