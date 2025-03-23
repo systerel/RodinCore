@@ -18,10 +18,8 @@ import static org.eventb.internal.core.ast.datatype.TypeSubstitution.makeSubstit
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -33,7 +31,6 @@ import org.eventb.core.ast.datatype.IDestructorExtension;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -66,7 +63,6 @@ public class ConstructorExtension implements IConstructorExtension {
 	private final IExtensionKind kind;
 	private final String groupId;
 
-	private Set<IFormulaExtension> extensions;
 	private HashMap<String, DestructorExtension> destructors;
 
 	public ConstructorExtension(Datatype origin, String name,
@@ -78,14 +74,12 @@ public class ConstructorExtension implements IConstructorExtension {
 		this.groupId = computeGroup(nbArgs);
 		this.kind = computeKind(nbArgs);
 		this.arguments = new ConstructorArgument[nbArgs];
-		this.extensions = new HashSet<IFormulaExtension>(nbArgs);
 		this.destructors = new HashMap<String, DestructorExtension>(nbArgs);
 		int count = 0;
 		for (final DatatypeArgument builderArg : builderArgs) {
 			final ConstructorArgument arg = builderArg.finalize(origin, this);
 			if (arg.isDestructor()) {
 				final DestructorExtension destr = arg.asDestructor();
-				extensions.add(destr);
 				destructors.put(destr.getName(), destr);
 			}
 			arguments[count] = arg;
@@ -233,10 +227,6 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public Datatype getOrigin() {
 		return origin;
-	}
-
-	public Set<IFormulaExtension> getExtensions() {
-		return extensions;
 	}
 
 	/*
