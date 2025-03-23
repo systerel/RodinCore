@@ -57,6 +57,7 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	private final Datatype origin;
 	private final String name;
+	private final boolean _needsTypeAnnotation;
 	private final ConstructorArgument[] arguments;
 
 	private final String id;
@@ -69,6 +70,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		this.origin = origin;
 		this.name = builder.getName();
 		this.id = computeId(name);
+		this._needsTypeAnnotation = builder.needsTypeAnnotation();
 		final List<DatatypeArgument> builderArgs = builder.getArguments();
 		final int nbArgs = builderArgs.size();
 		this.groupId = computeGroup(nbArgs);
@@ -180,6 +182,11 @@ public class ConstructorExtension implements IConstructorExtension {
 		// Not a generic datatype, it is easy to create the result type
 		final Type resultType = mediator.makeParametricType(typeConstr, emptyList());
 		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
+	}
+
+	@Override
+	public boolean needsTypeAnnotation() {
+		return _needsTypeAnnotation;
 	}
 
 	@Override
