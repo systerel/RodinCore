@@ -18,6 +18,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorBuilder;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.tests.AbstractTests;
+import org.eventb.internal.core.ast.datatype.ConstructorBuilder;
 import org.junit.Test;
 
 /**
@@ -28,6 +29,8 @@ import org.junit.Test;
 public class TestConstructorBuilder extends AbstractTests {
 
 	private static final GivenType tyS = LIST_FAC.makeGivenType("S");
+	private static final GivenType tyT = LIST_FAC.makeGivenType("T");
+	private static final GivenType tyU = LIST_FAC.makeGivenType("U");
 	private static final GivenType tyDT = LIST_FAC.makeGivenType("DT");
 	private static final GivenType tyNotParam = LIST_FAC.makeGivenType("NotParam");
 
@@ -36,7 +39,7 @@ public class TestConstructorBuilder extends AbstractTests {
 	}
 
 	private final IDatatypeBuilder builder = LIST_FAC.makeDatatypeBuilder("DT",
-			tyS);
+			tyS, tyT, tyU);
 	private final IConstructorBuilder cons = builder.addConstructor("cns");
 
 	@Test(expected = NullPointerException.class)
@@ -123,6 +126,8 @@ public class TestConstructorBuilder extends AbstractTests {
 	@Test(expected = IllegalStateException.class)
 	public void finalizedUnnamedArgument() {
 		cons.addArgument(tyS);
+		cons.addArgument(tyT);
+		cons.addArgument(tyU);
 		builder.finalizeDatatype();
 		cons.addArgument(tyS);
 	}
@@ -130,6 +135,8 @@ public class TestConstructorBuilder extends AbstractTests {
 	@Test(expected = IllegalStateException.class)
 	public void finalizedNamedArgument() {
 		cons.addArgument(tyS);
+		cons.addArgument(tyT);
+		cons.addArgument(tyU);
 		builder.finalizeDatatype();
 		cons.addArgument("foo", tyS);
 	}
@@ -182,4 +189,29 @@ public class TestConstructorBuilder extends AbstractTests {
 		cons.addArgument(CPROD(tyS, tyNotParam));
 	}
 
+	@Test
+	public void allTypeParamsInOneArg() throws Exception {
+		cons.addArgument(CPROD(CPROD(tyS, tyT), tyU));
+		assertFalse(((ConstructorBuilder) cons).needsTypeAnnotation());
+	}
+
+	@Test
+	public void allTypeParamsInSeveralArgs() throws Exception {
+		cons.addArgument(tyS);
+		cons.addArgument(POW(CPROD(tyT, tyU)));
+		assertFalse(((ConstructorBuilder) cons).needsTypeAnnotation());
+	}
+
+	@Test
+	public void notBasicDoesNotNeedTypeAnnotation() throws Exception {
+		cons.addArgument(tyDT);
+		assertFalse(((ConstructorBuilder) cons).needsTypeAnnotation());
+	}
+
+	@Test
+	public void basicMissingTypeParam() throws Exception {
+		cons.addArgument(tyS);
+		cons.addArgument(tyU);
+		assertTrue(((ConstructorBuilder) cons).needsTypeAnnotation());
+	}
 }
