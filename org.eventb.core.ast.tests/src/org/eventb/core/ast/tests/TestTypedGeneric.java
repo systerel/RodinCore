@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,13 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - operators of mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -52,17 +56,29 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.junit.Test;
 
 /**
- * Main test class for formulas containing generic atomic operators.
- * 
- * Tests have been entered in the same order as the type-checker
- * specification in the Rodin Deliverable D7 "Event-B Language".
- * 
+ * Main test class for formulas containing generic operators.
+ *
+ * <h2>Predefined operators</h2>
+ *
+ * Tests have been entered in the same order as the type-checker specification
+ * in the Rodin Deliverable D7 "Event-B Language".
+ * <p>
  * Only tests where an empty set can occur have been retained. For the other
  * generic atomic operators (KID_GEN, KPRJ1_GEN, KPRJ2_GEN) only one test is
  * present as they are parsed in the same way as empty sets.
+ *
+ * <h2>Extension operators</h2>
+ *
+ * The second part of this class concerns generic operators provided by
+ * expression extensions. We test that one can recover a typed expression from
+ * its serialization with <code>toStringWithTypes</code>.
+ * <p>
+ *
+ * @see Formula#toStringWithTypes()
  */
 public class TestTypedGeneric extends AbstractTests {
 
@@ -209,6 +225,10 @@ public class TestTypedGeneric extends AbstractTests {
 		doTest(expr, expected, ALL_VERSION_FACTORIES);
 	}
 	
+	private void doTest(Expression expr, FormulaFactory... factories) {
+		doTest(expr, expr.getType(), factories);
+	}
+
 	private void doTest(Expression expr, Type expected, FormulaFactory... factories) {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
@@ -386,5 +406,67 @@ public class TestTypedGeneric extends AbstractTests {
 		final Type rSS = REL(ty_S, ty_S);
 		doTest(mId(rSS), rSS, ff);
 	}
-	
+
+	/**
+	 * Tests about a simple enumeration datatype. Here, the operators are atomic and
+	 * non-generic, so we do not really need type annotations. However, it is useful
+	 * to check that <code>toStringWithTypes</code> does not produce any parse
+	 * problem.
+	 */
+	@Test
+	public void enumeration() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "ENUM ::= c1 || c2");
+		final FormulaFactory eff = dt.getFactory();
+
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor());
+		final Expression c1 = eff.makeExtendedExpression(dt.getConstructor("c1"), NO_EXPRS, NO_PREDS, null, dtType);
+		final Expression c2 = eff.makeExtendedExpression(dt.getConstructor("c2"), NO_EXPRS, NO_PREDS, null, dtType);
+		final Expression dtSet = eff.makeExtendedExpression(dt.getTypeConstructor(), NO_EXPRS, NO_PREDS, null,
+				eff.makePowerSetType(dtType));
+		final Predicate in = eff.makeRelationalPredicate(IN, c1, dtSet, null);
+
+		doTest(dtSet, eff);
+		doTest(c1, eff);
+		doTest(c2, eff);
+		doTest(in, eff);
+	}
+
+	/**
+	 * Tests about a generic datatype with a single constructor. We do not really
+	 * need type annotations. However, it is useful to check that
+	 * <code>toStringWithTypes</code> does not produce any parse problem.
+	 */
+	@Test
+	public void genericSingleConstructor() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "G[T] ::= c1[d1: T]");
+		final FormulaFactory eff = dt.getFactory();
+		final Type sType = eff.makeGivenType("S");
+		final Type powSType = eff.makePowerSetType(sType);
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor(), powSType);
+
+		final Expression empty = eff.makeEmptySet(powSType, null);
+		final Expression c1 = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(empty), emptyList(), null,
+				dtType);
+		final Expression d1 = eff.makeExtendedExpression(dt.getDestructor("d1"), asList(c1), emptyList(), null,
+				empty.getType());
+
+		doTest(c1, eff);
+		doTest(d1, eff);
+	}
+
+	/**
+	 * Tests about a generic datatype with an atomic constructor which is generic.
+	 * We do need type annotations.
+	 */
+	@Test
+	public void genericAtomicConstructor() throws Exception {
+		final FormulaFactory eff = LIST_FAC;
+		final Type sType = eff.makeGivenType("S");
+		final Type listSType = eff.makeParametricType(EXT_LIST, sType);
+
+		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null, listSType);
+
+		doTest(nil, eff);
+	}
+
 }
