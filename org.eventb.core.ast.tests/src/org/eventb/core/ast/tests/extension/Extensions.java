@@ -40,6 +40,7 @@ import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IArity;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExpressionExtension2;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -265,7 +266,7 @@ public class Extensions {
 	}
 
 	public static class Empty extends AbstractExtension implements
-			IExpressionExtension {
+			IExpressionExtension2 {
 
 		public static final Empty EXT = new Empty();
 
@@ -289,6 +290,11 @@ public class Extensions {
 		public Type synthesizeType(Expression[] childExprs,
 				Predicate[] childPreds, ITypeMediator mediator) {
 			return null;
+		}
+
+		@Override
+		public boolean needsTypeAnnotation() {
+			return true;
 		}
 
 		@Override
@@ -706,7 +712,7 @@ public class Extensions {
 	 * An alternative to the Right constructor which is typically used in the either
 	 * Monad of Haskell: "return :: a -> Either e a".
 	 */
-	public static class Return extends AbstractExtension implements IExpressionExtension {
+	public static class Return extends AbstractExtension implements IExpressionExtension2 {
 
 		public static Return EXT = new Return();
 
@@ -729,6 +735,11 @@ public class Extensions {
 			assert (childExprs.length == 1 && childPreds.length == 0);
 			// Cannot invent the first type parameter.
 			return null;
+		}
+
+		@Override
+		public boolean needsTypeAnnotation() {
+			return true;
 		}
 
 		/*
@@ -771,7 +782,7 @@ public class Extensions {
 	 * A strange binary operator that is equivalent to "Left(x + y)". The purpose is
 	 * to test oftype annotation on infix operators.
 	 */
-	public static class LeftPlus extends AbstractExtension implements IExpressionExtension {
+	public static class LeftPlus extends AbstractExtension implements IExpressionExtension2 {
 
 		public static LeftPlus EXT = new LeftPlus();
 
@@ -789,6 +800,11 @@ public class Extensions {
 			assert (childExprs.length == 2 && childPreds.length == 0);
 			// Cannot invent the second type parameter.
 			return null;
+		}
+
+		@Override
+		public boolean needsTypeAnnotation() {
+			return true;
 		}
 
 		/*
