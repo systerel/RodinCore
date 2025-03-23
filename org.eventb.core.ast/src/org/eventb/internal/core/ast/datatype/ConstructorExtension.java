@@ -65,11 +65,11 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	private HashMap<String, DestructorExtension> destructors;
 
-	public ConstructorExtension(Datatype origin, String name,
-			List<DatatypeArgument> builderArgs) {
+	public ConstructorExtension(Datatype origin, ConstructorBuilder builder) {
 		this.origin = origin;
-		this.name = name;
+		this.name = builder.getName();
 		this.id = computeId(name);
+		final List<DatatypeArgument> builderArgs = builder.getArguments();
 		final int nbArgs = builderArgs.size();
 		this.groupId = computeGroup(nbArgs);
 		this.kind = computeKind(nbArgs);
