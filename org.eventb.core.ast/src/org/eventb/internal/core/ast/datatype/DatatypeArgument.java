@@ -46,7 +46,7 @@ public final class DatatypeArgument {
 		return isBasic;
 	}
 
-	public boolean hasDestructor() {
+	public boolean isDestructor() {
 		return name != null;
 	}
 
@@ -56,7 +56,7 @@ public final class DatatypeArgument {
 
 	public ConstructorArgument finalize(Datatype origin,
 			ConstructorExtension constructorExt) {
-		if (hasDestructor()) {
+		if (isDestructor()) {
 			return new DestructorExtension(constructorExt, name, type, isBasic);
 		} else {
 			return new ConstructorArgument(constructorExt, type, isBasic);
