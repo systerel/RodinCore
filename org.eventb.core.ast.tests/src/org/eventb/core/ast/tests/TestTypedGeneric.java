@@ -469,4 +469,18 @@ public class TestTypedGeneric extends AbstractTests {
 		doTest(nil, eff);
 	}
 
+	/**
+	 * Tests <code>toStringWithTypes</code> on ill-typed formulas. The method should
+	 * succeed without any type annotation as the type information is not present.
+	 */
+	@Test
+	public void illTypedExpression() throws Exception {
+		final FormulaFactory eff = LIST_FAC;
+		final Expression empty = eff.makeEmptySet(null, null);
+		assertEquals("∅", empty.toStringWithTypes());
+
+		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null);
+		assertEquals("nil", nil.toStringWithTypes());
+	}
+
 }

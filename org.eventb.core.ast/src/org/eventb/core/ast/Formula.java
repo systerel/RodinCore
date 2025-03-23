@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1254,6 +1254,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * The string representation is the same as that returned by
 	 * {@link #toString()}, but with type information added to generic atomic
 	 * expressions (empty sets and bound identifier declarations).
+	 * </p>
+	 * <p>
+	 * If part of the formula is not type-checked, then no type information is
+	 * added (rather than raising an exception) for this part.
 	 * </p>
 	 * 
 	 * @return Returns the string representation of this formula with type
