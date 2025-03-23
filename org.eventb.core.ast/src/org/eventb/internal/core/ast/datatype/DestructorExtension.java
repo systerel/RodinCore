@@ -52,9 +52,9 @@ public class DestructorExtension extends ConstructorArgument implements
 	private final IExtensionKind kind;
 	private final String groupId;
 
-	public DestructorExtension(ConstructorExtension constructor, String name, Type type, boolean isBasic) {
-		super(constructor, type, isBasic);
-		this.name = name;
+	public DestructorExtension(ConstructorExtension constructor, DatatypeArgument builderArgument) {
+		super(constructor, builderArgument);
+		this.name = builderArgument.getDestructorName();
 		this.id = computeId(name);
 		int nbArgs = 1; // one argument (of type datatype)
 		this.kind = computeKind(nbArgs);
