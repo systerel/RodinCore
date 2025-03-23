@@ -21,6 +21,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYP
 
 import java.util.EnumSet;
 
+import org.eventb.core.ast.extension.IExpressionExtension2;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -247,7 +248,6 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 	
 	// FIXME hard coded tags
-	// TODO implement a 'printWithType' option for extensions as well
 	private static boolean isTypePrintable(Formula<?> toPrint) {
 		if (!toPrint.isTypeChecked()) {
 			// Avoid raising a NullPointerException when printing the type
@@ -260,8 +260,12 @@ import org.eventb.internal.core.parser.SubParsers;
 		case KPRJ2_GEN:
 			return true;
 		}
-		if (toPrint instanceof ExtendedExpression) {
-			return ((ExtendedExpression)toPrint).isAtomic();
+		if (toPrint instanceof ExtendedExpression extExpr) {
+			if (extExpr.getExtension() instanceof IExpressionExtension2 ext) {
+				return ext.needsTypeAnnotation();
+			}
+			// For backward compatibility with pre 3.9
+			return extExpr.isAtomic();
 		}
 		return false;
 	}

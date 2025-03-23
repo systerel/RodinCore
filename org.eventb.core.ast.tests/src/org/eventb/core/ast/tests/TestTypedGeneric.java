@@ -16,6 +16,7 @@ package org.eventb.core.ast.tests;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -40,8 +41,12 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.math.BigInteger;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AtomicExpression;
@@ -57,6 +62,8 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.tests.extension.Extensions.LeftPlus;
+import org.eventb.core.ast.tests.extension.Extensions.Return;
 import org.junit.Test;
 
 /**
@@ -481,6 +488,39 @@ public class TestTypedGeneric extends AbstractTests {
 
 		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null);
 		assertEquals("nil", nil.toStringWithTypes());
+	}
+
+	/**
+	 * Tests about the either datatype where both constructors need a type
+	 * annotation. We also test other operators that also need type annotations.
+	 */
+	@Test
+	public void eitherDatatype() throws Exception {
+		final FormulaFactory eff = EITHER_FAC;
+		final Type intType = eff.makeIntegerType();
+		final Type boolType = eff.makeBooleanType();
+		final Type either = eff.makeParametricType(EITHER_DT.getTypeConstructor(), intType, boolType);
+
+		final var leftCons = EITHER_DT.getConstructor("Left");
+		final Expression zero = eff.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression leftZero = eff.makeExtendedExpression(leftCons, //
+				asList(zero), emptyList(), null, either);
+		doTest(leftZero, eff);
+
+		final Expression trueLit = eff.makeAtomicExpression(TRUE, null);
+		final Expression returnTrue = eff.makeExtendedExpression(Return.EXT, //
+				asList(trueLit), emptyList(), null, either);
+		doTest(returnTrue, eff);
+
+		final Expression one = eff.makeIntegerLiteral(BigInteger.ONE, null);
+		final Expression leftPlus = eff.makeExtendedExpression(LeftPlus.EXT, //
+				asList(zero, one), emptyList(), null, either);
+		doTest(leftPlus, eff);
+
+		final var rightDes = EITHER_DT.getDestructor("getRight");
+		final Expression right = eff.makeExtendedExpression(rightDes, //
+				asList(leftPlus), emptyList(), null);
+		doTest(right, eff);
 	}
 
 }
