@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public final class DatatypeArgument {
 	public ConstructorArgument finalize(Datatype origin,
 			ConstructorExtension constructorExt) {
 		if (hasDestructor()) {
-			return new DestructorExtension(origin, constructorExt, name, type, isBasic);
+			return new DestructorExtension(constructorExt, name, type, isBasic);
 		} else {
 			return new ConstructorArgument(constructorExt, type, isBasic);
 		}
