@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,9 @@ import org.eventb.core.ast.Type;
 
 /**
  * Common protocol for expression extensions.
+ * <p>
+ * This interface is superseded by {@link IExpressionExtension2} and should no
+ * longer be implemented directly.
  * 
  * @author "Nicolas Beauger"
  * @since 2.0
@@ -25,13 +28,16 @@ public interface IExpressionExtension extends IFormulaExtension {
 
 	/**
 	 * Computes the type of the extended expression from its given children.
+	 * <p>
+	 * When implementing this method, clients should consider implementing
+	 * {@link IExpressionExtension2#needsTypeAnnotation()} as well.
 	 * 
-	 * @param childExprs
-	 *            the child expressions
-	 * @param childPreds
-	 *            the child predicates
+	 * @param childExprs the child expressions
+	 * @param childPreds the child predicates
+	 * @param mediator   a factory for building Event-B types
 	 * @return the type of the extended expression or <code>null</code> if it is
 	 *         ill-typed or if its type cannot be determined
+	 * @see IExpressionExtension2#needsTypeAnnotation()
 	 */
 	Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator);
