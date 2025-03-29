@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class TestConstructorBuilder extends AbstractTests {
 
 	private static final GivenType tyS = LIST_FAC.makeGivenType("S");
 	private static final GivenType tyDT = LIST_FAC.makeGivenType("DT");
+	private static final GivenType tyNotParam = LIST_FAC.makeGivenType("NotParam");
 
 	private static final Type LIST(Type base) {
 		return LIST_FAC.makeParametricType(EXT_LIST, base);
@@ -167,6 +168,16 @@ public class TestConstructorBuilder extends AbstractTests {
 	public void deepRecursiveIsNotBasic() {
 		cons.addArgument(LIST(CPROD(POW(tyS), tyDT)));
 		assertFalse(cons.isBasic());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void alienGivenType() {
+		cons.addArgument(tyNotParam);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void alienGivenTypeMixed() {
+		cons.addArgument(CPROD(tyS, tyNotParam));
 	}
 
 }

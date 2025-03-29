@@ -69,6 +69,11 @@ public interface IConstructorBuilder {
 	 * <li>The datatype type must not occur within a powerset construct</li>
 	 * </ul>
 	 * </p>
+	 * <p>
+	 * To avoid any introduction of some hidden name, the argument type must not
+	 * reference any given type other than one denoting a type parameter or the
+	 * datatype itself.
+	 * </p>
 	 * 
 	 * @param name the name of the corresponding destructor or <code>null</code> if
 	 *             there is no corresponding destructor
@@ -79,6 +84,9 @@ public interface IConstructorBuilder {
 	 *                                  object
 	 * @throws IllegalArgumentException if the datatype type occurs within a
 	 *                                  powerset in the argument type
+	 * @throws IllegalArgumentException if the argument type contains a given type
+	 *                                  which is neither a type parameter, nor the
+	 *                                  datatype name
 	 * @throws IllegalStateException    if this builder has been finalized
 	 * @see #addArgument(Type)
 	 */

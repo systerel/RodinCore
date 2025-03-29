@@ -22,7 +22,12 @@ import org.eventb.core.ast.datatype.IDatatypeBuilder;
  * on a datatype builder with a string name. Then arguments could be added until
  * its finalization caused by a call to
  * {@link IDatatypeBuilder#finalizeDatatype()} on the datatype builder.
- * 
+ * <p>
+ * <b>Implementation note</b>: It is important to prevent the use of an unknown
+ * given type in argument types. If it were allowed, then type-checking could
+ * introduce new given type names in some destructor type and break completely
+ * the computation of free identifiers in formulas.
+ *
  * @author Vincent Monfort
  */
 public final class ConstructorBuilder implements IConstructorBuilder {
