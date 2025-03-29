@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eventb.core.ast.Type;
  * </p>
  * <p>
  * Then datatype constructors can be added with the
- * {@link #addConstructor(String)} method and their arguments could be added
+ * {@link #addConstructor(String)} method and their arguments can be added
  * directly on the {@link IConstructorBuilder} objects returned.
  * </p>
  * <p>
@@ -94,14 +94,14 @@ public interface IDatatypeBuilder {
 	 * If the parse result was correctly parsed (i.e. not
 	 * {@link IParseResult#hasProblem()}) then a call to
 	 * {@link IParseResult#getParsedType()} will provide a type in the correct
-	 * intermediate representation of type that must be used for constructor
+	 * intermediate representation of types that must be used for constructor
 	 * arguments.
 	 * </p>
 	 * 
 	 * @param strType
 	 *            the string representation of a constructor argument type
 	 * @return the parse result in the correct intermediate representation for
-	 *         constructor argument type
+	 *         constructor argument types
 	 * @see IConstructorBuilder#addArgument(Type)
 	 * @see IConstructorBuilder#addArgument(String, Type)
 	 */
