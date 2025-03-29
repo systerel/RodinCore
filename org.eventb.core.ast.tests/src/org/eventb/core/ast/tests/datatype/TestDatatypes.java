@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -713,7 +713,7 @@ public class TestDatatypes extends AbstractTests {
 	public void testHasBasicConstructor() {
 		final GivenType tyDT = ff.makeGivenType("DT");
 		final GivenType tyT = ff.makeGivenType("T");
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
 		assertFalse("A datatype without constructor has not basic constructor",
 				dtBuilder.hasBasicConstructor());
 		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
@@ -739,7 +739,7 @@ public class TestDatatypes extends AbstractTests {
 	public void testFinalizeWithoutBasicConstructor() {
 		final GivenType tyDT = ff.makeGivenType("DT");
 		final GivenType tyT = ff.makeGivenType("T");
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
 		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
 		cons.addArgument(tyDT);
 		cons.addArgument(tyT);
@@ -750,7 +750,7 @@ public class TestDatatypes extends AbstractTests {
 	public void testFinalize() {
 		final GivenType tyDT = ff.makeGivenType("DT");
 		final GivenType tyT = ff.makeGivenType("T");
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
 		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
 		cons.addArgument(tyDT);
 		cons.addArgument(tyT);
@@ -773,7 +773,7 @@ public class TestDatatypes extends AbstractTests {
 	public void testIsBasicConstructor() {
 		final GivenType tyDT = ff.makeGivenType("DT");
 		final GivenType tyT = ff.makeGivenType("T");
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
 		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
 		assertTrue("A constructor without argument is a basic constructor",
 				cons.isBasic());
