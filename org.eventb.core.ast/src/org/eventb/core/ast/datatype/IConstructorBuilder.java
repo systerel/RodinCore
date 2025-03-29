@@ -74,9 +74,9 @@ public interface IConstructorBuilder {
 	 *             there is no corresponding destructor
 	 * @param type the type of the constructor argument
 	 * 
-	 * @throws IllegalArgumentException if the given type was not created by the
-	 *                                  same factory has the datatype builder of
-	 *                                  this object
+	 * @throws IllegalArgumentException if the argument type was not created by the
+	 *                                  same factory as the datatype builder of this
+	 *                                  object
 	 * @throws IllegalArgumentException if the datatype type occurs within a
 	 *                                  powerset in the argument type
 	 * @throws IllegalStateException    if this builder has been finalized
