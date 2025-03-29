@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,32 +58,28 @@ public interface IConstructorBuilder {
 	/**
 	 * Adds a constructor argument together with the corresponding destructor.
 	 * <p>
-	 * The type can be obtained by calling
-	 * {@link DatatypeBuilder#parseType(String)} with a string representation of
-	 * the argument type or must be constructed as follows:
+	 * The type can be obtained by calling {@link DatatypeBuilder#parseType(String)}
+	 * with a string representation of the argument type or must be constructed as
+	 * follows:
 	 * <ul>
-	 * <li>A type definition using the datatype type must use a
-	 * {@link GivenType} with the datatype name (instead of a parametric type)</li>
+	 * <li>A type definition using the datatype type must use a {@link GivenType}
+	 * with the datatype name (instead of a parametric type)</li>
 	 * <li>A type definition must refer to a type parameter using a
 	 * {@link GivenType} with the type parameter name</li>
 	 * <li>The datatype type must not occur within a powerset construct</li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param name
-	 *            the name of the corresponding destructor or <code>null</code>
-	 *            if there is no corresponding destructor
-	 * @param type
-	 *            the type of the constructor argument
+	 * @param name the name of the corresponding destructor or <code>null</code> if
+	 *             there is no corresponding destructor
+	 * @param type the type of the constructor argument
 	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given type was not created by the same factory has the
-	 *             datatype builder of this object
-	 * @throws IllegalArgumentException
-	 *             if the datatype type occurs within a powerset in the argument
-	 *             type
-	 * @throws IllegalStateException
-	 *             if this builder has been finalized
+	 * @throws IllegalArgumentException if the given type was not created by the
+	 *                                  same factory has the datatype builder of
+	 *                                  this object
+	 * @throws IllegalArgumentException if the datatype type occurs within a
+	 *                                  powerset in the argument type
+	 * @throws IllegalStateException    if this builder has been finalized
 	 * @see #addArgument(Type)
 	 */
 	void addArgument(String name, Type type);
