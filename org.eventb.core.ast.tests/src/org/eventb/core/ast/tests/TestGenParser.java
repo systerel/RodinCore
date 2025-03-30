@@ -2648,7 +2648,7 @@ public class TestGenParser extends AbstractTests {
 		// Ill-typed formula
 		final Expression trueExpr = eff.makeAtomicExpression(TRUE, null);
 		final Expression c1_true = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(trueExpr), emptyList(),
-				null, null);
+				null);
 		doExpressionTest("c1(TRUE)", c1_true);
 	}
 
