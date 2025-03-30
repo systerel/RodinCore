@@ -229,9 +229,31 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	public Datatype finalizeDatatype() {
 		if (finalized == null) {
 			checkHasBasicConstructor();
+			checkAllTypeParametersUsed();
 			finalized = Datatype.makeDatatype(this);
 		}
 		return finalized;
+	}
+
+	/*
+	 * Ensures that each type parameter occurs in at least one argument type.
+	 * 
+	 * If it is not the case, then it means that the datatype would somehow quantify
+	 * on the missing parameter, which would make the type system higher-order.
+	 */
+	private void checkAllTypeParametersUsed() {
+		final Set<GivenType> usedParams = new HashSet<>();
+		for (ConstructorBuilder constructor : constructors) {
+			for (DatatypeArgument argument : constructor.getArguments()) {
+				usedParams.addAll(argument.getType().getGivenTypes());
+			}
+		}
+		for (final GivenType typeParameter : typeParameters) {
+			if (!usedParams.contains(typeParameter)) {
+				throw new IllegalStateException(//
+						"Type parameter '" + typeParameter.getName() + "' is not used");
+			}
+		}
 	}
 
 	protected void checkNotFinalized() {

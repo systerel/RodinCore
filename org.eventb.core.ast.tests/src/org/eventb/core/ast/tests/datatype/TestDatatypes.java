@@ -746,6 +746,26 @@ public class TestDatatypes extends AbstractTests {
 		dtBuilder.finalizeDatatype();
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testFinalizeUnusedTypeParameter() {
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
+		dtBuilder.addConstructor("dt");
+		// Type parameter T is unused
+		dtBuilder.finalizeDatatype();
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testFinalizeUnusedTypeParameterRecursive() {
+		final GivenType tyDT = ff.makeGivenType("DT");
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT", tyT);
+		dtBuilder.addConstructor("dt1");
+		dtBuilder.addConstructor("dt2").addArgument(tyDT);
+		// Type parameter T is unused
+		dtBuilder.finalizeDatatype();
+	}
+
 	@Test
 	public void testFinalize() {
 		final GivenType tyDT = ff.makeGivenType("DT");

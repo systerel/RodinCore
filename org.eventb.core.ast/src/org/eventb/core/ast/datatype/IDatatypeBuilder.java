@@ -39,6 +39,10 @@ import org.eventb.core.ast.Type;
  * datatype will not be empty (all types are inhabited in Event-B).
  * </p>
  * <p>
+ * Each type parameter of the datatype must be used by at least one constructor
+ * argument, so that the datatype does not have any free type parameter.
+ * </p>
+ * <p>
  * A parser that can parse string representations of argument types referencing
  * the type parameters or the datatype itself is provided. It can be used to
  * define easily constructors argument types (see
@@ -119,7 +123,9 @@ public interface IDatatypeBuilder {
 	/**
 	 * Finalizes this builder and returns the assembled datatype.
 	 * <p>
-	 * At least one basic constructor must have been added to this builder.
+	 * At least one basic constructor must have been added to this builder. Also
+	 * each type parameter must be used in at least one constructor argument type
+	 * (not counting recursive uses of the datatype).
 	 * </p>
 	 * <p>
 	 * Upon return from this method, this datatype builder and all constructor
@@ -134,6 +140,8 @@ public interface IDatatypeBuilder {
 	 * @see #hasBasicConstructor()
 	 * @throws IllegalStateException
 	 *             if the datatype does not have a basic constructor
+	 * @throws IllegalStateException
+	 *             if some type parameter is not used by any constructor argument
 	 */
 	IDatatype finalizeDatatype();
 
