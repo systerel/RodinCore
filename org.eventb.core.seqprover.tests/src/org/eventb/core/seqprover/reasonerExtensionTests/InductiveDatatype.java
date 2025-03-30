@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,8 @@ public class InductiveDatatype {
 		final GivenType tyT = ff.makeGivenType("T");
 		final GivenType tyInduc = ff.makeGivenType("Induc");
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("Induc", tyT);
-		builder.addConstructor("ind0");
+		final IConstructorBuilder ind0 = builder.addConstructor("ind0");
+		ind0.addArgument("ind0_0", tyT);
 		final IConstructorBuilder ind1 = builder.addConstructor("ind1");
 		ind1.addArgument("ind1_0", tyInduc);
 		final IConstructorBuilder ind2 = builder.addConstructor("ind2");

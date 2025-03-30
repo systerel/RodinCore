@@ -77,12 +77,12 @@ public class DTDistinctCaseTests extends AbstractManualReasonerTests {
 				"{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}[][][l1∈SD;;l1=cons2(p_destr2_0, p_destr2_1)] |- ⊥");
 		// Applied to an inductive datatype
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1", input("1.1"),
-				"{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1",
+				"{l1=Induc(ℤ); p_ind0_0=ℤ}[][][l1=ind0(p_ind0_0)] |- ∀ l⦂Induc(ℤ) · l=l1",
 				"{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l1=ind1(p_ind1_0)] |- ∀ l⦂Induc(ℤ) · l=l1",
 				"{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l1=ind2(p_ind2_0, p_ind2_1)] |- ∀ l⦂Induc(ℤ) · l=l1");
 		// Applied to an inductive datatype in an hypothesis
 		assertReasonerSuccess("l1∈Induc(ℕ) |- ⊥", input("l1∈Induc(ℕ)", "0"),
-				"{l1=Induc(ℤ)}[][][l1∈Induc(ℕ);;l1=ind0] |- ⊥",
+				"{l1=Induc(ℤ); p_ind0_0=ℤ}[][][l1∈Induc(ℕ);; p_ind0_0∈ℕ;; l1=ind0(p_ind0_0)] |- ⊥",
 				"{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}[][][l1∈Induc(ℕ);;p_ind1_0∈Induc(ℕ);;l1=ind1(p_ind1_0)] |- ⊥",
 				"{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}[][][l1∈Induc(ℕ);;p_ind2_0∈Induc(ℕ);;"
 						+ "p_ind2_1∈Induc(ℕ);;l1=ind2(p_ind2_0, p_ind2_1)] |- ⊥");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
@@ -32,14 +36,18 @@ public class ArgumentTypeChecker implements ITypeVisitor {
 	// The type representing the datatype
 	private final GivenType dtType;
 
+	// Given types denoting type parameters
+	private final Set<GivenType> typeParams;
+
 	// Was the datatype found?
 	private boolean found;
 
 	// Number of enclosing power sets
 	private int enclosingPowersets;
 
-	public ArgumentTypeChecker(GivenType dtType) {
+	public ArgumentTypeChecker(GivenType dtType, List<GivenType> params) {
 		this.dtType = dtType;
+		this.typeParams = new HashSet<>(params);
 	}
 
 	public void check(Type argType) {
@@ -73,6 +81,10 @@ public class ArgumentTypeChecker implements ITypeVisitor {
 						"The datatype type occurs within a powerset");
 			}
 			found = true;
+		}
+		else if (!typeParams.contains(type)) {
+			throw new IllegalArgumentException(//
+					"The given type '" + type.getName() + "' should be a type parameter");
 		}
 	}
 

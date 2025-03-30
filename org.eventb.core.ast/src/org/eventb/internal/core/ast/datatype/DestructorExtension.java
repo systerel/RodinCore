@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,9 @@ public class DestructorExtension extends ConstructorArgument implements
 	private final IExtensionKind kind;
 	private final String groupId;
 
-	public DestructorExtension(Datatype origin, ConstructorExtension constructor, String name, Type type,
-			boolean isBasic) {
-		super(constructor, type, isBasic);
-		this.name = name;
+	public DestructorExtension(ConstructorExtension constructor, DatatypeArgument builderArgument) {
+		super(constructor, builderArgument);
+		this.name = builderArgument.getDestructorName();
 		this.id = computeId(name);
 		int nbArgs = 1; // one argument (of type datatype)
 		this.kind = computeKind(nbArgs);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,12 @@ import org.eventb.core.ast.datatype.IDatatypeBuilder;
  * on a datatype builder with a string name. Then arguments could be added until
  * its finalization caused by a call to
  * {@link IDatatypeBuilder#finalizeDatatype()} on the datatype builder.
- * 
+ * <p>
+ * <b>Implementation note</b>: It is important to prevent the use of an unknown
+ * given type in argument types. If it were allowed, then type-checking could
+ * introduce new given type names in some destructor type and break completely
+ * the computation of free identifiers in formulas.
+ *
  * @author Vincent Monfort
  */
 public final class ConstructorBuilder implements IConstructorBuilder {
@@ -63,9 +68,17 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		return true;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public List<DatatypeArgument> getArguments() {
+		return arguments;
+	}
+
 	/* Must be called only when finalizing the datatype */
 	public ConstructorExtension makeExtension(Datatype origin) {
-		return new ConstructorExtension(origin, name, arguments);
+		return new ConstructorExtension(origin, this);
 	}
 
 	public void harvest(ExtensionHarvester harvester) {

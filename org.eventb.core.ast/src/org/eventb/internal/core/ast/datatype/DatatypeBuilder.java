@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 		this.name = name;
 		this.origin = origin;
 		this.givenType = ff.makeGivenType(name);
-		this.argumentTypeChecker = new ArgumentTypeChecker(givenType);
+		this.argumentTypeChecker = new ArgumentTypeChecker(givenType, params);
 		checkTypeParameters(params);
 		this.typeParameters = params.toArray(new GivenType[params.size()]);
 		this.names = new HashSet<String>();
@@ -229,9 +229,31 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	public Datatype finalizeDatatype() {
 		if (finalized == null) {
 			checkHasBasicConstructor();
+			checkAllTypeParametersUsed();
 			finalized = Datatype.makeDatatype(this);
 		}
 		return finalized;
+	}
+
+	/*
+	 * Ensures that each type parameter occurs in at least one argument type.
+	 * 
+	 * If it is not the case, then it means that the datatype would somehow quantify
+	 * on the missing parameter, which would make the type system higher-order.
+	 */
+	private void checkAllTypeParametersUsed() {
+		final Set<GivenType> usedParams = new HashSet<>();
+		for (ConstructorBuilder constructor : constructors) {
+			for (DatatypeArgument argument : constructor.getArguments()) {
+				usedParams.addAll(argument.getType().getGivenTypes());
+			}
+		}
+		for (final GivenType typeParameter : typeParameters) {
+			if (!usedParams.contains(typeParameter)) {
+				throw new IllegalStateException(//
+						"Type parameter '" + typeParameter.getName() + "' is not used");
+			}
+		}
 	}
 
 	protected void checkNotFinalized() {

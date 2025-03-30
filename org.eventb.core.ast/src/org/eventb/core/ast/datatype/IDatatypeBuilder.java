@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eventb.core.ast.Type;
  * </p>
  * <p>
  * Then datatype constructors can be added with the
- * {@link #addConstructor(String)} method and their arguments could be added
+ * {@link #addConstructor(String)} method and their arguments can be added
  * directly on the {@link IConstructorBuilder} objects returned.
  * </p>
  * <p>
@@ -37,6 +37,10 @@ import org.eventb.core.ast.Type;
  * {@link #finalizeDatatype()} must be called to obtain the final datatype. The
  * restriction on the existence of a basic constructor ensures that the built
  * datatype will not be empty (all types are inhabited in Event-B).
+ * </p>
+ * <p>
+ * Each type parameter of the datatype must be used by at least one constructor
+ * argument, so that the datatype does not have any free type parameter.
  * </p>
  * <p>
  * A parser that can parse string representations of argument types referencing
@@ -94,14 +98,14 @@ public interface IDatatypeBuilder {
 	 * If the parse result was correctly parsed (i.e. not
 	 * {@link IParseResult#hasProblem()}) then a call to
 	 * {@link IParseResult#getParsedType()} will provide a type in the correct
-	 * intermediate representation of type that must be used for constructor
+	 * intermediate representation of types that must be used for constructor
 	 * arguments.
 	 * </p>
 	 * 
 	 * @param strType
 	 *            the string representation of a constructor argument type
 	 * @return the parse result in the correct intermediate representation for
-	 *         constructor argument type
+	 *         constructor argument types
 	 * @see IConstructorBuilder#addArgument(Type)
 	 * @see IConstructorBuilder#addArgument(String, Type)
 	 */
@@ -119,7 +123,9 @@ public interface IDatatypeBuilder {
 	/**
 	 * Finalizes this builder and returns the assembled datatype.
 	 * <p>
-	 * At least one basic constructor must have been added to this builder.
+	 * At least one basic constructor must have been added to this builder. Also
+	 * each type parameter must be used in at least one constructor argument type
+	 * (not counting recursive uses of the datatype).
 	 * </p>
 	 * <p>
 	 * Upon return from this method, this datatype builder and all constructor
@@ -134,6 +140,8 @@ public interface IDatatypeBuilder {
 	 * @see #hasBasicConstructor()
 	 * @throws IllegalStateException
 	 *             if the datatype does not have a basic constructor
+	 * @throws IllegalStateException
+	 *             if some type parameter is not used by any constructor argument
 	 */
 	IDatatype finalizeDatatype();
 

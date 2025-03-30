@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,23 +46,6 @@ public class TestEnumDatatypeTranslator extends AbstractTranslatorTests {
 				+ " two=basicEnum; three=basicEnum");
 		s.assertExprTranslation("one", "one");
 		s.assertAxioms("partition(basicEnum, {one}, {two}, {three})");
-	}
-
-	/**
-	 * Robustness test case : the enumerated datatype has a useless type
-	 * parameter which is instantiated twice.
-	 */
-	@Test 
-	public void testEnumWithTypeParamsTranlator() {
-		final TestTranslationSupport s = mSupport("basicEnum[T] ::= one || two");
-		s.setExpectedTypeEnvironment("basicEnum=ℙ(basicEnum);"
-				+ " basicEnum0=ℙ(basicEnum0)");
-		s.assertExprTranslation("basicEnum(ℤ)", "basicEnum");
-		s.assertExprTranslation("basicEnum(1‥3)", "basicEnum");
-		s.assertExprTranslation("basicEnum(BOOL)", "basicEnum0");
-		s.assertExprTranslation("basicEnum({TRUE})", "basicEnum0");
-		s.assertAxioms("partition(basicEnum, {one}, {two})",
-				"partition(basicEnum0, {one0}, {two0})");
 	}
 
 }
