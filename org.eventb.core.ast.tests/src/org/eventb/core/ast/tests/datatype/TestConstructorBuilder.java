@@ -122,12 +122,14 @@ public class TestConstructorBuilder extends AbstractTests {
 
 	@Test(expected = IllegalStateException.class)
 	public void finalizedUnnamedArgument() {
+		cons.addArgument(tyS);
 		builder.finalizeDatatype();
 		cons.addArgument(tyS);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void finalizedNamedArgument() {
+		cons.addArgument(tyS);
 		builder.finalizeDatatype();
 		cons.addArgument("foo", tyS);
 	}
