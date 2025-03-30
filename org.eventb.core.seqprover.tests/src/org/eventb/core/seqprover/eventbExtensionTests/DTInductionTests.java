@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2024 Systerel and others.
+ * Copyright (c) 2010, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,21 +67,21 @@ public class DTInductionTests extends AbstractManualReasonerTests {
 				"{}[][][] |- ∀ p_destr1 · ∀ l · l=cons1(p_destr1)",
 				"{}[][][] |- ∀ p_destr2_0, p_destr2_1 · ∀ l · l=cons2(p_destr2_0, p_destr2_1)");
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ) · l=l1", input("0"),
-				"{l1=Induc(ℤ)}[][][] |- ind0=l1",
+				"{l1=Induc(ℤ)}[][][] |- ∀ p_ind0_0⦂ℤ · ind0(p_ind0_0)=l1",
 				"{}[][][] |- ∀ p_ind1_0⦂Induc(ℤ) · p_ind1_0=l1 ⇒ ind1(p_ind1_0)=l1",
 				"{}[][][]|- ∀ p_ind2_0⦂Induc(ℤ), p_ind2_1 · p_ind2_0=l1 ∧ p_ind2_1=l1 ⇒ ind2(p_ind2_0, p_ind2_1)=l1");
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ), l1 · l=l1", input("0"),
-				"{}[][][] |- ∀ l1⦂Induc(ℤ) · ind0=l1",
+				"{}[][][] |- ∀ p_ind0_0⦂ℤ · (∀ l1⦂Induc(ℤ) · ind0(p_ind0_0)=l1)",
 				"{}[][][] |- ∀ p_ind1_0⦂Induc(ℤ) · (∀ l1 · p_ind1_0=l1) ⇒ (∀ l1 · ind1(p_ind1_0)=l1)",
 				"{}[][][]|- ∀ p_ind2_0⦂Induc(ℤ), p_ind2_1 · (∀ l1 · p_ind2_0=l1) ∧ (∀ l1 · p_ind2_1=l1) ⇒ (∀ l1 · ind2(p_ind2_0, p_ind2_1)=l1)");
 		assertReasonerSuccess("|- ∀ l⦂Induc(ℤ), l1 · l=l1", input("1"),
-				"{}[][][] |- ∀ l⦂Induc(ℤ) · l=ind0",
+				"{}[][][] |- ∀ p_ind0_0⦂ℤ · (∀ l⦂Induc(ℤ) · l=ind0(p_ind0_0))",
 				"{}[][][] |- ∀ p_ind1_0⦂Induc(ℤ) · (∀ l · l=p_ind1_0) ⇒ (∀ l · l=ind1(p_ind1_0))",
 				"{}[][][]|- ∀ p_ind2_0⦂Induc(ℤ), p_ind2_1 · (∀ l · l=p_ind2_0) ∧ (∀ l · l=p_ind2_1) ⇒ (∀ l · l=ind2(p_ind2_0, p_ind2_1))");
 
 		// Induction on a predicate with a guard
 		assertReasonerSuccess("|- ∀ x · x ∈ Induc(ℕ) ⇒ x ∈ S", input("0"), //
-				"{S=ℙ(Induc(ℤ))}[][][] |- ind0 ∈ Induc(ℕ) ⇒ ind0 ∈ S", //
+				"{S=ℙ(Induc(ℤ))}[][][] |- ∀p_ind0_0⦂ℤ · ind0(p_ind0_0) ∈ Induc(ℕ) ⇒ ind0(p_ind0_0) ∈ S", //
 				"{S=ℙ(Induc(ℤ))}[][][] |- ∀ a ·" //
 						+ "   (a ∈ Induc(ℕ) ⇒ a ∈ S)" //
 						+ "⇒ (ind1(a) ∈ Induc(ℕ) ⇒ ind1(a) ∈ S)",
