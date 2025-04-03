@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Systerel and others.
+ * Copyright (c) 2018, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,16 +78,44 @@ public class CheckExternalProvers extends AbstractHandler {
 	}
 
 	/**
+	 * Job to check external provers asynchronously.
+	 */
+	private static class LazyCheckerJob extends Job {
+
+		public LazyCheckerJob() {
+			super("External prover check");
+		}
+
+		/**
+		 * How many times we should try again when the check fails.
+		 */
+		private static int RETRIES = 2;
+
+		private int try_count = 0;
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			final IStatus status = checkAutoTactics(false, monitor);
+			if (!status.isOK()) {
+				if (try_count++ < RETRIES) {
+					schedule(5_000);
+				} else {
+					reportError(null, status);
+				}
+			}
+			return Status.OK_STATUS;
+		}
+
+	}
+
+	/**
 	 * Launch an external prover check asynchronously.
 	 */
 	public static void checkExternalProversLazily() {
-		final Job checker = Job.create("External prover check", monitor -> {
-			final IStatus status = checkAutoTactics(false, monitor);
-			if (!status.isOK()) {
-				reportError(null, status);
-			}
-			return Status.OK_STATUS;
-		});
+		final Job checker = new LazyCheckerJob();
 		checker.setPriority(Job.BUILD);
 
 		// Prevent the check from running concurrently with a build
