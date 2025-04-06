@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
 import java.util.Arrays;
@@ -154,10 +155,9 @@ public class SetExtension extends Expression {
 				return;
 			}
 			resultType = givenType;
-			if (!mergeGivenTypes(resultType)) {
-				// Incompatible type environments, don't set the type
-				return;
-			}
+			// As there is no element, the free identifier cache is empty,
+			// just set it from the type.
+			this.freeIdents = getGivenTypeIdentifiers(resultType);
 		} else {
 			final Type memberType = members[0].getType();
 			if (memberType == null) {
