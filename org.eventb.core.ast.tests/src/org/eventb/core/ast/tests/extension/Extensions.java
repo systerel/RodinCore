@@ -582,7 +582,7 @@ public class Extensions {
 
 	/**
 	 * An extension representing a Cartesian product, simulating an axiomatic
-	 * type defined by the Theory plug-in. The purpose of this operator is two
+	 * type defined by the Theory plug-in. The purpose of this operator is to
 	 * have a type constructor taking two type parameters.
 	 */
 	public static class CProd extends AbstractExtension
@@ -645,14 +645,17 @@ public class Extensions {
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
 			final Expression[] childExprs = expression.getChildExpressions();
-			// Children must be sets
-			for (final Expression child : childExprs) {
+
+			// Put children constraints and collect type parameters
+			final Type[] typeParams = new Type[childExprs.length];
+			for (int i = 0; i < childExprs.length; i++) {
 				final Type alpha = tcMediator.newTypeVariable();
 				final Type powType = tcMediator.makePowerSetType(alpha);
-				tcMediator.sameType(powType, child.getType());
+				tcMediator.sameType(powType, childExprs[i].getType());
+				typeParams[i] = alpha;
 			}
-			final List<Type> params = getParamTypes(childExprs);
-			final Type ptype = tcMediator.makeParametricType(this, params);
+
+			final Type ptype = tcMediator.makeParametricType(this, asList(typeParams));
 			return tcMediator.makePowerSetType(ptype);
 		}
 
