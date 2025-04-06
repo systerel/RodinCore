@@ -136,6 +136,21 @@ public class SetExtension extends Expression {
 
 	@Override
 	protected void synthesizeType(Type givenType) {
+		final int length = members.length;
+
+		// Special case when there is no element,
+		// similar to AtomicExpression for empty set.
+		if (length == 0) {
+			this.freeIdents = NO_FREE_IDENT;
+			this.boundIdents = NO_BOUND_IDENT;
+			if (!(givenType instanceof PowerSetType)) {
+				return;
+			}
+			this.freeIdents = getGivenTypeIdentifiers(givenType);
+			setFinalType(givenType, givenType);
+			return;
+		}
+
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -146,30 +161,17 @@ public class SetExtension extends Expression {
 			// Incompatible type environments, don't bother going further.
 			return;
 		}
-		
-		final int length = members.length;
-		final Type resultType;
-		if (length == 0) {
-			// Empty set, no way to synthesize its type.
-			if (!(givenType instanceof PowerSetType)) {
-				return;
-			}
-			resultType = givenType;
-			// As there is no element, the free identifier cache is empty,
-			// just set it from the type.
-			this.freeIdents = getGivenTypeIdentifiers(resultType);
-		} else {
-			final Type memberType = members[0].getType();
-			if (memberType == null) {
-				return;
-			}
-			for (int i = 1; i < length; i++) {
-				if (! memberType.equals(members[i].getType())) {
-					return;
-				}
-			}
-			resultType = getFactory().makePowerSetType(memberType);
+
+		final Type memberType = members[0].getType();
+		if (memberType == null) {
+			return;
 		}
+		for (int i = 1; i < length; i++) {
+			if (!memberType.equals(members[i].getType())) {
+				return;
+			}
+		}
+		final Type resultType = getFactory().makePowerSetType(memberType);
 		setFinalType(resultType, givenType);
 	}
 
