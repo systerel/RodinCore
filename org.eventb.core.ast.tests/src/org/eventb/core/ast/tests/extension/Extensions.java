@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2023 Systerel and others.
+ * Copyright (c) 2014, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -506,7 +506,7 @@ public class Extensions {
 
 	/**
 	 * An extension representing finite sets, simulating an axiomatic type
-	 * defined by the Theory plug-in. The purpose of this operator is two have a
+	 * defined by the Theory plug-in. The purpose of this operator is to have a
 	 * type constructor taking one type parameter.
 	 */
 	public static class FSet extends AbstractExtension
@@ -527,25 +527,21 @@ public class Extensions {
 		public Type synthesizeType(Expression[] childExprs,
 				Predicate[] childPreds, ITypeMediator mediator) {
 			assert (childExprs.length == 1 && childPreds.length == 0);
-			final List<Type> params = getParamTypes(childExprs);
-			final Type ptype = mediator.makeParametricType(this, params);
+			var typeParam = extractTypeParameter(childExprs[0]);
+			if (typeParam == null) {
+				return null;
+			}
+			var ptype = mediator.makeParametricType(this, asList(typeParam));
 			return mediator.makePowerSetType(ptype);
 		}
 
-		private List<Type> getParamTypes(Expression[] childExprs) {
-			final List<Type> params = new ArrayList<Type>(childExprs.length);
-			for (final Expression child : childExprs) {
-				final Type childType = child.getType();
-				if (childType == null) {
-					return null;
-				}
-				final Type paramType = childType.getBaseType();
-				if (paramType == null) {
-					return null;
-				}
-				params.add(paramType);
+		/* Extracts the type parameter from the type of the child if possible. */
+		private Type extractTypeParameter(Expression childExpr) {
+			var childType = childExpr.getType();
+			if (childType == null) {
+				return null;
 			}
-			return params;
+			return childType.getBaseType();
 		}
 
 		@Override
@@ -553,30 +549,27 @@ public class Extensions {
 				Predicate[] childPreds) {
 			assert (childExprs.length == 1 && childPreds.length == 0);
 			final Type baseType = proposedType.getBaseType();
-			if (!(baseType instanceof ParametricType)) {
+			if (!(baseType instanceof ParametricType pType)) {
 				return false;
 			}
-			final ParametricType pType = (ParametricType) baseType;
 			if (pType.getExprExtension() != this) {
 				return false;
 			}
 			final Type[] typeParameters = pType.getTypeParameters();
-			final List<Type> expectedParams = getParamTypes(childExprs);
-			return asList(typeParameters).equals(expectedParams);
+			assert typeParameters.length == 1;
+			return typeParameters[0].equals(extractTypeParameter(childExprs[0]));
 		}
 
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
 			final Expression[] childExprs = expression.getChildExpressions();
-			// Children must be sets
-			for (final Expression child : childExprs) {
-				final Type alpha = tcMediator.newTypeVariable();
-				final Type powType = tcMediator.makePowerSetType(alpha);
-				tcMediator.sameType(powType, child.getType());
-			}
-			final List<Type> params = getParamTypes(childExprs);
-			final Type ptype = tcMediator.makeParametricType(this, params);
+			// Child must be a set
+			final Type alpha = tcMediator.newTypeVariable();
+			final Type powType = tcMediator.makePowerSetType(alpha);
+			tcMediator.sameType(powType, childExprs[0].getType());
+
+			var ptype = tcMediator.makeParametricType(this, asList(alpha));
 			return tcMediator.makePowerSetType(ptype);
 		}
 
