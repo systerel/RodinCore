@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -34,6 +35,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -58,6 +61,8 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.ITypeConstructorExtension;
+import org.eventb.core.ast.tests.extension.Extensions.Return;
 import org.junit.Test;
 
 
@@ -707,6 +712,29 @@ public class TestFreeIdents extends AbstractTests {
 		BoundIdentDecl bf = a.asPrimedDecl();
 		assertEquals("name of primed bound should equal name of primed free",
 				ap.getName(), bf.getName());
+	}
+
+	/**
+	 * Ensures that identifiers occurring free only in a type which is set are
+	 * recorded.
+	 */
+	@Test
+	public void freeIdentsTypeCheckSuccess() throws Exception {
+		var fac = EITHER_FAC;
+		Type tS = fac.makeGivenType("S");
+		Type tT = fac.makeGivenType("T");
+		Expression id = fac.makeFreeIdentifier("x", null, tS);
+		Expression expr = fac.makeExtendedExpression(Return.EXT, asList(id), asList(), null);
+		var typenv = fac.makeTypeEnvironment();
+		ITypeConstructorExtension cons = EITHER_DT.getTypeConstructor();
+		Type either = fac.makeParametricType(cons, asList(tT, tS));
+
+		IdentsChecker.check(expr);
+		var tcResult = expr.typeCheck(typenv, either);
+		assertTrue(tcResult.isSuccess());
+		assertTrue(expr.isTypeChecked());
+		assertEquals(either, expr.getType());
+		IdentsChecker.check(expr);
 	}
 
 }
