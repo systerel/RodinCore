@@ -737,4 +737,29 @@ public class TestFreeIdents extends AbstractTests {
 		IdentsChecker.check(expr);
 	}
 
+	/**
+	 * Ensures that identifiers occurring free only in a type which is finally not
+	 * set because of a name conflict are not recorded. Here, the identifier "T"
+	 * occurs with type "S" in the formula and as a given type in type-check.
+	 */
+	@Test
+	public void freeIdentsTypeCheckFailed() throws Exception {
+		var fac = EITHER_FAC;
+		Type tS = fac.makeGivenType("S");
+		Type tT = fac.makeGivenType("T");
+		Type tU = fac.makeGivenType("U");
+		Expression id = fac.makeFreeIdentifier("T", null, tS);
+		Expression expr = fac.makeExtendedExpression(Return.EXT, asList(id), asList(), null);
+		var typenv = fac.makeTypeEnvironment();
+		ITypeConstructorExtension cons = EITHER_DT.getTypeConstructor();
+		Type cprod = fac.makeProductType(tT, tU);
+		Type either = fac.makeParametricType(cons, asList(cprod, tS));
+
+		IdentsChecker.check(expr);
+		var tcResult = expr.typeCheck(typenv, either);
+		assertFalse(tcResult.isSuccess());
+		assertFalse(expr.isTypeChecked());
+		IdentsChecker.check(expr);
+	}
+
 }
