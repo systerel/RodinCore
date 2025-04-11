@@ -37,9 +37,7 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
 import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +60,9 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.ITypeConstructorExtension;
+import org.eventb.core.ast.extension.ITypeAnnotation;
 import org.eventb.core.ast.tests.extension.Extensions.Return;
+import org.eventb.internal.core.ast.extension.TypeAnnotation;
 import org.junit.Test;
 
 
@@ -760,6 +760,26 @@ public class TestFreeIdents extends AbstractTests {
 		assertFalse(tcResult.isSuccess());
 		assertFalse(expr.isTypeChecked());
 		IdentsChecker.check(expr);
+	}
+
+	/**
+	 * Ensures that the free identifiers in a type annotation are not taken into
+	 * account.
+	 */
+	@Test
+	public void noIdentsFromTypeAnnotation() throws Exception {
+		var fac = EITHER_FAC;
+		FreeIdentifier id = fac.makeFreeIdentifier("x", null);
+
+		ITypeConstructorExtension cons = EITHER_DT.getTypeConstructor();
+		Type tS = fac.makeGivenType("S");
+		Type tT = fac.makeGivenType("T");
+		Type either = fac.makeParametricType(cons, asList(tT, tS));
+		ITypeAnnotation annot = new TypeAnnotation(either);
+
+		Expression expr = fac.makeExtendedExpression(Return.EXT, asList(id), asList(), null, annot);
+		IdentsChecker.check(expr);
+		assertArrayEquals(new FreeIdentifier[] { id }, expr.getFreeIdentifiers());
 	}
 
 }

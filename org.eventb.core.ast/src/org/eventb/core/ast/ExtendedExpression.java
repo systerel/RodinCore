@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Systerel and others.
+ * Copyright (c) 2010, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.ITypeAnnotation;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
@@ -177,9 +178,16 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	private final Predicate[] childPredicates;
 	private final IExpressionExtension extension;
 
+	/*
+	 * Type annotation that acts as a constraint for the typechecker. Note that free
+	 * identifiers occurring in this type do not contribute to the cache of free
+	 * identifiers.
+	 */
+	private final Type annotatedType;
+
 	/**
 	 * Must never be called directly: use the factory method instead.
-	 * 
+	 *
 	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
 	 *      Expression[], Predicate[], SourceLocation)
 	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
@@ -196,6 +204,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		this.childExpressions = expressions;
 		this.childPredicates = predicates;
 		this.extension = extension;
+		this.annotatedType = null;
 		checkPreconditions();
 		ensureSameFactory(this.childExpressions);
 		ensureSameFactory(this.childPredicates);
@@ -203,6 +212,35 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		setPredicateVariableCache(getChildren());
 		synthesizeType(type);
 		ensureHasType(this, type);
+	}
+
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 *
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      Expression[], Predicate[], SourceLocation, ITypeAnnotation)
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      java.util.Collection, java.util.Collection, SourceLocation,
+	 *      ITypeAnnotation)
+	 * @since 3.9
+	 */
+	protected ExtendedExpression(int tag, Expression[] expressions, Predicate[] predicates, SourceLocation location,
+			FormulaFactory ff, IExpressionExtension extension, ITypeAnnotation typeAnnotation) {
+		super(tag, ff, location, combineHashCodes(expressions, predicates));
+		this.childExpressions = expressions;
+		this.childPredicates = predicates;
+		this.extension = extension;
+		this.annotatedType = typeAnnotation.getType();
+		checkPreconditions();
+		ensureSameFactory(this.childExpressions);
+		ensureSameFactory(this.childPredicates);
+		ensureSameFactory(this.annotatedType);
+		setPredicateVariableCache(getChildren());
+		synthesizeType(this.annotatedType);
+		/*
+		 * The type annotation may fail to apply directly (e.g., one of the children is
+		 * not typechecked) so no call to ensureHasType().
+		 */
 	}
 
 	private void checkPreconditions() {
