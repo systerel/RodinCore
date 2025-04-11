@@ -298,6 +298,11 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
+		// Should obey the type annotation if present
+		if (annotatedType != null && !annotatedType.equals(resultType)) {
+			return;
+		}
+
 		// The type we are about to set on this expression can contribute
 		// some given sets, add them to the identifier cache
 		if (!mergeGivenTypes(resultType)) {
@@ -342,7 +347,14 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		}
 		final TypeCheckMediator mediator = new TypeCheckMediator(result, this,
 				isAtomic());
-		final Type resultType = extension.typeCheck(this, mediator);
+		Type resultType = extension.typeCheck(this, mediator);
+		if (annotatedType != null) {
+			// Add the constraint from the type annotation
+			result.unify(annotatedType, resultType, this);
+			// Also replace the result type with the annotation,
+			// so that it gets analyzed within the type environment
+			resultType = annotatedType;
+		}
 		setTemporaryType(resultType, result);
 		result.analyzeExpression(this);
 	}
