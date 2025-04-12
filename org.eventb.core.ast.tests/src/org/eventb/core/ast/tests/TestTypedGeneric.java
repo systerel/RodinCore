@@ -43,7 +43,9 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
 import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
+import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -62,7 +64,10 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.extension.IExpressionExtension2;
 import org.eventb.core.ast.tests.extension.Extensions.LeftPlus;
+import org.eventb.core.ast.tests.extension.Extensions.Real;
+import org.eventb.core.ast.tests.extension.Extensions.RealPlus;
 import org.eventb.core.ast.tests.extension.Extensions.Return;
 import org.junit.Test;
 
@@ -436,6 +441,10 @@ public class TestTypedGeneric extends AbstractTests {
 		doTest(c1, eff);
 		doTest(c2, eff);
 		doTest(in, eff);
+
+		assertImage(dtSet, "ENUM");
+		assertImage(c1, "c1");
+		assertImage(c2, "c2");
 	}
 
 	/**
@@ -459,6 +468,9 @@ public class TestTypedGeneric extends AbstractTests {
 
 		doTest(c1, eff);
 		doTest(d1, eff);
+
+		assertImage(c1, "c1(∅ ⦂ ℙ(S))");
+		assertImage(d1, "d1(c1(∅ ⦂ ℙ(S)))");
 	}
 
 	/**
@@ -474,6 +486,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null, listSType);
 
 		doTest(nil, eff);
+		assertImage(nil, "nil ⦂ List(S)");
 	}
 
 	/**
@@ -484,10 +497,10 @@ public class TestTypedGeneric extends AbstractTests {
 	public void illTypedExpression() throws Exception {
 		final FormulaFactory eff = LIST_FAC;
 		final Expression empty = eff.makeEmptySet(null, null);
-		assertEquals("∅", empty.toStringWithTypes());
+		assertImage(empty, "∅");
 
 		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null);
-		assertEquals("nil", nil.toStringWithTypes());
+		assertImage(nil, "nil");
 	}
 
 	/**
@@ -506,21 +519,50 @@ public class TestTypedGeneric extends AbstractTests {
 		final Expression leftZero = eff.makeExtendedExpression(leftCons, //
 				asList(zero), emptyList(), null, either);
 		doTest(leftZero, eff);
+		assertImage(leftZero, "Left(0) ⦂ either(ℤ,BOOL)");
 
 		final Expression trueLit = eff.makeAtomicExpression(TRUE, null);
 		final Expression returnTrue = eff.makeExtendedExpression(Return.EXT, //
 				asList(trueLit), emptyList(), null, either);
 		doTest(returnTrue, eff);
+		assertImage(returnTrue, "return(TRUE) ⦂ either(ℤ,BOOL)");
 
 		final Expression one = eff.makeIntegerLiteral(BigInteger.ONE, null);
 		final Expression leftPlus = eff.makeExtendedExpression(LeftPlus.EXT, //
 				asList(zero, one), emptyList(), null, either);
 		doTest(leftPlus, eff);
+		assertImage(leftPlus, "(0 ++ 1) ⦂ either(ℤ,BOOL)");
 
 		final var rightDes = EITHER_DT.getDestructor("getRight");
 		final Expression right = eff.makeExtendedExpression(rightDes, //
 				asList(leftPlus), emptyList(), null);
 		doTest(right, eff);
+		assertImage(right, "getRight((0 ++ 1) ⦂ either(ℤ,BOOL))");
 	}
 
+	/**
+	 * Ensures that old extensions not implementing the new
+	 * {@link IExpressionExtension2} interface behave as before.
+	 */
+	@Test
+	public void oldExtensions() {
+		assertFalse(Real.EXT instanceof IExpressionExtension2);
+		assertFalse(RealPlus.EXT instanceof IExpressionExtension2);
+
+		final FormulaFactory eff = EXTS_FAC;
+		Expression real = eff.makeExtendedExpression(Real.EXT, emptyList(), emptyList(), null);
+		doTest(real, eff);
+		assertImage(real, "(ℝ) ⦂ ℙ(ℝ)");
+
+		Expression id1 = eff.makeFreeIdentifier("x", null, real.toType());
+		Expression id2 = eff.makeFreeIdentifier("y", null, real.toType());
+		Expression plus = eff.makeExtendedExpression(RealPlus.EXT, asList(id1, id2), emptyList(), null);
+		Predicate in = eff.makeRelationalPredicate(IN, plus, real, null);
+		doTest(in, eff);
+		assertImage(in, "(x +. y)∈((ℝ) ⦂ ℙ(ℝ))");
+	}
+
+	private static void assertImage(Formula<?> formula, String expected) {
+		assertEquals(expected, formula.toStringWithTypes());
+	}
 }
