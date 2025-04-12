@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.datatype;
 
-import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExpressionExtension2;
 
 /**
  * Common protocol for datatype destructor extensions.
@@ -26,7 +26,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDestructorExtension extends IConstructorArgument,
-		IExpressionExtension {
+		IExpressionExtension2 {
 
 	/**
 	 * The destructor name.

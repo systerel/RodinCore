@@ -132,6 +132,12 @@ public class TestConstructor extends AbstractTests {
 	}
 
 	@Test
+	public void getDestructorNeedsTypeAnnotation() {
+		final IConstructorArgument d3 = c3.getArguments()[1];
+		assertFalse(d3.asDestructor().needsTypeAnnotation());
+	}
+
+	@Test
 	public void isBasic() {
 		IDatatype testDT = parse(LIST_FAC, "DT[S] ::= c1 || c2[S] || c3[DT] || c4[S×DT] || c5[List(S)] || c6[List(DT)]");
 		assertTrue(testDT.getConstructor("c1").isBasic());
