@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1231,6 +1231,10 @@ public class IdentsChecker implements IVisitor {
 			final Formula<?> child = stack.pop();
 			freeIdents.addAll(asList(child.getFreeIdentifiers()));
 			boundIdents.addAll(asList(child.getBoundIdentifiers()));
+		}
+		// The type of an expression also contributes free identifiers
+		if (formula instanceof Expression expr) {
+			freeIdents.addAll(getGivenTypeIdentifiers(expr));
 		}
 		checkFormula(formula, freeIdents, boundIdents);
 		return true;

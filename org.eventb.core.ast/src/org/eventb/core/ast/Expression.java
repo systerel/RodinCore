@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,9 +57,9 @@ public abstract class Expression extends Formula<Expression> {
 	protected abstract void synthesizeType(Type givenType);
 
 	/**
-	 * Adds the free identifiers for the GivenTypes occurring in the given type
-	 * into the free identifier cache. Returns whether these given types are
-	 * compatible with the current contents of the cache.
+	 * Adds the free identifiers for the GivenTypes occurring in the given type into
+	 * the free identifier cache, unless they are not compatible. Returns whether
+	 * the free identifier cache could be updated.
 	 * <p>
 	 * Must be called only by <code>synthesizeType()</code>.
 	 * </p>
@@ -75,9 +75,15 @@ public abstract class Expression extends Formula<Expression> {
 			// Nothing new
 			return true;
 		}
+		final var oldIdents = this.freeIdents;
 		final IdentListMerger merger = makeMerger(freeIdents, newIdents);
 		this.freeIdents = merger.getFreeMergedArray();
-		return !merger.containsError();
+		if (merger.containsError()) {
+			// Put back previous value, the type will not be set
+			this.freeIdents = oldIdents;
+			return false;
+		}
+		return true;
 	}
 
 	protected final void setFinalType(Type synType, Type proposedType) {

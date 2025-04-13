@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2025 Systerel and others.
+ * Copyright (c) 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,31 +8,31 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.datatype;
+package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.extension.IExpressionExtension2;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Type;
 
 /**
- * Common protocol for datatype destructor extensions.
- * 
+ * Common protocol encapsulating a type annotation.
  * <p>
- * A destructor extension is the implementation of a datatype destructor, it is
- * characterized by its name and its return type.
- * </p>
- * 
- * @author Vincent Monfort
- * @since 3.0
+ * This annotation corresponds to an occurrence of a type after an ⦂ (oftype)
+ * operator.
+ * <p>
+ * This interface is normally used by the formula parser only. It is
+ * nevertheless published because it occurs in the {@link FormulaFactory} API.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @since 3.9
  */
-public interface IDestructorExtension extends IConstructorArgument,
-		IExpressionExtension2 {
+public interface ITypeAnnotation {
 
 	/**
-	 * The destructor name.
-	 * 
-	 * @return the destructor name
+	 * Returns the type in the annotation.
+	 *
+	 * @return the type in the annotation
 	 */
-	String getName();
+	Type getType();
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Systerel and others.
+ * Copyright (c) 2011, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYP
 
 import java.util.EnumSet;
 
+import org.eventb.core.ast.extension.IExpressionExtension2;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -247,17 +248,24 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 	
 	// FIXME hard coded tags
-	// TODO implement a 'printWithType' option for extensions as well
 	private static boolean isTypePrintable(Formula<?> toPrint) {
+		if (!toPrint.isTypeChecked()) {
+			// Avoid raising a NullPointerException when printing the type
+			return false;
+		}
 		switch (toPrint.getTag()) {
 		case EMPTYSET:
 		case KID_GEN:
 		case KPRJ1_GEN:
 		case KPRJ2_GEN:
-			return toPrint.isTypeChecked();
+			return true;
 		}
-		if (toPrint instanceof ExtendedExpression) {
-			return ((ExtendedExpression)toPrint).isAtomic();
+		if (toPrint instanceof ExtendedExpression extExpr) {
+			if (extExpr.getExtension() instanceof IExpressionExtension2 ext) {
+				return ext.needsTypeAnnotation();
+			}
+			// For backward compatibility with pre 3.9
+			return extExpr.isAtomic();
 		}
 		return false;
 	}

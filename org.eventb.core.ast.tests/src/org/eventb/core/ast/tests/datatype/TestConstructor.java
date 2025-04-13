@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,6 +132,12 @@ public class TestConstructor extends AbstractTests {
 	}
 
 	@Test
+	public void getDestructorNeedsTypeAnnotation() {
+		final IConstructorArgument d3 = c3.getArguments()[1];
+		assertFalse(d3.asDestructor().needsTypeAnnotation());
+	}
+
+	@Test
 	public void isBasic() {
 		IDatatype testDT = parse(LIST_FAC, "DT[S] ::= c1 || c2[S] || c3[DT] || c4[S×DT] || c5[List(S)] || c6[List(DT)]");
 		assertTrue(testDT.getConstructor("c1").isBasic());
@@ -142,4 +148,14 @@ public class TestConstructor extends AbstractTests {
 		assertFalse(testDT.getConstructor("c6").isBasic());
 	}
 
+	@Test
+	public void needsTypeAnnotation() throws Exception {
+		IDatatype testDT = parse(LIST_FAC, "DT[S,T] ::= c1 || c2[S] || c3[S; T] || c4[S×T] || c5[S×DT] || c6[List(DT)]");
+		assertTrue(testDT.getConstructor("c1").needsTypeAnnotation());
+		assertTrue(testDT.getConstructor("c2").needsTypeAnnotation());
+		assertFalse(testDT.getConstructor("c3").needsTypeAnnotation());
+		assertFalse(testDT.getConstructor("c4").needsTypeAnnotation());
+		assertFalse(testDT.getConstructor("c5").needsTypeAnnotation());
+		assertFalse(testDT.getConstructor("c6").needsTypeAnnotation());
+	}
 }

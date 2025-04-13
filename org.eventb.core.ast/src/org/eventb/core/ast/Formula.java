@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.IExpressionExtension2;
 import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
@@ -1252,8 +1253,20 @@ public abstract class Formula<T extends Formula<T>> {
 	 * information.
 	 * <p>
 	 * The string representation is the same as that returned by
-	 * {@link #toString()}, but with type information added to generic atomic
-	 * expressions (empty sets and bound identifier declarations).
+	 * {@link #toString()}, but with type information added to some generic
+	 * sub-expressions that require it, namely empty sets, identity and projections,
+	 * bound identifier declarations and extended expressions that require it (see
+	 * {@link IExpressionExtension2#needsTypeAnnotation()}).
+	 * </p>
+	 * <p>
+	 * The purpose of this method is that given any type-checked formula, we can
+	 * print it to a string, then parse the string and type-check the result in the
+	 * same type environment as that of this formula to obtain the exact same
+	 * formula, including all types.
+	 * </p>
+	 * <p>
+	 * If part of the formula is not type-checked, then no type information is added
+	 * (rather than raising an exception) for this part.
 	 * </p>
 	 * 
 	 * @return Returns the string representation of this formula with type

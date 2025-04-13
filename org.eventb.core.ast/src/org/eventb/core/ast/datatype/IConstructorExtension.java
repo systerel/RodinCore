@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.datatype;
 
-import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExpressionExtension2;
 
 /**
  * Common protocol for datatype constructor extensions.
@@ -26,7 +26,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IConstructorExtension extends IExpressionExtension {
+public interface IConstructorExtension extends IExpressionExtension2 {
 
 	/**
 	 * The constructor name.

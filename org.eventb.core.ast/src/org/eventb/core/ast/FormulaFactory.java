@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPredicateExtension2;
+import org.eventb.core.ast.extension.ITypeAnnotation;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.datatype.DatatypeBuilder;
@@ -515,7 +516,37 @@ public class FormulaFactory {
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
 		return makeExtendedExpression(extension, expressions, predicates,
-				location, null);
+				location, (Type) null);
+	}
+
+	/**
+	 * Returns a new extended expression with a type annotation.
+	 * <p>
+	 * The type annotation is not checked here, but will be used later when
+	 * type-checking the returned expression.
+	 *
+	 * @param extension      the expression extension
+	 * @param expressions    the children expressions
+	 * @param predicates     the children predicates
+	 * @param location       the source location or <code>null</code>
+	 * @param typeAnnotation the type annotation
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException if the extension is not supported by this
+	 *                                  factory
+	 * @throws IllegalArgumentException if the preconditions of the extension on
+	 *                                  children are not verified
+	 * @throws IllegalArgumentException if the given type annotation or some given
+	 *                                  child has been built with a different
+	 *                                  factory
+	 * @since 3.9
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location, ITypeAnnotation typeAnnotation) {
+		final int tag = getCheckedExtensionTag(extension);
+		return new ExtendedExpression(tag, expressions.clone(),
+				predicates.clone(), location, this, extension, typeAnnotation);
 	}
 
 	/**
@@ -579,7 +610,38 @@ public class FormulaFactory {
 			IExpressionExtension extension, Collection<Expression> expressions,
 			Collection<Predicate> predicates, SourceLocation location) {
 		return makeExtendedExpression(extension, expressions, predicates,
-				location, null);
+				location, (Type) null);
+	}
+
+	/**
+	 * Returns a new extended expression with a type annotation.
+	 * <p>
+	 * The type annotation is not checked here, but will be used later when
+	 * type-checking the returned expression.
+	 *
+	 * @param extension      the expression extension
+	 * @param expressions    the children expressions
+	 * @param predicates     the children predicates
+	 * @param location       the source location or <code>null</code>
+	 * @param typeAnnotation the type annotation
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException if the extension is not supported by this
+	 *                                  factory
+	 * @throws IllegalArgumentException if the preconditions of the extension on
+	 *                                  children are not verified
+	 * @throws IllegalArgumentException if the given type annotation or some given
+	 *                                  child has been built with a different
+	 *                                  factory
+	 * @since 3.9
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Collection<Expression> expressions,
+			Collection<Predicate> predicates, SourceLocation location,
+			ITypeAnnotation typeAnnotation) {
+		final int tag = getCheckedExtensionTag(extension);
+		return new ExtendedExpression(tag, toExprArray(expressions),
+				toPredArray(predicates), location, this, extension, typeAnnotation);
 	}
 
 	/**

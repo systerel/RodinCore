@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,14 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - operators of mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -36,8 +41,14 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
+import static org.eventb.core.ast.tests.extension.Extensions.EXTS_FAC;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.math.BigInteger;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AtomicExpression;
@@ -52,17 +63,34 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.extension.IExpressionExtension2;
+import org.eventb.core.ast.tests.extension.Extensions.LeftPlus;
+import org.eventb.core.ast.tests.extension.Extensions.Real;
+import org.eventb.core.ast.tests.extension.Extensions.RealPlus;
+import org.eventb.core.ast.tests.extension.Extensions.Return;
 import org.junit.Test;
 
 /**
- * Main test class for formulas containing generic atomic operators.
- * 
- * Tests have been entered in the same order as the type-checker
- * specification in the Rodin Deliverable D7 "Event-B Language".
- * 
+ * Main test class for formulas containing generic operators.
+ *
+ * <h2>Predefined operators</h2>
+ *
+ * Tests have been entered in the same order as the type-checker specification
+ * in the Rodin Deliverable D7 "Event-B Language".
+ * <p>
  * Only tests where an empty set can occur have been retained. For the other
  * generic atomic operators (KID_GEN, KPRJ1_GEN, KPRJ2_GEN) only one test is
  * present as they are parsed in the same way as empty sets.
+ *
+ * <h2>Extension operators</h2>
+ *
+ * The second part of this class concerns generic operators provided by
+ * expression extensions. We test that one can recover a typed expression from
+ * its serialization with <code>toStringWithTypes</code>.
+ * <p>
+ *
+ * @see Formula#toStringWithTypes()
  */
 public class TestTypedGeneric extends AbstractTests {
 
@@ -209,6 +237,10 @@ public class TestTypedGeneric extends AbstractTests {
 		doTest(expr, expected, ALL_VERSION_FACTORIES);
 	}
 	
+	private void doTest(Expression expr, FormulaFactory... factories) {
+		doTest(expr, expr.getType(), factories);
+	}
+
 	private void doTest(Expression expr, Type expected, FormulaFactory... factories) {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
@@ -386,5 +418,151 @@ public class TestTypedGeneric extends AbstractTests {
 		final Type rSS = REL(ty_S, ty_S);
 		doTest(mId(rSS), rSS, ff);
 	}
-	
+
+	/**
+	 * Tests about a simple enumeration datatype. Here, the operators are atomic and
+	 * non-generic, so we do not really need type annotations. However, it is useful
+	 * to check that <code>toStringWithTypes</code> does not produce any parse
+	 * problem.
+	 */
+	@Test
+	public void enumeration() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "ENUM ::= c1 || c2");
+		final FormulaFactory eff = dt.getFactory();
+
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor());
+		final Expression c1 = eff.makeExtendedExpression(dt.getConstructor("c1"), NO_EXPRS, NO_PREDS, null, dtType);
+		final Expression c2 = eff.makeExtendedExpression(dt.getConstructor("c2"), NO_EXPRS, NO_PREDS, null, dtType);
+		final Expression dtSet = eff.makeExtendedExpression(dt.getTypeConstructor(), NO_EXPRS, NO_PREDS, null,
+				eff.makePowerSetType(dtType));
+		final Predicate in = eff.makeRelationalPredicate(IN, c1, dtSet, null);
+
+		doTest(dtSet, eff);
+		doTest(c1, eff);
+		doTest(c2, eff);
+		doTest(in, eff);
+
+		assertImage(dtSet, "ENUM");
+		assertImage(c1, "c1");
+		assertImage(c2, "c2");
+	}
+
+	/**
+	 * Tests about a generic datatype with a single constructor. We do not really
+	 * need type annotations. However, it is useful to check that
+	 * <code>toStringWithTypes</code> does not produce any parse problem.
+	 */
+	@Test
+	public void genericSingleConstructor() throws Exception {
+		final IDatatype dt = DatatypeParser.parse(ff, "G[T] ::= c1[d1: T]");
+		final FormulaFactory eff = dt.getFactory();
+		final Type sType = eff.makeGivenType("S");
+		final Type powSType = eff.makePowerSetType(sType);
+		final Type dtType = eff.makeParametricType(dt.getTypeConstructor(), powSType);
+
+		final Expression empty = eff.makeEmptySet(powSType, null);
+		final Expression c1 = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(empty), emptyList(), null,
+				dtType);
+		final Expression d1 = eff.makeExtendedExpression(dt.getDestructor("d1"), asList(c1), emptyList(), null,
+				empty.getType());
+
+		doTest(c1, eff);
+		doTest(d1, eff);
+
+		assertImage(c1, "c1(∅ ⦂ ℙ(S))");
+		assertImage(d1, "d1(c1(∅ ⦂ ℙ(S)))");
+	}
+
+	/**
+	 * Tests about a generic datatype with an atomic constructor which is generic.
+	 * We do need type annotations.
+	 */
+	@Test
+	public void genericAtomicConstructor() throws Exception {
+		final FormulaFactory eff = LIST_FAC;
+		final Type sType = eff.makeGivenType("S");
+		final Type listSType = eff.makeParametricType(EXT_LIST, sType);
+
+		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null, listSType);
+
+		doTest(nil, eff);
+		assertImage(nil, "nil ⦂ List(S)");
+	}
+
+	/**
+	 * Tests <code>toStringWithTypes</code> on ill-typed formulas. The method should
+	 * succeed without any type annotation as the type information is not present.
+	 */
+	@Test
+	public void illTypedExpression() throws Exception {
+		final FormulaFactory eff = LIST_FAC;
+		final Expression empty = eff.makeEmptySet(null, null);
+		assertImage(empty, "∅");
+
+		final Expression nil = eff.makeExtendedExpression(EXT_NIL, NO_EXPRS, NO_PREDS, null);
+		assertImage(nil, "nil");
+	}
+
+	/**
+	 * Tests about the either datatype where both constructors need a type
+	 * annotation. We also test other operators that also need type annotations.
+	 */
+	@Test
+	public void eitherDatatype() throws Exception {
+		final FormulaFactory eff = EITHER_FAC;
+		final Type intType = eff.makeIntegerType();
+		final Type boolType = eff.makeBooleanType();
+		final Type either = eff.makeParametricType(EITHER_DT.getTypeConstructor(), intType, boolType);
+
+		final var leftCons = EITHER_DT.getConstructor("Left");
+		final Expression zero = eff.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression leftZero = eff.makeExtendedExpression(leftCons, //
+				asList(zero), emptyList(), null, either);
+		doTest(leftZero, eff);
+		assertImage(leftZero, "Left(0) ⦂ either(ℤ,BOOL)");
+
+		final Expression trueLit = eff.makeAtomicExpression(TRUE, null);
+		final Expression returnTrue = eff.makeExtendedExpression(Return.EXT, //
+				asList(trueLit), emptyList(), null, either);
+		doTest(returnTrue, eff);
+		assertImage(returnTrue, "return(TRUE) ⦂ either(ℤ,BOOL)");
+
+		final Expression one = eff.makeIntegerLiteral(BigInteger.ONE, null);
+		final Expression leftPlus = eff.makeExtendedExpression(LeftPlus.EXT, //
+				asList(zero, one), emptyList(), null, either);
+		doTest(leftPlus, eff);
+		assertImage(leftPlus, "(0 ++ 1) ⦂ either(ℤ,BOOL)");
+
+		final var rightDes = EITHER_DT.getDestructor("getRight");
+		final Expression right = eff.makeExtendedExpression(rightDes, //
+				asList(leftPlus), emptyList(), null);
+		doTest(right, eff);
+		assertImage(right, "getRight((0 ++ 1) ⦂ either(ℤ,BOOL))");
+	}
+
+	/**
+	 * Ensures that old extensions not implementing the new
+	 * {@link IExpressionExtension2} interface behave as before.
+	 */
+	@Test
+	public void oldExtensions() {
+		assertFalse(Real.EXT instanceof IExpressionExtension2);
+		assertFalse(RealPlus.EXT instanceof IExpressionExtension2);
+
+		final FormulaFactory eff = EXTS_FAC;
+		Expression real = eff.makeExtendedExpression(Real.EXT, emptyList(), emptyList(), null);
+		doTest(real, eff);
+		assertImage(real, "(ℝ) ⦂ ℙ(ℝ)");
+
+		Expression id1 = eff.makeFreeIdentifier("x", null, real.toType());
+		Expression id2 = eff.makeFreeIdentifier("y", null, real.toType());
+		Expression plus = eff.makeExtendedExpression(RealPlus.EXT, asList(id1, id2), emptyList(), null);
+		Predicate in = eff.makeRelationalPredicate(IN, plus, real, null);
+		doTest(in, eff);
+		assertImage(in, "(x +. y)∈((ℝ) ⦂ ℙ(ℝ))");
+	}
+
+	private static void assertImage(Formula<?> formula, String expected) {
+		assertEquals(expected, formula.toStringWithTypes());
+	}
 }

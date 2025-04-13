@@ -921,6 +921,18 @@ public class TestDatatypes extends AbstractTests {
 						+ tconsExt.getOrigin(), dt, tconsExt.getOrigin());
 	}
 
+	/**
+	 * Unit tests of {@link ITypeConstructorExtension#needsTypeAnnotation()}.
+	 */
+	@Test
+	public void needsTypeAnnotation() {
+		final IDatatype dt1 = parse(ff, "foo ::= bar[BOOL]");
+		assertFalse(dt1.getTypeConstructor().needsTypeAnnotation());
+
+		final IDatatype dt2 = parse(ff, "foo[S] ::= bar[S]");
+		assertTrue(dt2.getTypeConstructor().needsTypeAnnotation());
+	}
+
 	/*
 	 * Unit tests for extension harvester
 	 */

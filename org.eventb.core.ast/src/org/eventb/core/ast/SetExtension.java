@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 ETH Zurich and others.
+ * Copyright (c) 2005, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
 import java.util.Arrays;
@@ -135,6 +136,21 @@ public class SetExtension extends Expression {
 
 	@Override
 	protected void synthesizeType(Type givenType) {
+		final int length = members.length;
+
+		// Special case when there is no element,
+		// similar to AtomicExpression for empty set.
+		if (length == 0) {
+			this.freeIdents = NO_FREE_IDENT;
+			this.boundIdents = NO_BOUND_IDENT;
+			if (!(givenType instanceof PowerSetType)) {
+				return;
+			}
+			this.freeIdents = getGivenTypeIdentifiers(givenType);
+			setFinalType(givenType, givenType);
+			return;
+		}
+
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -145,31 +161,17 @@ public class SetExtension extends Expression {
 			// Incompatible type environments, don't bother going further.
 			return;
 		}
-		
-		final int length = members.length;
-		final Type resultType;
-		if (length == 0) {
-			// Empty set, no way to synthesize its type.
-			if (!(givenType instanceof PowerSetType)) {
-				return;
-			}
-			resultType = givenType;
-			if (!mergeGivenTypes(resultType)) {
-				// Incompatible type environments, don't set the type
-				return;
-			}
-		} else {
-			final Type memberType = members[0].getType();
-			if (memberType == null) {
-				return;
-			}
-			for (int i = 1; i < length; i++) {
-				if (! memberType.equals(members[i].getType())) {
-					return;
-				}
-			}
-			resultType = getFactory().makePowerSetType(memberType);
+
+		final Type memberType = members[0].getType();
+		if (memberType == null) {
+			return;
 		}
+		for (int i = 1; i < length; i++) {
+			if (!memberType.equals(members[i].getType())) {
+				return;
+			}
+		}
+		final Type resultType = getFactory().makePowerSetType(memberType);
 		setFinalType(resultType, givenType);
 	}
 

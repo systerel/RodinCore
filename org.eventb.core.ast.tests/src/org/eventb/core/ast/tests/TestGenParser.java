@@ -74,6 +74,8 @@ import static org.eventb.core.ast.tests.ExtensionHelper.MONEY;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.datatype.TestDatatypes.EXT_MOULT;
 import static org.eventb.core.ast.tests.datatype.TestDatatypes.MOULT_DT;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_DT;
+import static org.eventb.core.ast.tests.extension.Extensions.EITHER_FAC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -133,6 +135,13 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.tests.ExtensionHelper.Money;
+import org.eventb.core.ast.tests.extension.Extensions;
+import org.eventb.core.ast.tests.extension.Extensions.LeftPlus;
+import org.eventb.core.ast.tests.extension.Extensions.Real;
+import org.eventb.core.ast.tests.extension.Extensions.RealPlus;
+import org.eventb.core.ast.tests.extension.Extensions.RealZero;
+import org.eventb.core.ast.tests.extension.Extensions.Return;
+import org.eventb.core.ast.tests.extension.Extensions.Union2;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.operators.OperatorRelationship;
 import org.junit.Test;
@@ -2633,23 +2642,124 @@ public class TestGenParser extends AbstractTests {
 
 		doExpressionTest("NG        ", dtSet);
 		doExpressionTest("NG ⦂ ℙ(NG)", dtSet);
-//		doExpressionTest("c1(0) ⦂ NG", c1_0);
+		doExpressionTest("c1(0) ⦂ NG", c1_0);
 		doExpressionTest("c1(0)     ", c1_0);
 		doExpressionTest("d1(c1(0))         ", d1_c1_0);
-//		doExpressionTest("d1(c1(0) ⦂ NG)    ", d1_c1_0);
-//		doExpressionTest("d1(c1(0)) ⦂ ℤ     ", d1_c1_0);
-//		doExpressionTest("d1(c1(0) ⦂ NG) ⦂ ℤ", d1_c1_0);
+		doExpressionTest("d1(c1(0) ⦂ NG)    ", d1_c1_0);
+		doExpressionTest("d1(c1(0)) ⦂ ℤ     ", d1_c1_0);
+		doExpressionTest("d1(c1(0) ⦂ NG) ⦂ ℤ", d1_c1_0);
 
-//		doPredicateTest("c1(0) ⦂ NG ∈ NG ⦂ ℙ(NG)", in);
+		doPredicateTest("c1(0) ⦂ NG ∈ NG ⦂ ℙ(NG)", in);
 		doPredicateTest("c1(0)      ∈ NG ⦂ ℙ(NG)", in);
-//		doPredicateTest("c1(0) ⦂ NG ∈ NG        ", in);
+		doPredicateTest("c1(0) ⦂ NG ∈ NG        ", in);
 		doPredicateTest("c1(0)      ∈ NG        ", in);
 
 		// Ill-typed formula
 		final Expression trueExpr = eff.makeAtomicExpression(TRUE, null);
 		final Expression c1_true = eff.makeExtendedExpression(dt.getConstructor("c1"), asList(trueExpr), emptyList(),
-				null, null);
+				null);
 		doExpressionTest("c1(TRUE)", c1_true);
+	}
+
+	/**
+	 * Checks that oftype annotations can be used for a prefix extended expression.
+	 */
+	@Test
+	public void oftype_annotation_prefix() throws Exception {
+		final FormulaFactory eff = Extensions.EXTS_FAC;
+		final Expression s0 = eff.makeSetExtension(eff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+		final Expression s1 = eff.makeSetExtension(eff.makeIntegerLiteral(BigInteger.ONE, null), null);
+		final Expression u2_s0_s1 = eff.makeExtendedExpression(Union2.EXT, asList(s0, s1), emptyList(), null);
+
+		doExpressionTest("union2({0}, {1})       ", u2_s0_s1);
+		doExpressionTest("union2({0}, {1}) ⦂ ℙ(ℤ)", u2_s0_s1);
+	}
+
+	/**
+	 * Checks that oftype annotations can be used for an infix extended expression.
+	 */
+	@Test
+	public void oftype_annotation_infix() throws Exception {
+		final FormulaFactory eff = Extensions.EXTS_FAC;
+		final Type realType = eff.makeParametricType(Real.EXT);
+		final Expression realSet = eff.makeExtendedExpression(Real.EXT, emptyList(), emptyList(), null);
+		final Expression zero = eff.makeExtendedExpression(RealZero.EXT, emptyList(), emptyList(), null);
+		final Expression zpz = eff.makeExtendedExpression(RealPlus.EXT, asList(zero, zero), emptyList(), null);
+
+		doTypeTest("ℝ", realType);
+
+		doExpressionTest("ℝ       ", realSet);
+		doExpressionTest("ℝ ⦂ ℙ(ℝ)", realSet);
+
+		doExpressionTest("zero    ", zero);
+		doExpressionTest("zero ⦂ ℝ", zero);
+
+		doExpressionTest(" zero      +.  zero     ", zpz);
+		doExpressionTest("(zero ⦂ ℝ) +.  zero     ", zpz);
+		doExpressionTest(" zero      +. (zero ⦂ ℝ)", zpz);
+		doExpressionTest("(zero ⦂ ℝ) +. (zero ⦂ ℝ)", zpz);
+
+		doExpressionTest("( zero      +.  zero     ) ⦂ ℝ", zpz);
+		doExpressionTest("((zero ⦂ ℝ) +.  zero     ) ⦂ ℝ", zpz);
+		doExpressionTest("( zero      +. (zero ⦂ ℝ)) ⦂ ℝ", zpz);
+		doExpressionTest("((zero ⦂ ℝ) +. (zero ⦂ ℝ)) ⦂ ℝ", zpz);
+	}
+
+	/**
+	 * Checks that oftype annotations can be used with the either datatype and
+	 * related operators. This is a typical case where the oftype annotation is
+	 * required.
+	 */
+	@Test
+	public void oftype_annotation_either() throws Exception {
+		final FormulaFactory eff = EITHER_FAC;
+		final Type intType = eff.makeIntegerType();
+		final Type boolType = eff.makeBooleanType();
+		final Type either = eff.makeParametricType(EITHER_DT.getTypeConstructor(), intType, boolType);
+
+		final Expression zero = eff.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression leftZero = eff.makeExtendedExpression(EITHER_DT.getConstructor("Left"), //
+				asList(zero), emptyList(), null, either);
+		doExpressionTest("Left(0) ⦂ either(ℤ, BOOL)", leftZero);
+
+		final Expression trueLit = eff.makeAtomicExpression(TRUE, null);
+		final Expression returnTrue = eff.makeExtendedExpression(Return.EXT, //
+				asList(trueLit), emptyList(), null, either);
+		doExpressionTest("return(TRUE) ⦂ either(ℤ, BOOL)", returnTrue);
+
+		final Expression one = eff.makeIntegerLiteral(BigInteger.ONE, null);
+		final Expression leftPlus = eff.makeExtendedExpression(LeftPlus.EXT, //
+				asList(zero, one), emptyList(), null, either);
+		doExpressionTest("(0 ++ 1) ⦂ either(ℤ, BOOL)", leftPlus);
+	}
+
+	/**
+	 * Checks that an oftype annotation does not produce an error if some child is
+	 * not typed. Indeed, the annotation can be valid in a further call to
+	 * typecheck.
+	 */
+	@Test
+	public void oftype_annotation_untyped_child() throws Exception {
+		var eff = EITHER_FAC;
+		var image = "Left(a) ⦂ either(ℤ, BOOL)";
+		var expr = parseExpression(image, eff);
+		typeCheck(expr);
+		assertTrue(expr.isTypeChecked());
+	}
+
+	/**
+	 * Checks that an oftype annotation does not produce an error at parse, even if
+	 * it cannot typecheck. The error will be raised in a further typecheck.
+	 */
+	@Test
+	public void oftype_annotation_bad_type() throws Exception {
+		var eff = EITHER_FAC;
+		var image = "Left(0) ⦂ either(BOOL, BOOL)";
+		var expr = parseExpression(image, eff);
+
+		var result = expr.typeCheck(eff.makeTypeEnvironment());
+		assertFalse(result.isSuccess());
+		assertFalse(expr.isTypeChecked());
 	}
 
 }

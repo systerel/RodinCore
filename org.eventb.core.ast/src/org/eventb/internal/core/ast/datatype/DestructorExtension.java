@@ -130,6 +130,11 @@ public class DestructorExtension extends ConstructorArgument implements
 	}
 
 	@Override
+	public boolean needsTypeAnnotation() {
+		return false;
+	}
+
+	@Override
 	public boolean verifyType(Type proposedType, Expression[] childExprs,
 			Predicate[] childPreds) {
 		assert childExprs.length == 1;
