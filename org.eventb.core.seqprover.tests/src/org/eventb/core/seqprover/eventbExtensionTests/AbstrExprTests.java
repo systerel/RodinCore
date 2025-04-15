@@ -20,6 +20,7 @@ import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
@@ -32,6 +33,34 @@ import org.junit.Test;
  * @author Farhad Mehta
  */
 public class AbstrExprTests extends AbstractReasonerTests {
+
+	private static final IDatatype RECORD1_DT; // Record with one destructor
+	private static final IDatatype RECORD2_DT; // Record with two destructors
+	private static final IDatatype RECORD3_DT; // Generic record with one destructor
+	static {
+		var ff = DEFAULT_FACTORY;
+		var integerType = ff.makeIntegerType();
+		var builder = ff.makeDatatypeBuilder("Record1");
+		var cons = builder.addConstructor("mkRecord1");
+		cons.addArgument("field", integerType);
+		RECORD1_DT = builder.finalizeDatatype();
+		builder = ff.makeDatatypeBuilder("Record2");
+		cons = builder.addConstructor("mkRecord2");
+		cons.addArgument("field1", integerType);
+		cons.addArgument("field2", integerType);
+		RECORD2_DT = builder.finalizeDatatype();
+		var genericT = ff.makeGivenType("T");
+		builder = ff.makeDatatypeBuilder("Record3", genericT);
+		cons = builder.addConstructor("mkRecord3");
+		cons.addArgument("field3", genericT);
+		RECORD3_DT = builder.finalizeDatatype();
+	}
+
+	public AbstrExprTests() {
+		super(DT_FAC.withExtensions(RECORD1_DT.getExtensions()) //
+				.withExtensions(RECORD2_DT.getExtensions()) //
+				.withExtensions(RECORD3_DT.getExtensions()));
+	}
 
 	@Override
 	public String getReasonerID() {
@@ -54,6 +83,18 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerFailure("⊤ |- ⊤", makeInput("a↦a=x", "x=ℤ×ℤ"), "Identifier a appears twice in pattern");
 		// Pattern matching with mapsto and arbitrary expression
 		assertReasonerFailure("⊤ |- ⊤", makeInput("0↦a=0↦1"), "Patterns with mapsto must only contain free identifiers");
+		// Pattern matching of datatypes requires a single constructor
+		assertReasonerFailure("⊤ |- ⊤", makeInput("cons1(x)=sd", "sd=SD"),
+				"Pattern constructor(...)=expr is only valid for datatypes with a single constructor");
+		// Pattern matching of wrong datatype
+		assertReasonerFailure("⊤ |- ⊤", makeInput("mkRecord1(x)=mkRecord2(0, 1)"),
+				"Type check failed for pattern mkRecord1(x) and expression mkRecord2(0,1)");
+		// Pattern matching of datatypes requires identifiers, not concrete values
+		assertReasonerFailure("⊤ |- ⊤", makeInput("mkRecord1(0)=x", "x=Record1"),
+				"In pattern, constructor parameters should be unique identifiers");
+		// Pattern matching of datatypes with duplicate names
+		assertReasonerFailure("⊤ |- ⊤", makeInput("mkRecord2(a, a)=x", "x=Record2"),
+				"Identifier a appears twice in pattern");
 	}
 
 	@Test
@@ -85,6 +126,22 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerSuccess("|- x=(0↦TRUE)↦((0↦FALSE)↦1)", makeInput("(a↦b)↦(c↦d)=x", "x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)"), //
 				"{x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)}[][][] |- ⊤", //
 				"{x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)}[][][(a↦b)↦(c↦d)=x] |- x=(0↦TRUE)↦((0↦FALSE)↦1)");
+		// Pattern matching with a single constructor and one destructor
+		assertReasonerSuccess("|- field(x)=0", makeInput("mkRecord1(f)=x", "x=Record1"), //
+				"{x=Record1}[][][] |- ⊤", //
+				"{}[][][mkRecord1(f)=x] |- field(x)=0");
+		// Pattern matching with a single generic constructor and one destructor
+		assertReasonerSuccess("|- field3(x)=0", makeInput("mkRecord3(f)=x", "x=Record3(ℤ)"), //
+				"{x=Record3(ℤ)}[][][] |- ⊤", //
+				"{x=Record3(ℤ)}[][][mkRecord3(f)=x] |- field3(x)=0");
+		// Pattern matching with a single constructor and two destructors
+		assertReasonerSuccess("|- field1(x)=field2(x)", makeInput("mkRecord2(f1, f2)=x", "x=Record2"), //
+				"{x=Record2}[][][] |- ⊤", //
+				"{}[][][mkRecord2(f1, f2)=x] |- field1(x)=field2(x)");
+		// Pattern matching with conflicts
+		assertReasonerSuccess("a=0 ;; b=1 ;; b0=2 |- field1(x)=field2(x)", makeInput("mkRecord2(a, b)=x", "x=Record2"), //
+				"{x=Record2}[][][a=0 ;; b=1 ;; b0=2] |- ⊤", //
+				"{}[][][a=0 ;; b=1 ;; b0=2 ;; mkRecord2(a0, b1)=x] |- field1(x)=field2(x)");
 	}
 
 	@Test
@@ -116,7 +173,7 @@ public class AbstrExprTests extends AbstractReasonerTests {
 	}
 
 	private IReasonerInput makeInput(String input, String typeEnv) {
-		return new AbstrExpr.Input(input, mTypeEnvironment(typeEnv));
+		return new AbstrExpr.Input(input, mTypeEnvironment(typeEnv, ff));
 	}
 	
 }

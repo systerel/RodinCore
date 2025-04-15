@@ -10,6 +10,7 @@
  *     Systerel - added broken input repair mechanism
  *     UPEC - added optional input name for fresh ident
  *     INP Toulouse - rewrote input, stopped serializing expression
+ *     INP Toulouse - added optional pattern with mapsto and constructor
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -32,11 +33,14 @@ import java.util.Set;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.datatype.IConstructorExtension;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
@@ -64,6 +68,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * <ul>
  * <li>a single identifier</li>
  * <li>a combination of identifiers and mapsto (e.g., (a ↦ b) ↦ c)</li>
+ * <li>the constructor of a datatype which has only one constructor</li>
  * </ul>
  * 
  * @author Farhad Mehta
@@ -276,6 +281,9 @@ public class AbstrExpr implements IReasoner {
 		case MAPSTO:
 			return checkProductPattern(e, new HashSet<>());
 		default:
+			if (e instanceof ExtendedExpression extExpr) {
+				return checkConstructorPattern(extExpr);
+			}
 			return "Expect an expression or a predicate in the form pattern=expr";
 		}
 	}
@@ -299,6 +307,30 @@ public class AbstrExpr implements IReasoner {
 			return null;
 		}
 		return "Patterns with mapsto must only contain free identifiers";
+	}
+
+	// Checks if an expression is a valid constructor pattern
+	// Returns an error message or null if the expression is valid
+	private String checkConstructorPattern(ExtendedExpression expr) {
+		var ext = expr.getExtension();
+		if (!(ext instanceof IConstructorExtension)) {
+			return "Expect an expression or a predicate in the form pattern=expr";
+		}
+		IDatatype dt = ((IConstructorExtension) ext).getOrigin();
+		if (dt.getConstructors().length != 1) {
+			return "Pattern constructor(...)=expr is only valid for datatypes with a single constructor";
+		}
+		Set<FreeIdentifier> seenIdents = new HashSet<>();
+		for (var child : expr.getChildExpressions()) {
+			if (child.getTag() != FREE_IDENT) {
+				return "In pattern, constructor parameters should be unique identifiers";
+			}
+			if (seenIdents.contains(child)) {
+				return "Identifier " + child + " appears twice in pattern";
+			}
+			seenIdents.add((FreeIdentifier) child);
+		}
+		return null;
 	}
 
 	@Override
