@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 ETH Zurich and others.
+ * Copyright (c) 2007, 2025 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,9 @@ public class AbstrExprTests extends AbstractReasonerTests {
 	@Test
 	public void failure() throws Exception {
 		// Expression not parsable
-		assertReasonerFailure("⊤ |- ⊤", makeInput("@unparsable@"), "Parse error for expression: @unparsable@");
+		assertReasonerFailure("⊤ |- ⊤", makeInput("@unparsable@"), "Failed parsing input @unparsable@");
 		// Expression not typecheckable
-		assertReasonerFailure("⊤ |- ⊤", makeInput("x"), "Type check failed for expression: x");
+		assertReasonerFailure("⊤ |- ⊤", makeInput("x"), "Failed type checking input: Variable has an unknown type");
 		// Input is a predicate, but not an equality
 		assertReasonerFailure("⊤ |- ⊤", makeInput("x>2"), "Expect an expression or a predicate in the form ident=expr");
 		// Expression instead of identifier for name
