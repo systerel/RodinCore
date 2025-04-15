@@ -17,16 +17,19 @@ import static java.util.stream.Collectors.joining;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FREE_IDENT;
+import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.parseExpression;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.parsePredicate;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.typeCheckClosed;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -51,10 +54,17 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
- * This reasoner abstracts a given expression with a fresh free identifier.
+ * This reasoner abstracts a given expression with fresh free identifiers.
  * 
- * It does this by introducing a new free variable and an equality hypothesis that can be
- * used to later rewrite all occurrences of the expression by the free variable.
+ * It does this by introducing new free variables based on a pattern (or, if no
+ * pattern is provided, a single identifier) and an equality hypothesis that can
+ * be used to later rewrite all occurrences of the expression by the pattern.
+ *
+ * The pattern can be:
+ * <ul>
+ * <li>a single identifier</li>
+ * <li>a combination of identifiers and mapsto (e.g., (a ↦ b) ↦ c)</li>
+ * </ul>
  * 
  * @author Farhad Mehta
  *
@@ -95,7 +105,7 @@ public class AbstrExpr implements IReasoner {
 				pattern = equal.getLeft();
 				expression = equal.getRight();
 			} else {
-				errorMessage = "Expect an expression or a predicate in the form ident=expr";
+				errorMessage = "Expect an expression or a predicate in the form pattern=expr";
 			}
 			if (expression != null) {
 				var tcResult = expression.typeCheck(typeEnv);
@@ -211,9 +221,9 @@ public class AbstrExpr implements IReasoner {
 		if (pattern == null) {
 			pattern = ff.makeFreeIdentifier("ae", null); // Default name if none provided by the user
 		} else {
-			if (pattern.getTag() != FREE_IDENT) {
-				return reasonerFailure(this, reasonerInput,
-						"Expect an expression or a predicate in the form ident=expr");
+			String error = checkPattern(pattern);
+			if (error != null) {
+				return reasonerFailure(this, reasonerInput, error);
 			}
 		}
 
@@ -223,8 +233,7 @@ public class AbstrExpr implements IReasoner {
 		var exists = ff.makeQuantifiedPredicate(EXISTS, bound,
 				ff.makeRelationalPredicate(EQUAL, boundPattern, expr, null), null);
 		if (!typeCheckClosed(exists, seq.typeEnvironment())) {
-			return reasonerFailure(this, reasonerInput,
-					"Type check of pattern " + pattern + " and expression " + expr + " failed");
+			return reasonerFailure(this, reasonerInput, "Type check failed for pattern " + pattern + " and expression " + expr);
 		}
 		var freeIdents = seq.typeEnvironment().makeBuilder().makeFreshIdentifiers(exists.getBoundIdentDecls());
 				
@@ -256,6 +265,40 @@ public class AbstrExpr implements IReasoner {
 		// Generate the proof rule
 		return ProverFactory.makeProofRule(this, input, null,
 				"ae (" + expr.toString() + ")", antecedents);
+	}
+
+	// Checks if an expression is a valid pattern.
+	// Returns an error message or null if the expression is valid
+	private String checkPattern(Expression e) {
+		switch (e.getTag()) {
+		case FREE_IDENT:
+			return null;
+		case MAPSTO:
+			return checkProductPattern(e, new HashSet<>());
+		default:
+			return "Expect an expression or a predicate in the form pattern=expr";
+		}
+	}
+
+	// Checks if an expression is a combination of mapsto and unique identifiers
+	// Returns an error message or null if the expression is valid
+	private String checkProductPattern(Expression e, Set<FreeIdentifier> seenIdents) {
+		if (e.getTag() == MAPSTO) {
+			var bin = (BinaryExpression) e;
+			String error = checkProductPattern(bin.getLeft(), seenIdents);
+			if (error == null) {
+				error = checkProductPattern(bin.getRight(), seenIdents);
+			}
+			return error;
+		}
+		if (e.getTag() == FREE_IDENT) {
+			if (seenIdents.contains(e)) {
+				return "Identifier " + e + " appears twice in pattern";
+			}
+			seenIdents.add((FreeIdentifier) e);
+			return null;
+		}
+		return "Patterns with mapsto must only contain free identifiers";
 	}
 
 	@Override

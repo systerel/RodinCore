@@ -45,9 +45,15 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		// Expression not typecheckable
 		assertReasonerFailure("⊤ |- ⊤", makeInput("x"), "Failed type checking input: Variable has an unknown type");
 		// Input is a predicate, but not an equality
-		assertReasonerFailure("⊤ |- ⊤", makeInput("x>2"), "Expect an expression or a predicate in the form ident=expr");
+		assertReasonerFailure("⊤ |- ⊤", makeInput("x>2"), "Expect an expression or a predicate in the form pattern=expr");
 		// Expression instead of identifier for name
-		assertReasonerFailure("⊤ |- ⊤", makeInput("1=2"), "Expect an expression or a predicate in the form ident=expr");
+		assertReasonerFailure("⊤ |- ⊤", makeInput("1=2"), "Expect an expression or a predicate in the form pattern=expr");
+		// Pattern matching with incompatible mapsto
+		assertReasonerFailure("⊤ |- ⊤", makeInput("a↦b=0"), "Type check failed for pattern a ↦ b and expression 0");
+		// Pattern matching with duplicate names
+		assertReasonerFailure("⊤ |- ⊤", makeInput("a↦a=x", "x=ℤ×ℤ"), "Identifier a appears twice in pattern");
+		// Pattern matching with mapsto and arbitrary expression
+		assertReasonerFailure("⊤ |- ⊤", makeInput("0↦a=0↦1"), "Patterns with mapsto must only contain free identifiers");
 	}
 
 	@Test
@@ -67,6 +73,18 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerSuccess("|- x+1 = 2", makeInput("x=1"), //
 				"{x=ℤ}[][][] |- ⊤", //
 				"{}[][][x0 = 1] |- x+1 = 2");
+		// Simple pattern matching with pair
+		assertReasonerSuccess("|- x=0↦0", makeInput("a↦b=x", "x=ℤ×ℤ"), //
+				"{x=ℤ×ℤ}[][][] |- ⊤", //
+				"{x=ℤ×ℤ}[][][a↦b=x] |- x=0↦0");
+		// Pattern matching with conflict
+		assertReasonerSuccess("y=1 |- x=0↦0", makeInput("x↦y=x", "x=ℤ×ℤ"), //
+				"{x=ℤ×ℤ}[][][y=1] |- ⊤", //
+				"{x=ℤ×ℤ}[][][y=1 ;; x0↦y0=x] |- x=0↦0");
+		// Pattern matching more complex expression
+		assertReasonerSuccess("|- x=(0↦TRUE)↦((0↦FALSE)↦1)", makeInput("(a↦b)↦(c↦d)=x", "x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)"), //
+				"{x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)}[][][] |- ⊤", //
+				"{x=(ℤ×BOOL)×((ℤ×BOOL)×ℤ)}[][][(a↦b)↦(c↦d)=x] |- x=(0↦TRUE)↦((0↦FALSE)↦1)");
 	}
 
 	@Test
