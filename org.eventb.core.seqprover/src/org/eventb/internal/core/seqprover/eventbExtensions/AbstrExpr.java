@@ -115,17 +115,17 @@ public class AbstrExpr implements IReasoner {
 			if (antecedents.length != 2) {
 				throw deserializationError("Serialized input of ae should have two antecedents");
 			}
-			FreeIdentifier[] idents = antecedents[1].getAddedFreeIdents();
-			if (idents.length != 1) {
-				throw deserializationError("Serialized input of ae should have added a single identifier");
+			Set<FreeIdentifier> idents = Set.of(antecedents[1].getAddedFreeIdents());
+			if (idents.size() == 0) {
+				throw deserializationError("Serialized input of ae should have added at least one identifier");
 			}
 			// Multiple hypotheses may have been added: WD conditions in addition to the
-			// definition of the added identifier
+			// definition of all the added identifiers
 			for (var hyp : antecedents[1].getAddedHyps()) {
 				if (hyp.getTag() == EQUAL) {
 					var rel = (RelationalPredicate) hyp;
-					if (rel.getLeft().equals(idents[0])) {
-						pattern = idents[0];
+					if (idents.equals(Set.of(rel.getLeft().getFreeIdentifiers()))) {
+						pattern = rel.getLeft();
 						expression = rel.getRight();
 						break;
 					}
