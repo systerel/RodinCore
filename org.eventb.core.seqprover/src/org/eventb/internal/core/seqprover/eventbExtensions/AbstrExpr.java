@@ -15,15 +15,19 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.stream.Collectors.joining;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.parseExpression;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.parsePredicate;
-import static org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiation.genFreshFreeIdent;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.typeCheckClosed;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -199,33 +203,40 @@ public class AbstrExpr implements IReasoner {
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 
+		final FormulaFactory ff = seq.getFormulaFactory();
+
 		// Extract input name and expression from formula
 		Expression expr = input.getExpression();
 		Expression pattern = input.getPattern();
-		String nameBase;
 		if (pattern == null) {
-			nameBase = "ae"; // Default name if none provided by the user
+			pattern = ff.makeFreeIdentifier("ae", null); // Default name if none provided by the user
 		} else {
 			if (pattern.getTag() != FREE_IDENT) {
 				return reasonerFailure(this, reasonerInput,
 						"Expect an expression or a predicate in the form ident=expr");
 			}
-			nameBase = ((FreeIdentifier) pattern).getName();
 		}
 
+		// Generate fresh free identifiers
+		List<BoundIdentDecl> bound = new ArrayList<>();
+		var boundPattern = pattern.bindAllFreeIdents(bound);
+		var exists = ff.makeQuantifiedPredicate(EXISTS, bound,
+				ff.makeRelationalPredicate(EQUAL, boundPattern, expr, null), null);
+		if (!typeCheckClosed(exists, seq.typeEnvironment())) {
+			return reasonerFailure(this, reasonerInput,
+					"Type check of pattern " + pattern + " and expression " + expr + " failed");
+		}
+		var freeIdents = seq.typeEnvironment().makeBuilder().makeFreshIdentifiers(exists.getBoundIdentDecls());
+				
 		// We can now assume that lemma has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the lemma
-		final FormulaFactory ff = seq.getFormulaFactory();
 		final Predicate exprWD = DLib.WD(expr);
 		final Set<Predicate> exprWDs = Lib.breakPossibleConjunct(exprWD);
 		DLib.removeTrue(ff, exprWDs);
 		
-		// Generate a fresh free identifier
-		final FreeIdentifier freeIdent = genFreshFreeIdent(seq.typeEnvironment(), nameBase, expr.getType());
-		
 		// Generate the equality predicate
-		final Predicate aeEq = DLib.makeEq(freeIdent, expr);
+		final Predicate aeEq = exists.instantiate(freeIdents, ff);
 		
 		// Generate the antecedents
 		final IAntecedent[] antecedents = new IAntecedent[2];
@@ -240,7 +251,7 @@ public class AbstrExpr implements IReasoner {
 		addedHyps.add(aeEq);
 		antecedents[1] = ProverFactory.makeAntecedent(
 				null, addedHyps,
-				new FreeIdentifier[] {freeIdent}, null);
+				freeIdents, null);
 		
 		// Generate the proof rule
 		return ProverFactory.makeProofRule(this, input, null,
