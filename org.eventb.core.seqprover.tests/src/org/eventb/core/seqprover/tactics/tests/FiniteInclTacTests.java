@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetMinusShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
@@ -58,6 +59,9 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		// works with Equality (2/2)
 		assertSuccess(prefix + "B=A ;; finite(B) |- finite(A)", //
 				expectedShape);
+		// works with set minus
+		assertSuccess(prefix + "finite(A) |- finite(A ∖ B)", //
+				finiteSetMinusShape(hyp()));
 		// no free identifier
 		assertSuccess(prefix + "C∈ℙ(ℤ) ;; A∩C⊆B ;; finite(B) |- finite(A∩C)",
 				expectedShape);
@@ -82,6 +86,8 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- ⊤ ");
 		// Nothing to do
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A) ");
+		// Set minus without right hypothesis
+		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A ∖ B) ");
 	}
 
 	private void assertSuccess(String typeEnvImage, String defaultHypsImage,

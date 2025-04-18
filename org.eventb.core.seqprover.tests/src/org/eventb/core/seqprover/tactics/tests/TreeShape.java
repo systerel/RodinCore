@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2024 Systerel and others.
+ * Copyright (c) 2008, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
@@ -464,6 +465,18 @@ public abstract class TreeShape {
 		}
 	}
 
+	private static class FiniteSetMinusShape extends VoidShape {
+
+		public FiniteSetMinusShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteSetMinus.REASONER_ID;
+		}
+	}
+
 	private static abstract class HypothesisShape extends TreeShape {
 
 		private final Predicate predicate;
@@ -723,6 +736,10 @@ public abstract class TreeShape {
 
 	public static TreeShape finiteSetShape(Expression exp, TreeShape... children) {
 		return new FiniteSetShape(exp, children);
+	}
+
+	public static TreeShape finiteSetMinusShape(TreeShape... children) {
+		return new FiniteSetMinusShape(children);
 	}
 
 	public static TreeShape conjI(TreeShape... children) {

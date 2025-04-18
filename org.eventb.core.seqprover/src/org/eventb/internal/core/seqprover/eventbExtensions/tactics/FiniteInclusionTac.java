@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Systerel and others.
+ * Copyright (c) 2014, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     INP Toulouse - handle set minus
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
@@ -20,6 +22,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -29,11 +32,17 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 
 /**
- * Discharges a sequent such as : <code>A op B, finite(B) ⊦ finite(A)</code>
+ * Discharges simple proofs of finiteness.
+ *
+ * <ul>
+ * <li>
+ * For sequents such as: <code>A op B, finite(B) ⊦ finite(A)</code>
  * such that <code>A op B</code> entails that <code>A ⊆ B</code>.
  * <p>
  * Tries to find a hypothesis of the form finite(B) such that B is a finite
@@ -43,10 +52,18 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
  * Fails otherwise. Note that we do not fail in the case where the WD subgoal is
  * not identically true, but leave it undischarged.
  * </p>
+ * </li>
+ * <li>
+ * For sequents such as: <code>finite(A) ⊦ finite(A ∖ B)</code>, applies the
+ * FiniteSetMinus reasoner, then the Hyp reasoner on the subgoal.
+ * </li>
+ * </ul>
  * 
  * @author Josselin Dolhen
  */
 public class FiniteInclusionTac implements ITactic {
+
+	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
 
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
@@ -56,8 +73,19 @@ public class FiniteInclusionTac implements ITactic {
 			return "Goal is not of the form finite(S)";
 		}
 		final Expression goalSet = ((SimplePredicate) goal).getExpression();
+		switch (goalSet.getTag()) {
+		case SETMINUS:
+			if (applyFiniteSetMinus(ptNode, (BinaryExpression) goalSet, pm)) {
+				return null;
+			}
+			break; // Try finiteSet if finiteSetMinus failed
+		}
+		return applyFiniteSet(ptNode, goalSet, pm);
+	}
+
+	private String applyFiniteSet(IProofTreeNode ptNode, Expression goalSet, IProofMonitor pm) {
 		final Set<Expression> finiteSets = extractFiniteSupersets(
-				sequent.visibleHypIterable(), goalSet);
+				ptNode.getSequent().visibleHypIterable(), goalSet);
 		if (finiteSets.isEmpty()) {
 			return "Tactic unapplicable";
 		}
@@ -75,6 +103,23 @@ public class FiniteInclusionTac implements ITactic {
 			return "Tactic fails";
 		}
 		return null;
+	}
+
+	private boolean applyFiniteSetMinus(IProofTreeNode ptNode, BinaryExpression goalSet, IProofMonitor pm) {
+		var ff = ptNode.getFormulaFactory();
+		if (!ptNode.getSequent().containsHypothesis(ff.makeSimplePredicate(KFINITE, goalSet.getLeft(), null))) {
+			return false;
+		}
+		Object result = reasonerTac(new FiniteSetMinus(), EMPTY_INPUT).apply(ptNode, pm);
+		if (result != null) {
+			return false;
+		}
+		var openDescendants = ptNode.getOpenDescendants();
+		if (openDescendants.length != 1 || hyp().apply(openDescendants[0], pm) != null) {
+			ptNode.pruneChildren();
+			return false;
+		}
+		return true;
 	}
 
 	/**
