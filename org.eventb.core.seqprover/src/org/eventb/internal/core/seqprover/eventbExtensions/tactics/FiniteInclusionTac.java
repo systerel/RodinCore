@@ -7,10 +7,11 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     INP Toulouse - handle set minus
+ *     INP Toulouse - handle set minus, intersection
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.SETMINUS;
@@ -22,6 +23,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
@@ -34,8 +36,10 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
+import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 
 /**
  * Discharges simple proofs of finiteness.
@@ -56,6 +60,10 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
  * <li>
  * For sequents such as: <code>finite(A) ⊦ finite(A ∖ B)</code>, applies the
  * FiniteSetMinus reasoner, then the Hyp reasoner on the subgoal.
+ * </li>
+ * <li>
+ * For sequents such as: <code>finite(S_i) ⊦ finite(S_1 ∩ ... ∩ S_n)</code>,
+ * applies the FiniteInter reasoner, then the HypOr reasoner on the subgoal.
  * </li>
  * </ul>
  * 
@@ -79,6 +87,11 @@ public class FiniteInclusionTac implements ITactic {
 				return null;
 			}
 			break; // Try finiteSet if finiteSetMinus failed
+		case BINTER:
+			if (applyFiniteInter(ptNode, (AssociativeExpression) goalSet, pm)) {
+				return null;
+			}
+			break; // Try finiteSet if finiteInter failed
 		}
 		return applyFiniteSet(ptNode, goalSet, pm);
 	}
@@ -116,6 +129,30 @@ public class FiniteInclusionTac implements ITactic {
 		}
 		var openDescendants = ptNode.getOpenDescendants();
 		if (openDescendants.length != 1 || hyp().apply(openDescendants[0], pm) != null) {
+			ptNode.pruneChildren();
+			return false;
+		}
+		return true;
+	}
+
+	private boolean applyFiniteInter(IProofTreeNode ptNode, AssociativeExpression goalSet, IProofMonitor pm) {
+		var children = Set.of(goalSet.getChildren());
+		boolean found = false;
+		for (Predicate hyp : ptNode.getSequent().visibleHypIterable()) {
+			if (hyp.getTag() == KFINITE && children.contains(((SimplePredicate) hyp).getExpression())) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			return false;
+		}
+		Object result = reasonerTac(new FiniteInter(), EMPTY_INPUT).apply(ptNode, pm);
+		if (result != null) {
+			return false;
+		}
+		var openDescendants = ptNode.getOpenDescendants();
+		if (openDescendants.length != 1 || reasonerTac(new HypOr(), EMPTY_INPUT).apply(openDescendants[0], pm) != null) {
 			ptNode.pruneChildren();
 			return false;
 		}

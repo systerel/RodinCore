@@ -11,9 +11,11 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteInterShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetMinusShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.hypOr;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
@@ -62,6 +64,15 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		// works with set minus
 		assertSuccess(prefix + "finite(A) |- finite(A ∖ B)", //
 				finiteSetMinusShape(hyp()));
+		// works with set intersection: left-hand-side (1/3)
+		assertSuccess(prefix + "finite(B) |- finite(B ∩ A)", //
+				finiteInterShape(hypOr()));
+		// works with set intersection: right-hand-side (2/3)
+		assertSuccess(prefix + "finite(B) |- finite(A ∩ B)", //
+				finiteInterShape(hypOr()));
+		// works with set intersection: associativity with many sets (3/3)
+		assertSuccess(prefix + "C∈ℙ(ℤ) ;; finite(C) |- finite(A ∩ B ∩ C ∩ D ∩ E)", //
+				finiteInterShape(hypOr()));
 		// no free identifier
 		assertSuccess(prefix + "C∈ℙ(ℤ) ;; A∩C⊆B ;; finite(B) |- finite(A∩C)",
 				expectedShape);
@@ -88,6 +99,8 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A) ");
 		// Set minus without right hypothesis
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A ∖ B) ");
+		// Set intersection without right hypothesis
+		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A |- finite(A ∩ B) ");
 	}
 
 	private void assertSuccess(String typeEnvImage, String defaultHypsImage,

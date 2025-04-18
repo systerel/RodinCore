@@ -44,9 +44,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -294,6 +296,18 @@ public abstract class TreeShape {
 
 	}
 
+	private static class HypOrShape extends VoidShape {
+
+		public HypOrShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return HypOr.REASONER_ID;
+		}
+	}
+
 	private static class TrueGoalShape extends VoidShape {
 
 		public TrueGoalShape(TreeShape[] expChildren) {
@@ -474,6 +488,18 @@ public abstract class TreeShape {
 		@Override
 		protected String getReasonerID() {
 			return FiniteSetMinus.REASONER_ID;
+		}
+	}
+
+	private static class FiniteInterShape extends VoidShape {
+
+		public FiniteInterShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteInter.REASONER_ID;
 		}
 	}
 
@@ -721,6 +747,10 @@ public abstract class TreeShape {
 		return new HypShape(children);
 	}
 
+	public static TreeShape hypOr(TreeShape... children) {
+		return new HypOrShape(children);
+	}
+
 	public static TreeShape totalDom(Predicate predicate, String position,
 			Expression substitute, TreeShape... children) {
 		return new TotalDomShape(predicate, position, substitute,children);
@@ -740,6 +770,10 @@ public abstract class TreeShape {
 
 	public static TreeShape finiteSetMinusShape(TreeShape... children) {
 		return new FiniteSetMinusShape(children);
+	}
+
+	public static TreeShape finiteInterShape(TreeShape... children) {
+		return new FiniteInterShape(children);
 	}
 
 	public static TreeShape conjI(TreeShape... children) {
