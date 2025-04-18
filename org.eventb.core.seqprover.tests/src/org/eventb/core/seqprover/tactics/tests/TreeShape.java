@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2024 Systerel and others.
+ * Copyright (c) 2008, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -293,6 +297,18 @@ public abstract class TreeShape {
 
 	}
 
+	private static class HypOrShape extends VoidShape {
+
+		public HypOrShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return HypOr.REASONER_ID;
+		}
+	}
+
 	private static class TrueGoalShape extends VoidShape {
 
 		public TrueGoalShape(TreeShape[] expChildren) {
@@ -461,6 +477,42 @@ public abstract class TreeShape {
 		@Override
 		protected IReasonerInput getInput() {
 			return new SingleExprInput(exp);
+		}
+	}
+
+	private static class FiniteSetMinusShape extends VoidShape {
+
+		public FiniteSetMinusShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteSetMinus.REASONER_ID;
+		}
+	}
+
+	private static class FiniteInterShape extends VoidShape {
+
+		public FiniteInterShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteInter.REASONER_ID;
+		}
+	}
+
+	private static class FiniteUnionShape extends VoidShape {
+
+		public FiniteUnionShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteUnion.REASONER_ID;
 		}
 	}
 
@@ -708,6 +760,10 @@ public abstract class TreeShape {
 		return new HypShape(children);
 	}
 
+	public static TreeShape hypOr(TreeShape... children) {
+		return new HypOrShape(children);
+	}
+
 	public static TreeShape totalDom(Predicate predicate, String position,
 			Expression substitute, TreeShape... children) {
 		return new TotalDomShape(predicate, position, substitute,children);
@@ -723,6 +779,18 @@ public abstract class TreeShape {
 
 	public static TreeShape finiteSetShape(Expression exp, TreeShape... children) {
 		return new FiniteSetShape(exp, children);
+	}
+
+	public static TreeShape finiteSetMinusShape(TreeShape... children) {
+		return new FiniteSetMinusShape(children);
+	}
+
+	public static TreeShape finiteInterShape(TreeShape... children) {
+		return new FiniteInterShape(children);
+	}
+
+	public static TreeShape finiteUnionShape(TreeShape... children) {
+		return new FiniteUnionShape(children);
 	}
 
 	public static TreeShape conjI(TreeShape... children) {
