@@ -20,7 +20,6 @@ import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtensionTests.AbstractReasonerTests;
@@ -53,11 +52,11 @@ public class AbstrExprTests extends AbstractReasonerTests {
 
 	@Test
 	public void success() throws Exception {
-		assertReasonerSuccess("x=1 ;; x+1 = 2 |- (x+1)+1 = 3", makeInput("x+1", mTypeEnvironment("x=ℤ")),
+		assertReasonerSuccess("x=1 ;; x+1 = 2 |- (x+1)+1 = 3", makeInput("x+1", "x=ℤ"),
 				"{x=ℤ}[][][x=1;; x+1=2] |- ⊤", //
 				"{ae=ℤ; x=ℤ}[][][x=1;; x+1=2;; ae=x+1] |- (x+1)+1=3");
 		// WD added as hypothesis
-		assertReasonerSuccess("|- a÷b = c", makeInput("a÷b", mTypeEnvironment("a=ℤ;b=ℤ;c=ℤ")),
+		assertReasonerSuccess("|- a÷b = c", makeInput("a÷b", "a=ℤ;b=ℤ;c=ℤ"),
 				"{a=ℤ; b=ℤ; c=ℤ}[][][] |- b ≠ 0", //
 				"{}[][][b ≠ 0 ;; ae=a÷b] |- a÷b = c");
 		// Fresh name provided
@@ -98,8 +97,8 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		return new AbstrExpr.Input(input, ff.makeTypeEnvironment());
 	}
 
-	private IReasonerInput makeInput(String input, ITypeEnvironment typeEnv) {
-		return new AbstrExpr.Input(input, typeEnv);
+	private IReasonerInput makeInput(String input, String typeEnv) {
+		return new AbstrExpr.Input(input, mTypeEnvironment(typeEnv));
 	}
 	
 }
