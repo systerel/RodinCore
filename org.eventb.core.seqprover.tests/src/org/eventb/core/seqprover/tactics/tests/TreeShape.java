@@ -46,6 +46,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
@@ -503,6 +504,18 @@ public abstract class TreeShape {
 		}
 	}
 
+	private static class FiniteUnionShape extends VoidShape {
+
+		public FiniteUnionShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FiniteUnion.REASONER_ID;
+		}
+	}
+
 	private static abstract class HypothesisShape extends TreeShape {
 
 		private final Predicate predicate;
@@ -774,6 +787,10 @@ public abstract class TreeShape {
 
 	public static TreeShape finiteInterShape(TreeShape... children) {
 		return new FiniteInterShape(children);
+	}
+
+	public static TreeShape finiteUnionShape(TreeShape... children) {
+		return new FiniteUnionShape(children);
 	}
 
 	public static TreeShape conjI(TreeShape... children) {

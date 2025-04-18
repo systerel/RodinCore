@@ -7,16 +7,19 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     INP Toulouse - handle set minus, intersection
+ *     INP Toulouse - handle set minus, intersection, union
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.conjI;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 
@@ -39,6 +42,7 @@ import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteUnion;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 
 /**
@@ -64,6 +68,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
  * <li>
  * For sequents such as: <code>finite(S_i) ⊦ finite(S_1 ∩ ... ∩ S_n)</code>,
  * applies the FiniteInter reasoner, then the HypOr reasoner on the subgoal.
+ * </li>
+ * <li>
+ * For sequents such as:
+ * <code>finite(S_1) ;; ... ;; finite(S_n) ⊦ finite(S_1 ∪ ... ∪ S_n)</code>,
+ * applies the FiniteUnion reasoner, then the ConjI reasoner on the subgoal,
+ * then the Hyp reasoner on the <code>n</code> subgoals.
  * </li>
  * </ul>
  * 
@@ -92,6 +102,11 @@ public class FiniteInclusionTac implements ITactic {
 				return null;
 			}
 			break; // Try finiteSet if finiteInter failed
+		case BUNION:
+			if (applyFiniteUnion(ptNode, (AssociativeExpression) goalSet, pm)) {
+				return null;
+			}
+			break; // Try finiteSet if finiteUnion failed
 		}
 		return applyFiniteSet(ptNode, goalSet, pm);
 	}
@@ -153,6 +168,28 @@ public class FiniteInclusionTac implements ITactic {
 		}
 		var openDescendants = ptNode.getOpenDescendants();
 		if (openDescendants.length != 1 || reasonerTac(new HypOr(), EMPTY_INPUT).apply(openDescendants[0], pm) != null) {
+			ptNode.pruneChildren();
+			return false;
+		}
+		return true;
+	}
+
+	private boolean applyFiniteUnion(IProofTreeNode ptNode, AssociativeExpression goalSet, IProofMonitor pm) {
+		Set<Expression> finiteSets = new HashSet<>();
+		for (Predicate hyp : ptNode.getSequent().visibleHypIterable()) {
+			if (hyp.getTag() == KFINITE) {
+				finiteSets.add(((SimplePredicate) hyp).getExpression());
+			}
+		}
+		var children = goalSet.getChildren();
+		if (!finiteSets.containsAll(asList(children))) {
+			return false;
+		}
+		Object result = reasonerTac(new FiniteUnion(), EMPTY_INPUT).apply(ptNode, pm);
+		if (result != null) {
+			return false;
+		}
+		if (!applyConjThenHyp(children.length, ptNode, pm)) {
 			ptNode.pruneChildren();
 			return false;
 		}
@@ -238,6 +275,26 @@ public class FiniteInclusionTac implements ITactic {
 		// Apply HYP to discharge "finite(B)"
 		if (hyp().apply(openDescendants[2], pm) != null) {
 			return false;
+		}
+		return true;
+	}
+
+	private boolean applyConjThenHyp(int count, IProofTreeNode ptNode, IProofMonitor pm) {
+		IProofTreeNode[] openDescendants = ptNode.getOpenDescendants();
+		if (openDescendants.length != 1) {
+			return false;
+		}
+		if (conjI().apply(openDescendants[0], pm) != null) {
+			return false;
+		}
+		openDescendants = openDescendants[0].getOpenDescendants();
+		if (openDescendants.length != count) {
+			return false;
+		}
+		for (var descendent : openDescendants) {
+			if (hyp().apply(descendent, pm) != null) {
+				return false;
+			}
 		}
 		return true;
 	}

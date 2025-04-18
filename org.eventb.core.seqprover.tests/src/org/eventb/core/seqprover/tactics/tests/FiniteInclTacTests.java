@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.conjI;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteInterShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetMinusShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteSetShape;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.finiteUnionShape;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hypOr;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
@@ -73,6 +75,12 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		// works with set intersection: associativity with many sets (3/3)
 		assertSuccess(prefix + "C∈ℙ(ℤ) ;; finite(C) |- finite(A ∩ B ∩ C ∩ D ∩ E)", //
 				finiteInterShape(hypOr()));
+		// works with set union: two sets (1/2)
+		assertSuccess(prefix + "finite(A) ;; finite(B) |- finite(A ∪ B)", //
+				finiteUnionShape(conjI(hyp(), hyp())));
+		// works with set union: associativity with many sets (2/2)
+		assertSuccess(prefix + "finite(A) ;; finite(B) ;; finite(C) ;; finite(D) |- finite(A ∪ B ∪ C ∪ D)", //
+				finiteUnionShape(conjI(hyp(), hyp(), hyp(), hyp())));
 		// no free identifier
 		assertSuccess(prefix + "C∈ℙ(ℤ) ;; A∩C⊆B ;; finite(B) |- finite(A∩C)",
 				expectedShape);
@@ -101,6 +109,8 @@ public class FiniteInclTacTests extends AbstractTacticTests {
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A ∖ B) ");
 		// Set intersection without right hypothesis
 		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A |- finite(A ∩ B) ");
+		// Set union without right hypothesis
+		assertFailure(" ;H; ;S; A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;; B⊆A ;; finite(B) |- finite(A ∪ B) ");
 	}
 
 	private void assertSuccess(String typeEnvImage, String defaultHypsImage,
