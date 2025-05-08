@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<www-basedir>/tmp/rodin-build/rodin-3.9</www-basedir>
+		<www-basedir>/tmp/rodin-build/rodin-3.10</www-basedir>
 
 		<!-- Plug-in versions -->
 		<tycho-version>4.0.9</tycho-version>
@@ -21,9 +21,9 @@
 
 	<repositories>
 		<repository>
-			<id>2023-12-4.30</id>
+			<id>2024-12-4.34</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.30/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.34/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
