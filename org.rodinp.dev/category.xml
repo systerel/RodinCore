@@ -36,6 +36,6 @@
    <!-- Tests of the core Rodin platform -->
    <feature id="org.rodinp.platform.tests.source"/>
    <bundle id="org.junit.source"/>
-   <bundle id="org.hamcrest.core.source"/>
+   <bundle id="org.hamcrest.source"/>
 
 </site>

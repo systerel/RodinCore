@@ -2,7 +2,7 @@
 <feature
       id="org.rodinp.platform.tests"
       label="%featureName"
-      version="3.9.0.qualifier"
+      version="3.10.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -23,7 +23,7 @@
 
    <requires>
       <import plugin="org.junit.source"/>
-      <import plugin="org.hamcrest.core"/>
+      <import plugin="org.hamcrest.source"/>
    </requires>
 
    <plugin

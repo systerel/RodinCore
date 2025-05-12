@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.platform" version="4.30" match="compatible"/>
+      <import feature="org.eclipse.platform" version="4.34" match="compatible"/>
    </requires>
 
    <plugin
