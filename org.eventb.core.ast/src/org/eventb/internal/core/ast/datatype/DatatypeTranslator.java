@@ -232,14 +232,14 @@ public class DatatypeTranslator {
 		if (trgArgTypes.length == 0) {
 			return trgDatatype;
 		}
-		final Type trgProdType = makeTrgPowProdType(trgArgTypes);
+		final Type trgProdType = mTrgProdPowType(trgArgTypes);
 		return mTrgRelType(trgProdType, mTrgPowerSetType(trgDatatype));
 	}
 
 	/*
 	 * Returns the type "ℙ(T1) × ... × ℙ(Tn)", given T1, ..., Tn.
 	 */
-	private Type makeTrgPowProdType(Type[] trgTypes) {
+	private Type mTrgProdPowType(Type[] trgTypes) {
 		Type trgProdType = mTrgPowerSetType(trgTypes[0]);
 		for (int i = 1; i < trgTypes.length; i++) {
 			trgProdType = mTrgProdType(trgProdType, mTrgPowerSetType(trgTypes[i]));
