@@ -315,16 +315,19 @@ public class DatatypeTranslator {
 			if (hasNoSetConstructor || src.isATypeExpression()) {
 				return trgDatatypeExpr;
 			} else {
-				final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
-				return mTrgBinExpr(FUNIMAGE, trgSetCons, trgMaplets);
+				return mTrgFunImage(trgSetCons, trgChildExprs);
 			}
 		}
 		final Expression trgExpr = replacements.get(ext);
-		if (trgChildExprs.length == 0) {
-			return trgExpr;
+		return mTrgFunImage(trgExpr, trgChildExprs);
+	}
+
+	protected Expression mTrgFunImage(Expression trgFun, Expression[] trgArgs) {
+		if (trgArgs.length == 0) {
+			return trgFun;
 		}
-		final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
-		return mTrgBinExpr(FUNIMAGE, trgExpr, trgMaplets);
+		var trgMaplets = combineTrgExpr(MAPSTO, trgArgs);
+		return mTrgBinExpr(FUNIMAGE, trgFun, trgMaplets);
 	}
 
 	private Expression mTrgRelImage(Expression trgRel, Expression[] trgSets) {
@@ -443,7 +446,7 @@ public class DatatypeTranslator {
 	 */
 	private Predicate makeSetConstructorCompletenessAxiom() {
 		var typeParamsAsExpr = stream(trgTypeParameters).map(Type::toExpression).toArray(Expression[]::new);
-		return mTrgEquals(mTrgBinExpr(FUNIMAGE, trgSetCons, combineTrgExpr(MAPSTO, typeParamsAsExpr)), trgDatatypeExpr);
+		return mTrgEquals(mTrgFunImage(trgSetCons, typeParamsAsExpr), trgDatatypeExpr);
 	}
 
 	private Expression[] makeSrcBoundIdentifiers() {
