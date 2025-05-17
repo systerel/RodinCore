@@ -59,6 +59,7 @@ public class ConstructorExtension implements IConstructorExtension {
 	private final String name;
 	private final boolean _needsTypeAnnotation;
 	private final ConstructorArgument[] arguments;
+	private final int sameTypeIndex;
 
 	private final String id;
 	private final IExtensionKind kind;
@@ -76,6 +77,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		this.groupId = computeGroup(nbArgs);
 		this.kind = computeKind(nbArgs);
 		this.arguments = new ConstructorArgument[nbArgs];
+		this.sameTypeIndex = builder.getSameTypeIndex();
 		this.destructors = new HashMap<String, DestructorExtension>(nbArgs);
 		int count = 0;
 		for (final DatatypeArgument builderArg : builderArgs) {
@@ -173,6 +175,19 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
+		final Type resultType = inferResultType(childExprs, mediator);
+		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
+	}
+
+	/*
+	 * Tries to infer the result type by various means, except full pattern
+	 * matching.
+	 */
+	protected Type inferResultType(Expression[] childExprs, ITypeMediator mediator) {
+		if (sameTypeIndex >= 0) {
+			return childExprs[sameTypeIndex].getType();
+		}
+		
 		var typeConstr = origin.getTypeConstructor();
 		if (typeConstr.getNbParams() != 0) {
 			// either a proposed type or typechecking is required
@@ -181,7 +196,7 @@ public class ConstructorExtension implements IConstructorExtension {
 
 		// Not a generic datatype, it is easy to create the result type
 		final Type resultType = mediator.makeParametricType(typeConstr, emptyList());
-		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
+		return resultType;
 	}
 
 	@Override
