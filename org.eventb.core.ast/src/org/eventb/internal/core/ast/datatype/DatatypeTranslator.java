@@ -463,13 +463,14 @@ public class DatatypeTranslator {
 		return idents;
 	}
 
-	private Expression[] translate(Expression[] srcExprs) {
-		final int length = srcExprs.length;
-		final Expression[] trgResult = new Expression[length];
-		for (int i = 0; i < length; i++) {
-			trgResult[i] = srcExprs[i].translateDatatype(translation);
-		}
-		return trgResult;
+	private BoundIdentifier[] translate(BoundIdentifier[] srcBIs) {
+		return stream(srcBIs).map(this::translate).toArray(BoundIdentifier[]::new);
+	}
+
+	private BoundIdentifier translate(BoundIdentifier bi) {
+		var boundIndex = bi.getBoundIndex();
+		var trgType = translation.translate(bi.getType());
+		return trgFactory.makeBoundIdentifier(boundIndex, null, trgType);
 	}
 
 	private Expression makeTrgSetConstructorPart(IConstructorExtension cons,
