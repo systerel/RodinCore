@@ -292,6 +292,36 @@ public class TestDatatypes extends AbstractTests {
 	}
 
 	@Test
+	public void testDatatypeConstructorTypeSynthesis() throws Exception {
+		// No argument is typed
+		assertType("cons(a, b)", null, LIST_FAC);
+		
+		// Only first argument is typed
+		assertType("cons(1, b)", null, LIST_FAC);
+		
+		// Only second argument is typed
+		assertType("cons(a, nil ⦂ List(ℤ))", null, LIST_FAC);
+		
+		// Incompatible argument types
+		assertType("cons(1, nil ⦂ List(BOOL))", null, LIST_FAC);
+
+		// All arguments have compatible types
+		assertType("cons(1, nil ⦂ List(ℤ))", "List(ℤ)", LIST_FAC);
+		
+		// Non generic datatype
+		var dt_fac = mDatatypeFactory(ff, "DT ::= c1 || c2[ℤ]");
+		assertType("c1", "DT", dt_fac);
+		assertType("c2(a)", null, dt_fac); // argument is not typed
+		assertType("c2(1)", "DT", dt_fac);
+	}
+
+	private void assertType(String formula, String expectedImage, FormulaFactory fac) {
+		var expr = parseExpr(formula, fac);
+		var expected = expectedImage == null ? null : parseType(expectedImage, fac);
+		assertEquals(expected, expr.getType());
+	}
+
+	@Test
 	public void testDatatypeDestructors() throws Exception {
 		assertNotNull("head destructor not found", EXT_HEAD);
 

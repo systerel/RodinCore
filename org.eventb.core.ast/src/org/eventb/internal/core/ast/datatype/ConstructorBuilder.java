@@ -48,6 +48,17 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 	// May include the datatype itself if this constructor is not basic.
 	private final Set<GivenType> knownFormalTypeParameters;
 
+	/*
+	 * The index of an argument that carries the same type as the result of this
+	 * constructor, or a negative value if none.
+	 * 
+	 * This argument index can be used to ease type synthesis.
+	 * 
+	 * For instance, for the "cons" of a "List" datatype, this field will contain 1
+	 * (second argument is a list).
+	 */
+	private int sameTypeIndex = -1;
+	
 	ConstructorBuilder(DatatypeBuilder dtBuilder, String name) {
 		this.dtBuilder = dtBuilder;
 		this.name = name;
@@ -60,6 +71,10 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		dtBuilder.checkNotFinalized();
 		arguments.add(new DatatypeArgument(dtBuilder, argName, argType));
 		knownFormalTypeParameters.addAll(argType.getGivenTypes());
+		if (argType instanceof GivenType givenType //
+				&& givenType.getName().equals(dtBuilder.getName())) {
+			sameTypeIndex = arguments.size() - 1;
+		}
 	}
 
 	@Override
@@ -96,6 +111,10 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		 * test). So we can just count, rather than compare sets.
 		 */
 		return knownFormalTypeParameters.size() != dtBuilder.getTypeParameters().length;
+	}
+
+	public int getSameTypeIndex() {
+		return sameTypeIndex;
 	}
 
 	/* Must be called only when finalizing the datatype */
