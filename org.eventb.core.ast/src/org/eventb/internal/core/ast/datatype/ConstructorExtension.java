@@ -173,6 +173,15 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
+		final Type resultType = inferResultType(childExprs, mediator);
+		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
+	}
+
+	/*
+	 * Tries to infer the result type by various means, except full pattern
+	 * matching.
+	 */
+	protected Type inferResultType(Expression[] childExprs, ITypeMediator mediator) {
 		var typeConstr = origin.getTypeConstructor();
 		if (typeConstr.getNbParams() != 0) {
 			// either a proposed type or typechecking is required
@@ -181,7 +190,7 @@ public class ConstructorExtension implements IConstructorExtension {
 
 		// Not a generic datatype, it is easy to create the result type
 		final Type resultType = mediator.makeParametricType(typeConstr, emptyList());
-		return verifyType(resultType, childExprs, childPreds) ? resultType : null;
+		return resultType;
 	}
 
 	@Override
