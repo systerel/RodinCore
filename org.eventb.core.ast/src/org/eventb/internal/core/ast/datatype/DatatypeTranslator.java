@@ -233,16 +233,16 @@ public class DatatypeTranslator {
 			return trgDatatype;
 		}
 		final Type trgProdType = mTrgProdPowType(trgArgTypes);
-		return mTrgRelType(trgProdType, mTrgPowerSetType(trgDatatype));
+		return mTrgRelType(trgProdType, mTrgPowType(trgDatatype));
 	}
 
 	/*
 	 * Returns the type "ℙ(T1) × ... × ℙ(Tn)", given T1, ..., Tn.
 	 */
 	private Type mTrgProdPowType(Type[] trgTypes) {
-		Type trgProdType = mTrgPowerSetType(trgTypes[0]);
+		Type trgProdType = mTrgPowType(trgTypes[0]);
 		for (int i = 1; i < trgTypes.length; i++) {
-			trgProdType = mTrgProdType(trgProdType, mTrgPowerSetType(trgTypes[i]));
+			trgProdType = mTrgProdType(trgProdType, mTrgPowType(trgTypes[i]));
 		}
 		return trgProdType;
 	}
@@ -390,7 +390,7 @@ public class DatatypeTranslator {
 	private Predicate makeSetConstructorFixpointAxiom() {
 		final List<Predicate> trgParts = new ArrayList<>();
 		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
-		final Type trgDatatypePowerSet = mTrgPowerSetType(trgDatatype);
+		final Type trgDatatypePowerSet = mTrgPowType(trgDatatype);
 		final BoundIdentifier trgFPIdent = trgFactory.makeBoundIdentifier(0, null, trgDatatypePowerSet);
 		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
 		final var trgSet = (BinaryExpression) srcSet.translateDatatype(translation).shiftBoundIdentifiers(1);
@@ -502,7 +502,7 @@ public class DatatypeTranslator {
 		final String[] typeParamsNames = datatype.getTypeConstructor()
 				.getFormalNames();
 		for (int i = 0; i < nbTypeParams; i++) {
-			final Type trgType = mTrgPowerSetType(trgTypeParameters[i]);
+			final Type trgType = mTrgPowType(trgTypeParameters[i]);
 			final String declName = typeParamsNames[i];
 			trgResult[i] = mTrgBoundIdentDecl(declName, trgType);
 		}
@@ -586,7 +586,7 @@ public class DatatypeTranslator {
 		return srcFactory.makePowerSetType(srcType);
 	}
 
-	private Type mTrgPowerSetType(Type trgType) {
+	private Type mTrgPowType(Type trgType) {
 		return trgFactory.makePowerSetType(trgType);
 	}
 
