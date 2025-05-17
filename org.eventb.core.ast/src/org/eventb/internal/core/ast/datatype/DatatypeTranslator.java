@@ -368,7 +368,7 @@ public class DatatypeTranslator {
 	 */
 	private Predicate makeSetConstructorUnionAxiom() {
 		final List<Expression> trgParts = new ArrayList<>();
-		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
+		final BoundIdentifier[] srcBoundIdents = makeSrcBoundIdentifiers();
 		final ISetInstantiation setInst = datatype.getSetInstantiation(makeSrcSet(srcBoundIdents));
 		for (final IConstructorExtension cons : srcConstructors) {
 			Expression part = makeTrgSetConstructorPart(cons, setInst);
@@ -392,7 +392,7 @@ public class DatatypeTranslator {
 	 */
 	private Predicate makeSetConstructorFixpointAxiom() {
 		final List<Predicate> trgParts = new ArrayList<>();
-		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
+		final BoundIdentifier[] srcBoundIdents = makeSrcBoundIdentifiers();
 		final Type trgDatatypePowerSet = mTrgPowType(trgDatatype);
 		final BoundIdentifier trgFPIdent = trgFactory.makeBoundIdentifier(0, null, trgDatatypePowerSet);
 		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
@@ -422,7 +422,7 @@ public class DatatypeTranslator {
 		return trgFactory.makeRelationalPredicate(relOp, part, trgFPIdent, null);
 	}
 
-	private Expression makeSetConstructorLambda(Expression[] srcBoundIdents, Expression fixPoint) {
+	private Expression makeSetConstructorLambda(BoundIdentifier[] srcBoundIdents, Expression fixPoint) {
 		var arguments = combineTrgExpr(MAPSTO, translate(srcBoundIdents));
 		return trgFactory.makeQuantifiedExpression(CSET, makeTrgBoundIdentDecls(), mTrgTrue(),
 				mTrgBinExpr(MAPSTO, arguments, fixPoint), null, Lambda);
@@ -449,9 +449,9 @@ public class DatatypeTranslator {
 		return mTrgEquals(mTrgFunImage(trgSetCons, typeParamsAsExpr), trgDatatypeExpr);
 	}
 
-	private Expression[] makeSrcBoundIdentifiers() {
+	private BoundIdentifier[] makeSrcBoundIdentifiers() {
 		final int nbIdents = srcTypeParameters.length;
-		final Expression[] idents = new Expression[nbIdents];
+		final BoundIdentifier[] idents = new BoundIdentifier[nbIdents];
 		// De Bruijn indexes are counted backwards
 		int boundIndex = nbIdents - 1;
 		for (int i = 0; i < nbIdents; i++) {
@@ -581,7 +581,7 @@ public class DatatypeTranslator {
 		return hasSingleConstructor && srcConstructors[0].hasArguments();
 	}
 
-	private Expression mSrcBoundIdent(int i, Type srcType) {
+	private BoundIdentifier mSrcBoundIdent(int i, Type srcType) {
 		return srcFactory.makeBoundIdentifier(i, null, srcType);
 	}
 
