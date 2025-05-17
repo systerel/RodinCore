@@ -230,25 +230,30 @@ It is not required to refer to the previous value.
    </element>
 
    <element name="source">
+      <annotation>
+         <documentation>
+            Arbitrary XSL transformation:
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the fully qualified identifier of a type of file elements to which this version applies
                </documentation>
             </annotation>
          </attribute>
          <attribute name="version" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the target version of this conversion; each conversion converts from &lt;code&gt;version-1&lt;/code&gt; to &lt;code&gt;version&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="source" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The XSL transformation to apply
                </documentation>
             </annotation>
          </attribute>
