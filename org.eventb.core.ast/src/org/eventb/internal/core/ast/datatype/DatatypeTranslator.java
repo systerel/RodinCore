@@ -93,7 +93,6 @@ public class DatatypeTranslator {
 	private final IExpressionExtension srcTypeConstructor;
 	private final IDatatype datatype;
 	private final IConstructorExtension[] srcConstructors;
-	private final boolean hasDestructors;
 	private final boolean hasNoSetConstructor;
 	private final boolean hasSingleConstructor;
 
@@ -121,9 +120,7 @@ public class DatatypeTranslator {
 		// A non-empty datatype must have at least one constructor
 		assert srcConstructors.length != 0;
 
-		this.hasDestructors = hasDestructors();
-		this.hasNoSetConstructor = !hasDestructors
-				|| srcTypeParameters.length == 0;
+		this.hasNoSetConstructor = srcTypeParameters.length == 0;
 		this.hasSingleConstructor = srcConstructors.length == 1;
 
 		// The first translation must be for the type parameters to ensure
@@ -135,14 +132,6 @@ public class DatatypeTranslator {
 		this.trgDatatypeExpr = toTrgExpr(trgDatatype);
 		this.trgSetCons = getTrgSetConstructor(srcSymbol);
 		computeReplacements();
-	}
-
-	private boolean hasDestructors() {
-		for (final IConstructorExtension cons : datatype.getConstructors()) {
-			if (cons.hasArguments())
-				return true;
-		}
-		return false;
 	}
 
 	private Expression toTrgExpr(Type trgType) {

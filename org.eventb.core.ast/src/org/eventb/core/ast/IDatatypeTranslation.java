@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2024 Systerel and others.
+ * Copyright (c) 2012, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,8 +120,8 @@ public interface IDatatypeTranslation {
 	 * Moreover, there are four special cases where these predicates are
 	 * slightly modified:
 	 * <ul>
-	 * <li>when there is no type parameter or no destructor, predicates (E) and
-	 * (F) are not generated</li>
+	 * <li>when there is no type parameter, predicates (E) and (F) are not
+	 * generated</li>
 	 * <li>when all value constructors are basic, axiom (E) gets simplified to
 	 * <pre>
 	 * (E) Γ = (λ t1 ↦ t2 ↦ … ↦ tn · ⊤ ∣ ɣ1[ϕ11 × … × ϕ1k1] ∪ … ∪ ɣn[ϕn1 × … × ϕnkm])
