@@ -90,7 +90,7 @@ public class DatatypeTranslator {
 	private final ParametricType srcTypeInstance;
 	private final ITypeInstantiation srcInstantiation;
 	private final Type[] srcTypeParameters;
-	private final IExpressionExtension srcTypeConstructor;
+	private final TypeConstructorExtension srcTypeConstructor;
 	private final IDatatype datatype;
 	private final IConstructorExtension[] srcConstructors;
 	private final boolean hasNoSetConstructor;
@@ -111,9 +111,9 @@ public class DatatypeTranslator {
 		this.srcFactory = translation.getSourceFormulaFactory();
 		this.trgFactory = translation.getTargetFormulaFactory();
 		this.srcTypeInstance = typeInstance;
-		this.srcTypeConstructor = typeInstance.getExprExtension();
+		this.srcTypeConstructor = (TypeConstructorExtension) typeInstance.getExprExtension();
 		this.srcTypeParameters = typeInstance.getTypeParameters();
-		this.datatype = (IDatatype) srcTypeConstructor.getOrigin();
+		this.datatype = srcTypeConstructor.getOrigin();
 		this.srcInstantiation = datatype.getTypeInstantiation(srcTypeInstance);
 		this.srcConstructors = datatype.getConstructors();
 
