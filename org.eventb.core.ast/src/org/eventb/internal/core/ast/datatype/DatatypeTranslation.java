@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2023 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.AbstractTranslation;
 import org.eventb.internal.core.ast.FreshNameSolver;
-import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.TypeRewriter;
 
 /**
@@ -59,7 +58,7 @@ public class DatatypeTranslation extends AbstractTranslation implements
 	= new LinkedHashMap<ParametricType, DatatypeTranslator>();
 
 	private final TypeRewriter typeRewriter;
-	private final ITypeCheckingRewriter formulaRewriter;
+	private final DatatypeRewriter formulaRewriter;
 
 	public DatatypeTranslation(ISealedTypeEnvironment typenv) {
 		super(typenv);
@@ -113,7 +112,7 @@ public class DatatypeTranslation extends AbstractTranslation implements
 	}
 
 	@Override
-	public ITypeCheckingRewriter getFormulaRewriter() {
+	public DatatypeRewriter getFormulaRewriter() {
 		return formulaRewriter;
 	}
 
