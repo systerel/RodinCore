@@ -33,6 +33,7 @@ import static org.eventb.core.ast.Formula.TINJ;
 import static org.eventb.core.ast.Formula.TSUR;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
+import static org.eventb.internal.core.ast.datatype.TranslatingSetSubstitution.makeTranslatingSetSubstitution;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -356,23 +357,16 @@ public class DatatypeTranslator {
 	 * Makes the definition of the set constructor as a union of basic sets.
 	 */
 	private Predicate makeSetConstructorUnionAxiom() {
-		final List<Expression> trgParts = new ArrayList<>();
-		final BoundIdentifier[] srcBoundIdents = makeSrcBoundIdentifiers();
-		final ISetInstantiation setInst = datatype.getSetInstantiation(makeSrcSet(srcBoundIdents));
-		for (final IConstructorExtension cons : srcConstructors) {
-			Expression part = makeTrgSetConstructorPart(cons, setInst);
-			if (part.getTag() == FREE_IDENT) {
-				part = mTrgSingleton(part);
-			}
-			trgParts.add(part);
-		}
-		Expression values;
-		if (trgParts.size() == 1) {
-			values = trgParts.get(0);
-		} else {
-			values = trgFactory.makeAssociativeExpression(BUNION, trgParts, null);
-		}
-		var lambda = makeSetConstructorLambda(srcBoundIdents, values);
+		final String[] names = srcTypeConstructor.getFormalNames();
+		final BoundIdentDecl[] trgBIDs = mSetBIDs(names, trgTypeParameters);
+		final BoundIdentifier[] trgBoundIdents = mSetBoundIdents(trgTypeParameters, 0);
+		final var subst = makeTranslatingSetSubstitution(translation, srcInstantiation, null, trgBoundIdents);
+
+		final Expression[] trgConsValueSets = stream(srcConstructors) //
+				.map(cons -> makeTrgConsValueSet(cons, subst)) //
+				.toArray(Expression[]::new);
+		final Expression trgAllValues = mTrgUnion(trgConsValueSets);
+		var lambda = mTrgLambda(trgBIDs, trgBoundIdents, trgAllValues);
 		return mTrgEquals(trgSetCons, lambda);
 	}
 
@@ -462,6 +456,24 @@ public class DatatypeTranslator {
 		}
 	}
 
+	/*
+	 * Returns a target expression corresponding to the set of all values than can
+	 * be created with the given constructor when we limit ourselves to the sets
+	 * embedded in the given set substitution.
+	 *
+	 * This corresponds to <code>ɣ1[ϕ11 × … × ϕ1k1]</code> or <code>{ɣ1}</code> in
+	 * {@link IDatatypeTranslation}
+	 */
+	private Expression makeTrgConsValueSet(IConstructorExtension cons, TranslatingSetSubstitution subst) {
+		final Expression trgCons = replacements.get(cons);
+		if (cons.hasArguments()) {
+			final Expression[] trgArgSets = makeTrgArgSets(cons, subst);
+			return mTrgRelImage(trgCons, trgArgSets);
+		} else {
+			return mTrgSingleton(trgCons);
+		}
+	}
+
 	private Expression[] mTrgArgSets(IConstructorExtension cons,
 			ISetInstantiation setInst) {
 		final IConstructorArgument[] args = cons.getArguments();
@@ -469,6 +481,16 @@ public class DatatypeTranslator {
 		for (int i = 0; i < trgSets.length; i++) {
 			final Expression srcSet = args[i].getSet(setInst);
 			trgSets[i] = srcSet.translateDatatype(translation);
+		}
+		return trgSets;
+	}
+
+	private Expression[] makeTrgArgSets(IConstructorExtension cons, TranslatingSetSubstitution subst) {
+		final IConstructorArgument[] args = cons.getArguments();
+		final Expression[] trgSets = new Expression[args.length];
+		for (int i = 0; i < trgSets.length; i++) {
+			final var arg = (ConstructorArgument) args[i];
+			trgSets[i] = subst.getSet(arg);
 		}
 		return trgSets;
 	}
@@ -582,6 +604,19 @@ public class DatatypeTranslator {
 			Expression trgDomain, Expression trgRange) {
 		final Expression trgSet = mTrgBinExpr(tag, trgDomain, trgRange);
 		return trgFactory.makeRelationalPredicate(IN, trgRel, trgSet, null);
+	}
+
+	private Expression mTrgLambda(BoundIdentDecl[] trgBIDs, BoundIdentifier[] trgBIs, Expression trgValue) {
+		final var trgArgs = combineTrgExpr(MAPSTO, trgBIs);
+		final var trgExpr = mTrgBinExpr(MAPSTO, trgArgs, trgValue);
+		return trgFactory.makeQuantifiedExpression(CSET, trgBIDs, mTrgTrue(), trgExpr, null, Lambda);
+	}
+
+	private Expression mTrgUnion(Expression[] trgSets) {
+		if (trgSets.length == 1) {
+			return trgSets[0];
+		}
+		return trgFactory.makeAssociativeExpression(BUNION, trgSets, null);
 	}
 
 	private Expression mTrgSingleton(Expression expression) {
