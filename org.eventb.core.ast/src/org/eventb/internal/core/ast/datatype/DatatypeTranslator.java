@@ -383,7 +383,7 @@ public class DatatypeTranslator {
 		final List<Predicate> trgParts = new ArrayList<>();
 		final BoundIdentifier[] srcBoundIdents = makeSrcBoundIdentifiers();
 		final Type trgDatatypePowerSet = mTrgPowType(trgDatatype);
-		final BoundIdentifier trgFPIdent = trgFactory.makeBoundIdentifier(0, null, trgDatatypePowerSet);
+		final BoundIdentifier trgFPIdent = mSetBoundIdent(0, trgDatatype);
 		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
 		final var trgSet = (BinaryExpression) srcSet.translateDatatype(translation).shiftBoundIdentifiers(1);
 		final ISetInstantiation setInst = datatype.getSetInstantiation(srcSet);
@@ -439,17 +439,7 @@ public class DatatypeTranslator {
 	}
 
 	private BoundIdentifier[] makeSrcBoundIdentifiers() {
-		final int nbIdents = srcTypeParameters.length;
-		final BoundIdentifier[] idents = new BoundIdentifier[nbIdents];
-		// De Bruijn indexes are counted backwards
-		int boundIndex = nbIdents - 1;
-		for (int i = 0; i < nbIdents; i++) {
-			final Type srcType = srcTypeParameters[i];
-			final Type srcBoundType = mSrcPowerSetType(srcType);
-			idents[i] = mSrcBoundIdent(boundIndex, srcBoundType);
-			boundIndex--;
-		}
-		return idents;
+		return mSetBoundIdents(srcTypeParameters, 0);
 	}
 
 	private BoundIdentifier[] translate(BoundIdentifier[] srcBIs) {
@@ -571,14 +561,6 @@ public class DatatypeTranslator {
 		return hasSingleConstructor && srcConstructors[0].hasArguments();
 	}
 
-	private BoundIdentifier mSrcBoundIdent(int i, Type srcType) {
-		return srcFactory.makeBoundIdentifier(i, null, srcType);
-	}
-
-	private Type mSrcPowerSetType(Type srcType) {
-		return srcFactory.makePowerSetType(srcType);
-	}
-
 	private Type mTrgPowType(Type trgType) {
 		return trgFactory.makePowerSetType(trgType);
 	}
@@ -636,6 +618,41 @@ public class DatatypeTranslator {
 
 	private Predicate mTrgTrue() {
 		return trgFactory.makeLiteralPredicate(BTRUE, null);
+	}
+
+	/**
+	 * Returns an array of bound identifiers carrying the power set of the given
+	 * types. The identifiers are numbered from <code>N + offset - 1</code> to
+	 * <code>offset</code> in decreasing order.
+	 *
+	 * @param offset index of last bound identifier
+	 * @param types  types to use (must not be empty)
+	 * @return an array of bound identifiers
+	 */
+	private static BoundIdentifier[] mSetBoundIdents(Type[] types, int offset) {
+		final int nbIdents = types.length;
+		assert nbIdents != 0;
+		final BoundIdentifier[] idents = new BoundIdentifier[nbIdents];
+		int boundIndex = nbIdents + offset - 1;
+		for (int i = 0; i < nbIdents; i++) {
+			idents[i] = mSetBoundIdent(boundIndex, types[i]);
+			boundIndex--;
+		}
+		return idents;
+	}
+
+	/**
+	 * Returns a bound identifier with the given index and the power set of the
+	 * given type.
+	 *
+	 * @param boundIndex index of the bound identifier
+	 * @param type       type to use
+	 * @return a bound identifier
+	 */
+	private static BoundIdentifier mSetBoundIdent(int boundIndex, Type type) {
+		final FormulaFactory fac = type.getFactory();
+		final Type pow = fac.makePowerSetType(type);
+		return fac.makeBoundIdentifier(boundIndex, null, pow);
 	}
 
 }
