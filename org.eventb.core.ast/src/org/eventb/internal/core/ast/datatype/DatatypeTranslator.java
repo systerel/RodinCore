@@ -382,7 +382,6 @@ public class DatatypeTranslator {
 	private Predicate makeSetConstructorFixpointAxiom() {
 		final List<Predicate> trgParts = new ArrayList<>();
 		final BoundIdentifier[] srcBoundIdents = makeSrcBoundIdentifiers();
-		final Type trgDatatypePowerSet = mTrgPowType(trgDatatype);
 		final BoundIdentifier trgFPIdent = mSetBoundIdent(0, trgDatatype);
 		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
 		final var trgSet = (BinaryExpression) srcSet.translateDatatype(translation).shiftBoundIdentifiers(1);
@@ -391,7 +390,7 @@ public class DatatypeTranslator {
 			trgParts.add(makeConstructorFixpointPart(cons, setInst, trgSet, trgFPIdent));
 		}
 		final Predicate trgFPPred = mTrgAnd(trgParts);
-		final var trgFPDecl = new BoundIdentDecl[] { mTrgBoundIdentDecl(trgSetCons.getName(), trgDatatypePowerSet) };
+		final var trgFPDecl = new BoundIdentDecl[] { mSetBID(trgSetCons.getName(), trgDatatype) };
 		var fixPoint = trgFactory.makeQuantifiedExpression(QINTER, trgFPDecl, trgFPPred, trgFPIdent, null, Implicit);
 		var lambda = makeSetConstructorLambda(srcBoundIdents, fixPoint);
 		return mTrgEquals(trgSetCons, lambda);
@@ -480,16 +479,8 @@ public class DatatypeTranslator {
 	}
 
 	private BoundIdentDecl[] makeTrgBoundIdentDecls() {
-		final int nbTypeParams = trgTypeParameters.length;
-		final BoundIdentDecl[] trgResult = new BoundIdentDecl[nbTypeParams];
-		final String[] typeParamsNames = datatype.getTypeConstructor()
-				.getFormalNames();
-		for (int i = 0; i < nbTypeParams; i++) {
-			final Type trgType = mTrgPowType(trgTypeParameters[i]);
-			final String declName = typeParamsNames[i];
-			trgResult[i] = mTrgBoundIdentDecl(declName, trgType);
-		}
-		return trgResult;
+		final String[] names = srcTypeConstructor.getFormalNames();
+		return mSetBIDs(names, trgTypeParameters);
 	}
 
 	private void addAxioms(List<Predicate> axioms, IConstructorExtension cons) {
@@ -565,10 +556,6 @@ public class DatatypeTranslator {
 		return trgFactory.makePowerSetType(trgType);
 	}
 
-	private BoundIdentDecl mTrgBoundIdentDecl(String name, Type trgType) {
-		return trgFactory.makeBoundIdentDecl(name, null, trgType);
-	}
-
 	private Expression mTrgBinExpr(final int tag, final Expression e1,
 			final Expression e2) {
 		return trgFactory.makeBinaryExpression(tag, e1, e2, null);
@@ -621,6 +608,40 @@ public class DatatypeTranslator {
 	}
 
 	/**
+	 * Returns an array of bound identifier declarations with the given names and
+	 * the power set of the given types.
+	 *
+	 * @param names names of the identifier declarations (must not be empty)
+	 * @param types types to use (must have same length)
+	 * @return an array of bound identifier declarations
+	 * @see #mSetBoundIdents(Type[], int)
+	 */
+	private static BoundIdentDecl[] mSetBIDs(String[] names, Type[] types) {
+		final int nbBIDs = names.length;
+		assert nbBIDs != 0 && nbBIDs == types.length;
+		final BoundIdentDecl[] bids = new BoundIdentDecl[nbBIDs];
+		for (int i = 0; i < nbBIDs; i++) {
+			bids[i] = mSetBID(names[i], types[i]);
+		}
+		return bids;
+	}
+
+	/**
+	 * Returns a bound identifier declaration with the given name and the power set
+	 * of the given type.
+	 *
+	 * @param name name of the identifier declaration
+	 * @param type type to use
+	 * @return a bound identifier declaration
+	 * @see #mSetBoundIdents(Type[], int)
+	 */
+	private static BoundIdentDecl mSetBID(String name, Type type) {
+		final FormulaFactory fac = type.getFactory();
+		final Type pow = fac.makePowerSetType(type);
+		return fac.makeBoundIdentDecl(name, null, pow);
+	}
+
+	/**
 	 * Returns an array of bound identifiers carrying the power set of the given
 	 * types. The identifiers are numbered from <code>N + offset - 1</code> to
 	 * <code>offset</code> in decreasing order.
@@ -628,6 +649,7 @@ public class DatatypeTranslator {
 	 * @param offset index of last bound identifier
 	 * @param types  types to use (must not be empty)
 	 * @return an array of bound identifiers
+	 * @see #mSetBIDs(String[], Type[])
 	 */
 	private static BoundIdentifier[] mSetBoundIdents(Type[] types, int offset) {
 		final int nbIdents = types.length;
