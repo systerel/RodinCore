@@ -301,7 +301,8 @@ public class DatatypeTranslator {
 	public Expression rewrite(ExtendedExpression src, Expression[] trgChildExprs) {
 		final IExpressionExtension ext = src.getExtension();
 		if (ext.isATypeConstructor()) {
-			if (hasNoSetConstructor || src.isATypeExpression()) {
+			var allTypes = stream(trgChildExprs).allMatch(Expression::isATypeExpression);
+			if (allTypes) {
 				return trgDatatypeExpr;
 			} else {
 				return mTrgFunImage(trgSetCons, trgChildExprs);
