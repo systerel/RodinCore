@@ -151,10 +151,11 @@ public class DatatypeTranslation extends AbstractTranslation implements
 
 	public Expression translate(ExtendedExpression src,
 			Expression[] newChildExprs) {
-		assert src.getExtension().getOrigin() instanceof Datatype;
+		final IExpressionExtension ext = src.getExtension();
+		assert ext.getOrigin() instanceof Datatype;
 		final ParametricType type = getDatatypeInstance(src);
 		final DatatypeTranslator translator = getTranslatorFor(type);
-		return translator.rewrite(src, newChildExprs);
+		return translator.rewrite(ext, newChildExprs);
 	}
 
 	private DatatypeTranslator getTranslatorFor(ParametricType type) {

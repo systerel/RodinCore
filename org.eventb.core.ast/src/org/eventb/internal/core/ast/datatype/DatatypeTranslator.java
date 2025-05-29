@@ -292,14 +292,13 @@ public class DatatypeTranslator {
 	/**
 	 * Rewrites the given extended expression.
 	 * 
-	 * @param src
-	 *            the extended expression to be translated
+	 * @param ext
+	 *            the extension to be translated
 	 * @param trgChildExprs
 	 *            the new children expressions
 	 * @return a translation of the given extended expression
 	 */
-	public Expression rewrite(ExtendedExpression src, Expression[] trgChildExprs) {
-		final IExpressionExtension ext = src.getExtension();
+	public Expression rewrite(IExpressionExtension ext, Expression[] trgChildExprs) {
 		if (ext.isATypeConstructor()) {
 			var allTypes = stream(trgChildExprs).allMatch(Expression::isATypeExpression);
 			if (allTypes) {
