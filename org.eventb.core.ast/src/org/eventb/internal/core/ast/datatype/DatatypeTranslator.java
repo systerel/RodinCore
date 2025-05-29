@@ -121,13 +121,9 @@ public class DatatypeTranslator {
 
 		final String srcSymbol = srcTypeConstructor.getSyntaxSymbol();
 		this.trgDatatype = getTrgDatatype(srcSymbol);
-		this.trgDatatypeExpr = toTrgExpr(trgDatatype);
+		this.trgDatatypeExpr = trgDatatype.toExpression();
 		this.trgSetCons = getTrgSetConstructor(srcSymbol);
 		computeReplacements();
-	}
-
-	private Expression toTrgExpr(Type trgType) {
-		return trgType.toExpression();
 	}
 
 	private Type[] translateTypeParameters() {
@@ -448,7 +444,7 @@ public class DatatypeTranslator {
 			return;
 		}
 		final Expression trgCons = replacements.get(cons);
-		final Expression trgDomain = toTrgExpr(trgCons.getType().getSource());
+		final Expression trgDomain = trgCons.getType().getSource().toExpression();
 		final Expression trgRange = trgDatatypeExpr;
 		final int tag = hasSingleConstructor ? TBIJ : TINJ;
 		axioms.add(mTrgInRelationalSet(trgCons, tag, trgDomain, trgRange));
@@ -474,7 +470,7 @@ public class DatatypeTranslator {
 		for (final Expression trgDest : trgDests) {
 			final Type trgType = trgDest.getType().getTarget();
 			axioms.add(mTrgInRelationalSet(trgDest, TSUR, trgPart,
-					toTrgExpr(trgType)));
+					trgType.toExpression()));
 		}
 	}
 
