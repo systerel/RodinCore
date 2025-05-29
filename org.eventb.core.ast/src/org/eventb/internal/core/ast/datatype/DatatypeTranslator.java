@@ -332,7 +332,7 @@ public class DatatypeTranslator {
 	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)
 			return;
-		if (stream(srcConstructors).allMatch(IConstructorExtension::isBasic)) {
+		if (datatype.isBasic()) {
 			axioms.add(makeSetConstructorUnionAxiom());
 		} else {
 			axioms.add(makeSetConstructorFixpointAxiom());
