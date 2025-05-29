@@ -378,7 +378,7 @@ public class DatatypeTranslator {
 		var trgFixPoint = mTrgQInter(trgGammaBID, trgFPPred, trgGammaBI);
 
 		// Need to shift outside of the fix point
-		setAll(trgSetBIs, i -> (BoundIdentifier) trgSetBIs[i].shiftBoundIdentifiers(-1));
+		setAll(trgSetBIs, i -> trgSetBIs[i].shiftBoundIdentifiers(-1));
 		var trgLambda = mTrgLambda(trgSetBIDs, trgSetBIs, trgFixPoint);
 		return mTrgEquals(trgSetCons, trgLambda);
 	}
