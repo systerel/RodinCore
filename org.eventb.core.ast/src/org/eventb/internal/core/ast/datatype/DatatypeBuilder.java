@@ -148,12 +148,11 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 
 	@Override
 	public boolean hasBasicConstructor() {
-		for (final ConstructorBuilder cons : constructors) {
-			if (cons.isBasic()) {
-				return true;
-			}
-		}
-		return false;
+		return constructors.stream().anyMatch(ConstructorBuilder::isBasic);
+	}
+
+	public boolean isBasic() {
+		return constructors.stream().allMatch(ConstructorBuilder::isBasic);
 	}
 
 	private void checkHasBasicConstructor() {
