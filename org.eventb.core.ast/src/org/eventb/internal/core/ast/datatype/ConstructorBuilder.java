@@ -113,6 +113,10 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		return knownFormalTypeParameters.size() != dtBuilder.getTypeParameters().length;
 	}
 
+	public Set<GivenType> getKnownFormalTypeParameters() {
+		return knownFormalTypeParameters;
+	}
+
 	public int getSameTypeIndex() {
 		return sameTypeIndex;
 	}
