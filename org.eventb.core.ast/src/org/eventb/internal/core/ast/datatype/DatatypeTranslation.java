@@ -158,6 +158,16 @@ public class DatatypeTranslation extends AbstractTranslation implements
 		return translator.rewrite(ext, newChildExprs);
 	}
 
+	/*
+	 * Special case where the source expression is a set constructor and we are
+	 * given the corresponding type.
+	 */
+	public Expression translate(ParametricType type, Expression[] newChildExprs) {
+		final DatatypeTranslator translator = getTranslatorFor(type);
+		final IExpressionExtension ext = type.getExprExtension();
+		return translator.rewrite(ext, newChildExprs);
+	}
+
 	private DatatypeTranslator getTranslatorFor(ParametricType type) {
 		DatatypeTranslator translator = translators.get(type);
 		if (translator == null) {
