@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.datatype;
 
+import static java.util.Arrays.setAll;
 import static java.util.Arrays.stream;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -18,7 +19,6 @@ import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DPROD;
 import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KPARTITION;
@@ -33,30 +33,26 @@ import static org.eventb.core.ast.Formula.TINJ;
 import static org.eventb.core.ast.Formula.TSUR;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
+import static org.eventb.internal.core.ast.datatype.TranslatingSetSubstitution.makeTranslatingSetSubstitution;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
-import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorArgument;
 import org.eventb.core.ast.datatype.IConstructorExtension;
 import org.eventb.core.ast.datatype.IDatatype;
-import org.eventb.core.ast.datatype.ISetInstantiation;
 import org.eventb.core.ast.datatype.ITypeInstantiation;
 import org.eventb.core.ast.extension.IExpressionExtension;
 
@@ -78,22 +74,18 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  */
 public class DatatypeTranslator {
 
-	private static final Predicate[] NO_PREDICATES = new Predicate[0];
-
 	private static final String TYPE_SUFFIX = "_Type";
 
 	private final DatatypeTranslation translation;
-	private final FormulaFactory srcFactory;
 	private final FormulaFactory trgFactory;
 
 	// Types and extension of the source language
 	private final ParametricType srcTypeInstance;
 	private final ITypeInstantiation srcInstantiation;
 	private final Type[] srcTypeParameters;
-	private final IExpressionExtension srcTypeConstructor;
+	private final TypeConstructorExtension srcTypeConstructor;
 	private final IDatatype datatype;
 	private final IConstructorExtension[] srcConstructors;
-	private final boolean hasDestructors;
 	private final boolean hasNoSetConstructor;
 	private final boolean hasSingleConstructor;
 
@@ -109,21 +101,18 @@ public class DatatypeTranslator {
 	public DatatypeTranslator(ParametricType typeInstance,
 			DatatypeTranslation translation) {
 		this.translation = translation;
-		this.srcFactory = translation.getSourceFormulaFactory();
 		this.trgFactory = translation.getTargetFormulaFactory();
 		this.srcTypeInstance = typeInstance;
-		this.srcTypeConstructor = typeInstance.getExprExtension();
+		this.srcTypeConstructor = (TypeConstructorExtension) typeInstance.getExprExtension();
 		this.srcTypeParameters = typeInstance.getTypeParameters();
-		this.datatype = (IDatatype) srcTypeConstructor.getOrigin();
+		this.datatype = srcTypeConstructor.getOrigin();
 		this.srcInstantiation = datatype.getTypeInstantiation(srcTypeInstance);
 		this.srcConstructors = datatype.getConstructors();
 
 		// A non-empty datatype must have at least one constructor
 		assert srcConstructors.length != 0;
 
-		this.hasDestructors = hasDestructors();
-		this.hasNoSetConstructor = !hasDestructors
-				|| srcTypeParameters.length == 0;
+		this.hasNoSetConstructor = srcTypeParameters.length == 0;
 		this.hasSingleConstructor = srcConstructors.length == 1;
 
 		// The first translation must be for the type parameters to ensure
@@ -132,21 +121,9 @@ public class DatatypeTranslator {
 
 		final String srcSymbol = srcTypeConstructor.getSyntaxSymbol();
 		this.trgDatatype = getTrgDatatype(srcSymbol);
-		this.trgDatatypeExpr = toTrgExpr(trgDatatype);
+		this.trgDatatypeExpr = trgDatatype.toExpression();
 		this.trgSetCons = getTrgSetConstructor(srcSymbol);
 		computeReplacements();
-	}
-
-	private boolean hasDestructors() {
-		for (final IConstructorExtension cons : datatype.getConstructors()) {
-			if (cons.hasArguments())
-				return true;
-		}
-		return false;
-	}
-
-	private Expression toTrgExpr(Type trgType) {
-		return trgType.toExpression();
 	}
 
 	private Type[] translateTypeParameters() {
@@ -232,17 +209,17 @@ public class DatatypeTranslator {
 		if (trgArgTypes.length == 0) {
 			return trgDatatype;
 		}
-		final Type trgProdType = makeTrgPowProdType(trgArgTypes);
-		return mTrgRelType(trgProdType, mTrgPowerSetType(trgDatatype));
+		final Type trgProdType = mTrgProdPowType(trgArgTypes);
+		return mTrgRelType(trgProdType, mTrgPowType(trgDatatype));
 	}
 
 	/*
 	 * Returns the type "ℙ(T1) × ... × ℙ(Tn)", given T1, ..., Tn.
 	 */
-	private Type makeTrgPowProdType(Type[] trgTypes) {
-		Type trgProdType = mTrgPowerSetType(trgTypes[0]);
+	private Type mTrgProdPowType(Type[] trgTypes) {
+		Type trgProdType = mTrgPowType(trgTypes[0]);
 		for (int i = 1; i < trgTypes.length; i++) {
-			trgProdType = mTrgProdType(trgProdType, mTrgPowerSetType(trgTypes[i]));
+			trgProdType = mTrgProdType(trgProdType, mTrgPowType(trgTypes[i]));
 		}
 		return trgProdType;
 	}
@@ -303,28 +280,31 @@ public class DatatypeTranslator {
 	/**
 	 * Rewrites the given extended expression.
 	 * 
-	 * @param src
-	 *            the extended expression to be translated
+	 * @param ext
+	 *            the extension to be translated
 	 * @param trgChildExprs
 	 *            the new children expressions
 	 * @return a translation of the given extended expression
 	 */
-	public Expression rewrite(ExtendedExpression src, Expression[] trgChildExprs) {
-		final IExpressionExtension ext = src.getExtension();
+	public Expression rewrite(IExpressionExtension ext, Expression[] trgChildExprs) {
 		if (ext.isATypeConstructor()) {
-			if (hasNoSetConstructor || src.isATypeExpression()) {
+			var allTypes = stream(trgChildExprs).allMatch(Expression::isATypeExpression);
+			if (allTypes) {
 				return trgDatatypeExpr;
 			} else {
-				final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
-				return mTrgBinExpr(FUNIMAGE, trgSetCons, trgMaplets);
+				return mTrgFunImage(trgSetCons, trgChildExprs);
 			}
 		}
 		final Expression trgExpr = replacements.get(ext);
-		if (trgChildExprs.length == 0) {
-			return trgExpr;
+		return mTrgFunImage(trgExpr, trgChildExprs);
+	}
+
+	protected Expression mTrgFunImage(Expression trgFun, Expression[] trgArgs) {
+		if (trgArgs.length == 0) {
+			return trgFun;
 		}
-		final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
-		return mTrgBinExpr(FUNIMAGE, trgExpr, trgMaplets);
+		var trgMaplets = combineTrgExpr(MAPSTO, trgArgs);
+		return mTrgBinExpr(FUNIMAGE, trgFun, trgMaplets);
 	}
 
 	private Expression mTrgRelImage(Expression trgRel, Expression[] trgSets) {
@@ -352,7 +332,7 @@ public class DatatypeTranslator {
 	private void addSetConstructorAxioms(List<Predicate> axioms) {
 		if (hasNoSetConstructor)
 			return;
-		if (stream(srcConstructors).allMatch(IConstructorExtension::isBasic)) {
+		if (datatype.isBasic()) {
 			axioms.add(makeSetConstructorUnionAxiom());
 		} else {
 			axioms.add(makeSetConstructorFixpointAxiom());
@@ -364,78 +344,43 @@ public class DatatypeTranslator {
 	 * Makes the definition of the set constructor as a union of basic sets.
 	 */
 	private Predicate makeSetConstructorUnionAxiom() {
-		final List<Expression> trgParts = new ArrayList<>();
-		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
-		final ISetInstantiation setInst = datatype.getSetInstantiation(makeSrcSet(srcBoundIdents));
-		for (final IConstructorExtension cons : srcConstructors) {
-			Expression part = makeTrgSetConstructorPart(cons, setInst);
-			if (part.getTag() == FREE_IDENT) {
-				part = mTrgSingleton(part);
-			}
-			trgParts.add(part);
-		}
-		Expression values;
-		if (trgParts.size() == 1) {
-			values = trgParts.get(0);
-		} else {
-			values = trgFactory.makeAssociativeExpression(BUNION, trgParts, null);
-		}
-		var lambda = makeSetConstructorLambda(srcBoundIdents, values);
+		final String[] names = srcTypeConstructor.getFormalNames();
+		final BoundIdentDecl[] trgBIDs = mSetBIDs(names, trgTypeParameters);
+		final BoundIdentifier[] trgBoundIdents = mSetBoundIdents(trgTypeParameters, 0);
+		final var subst = makeTranslatingSetSubstitution(translation, srcInstantiation, null, trgBoundIdents);
+
+		final Expression[] trgConsValueSets = stream(srcConstructors) //
+				.map(cons -> makeTrgConsValueSet(cons, subst)) //
+				.toArray(Expression[]::new);
+		final Expression trgAllValues = mTrgUnion(trgConsValueSets);
+		var lambda = mTrgLambda(trgBIDs, trgBoundIdents, trgAllValues);
 		return mTrgEquals(trgSetCons, lambda);
 	}
 
 	/**
-	 * Makes the definition of the set constructor as a fixpoint.
+	 * Makes the definition of the set constructor as a fixpoint (predicate (E) in
+	 * {@link IDatatypeTranslation}).
 	 */
 	private Predicate makeSetConstructorFixpointAxiom() {
-		final List<Predicate> trgParts = new ArrayList<>();
-		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
-		final Type trgDatatypePowerSet = mTrgPowerSetType(trgDatatype);
-		final BoundIdentifier trgFPIdent = trgFactory.makeBoundIdentifier(0, null, trgDatatypePowerSet);
-		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
-		final var trgSet = (BinaryExpression) srcSet.translateDatatype(translation).shiftBoundIdentifiers(1);
-		final ISetInstantiation setInst = datatype.getSetInstantiation(srcSet);
-		for (final IConstructorExtension cons : srcConstructors) {
-			trgParts.add(makeConstructorFixpointPart(cons, setInst, trgSet, trgFPIdent));
-		}
-		final Predicate trgFPPred = mTrgAnd(trgParts);
-		final var trgFPDecl = new BoundIdentDecl[] { mTrgBoundIdentDecl(trgSetCons.getName(), trgDatatypePowerSet) };
-		var fixPoint = trgFactory.makeQuantifiedExpression(QINTER, trgFPDecl, trgFPPred, trgFPIdent, null, Implicit);
-		var lambda = makeSetConstructorLambda(srcBoundIdents, fixPoint);
-		return mTrgEquals(trgSetCons, lambda);
-	}
+		final String[] names = srcTypeConstructor.getFormalNames();
+		final BoundIdentDecl[] trgSetBIDs = mSetBIDs(names, trgTypeParameters);
+		final BoundIdentifier[] trgSetBIs = mSetBoundIdents(trgTypeParameters, 1);
 
-	private Predicate makeConstructorFixpointPart(IConstructorExtension cons, ISetInstantiation setInst,
-			BinaryExpression trgSet, BoundIdentifier trgFPIdent) {
-		Expression part = makeTrgSetConstructorPart(cons, setInst);
-		// Part will go in a quantified intersection with one quantified variable
-		part = part.shiftBoundIdentifiers(1);
-		// Replace the datatype set translation with the fix point's bound identifier
-		part = part.rewrite(makeBinExpRewriter(trgSet, trgFPIdent));
-		// Two possibilities:
-		// - the constructor is a constant, the predicate is "cons : Set"
-		// - the constructor has arguments, the predicate is "cons(...) <: Set"
-		int relOp = part.getTag() == FREE_IDENT ? IN : SUBSETEQ;
-		return trgFactory.makeRelationalPredicate(relOp, part, trgFPIdent, null);
-	}
+		final BoundIdentDecl trgGammaBID = mSetBID(trgSetCons.getName(), trgDatatype);
+		final BoundIdentifier trgGammaBI = mSetBoundIdent(0, trgDatatype);
 
-	private Expression makeSetConstructorLambda(Expression[] srcBoundIdents, Expression fixPoint) {
-		var arguments = combineTrgExpr(MAPSTO, translate(srcBoundIdents));
-		return trgFactory.makeQuantifiedExpression(CSET, makeTrgBoundIdentDecls(), mTrgTrue(),
-				mTrgBinExpr(MAPSTO, arguments, fixPoint), null, Lambda);
-	}
+		final var subst = makeTranslatingSetSubstitution(translation, srcInstantiation, trgGammaBI, trgSetBIs);
 
-	// Makes a rewriter replacing binary expression "from" with expression "to"
-	private IFormulaRewriter makeBinExpRewriter(BinaryExpression from, Expression to) {
-		return new DefaultRewriter(false) {
-			@Override
-			public Expression rewrite(BinaryExpression expression) {
-				if (expression.equals(from)) {
-					return to;
-				}
-				return super.rewrite(expression);
-			}
-		};
+		final Predicate[] trgConsValuePreds = stream(srcConstructors) //
+				.map(cons -> makeTrgConsValuePred(cons, subst, trgGammaBI)) //
+				.toArray(Predicate[]::new);
+		final Predicate trgFPPred = mTrgAnd(trgConsValuePreds);
+		var trgFixPoint = mTrgQInter(trgGammaBID, trgFPPred, trgGammaBI);
+
+		// Need to shift outside of the fix point
+		setAll(trgSetBIs, i -> trgSetBIs[i].shiftBoundIdentifiers(-1));
+		var trgLambda = mTrgLambda(trgSetBIDs, trgSetBIs, trgFixPoint);
+		return mTrgEquals(trgSetCons, trgLambda);
 	}
 
 	/**
@@ -443,70 +388,55 @@ public class DatatypeTranslator {
 	 */
 	private Predicate makeSetConstructorCompletenessAxiom() {
 		var typeParamsAsExpr = stream(trgTypeParameters).map(Type::toExpression).toArray(Expression[]::new);
-		return mTrgEquals(mTrgBinExpr(FUNIMAGE, trgSetCons, combineTrgExpr(MAPSTO, typeParamsAsExpr)), trgDatatypeExpr);
+		return mTrgEquals(mTrgFunImage(trgSetCons, typeParamsAsExpr), trgDatatypeExpr);
 	}
 
-	private Expression[] makeSrcBoundIdentifiers() {
-		final int nbIdents = srcTypeParameters.length;
-		final Expression[] idents = new Expression[nbIdents];
-		// De Bruijn indexes are counted backwards
-		int boundIndex = nbIdents - 1;
-		for (int i = 0; i < nbIdents; i++) {
-			final Type srcType = srcTypeParameters[i];
-			final Type srcBoundType = mSrcPowerSetType(srcType);
-			idents[i] = mSrcBoundIdent(boundIndex, srcBoundType);
-			boundIndex--;
-		}
-		return idents;
-	}
-
-	private Expression[] translate(Expression[] srcExprs) {
-		final int length = srcExprs.length;
-		final Expression[] trgResult = new Expression[length];
-		for (int i = 0; i < length; i++) {
-			trgResult[i] = srcExprs[i].translateDatatype(translation);
-		}
-		return trgResult;
-	}
-
-	private Expression makeTrgSetConstructorPart(IConstructorExtension cons,
-			ISetInstantiation setInst) {
+	/*
+	 * Returns a target expression corresponding to the set of all values than can
+	 * be created with the given constructor when we limit ourselves to the sets
+	 * embedded in the given set substitution.
+	 *
+	 * This corresponds to <code>ɣ1[ϕ11 × … × ϕ1k1]</code> or <code>{ɣ1}</code> in
+	 * {@link IDatatypeTranslation}
+	 */
+	private Expression makeTrgConsValueSet(IConstructorExtension cons, TranslatingSetSubstitution subst) {
 		final Expression trgCons = replacements.get(cons);
 		if (cons.hasArguments()) {
-			final Expression[] trgArgSets = mTrgArgSets(cons, setInst);
+			final Expression[] trgArgSets = makeTrgArgSets(cons, subst);
 			return mTrgRelImage(trgCons, trgArgSets);
 		} else {
-			return trgCons;
+			return mTrgSingleton(trgCons);
 		}
 	}
 
-	private Expression[] mTrgArgSets(IConstructorExtension cons,
-			ISetInstantiation setInst) {
+	/*
+	 * Returns a target predicate stating that the set of all values than can be
+	 * created with the given constructor is included in gamma, when we limit
+	 * ourselves to the sets embedded in the given set substitution.
+	 *
+	 * This corresponds to <code>ɣ1[ϕ11 × … × ϕ1k1] ⊆ Γ</code> or <code>ɣ1 ∈
+	 * Γ</code> in {@link IDatatypeTranslation}
+	 */
+	private Predicate makeTrgConsValuePred(IConstructorExtension cons, TranslatingSetSubstitution subst,
+			Expression gamma) {
+
+		final Expression trgCons = replacements.get(cons);
+		if (cons.hasArguments()) {
+			final Expression[] trgArgSets = makeTrgArgSets(cons, subst);
+			return mTrgSubsetEq(mTrgRelImage(trgCons, trgArgSets), gamma);
+		} else {
+			return mTrgIn(trgCons, gamma);
+		}
+	}
+
+	private Expression[] makeTrgArgSets(IConstructorExtension cons, TranslatingSetSubstitution subst) {
 		final IConstructorArgument[] args = cons.getArguments();
 		final Expression[] trgSets = new Expression[args.length];
 		for (int i = 0; i < trgSets.length; i++) {
-			final Expression srcSet = args[i].getSet(setInst);
-			trgSets[i] = srcSet.translateDatatype(translation);
+			final var arg = (ConstructorArgument) args[i];
+			trgSets[i] = subst.getSet(arg);
 		}
 		return trgSets;
-	}
-
-	private ExtendedExpression makeSrcSet(Expression[] srcExprs) {
-		return srcFactory.makeExtendedExpression(srcTypeConstructor, srcExprs,
-				NO_PREDICATES, null);
-	}
-
-	private BoundIdentDecl[] makeTrgBoundIdentDecls() {
-		final int nbTypeParams = trgTypeParameters.length;
-		final BoundIdentDecl[] trgResult = new BoundIdentDecl[nbTypeParams];
-		final String[] typeParamsNames = datatype.getTypeConstructor()
-				.getFormalNames();
-		for (int i = 0; i < nbTypeParams; i++) {
-			final Type trgType = mTrgPowerSetType(trgTypeParameters[i]);
-			final String declName = typeParamsNames[i];
-			trgResult[i] = mTrgBoundIdentDecl(declName, trgType);
-		}
-		return trgResult;
 	}
 
 	private void addAxioms(List<Predicate> axioms, IConstructorExtension cons) {
@@ -514,7 +444,7 @@ public class DatatypeTranslator {
 			return;
 		}
 		final Expression trgCons = replacements.get(cons);
-		final Expression trgDomain = toTrgExpr(trgCons.getType().getSource());
+		final Expression trgDomain = trgCons.getType().getSource().toExpression();
 		final Expression trgRange = trgDatatypeExpr;
 		final int tag = hasSingleConstructor ? TBIJ : TINJ;
 		axioms.add(mTrgInRelationalSet(trgCons, tag, trgDomain, trgRange));
@@ -540,7 +470,7 @@ public class DatatypeTranslator {
 		for (final Expression trgDest : trgDests) {
 			final Type trgType = trgDest.getType().getTarget();
 			axioms.add(mTrgInRelationalSet(trgDest, TSUR, trgPart,
-					toTrgExpr(trgType)));
+					trgType.toExpression()));
 		}
 	}
 
@@ -578,20 +508,8 @@ public class DatatypeTranslator {
 		return hasSingleConstructor && srcConstructors[0].hasArguments();
 	}
 
-	private Expression mSrcBoundIdent(int i, Type srcType) {
-		return srcFactory.makeBoundIdentifier(i, null, srcType);
-	}
-
-	private Type mSrcPowerSetType(Type srcType) {
-		return srcFactory.makePowerSetType(srcType);
-	}
-
-	private Type mTrgPowerSetType(Type trgType) {
+	private Type mTrgPowType(Type trgType) {
 		return trgFactory.makePowerSetType(trgType);
-	}
-
-	private BoundIdentDecl mTrgBoundIdentDecl(String name, Type trgType) {
-		return trgFactory.makeBoundIdentDecl(name, null, trgType);
 	}
 
 	private Expression mTrgBinExpr(final int tag, final Expression e1,
@@ -619,7 +537,33 @@ public class DatatypeTranslator {
 	private Predicate mTrgInRelationalSet(Expression trgRel, int tag,
 			Expression trgDomain, Expression trgRange) {
 		final Expression trgSet = mTrgBinExpr(tag, trgDomain, trgRange);
-		return trgFactory.makeRelationalPredicate(IN, trgRel, trgSet, null);
+		return mTrgIn(trgRel, trgSet);
+	}
+
+	private Predicate mTrgIn(Expression trgMember, Expression trgSet) {
+		return trgFactory.makeRelationalPredicate(IN, trgMember, trgSet, null);
+	}
+
+	private Predicate mTrgSubsetEq(Expression trgLeft, Expression trgRight) {
+		return trgFactory.makeRelationalPredicate(SUBSETEQ, trgLeft, trgRight, null);
+	}
+
+	private Expression mTrgLambda(BoundIdentDecl[] trgBIDs, BoundIdentifier[] trgBIs, Expression trgValue) {
+		final var trgArgs = combineTrgExpr(MAPSTO, trgBIs);
+		final var trgExpr = mTrgBinExpr(MAPSTO, trgArgs, trgValue);
+		return trgFactory.makeQuantifiedExpression(CSET, trgBIDs, mTrgTrue(), trgExpr, null, Lambda);
+	}
+
+	private Expression mTrgQInter(BoundIdentDecl trgBID, Predicate trgPred, Expression trgExpr) {
+		final var trgBIDs = new BoundIdentDecl[] { trgBID };
+		return trgFactory.makeQuantifiedExpression(QINTER, trgBIDs, trgPred, trgExpr, null, Implicit);
+	}
+
+	private Expression mTrgUnion(Expression[] trgSets) {
+		if (trgSets.length == 1) {
+			return trgSets[0];
+		}
+		return trgFactory.makeAssociativeExpression(BUNION, trgSets, null);
 	}
 
 	private Expression mTrgSingleton(Expression expression) {
@@ -630,19 +574,89 @@ public class DatatypeTranslator {
 		return trgFactory.makeUnaryExpression(tag, constructor, null);
 	}
 
-	private Predicate mTrgAnd(List<Predicate> preds) {
-		switch (preds.size()) {
+	private Predicate mTrgAnd(Predicate[] trgPreds) {
+		switch (trgPreds.length) {
 		case 0:
 			return mTrgTrue();
 		case 1:
-			return preds.get(0);
+			return trgPreds[0];
 		default:
-			return trgFactory.makeAssociativePredicate(LAND, preds, null);
+			return trgFactory.makeAssociativePredicate(LAND, trgPreds, null);
 		}
 	}
 
 	private Predicate mTrgTrue() {
 		return trgFactory.makeLiteralPredicate(BTRUE, null);
+	}
+
+	/**
+	 * Returns an array of bound identifier declarations with the given names and
+	 * the power set of the given types.
+	 *
+	 * @param names names of the identifier declarations (must not be empty)
+	 * @param types types to use (must have same length)
+	 * @return an array of bound identifier declarations
+	 * @see #mSetBoundIdents(Type[], int)
+	 */
+	private static BoundIdentDecl[] mSetBIDs(String[] names, Type[] types) {
+		final int nbBIDs = names.length;
+		assert nbBIDs != 0 && nbBIDs == types.length;
+		final BoundIdentDecl[] bids = new BoundIdentDecl[nbBIDs];
+		for (int i = 0; i < nbBIDs; i++) {
+			bids[i] = mSetBID(names[i], types[i]);
+		}
+		return bids;
+	}
+
+	/**
+	 * Returns a bound identifier declaration with the given name and the power set
+	 * of the given type.
+	 *
+	 * @param name name of the identifier declaration
+	 * @param type type to use
+	 * @return a bound identifier declaration
+	 * @see #mSetBoundIdents(Type[], int)
+	 */
+	private static BoundIdentDecl mSetBID(String name, Type type) {
+		final FormulaFactory fac = type.getFactory();
+		final Type pow = fac.makePowerSetType(type);
+		return fac.makeBoundIdentDecl(name, null, pow);
+	}
+
+	/**
+	 * Returns an array of bound identifiers carrying the power set of the given
+	 * types. The identifiers are numbered from <code>N + offset - 1</code> to
+	 * <code>offset</code> in decreasing order.
+	 *
+	 * @param offset index of last bound identifier
+	 * @param types  types to use (must not be empty)
+	 * @return an array of bound identifiers
+	 * @see #mSetBIDs(String[], Type[])
+	 */
+	private static BoundIdentifier[] mSetBoundIdents(Type[] types, int offset) {
+		final int nbIdents = types.length;
+		assert nbIdents != 0;
+		final BoundIdentifier[] idents = new BoundIdentifier[nbIdents];
+		int boundIndex = nbIdents + offset - 1;
+		for (int i = 0; i < nbIdents; i++) {
+			idents[i] = mSetBoundIdent(boundIndex, types[i]);
+			boundIndex--;
+		}
+		return idents;
+	}
+
+	/**
+	 * Returns a bound identifier with the given index and the power set of the
+	 * given type.
+	 *
+	 * @param boundIndex index of the bound identifier
+	 * @param type       type to use
+	 * @return a bound identifier
+	 */
+	private static BoundIdentifier mSetBoundIdent(int boundIndex, Type type) {
+		final FormulaFactory fac = type.getFactory();
+		final Type pow = fac.makePowerSetType(type);
+		return fac.makeBoundIdentifier(boundIndex, null, pow);
 	}
 
 }

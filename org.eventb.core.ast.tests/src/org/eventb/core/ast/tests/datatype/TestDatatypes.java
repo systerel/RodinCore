@@ -1103,5 +1103,31 @@ public class TestDatatypes extends AbstractTests {
 		assertSame(origin1, dt1.getOrigin());
 		assertSame(origin2, dt2.getOrigin());
 	}
-	
+
+	/**
+	 * Unit tests about {@link IDatatype#isBasic()}.
+	 */
+	@Test
+	public void isBasic() {
+		final FormulaFactory dtFF = mDatatypeFactory(ff, //
+				"Enum ::= a1 || a2", //
+				"Foo ::= foo[BOOL]", //
+				"Bar[T] ::= bar[T;Enum]");
+		assertIsBasic(dtFF, "Enum", true);
+		assertIsBasic(dtFF, "Foo", true);
+		assertIsBasic(dtFF, "Bar", true);
+	}
+
+	private static void assertIsBasic(FormulaFactory fac, String name, boolean expected) {
+		IDatatype datatype = null;
+		for (IFormulaExtension ext : fac.getExtensions()) {
+			if (ext.getSyntaxSymbol().equals(name)) {
+				datatype = (IDatatype) ext.getOrigin();
+				break;
+			}
+		}
+		assertNotNull(datatype);
+		assertEquals(expected, datatype.isBasic());
+	}
+
 }

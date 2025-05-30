@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2024 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,8 @@ public class Datatype implements IDatatype {
 	// The destructors
 	private final Map<String, DestructorExtension> destructors;
 
+	private final boolean isBasic;
+
 	// Cache of the extensions provided by this datatype
 	private final Set<IFormulaExtension> extensions;
 
@@ -96,6 +98,7 @@ public class Datatype implements IDatatype {
 			constructors.put(constructor.getName(), constructor);
 			destructors.putAll(constructor.getDestructorMap());
 		}
+		isBasic = dtBuilder.isBasic();
 		extensions = new HashSet<IFormulaExtension>();
 		extensions.add(typeCons);
 		extensions.addAll(constructors.values());
@@ -146,6 +149,11 @@ public class Datatype implements IDatatype {
 	@Override
 	public IDestructorExtension getDestructor(String name) {
 		return destructors.get(name);
+	}
+
+	@Override
+	public boolean isBasic() {
+		return isBasic;
 	}
 
 	@Override

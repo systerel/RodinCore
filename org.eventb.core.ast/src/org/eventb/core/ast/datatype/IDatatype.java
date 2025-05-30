@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Systerel and others.
+ * Copyright (c) 2013, 2025 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,15 @@ public interface IDatatype {
 	 * @return the destructor with the given name or <code>null</code>
 	 */
 	IDestructorExtension getDestructor(String name);
+
+	/**
+	 * Tells whether this datatype is basic, that is contains only basic
+	 * constructors. Seen differently, a basic datatype is non-recursive.
+	 *
+	 * @return <code>true</code> iff this datatype is basic
+	 * @since 3.9
+	 */
+	boolean isBasic();
 
 	/**
 	 * Returns a minimal formula factory that contains all extensions that are
