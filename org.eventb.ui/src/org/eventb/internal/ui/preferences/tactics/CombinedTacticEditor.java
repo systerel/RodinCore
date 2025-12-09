@@ -201,8 +201,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	private static Text makeDescription(final Composite parent) {
 		final Text text = new Text(parent, SWT.WRAP | SWT.V_SCROLL
 				| SWT.READ_ONLY);
-		final GridData layoutData = new GridData();
-		layoutData.exclude = true; // avoid packing
+		GridData layoutData = new GridData(GridData.FILL, GridData.FILL, true, true);
 		text.setLayoutData(layoutData);
 		parent.addControlListener(new ControlAdapter() {
 			@Override
@@ -261,8 +260,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		group.setText(text);
 		group.setLayout(new GridLayout());
 		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.minimumWidth = 200;
-		layoutData.minimumHeight = 200;
+		layoutData.widthHint = 200;
+		layoutData.heightHint = 200;
 		group.setLayoutData(layoutData);
 		return group;
 	}
