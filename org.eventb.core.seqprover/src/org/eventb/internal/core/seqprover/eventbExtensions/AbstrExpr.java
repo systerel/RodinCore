@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2025 ETH Zurich and others.
+ * Copyright (c) 2007, 2026 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public class AbstrExpr implements IReasoner {
 			for (var hyp : antecedents[1].getAddedHyps()) {
 				if (hyp.getTag() == EQUAL) {
 					var rel = (RelationalPredicate) hyp;
-					if (idents.equals(Set.of(rel.getLeft().getFreeIdentifiers()))) {
+					if (idents.equals(Set.of(rel.getLeft().getSyntacticallyFreeIdentifiers()))) {
 						pattern = rel.getLeft();
 						expression = rel.getRight();
 						break;

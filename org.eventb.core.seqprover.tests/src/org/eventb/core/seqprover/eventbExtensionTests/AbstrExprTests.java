@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2025 ETH Zurich and others.
+ * Copyright (c) 2007, 2026 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.ProverLib.deepEquals;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.abstrExpr;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.replay;
+import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertNull;
@@ -118,6 +119,11 @@ public class AbstrExprTests extends AbstractReasonerTests {
 		assertReasonerSuccess("|- x=0↦0", makeInput("a↦b=x", "x=ℤ×ℤ"), //
 				"{x=ℤ×ℤ}[][][] |- ⊤", //
 				"{x=ℤ×ℤ}[][][a↦b=x] |- x=0↦0");
+		// Pattern matching with given types
+		assertReasonerSuccess(genFullSeq(";H; ;S; |- x=a↦b", mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S; b=T", ff)),
+				makeInput("a↦b", "a=S; b=T"), //
+				"{a=S; b=T; x=S×T}[][][] |- ⊤", //
+				"{a=S; b=T; x=S×T}[][][ae=a↦b] |- x=a↦b");
 		// Pattern matching with conflict
 		assertReasonerSuccess("y=1 |- x=0↦0", makeInput("x↦y=x", "x=ℤ×ℤ"), //
 				"{x=ℤ×ℤ}[][][y=1] |- ⊤", //
