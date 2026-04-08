@@ -21,9 +21,9 @@
 
 	<repositories>
 		<repository>
-			<id>2024-12-4.34</id>
+			<id>2025-12-4.38</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.34/</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.38/</url>
 		</repository>
 		<repository>
 			<id>handbook</id>
@@ -190,7 +190,7 @@
 				<configuration>
 					<toolchains>
 						<jdk>
-							<version>17</version>
+							<version>21</version>
 							<vendor>openjdk</vendor>
 						</jdk>
 					</toolchains>
