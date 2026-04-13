@@ -25,9 +25,18 @@
             <phase>generate-sources</phase>
             <configuration>
               <target description="Generate the type unifier using Tom">
+                <!-- Running ant in the same process fails, so we fork a Java process to run it.
+                     Hopefully, this will be fixed in a future version and we come switch back to this.
                 <ant antfile="${project.basedir}/build-tom.xml">
                   <target name="tom" />
                 </ant>
+                -->
+                <java classname="org.apache.tools.ant.launch.Launcher" fork="true" failonerror="true">
+                  <classpath refid="maven.plugin.classpath"/>
+                  <arg value="-f"/>
+                  <arg value="${project.basedir}/build-tom.xml"/>
+                  <arg value="tom"/>
+                </java>
               </target>
             </configuration>
             <goals>
