@@ -25,10 +25,10 @@
 
    <!-- Feature "org.rodinp.platform" and its requirements -->
    <feature id="org.rodinp.platform.source"/>
-   <feature id="org.eclipse.platform.source"/>
+   <!--<feature id="org.eclipse.platform.source"/>
    <feature id="org.eclipse.equinox.p2.user.ui.source"/>
    <feature id="org.eclipse.emf.common.source"/>
-   <feature id="org.eclipse.emf.ecore.source"/>
+   <feature id="org.eclipse.emf.ecore.source"/>-->
    
    <!-- Feature "org.rodinp.handbook.feature" and its requirements -->
    <!-- We skip the source feature for the Rodin Handbook -->
